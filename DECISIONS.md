@@ -13,7 +13,7 @@ Answers to `HANDOFF.md` §8, confirmed by the founder on 2026-09-10. This file i
 | 5 | `/join` jobs page | **Keep**, rebuilt as `/jobs`. |
 | 6 | Blog | **Keep and grow.** Migrate the 5 existing posts; Julie writes new ones in Sanity, not git. |
 | 7 | Corporate coaching / Olympia sportaanbod | **Keep**, both in scope. |
-| 8 | Brand | **One site, MPC as a dark "performance" sub-brand** — same component system, different color tokens/theme for `/mpc/*`. |
+| 8 | Brand | **One site, MPC as a dark "performance" sub-brand** — same component system, different color tokens/theme for `/mpc/*`. *(Update 2026-09-10: inspected the real movenda.be/mpc.movenda.be — there is no separate dark/orange MPC scheme on the live sites; MPC uses the exact same navy/blue palette as Movenda. Reverted `/mpc/*` to the shared palette to match the real house style; see `web/src/styles/global.css`.)* |
 | 9 | Budget / timeline / design | No external design; we design in code from the current logo/colors. Timeline: pitch preview first (Fase 1), full build after they choose us. |
 
 ## Hosting

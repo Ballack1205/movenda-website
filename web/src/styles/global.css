@@ -1,29 +1,28 @@
 @import "tailwindcss";
 
-/* Design tokens — Movenda (light, default) and MPC (dark sub-brand).
-   Same component system, different tokens: switch by putting
-   data-brand="mpc" on a page's <body> (see Layout.astro). */
+/* Design tokens — Movenda's real house style, extracted from the live
+   movenda.be (Squarespace) site: navy/blue palette throughout, incl. MPC
+   (there is no separate orange/dark MPC sub-brand on the real site — MPC
+   uses the exact same blues, just a second location). See PITCH.md /
+   commit history for the extraction notes. */
 
 :root {
-  --brand-bg: #ffffff;
-  --brand-surface: #f3f6f5;
-  --brand-primary: #0f5c4f;
-  --brand-primary-dark: #0b463c;
-  --brand-accent: #d98b3f;
-  --brand-text: #14231f;
-  --brand-muted: #5b6b66;
-  --brand-border: #e1e8e5;
+  --brand-bg: #eff3f8; /* page background — light blue-grey, not pure white */
+  --brand-surface: #ffffff; /* card backgrounds */
+  --brand-primary: #1470af; /* CTAs, links — confirmed via computed style on movenda.be */
+  --brand-primary-dark: #0d5a8a;
+  --brand-header: #274d87; /* nav bar background (navy) */
+  --brand-footer: #074b78; /* footer background (deep blue) */
+  --brand-accent: #d9a441; /* muted gold — review stars only, not brand-critical */
+  --brand-text: #142433;
+  --brand-muted: #56708a;
+  --brand-border: #d7e2ec;
 }
 
+/* `data-brand="mpc"` is kept as a hook for any future light differentiation,
+   but intentionally does NOT change colors: the real Movenda Performance
+   Centre site (mpc.movenda.be) uses the identical blue palette. */
 [data-brand="mpc"] {
-  --brand-bg: #0b0e10;
-  --brand-surface: #15191c;
-  --brand-primary: #ff4d2e;
-  --brand-primary-dark: #d93d22;
-  --brand-accent: #ff4d2e;
-  --brand-text: #f5f5f5;
-  --brand-muted: #a3aab0;
-  --brand-border: #262b2f;
 }
 
 @theme {
@@ -31,11 +30,14 @@
   --color-brand-surface: var(--brand-surface);
   --color-brand-primary: var(--brand-primary);
   --color-brand-primary-dark: var(--brand-primary-dark);
+  --color-brand-header: var(--brand-header);
+  --color-brand-footer: var(--brand-footer);
   --color-brand-accent: var(--brand-accent);
   --color-brand-text: var(--brand-text);
   --color-brand-muted: var(--brand-muted);
   --color-brand-border: var(--brand-border);
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Poppins", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -46,4 +48,8 @@ body {
   background-color: var(--brand-bg);
   color: var(--brand-text);
   font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
 }

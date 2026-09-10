@@ -40,7 +40,7 @@ Dan: open de Studio, voeg live een teamlid toe, laat zien dat het binnen ~1 minu
 
 - **Volledig eigen CMS (Sanity)**: Julie (of wie dan ook) voegt teamleden, locaties en diensten toe via een Nederlandstalig scherm — geen code, geen Cursor, geen git nodig.
 - **Live auto-publish**: Publish in de Studio → automatisch een nieuwe build op Render → live binnen ~1-2 minuten. Zonder ons.
-- **Eén site, twee merken**: Movenda (licht/teal) en MPC (donker/oranje "performance" sub-merk) delen dezelfde component-basis maar zien er duidelijk anders uit — via één `brand`-instelling per pagina, geen dubbele codebase.
+- **Echte huisstijl, uit de live site gehaald**: navy/blauw kleurenpalet (`#274d87` nav, `#1470af` primary, `#074b78` footer) en Poppins voor koppen — 1-op-1 overgenomen van movenda.be, i.p.v. zelfverzonnen kleuren. Movenda en MPC delen dezelfde huisstijl (geen apart donker/oranje MPC-thema — dat bestaat niet op de echte site) via één component-basis, geen dubbele codebase.
 - **Google-reviewbadge**: 30+ ⭐5.0 zichtbaar op home, locatiepagina's en contact, met link naar de echte Google-reviews.
 - **Boekknop klaar, maar uit**: `siteSettings.booking.enabled` staat op `false`. Zodra Movenda een scheduler kiest (Progenda/Doctena/...), zetten we 'm met één klik aan.
 - **SEO-fundament**: JSON-LD structured data per pagina (Organization, LocalBusiness per locatie, Person per teamlid, Service per dienst, Breadcrumbs) — geen zelf-gerapporteerde `AggregateRating` (dat toont Google sowieso niet meer als rich result; het echte signaal blijft het Google Bedrijfsprofiel zelf).

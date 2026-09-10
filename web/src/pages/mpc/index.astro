@@ -30,22 +30,22 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-6xl px-4 py-16">
-    <p class="text-sm font-semibold uppercase tracking-wide" style="color:#ff4d2e;">
+    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">
       Movenda Performance Centre
     </p>
     <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
       Presteer op je hoogste niveau, data-gedreven begeleid
     </h1>
-    <p class="mt-4 max-w-2xl" style="color:#a3aab0;">
+    <p class="mt-4 max-w-2xl text-brand-muted">
       Een multidisciplinair performance centre gericht op prestatiemaximalisatie van
       (semi-)professionele sporters en medische revalidatie op basis van data-analyse. Open
       ruimte, hoogwaardige toestellen en een één-op-één begeleiding.
     </p>
     <div class="mt-6 flex flex-wrap gap-3">
-      <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="rounded-full px-6 py-3 font-semibold text-white" style="background-color:#ff4d2e;">
+      <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
         Bel {locatie.telefoon}
       </a>
-      <a href="/contact" class="rounded-full border px-6 py-3 font-semibold" style="border-color:#262b2f;">
+      <a href="/contact" class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary">
         Contacteer ons
       </a>
     </div>
@@ -58,10 +58,10 @@ const jsonLd = [
     <h2 class="text-2xl font-bold">Onze diensten</h2>
     <div class="mt-6 grid gap-6 sm:grid-cols-2">
       {diensten.map((dienst) => (
-        <a href={`/mpc/${dienst.slug}`} class="rounded-2xl border p-8 transition" style="border-color:#262b2f;">
+        <a href={`/mpc/${dienst.slug}`} class="rounded-2xl border border-brand-border bg-brand-surface p-8 transition hover:border-brand-primary">
           <h3 class="text-xl font-semibold">{dienst.titel}</h3>
-          <p class="mt-2" style="color:#a3aab0;">{dienst.intro}</p>
-          <span class="mt-4 inline-block font-semibold" style="color:#ff4d2e;">Meer info →</span>
+          <p class="mt-2 text-brand-muted">{dienst.intro}</p>
+          <span class="mt-4 inline-block font-semibold text-brand-primary">Meer info →</span>
         </a>
       ))}
     </div>
@@ -69,7 +69,7 @@ const jsonLd = [
     <h2 class="mt-12 text-xl font-bold">Nog meer programma's</h2>
     <div class="mt-4 flex flex-wrap gap-2">
       {extraProgrammas.map((p) => (
-        <span class="rounded-full border px-4 py-1.5 text-sm" style="border-color:#262b2f; color:#a3aab0;">
+        <span class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-muted">
           {p}
         </span>
       ))}
