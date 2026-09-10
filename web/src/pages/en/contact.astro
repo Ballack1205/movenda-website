@@ -1,31 +1,32 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import { getLocaties } from "../lib/content";
-import { breadcrumbSchema } from "../lib/schema";
+import Layout from "../../layouts/Layout.astro";
+import { getLocaties } from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
 
 const locaties = await getLocaties();
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
 
 const jsonLd = [
   breadcrumbSchema([
-    { name: "Home", path: "/" },
-    { name: "Contact", path: "/contact" },
+    { name: "Home", path: "/en" },
+    { name: "Contact", path: "/en/contact" },
   ]),
 ];
 ---
 
 <Layout
-  title="Contact & afspraak | Movenda Hasselt"
-  description="Neem contact op met Movenda (Olympia, Hasselt) of het Movenda Performance Centre (Kuringen) via telefoon, e-mail of het contactformulier."
-  path="/contact"
-  altPath="/en/contact"
+  title="Contact & appointments | Movenda Hasselt"
+  description="Get in touch with Movenda (Olympia, Hasselt) or the Movenda Performance Centre (Kuringen) by phone, email or the contact form."
+  path="/en/contact"
+  altPath="/contact"
+  lang="en"
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="text-3xl font-bold">Neem contact op</h1>
+    <h1 class="text-3xl font-bold">Get in touch</h1>
     <p class="mt-2 max-w-2xl text-brand-muted">
-      Heb je een vraag of wil je een afspraak maken? Vul het formulier in en we nemen zo snel
-      mogelijk contact met je op. Je kan ons ook rechtstreeks bellen of mailen.
+      Have a question or want to book an appointment? Fill in the form and we'll get back to you
+      as soon as possible. You can also call or email us directly.
     </p>
 
     <div class="mt-10 grid gap-8 sm:grid-cols-2">
@@ -49,22 +50,21 @@ const jsonLd = [
 
     <form class="mt-12 grid gap-4" data-contact-form>
       <div class="grid gap-4 sm:grid-cols-2">
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Naam" required />
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="E-mail" required />
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Name" required />
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="Email" required />
       </div>
       <div class="grid gap-4 sm:grid-cols-2">
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Telefoon (optioneel)" />
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Phone (optional)" />
         <select class="rounded-lg border border-brand-border px-4 py-3" name="locatie">
-          <option value="">Voor welke vestiging?</option>
+          <option value="">Which location?</option>
           <option value="Movenda Olympia">Movenda — Olympia</option>
           <option value="Movenda Performance Centre">Movenda Performance Centre</option>
         </select>
       </div>
-      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Je vraag" required minlength="5"></textarea>
-      <!-- Honeypot: hidden from real visitors via CSS, bots tend to fill every field. -->
+      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Your message" required minlength="5"></textarea>
       <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
       <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
-        Verzenden
+        Send
       </button>
       <p class="text-sm" data-contact-status role="status" aria-live="polite"></p>
     </form>
@@ -80,7 +80,7 @@ const jsonLd = [
     const data = Object.fromEntries(new FormData(form).entries());
     const button = form.querySelector("button[type=submit]");
     button.disabled = true;
-    status.textContent = "Verzenden…";
+    status.textContent = "Sending…";
     status.className = "text-sm text-brand-muted";
 
     try {
@@ -90,13 +90,12 @@ const jsonLd = [
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("send_failed");
-      status.textContent = "Bedankt! We nemen zo snel mogelijk contact met je op.";
+      status.textContent = "Thanks! We'll get back to you as soon as possible.";
       status.className = "text-sm font-semibold text-brand-primary";
       window.gtag?.("event", "form_submit", { form: "contact" });
       form.reset();
     } catch {
-      status.textContent =
-        "Er ging iets mis bij het verzenden. Bel of mail ons gerust rechtstreeks — zie de gegevens hierboven.";
+      status.textContent = "Something went wrong sending this. Please call or email us directly — see above.";
       status.className = "text-sm font-semibold text-red-600";
     } finally {
       button.disabled = false;

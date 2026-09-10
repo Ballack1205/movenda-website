@@ -1,9 +1,9 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
-import BookingButton from "../components/BookingButton.astro";
-import { getLocaties, getTeamleden, getSiteSettings } from "../lib/content";
-import { organizationSchema, localBusinessSchema } from "../lib/schema";
+import Layout from "../../layouts/Layout.astro";
+import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
+import BookingButton from "../../components/BookingButton.astro";
+import { getLocaties, getTeamleden, getSiteSettings } from "../../lib/content";
+import { organizationSchema, localBusinessSchema } from "../../lib/schema";
 
 const locaties = await getLocaties();
 const olympia = locaties.find((l) => l.slug === "olympia")!;
@@ -15,35 +15,36 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
 ---
 
 <Layout
-  title="Movenda Hasselt: kinesitherapie, personal training & performance"
-  description="Movenda is dé groepspraktijk kinesitherapie en personal training in Hasselt, met een tweede vestiging Movenda Performance Centre in Kuringen."
-  path="/"
-  altPath="/en"
+  title="Movenda Hasselt: physiotherapy, personal training & performance"
+  description="Movenda is the leading physiotherapy and personal training practice in Hasselt, Belgium, with a second location — Movenda Performance Centre — in Kuringen."
+  path="/en"
+  altPath="/"
+  lang="en"
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-6xl px-4 py-16 text-center">
     <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">
-      Kinesitherapie · Personal training · Performance
+      Physiotherapy · Personal training · Performance
     </p>
     <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
-      Bewegen, herstellen en presteren in Hasselt
+      Move, recover and perform in Hasselt
     </h1>
     <p class="mx-auto mt-4 max-w-2xl text-lg text-brand-muted">
-      Met een team van {team.length}+ kinesisten en trainers begeleiden we jou bij herstel,
-      blessurepreventie en een gezonde, actieve levensstijl — medisch verantwoord en volledig op maat.
+      With a team of {team.length}+ physiotherapists and trainers, we guide you through recovery,
+      injury prevention and a healthy, active lifestyle — medically sound and fully tailored to you.
     </p>
     <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
       <a
         href={`tel:${settings.telefoonOlympia.replace(/\s+/g, "")}`}
         class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
       >
-        Bel {settings.telefoonOlympia}
+        Call {settings.telefoonOlympia}
       </a>
       <a
-        href="/contact"
+        href="/en/contact"
         class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary"
       >
-        Contacteer ons
+        Contact us
       </a>
       <BookingButton />
     </div>
@@ -54,44 +55,43 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
   </section>
 
   <section class="mx-auto grid max-w-6xl gap-6 px-4 pb-16 sm:grid-cols-2">
-    <a
-      href="/locaties/olympia"
-      class="group rounded-2xl border border-brand-border bg-brand-surface p-8 transition hover:border-brand-primary"
-    >
+    <div class="rounded-2xl border border-brand-border bg-brand-surface p-8">
       <h2 class="text-2xl font-bold text-brand-primary">Movenda — Olympia</h2>
       <p class="mt-2 text-brand-muted">
-        Kinesitherapie en personal training in Sportcentrum Olympia, Hasselt. Manuele therapie,
-        dry needling, acupunctuur, sportspecifieke training en meer.
+        Physiotherapy and personal training at Sportcentrum Olympia, Hasselt. Manual therapy, dry
+        needling, acupuncture, sport-specific training and more.
       </p>
-      <span class="mt-4 inline-block font-semibold text-brand-primary group-hover:underline">
-        Bekijk de vestiging →
-      </span>
-    </a>
+    </div>
     <a
-      href="/mpc"
+      href="/en/mpc"
       data-brand="mpc"
       class="group rounded-2xl border border-brand-border p-8 transition hover:border-brand-primary"
       style="background-color: #0b0e10; color: #f5f5f5;"
     >
       <h2 class="text-2xl font-bold" style="color:#ff4d2e;">Movenda Performance Centre</h2>
       <p class="mt-2" style="color:#a3aab0;">
-        Performance training en sportrevalidatie in Kuringen, data-gedreven en één-op-één, voor
-        recreatieve en professionele sporters.
+        Performance training and sports rehabilitation in Kuringen, data-driven and one-on-one,
+        for recreational and professional athletes.
       </p>
       <span class="mt-4 inline-block font-semibold group-hover:underline" style="color:#ff4d2e;">
-        Bekijk MPC →
+        See MPC →
       </span>
     </a>
   </section>
 
   <section class="mx-auto max-w-6xl px-4 pb-16">
-    <h2 class="text-2xl font-bold">Ons team</h2>
+    <h2 class="text-2xl font-bold">Our team</h2>
     <p class="mt-2 max-w-2xl text-brand-muted">
-      {team.length} kinesisten, personal trainers en performance coaches — elk met hun eigen
-      specialisatie.
+      {team.length} physiotherapists, personal trainers and performance coaches — each with their
+      own specialisation.
     </p>
-    <a href="/team" class="mt-4 inline-block font-semibold text-brand-primary hover:underline">
-      Bekijk het volledige team →
+    <a href="/en/team" class="mt-4 inline-block font-semibold text-brand-primary hover:underline">
+      Meet the full team →
     </a>
   </section>
+
+  <p class="mx-auto max-w-6xl px-4 pb-16 text-xs text-brand-muted">
+    This page is available in English. Some deeper pages are currently Dutch-only —{" "}
+    <a href="/" class="font-semibold text-brand-primary hover:underline">bekijk de Nederlandse site</a>.
+  </p>
 </Layout>

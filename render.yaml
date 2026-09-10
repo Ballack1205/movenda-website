@@ -14,6 +14,37 @@ services:
       - path: /*
         name: X-Robots-Tag
         value: "noindex, nofollow"
-    # The full 301 map (old movenda.be + mpc.movenda.be URLs) is added here
-    # in Fase 3, once Movenda confirms go-live. See HANDOFF.md IA section
-    # for the full list of legacy URLs to cover.
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+    # 301 map: old movenda.be slugs -> new IA. NOTE: this service was created
+    # directly via the Render MCP (create_static_site), not via a Blueprint
+    # sync, so this `routes` block is prepared IaC that isn't live yet —
+    # either run a Blueprint sync against this file, or copy these rules
+    # into Dashboard > Settings > Redirects/Rewrites, before go-live.
+    # Blog post slugs were kept identical on purpose, so /blog/* needs no
+    # redirect. mpc.movenda.be -> movenda.be/mpc/* is a host-level redirect
+    # that only makes sense after the Fase 4 DNS cutover (out of scope here —
+    # see AGENTS.md: don't touch movenda.be DNS/Squarespace unless asked).
+    routes:
+      - type: redirect
+        source: /kine
+        destination: /kinesitherapie
+      - type: redirect
+        source: /olympia
+        destination: /training
+      - type: redirect
+        source: /faqs
+        destination: /faq
+      - type: redirect
+        source: /join
+        destination: /jobs
+      - type: redirect
+        source: /over
+        destination: /
+      - type: redirect
+        source: /cart
+        destination: /

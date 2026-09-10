@@ -1,0 +1,37 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getTeamleden } from "../../../lib/content";
+
+const team = await getTeamleden();
+---
+
+<Layout
+  title="Our team | Physiotherapists & personal trainers Hasselt | Movenda"
+  description="Meet the Movenda team: physiotherapists, personal trainers and performance coaches in Hasselt and Kuringen."
+  path="/en/team"
+  altPath="/team"
+  lang="en"
+>
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Our team, your health</h1>
+    <p class="mt-2 max-w-2xl text-brand-muted">
+      {team.length} therapists and coaches, across Movenda Olympia and the Movenda Performance
+      Centre. Each team member has their own specialisation — pick whoever best matches your
+      complaint or goal.
+    </p>
+    <p class="mt-2 max-w-2xl text-xs text-brand-muted">
+      Bios below are shown in Dutch where an English translation isn't available yet — job
+      titles are translated.
+    </p>
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {team.map((lid) => (
+        <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+          <h2 class="text-lg font-semibold">{lid.voornaam} {lid.naam}</h2>
+          <p class="mt-1 text-sm font-medium text-brand-primary">{lid.rolEn || lid.rol}</p>
+          <p class="mt-2 text-sm text-brand-muted line-clamp-3">{lid.bioEn || lid.bio}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

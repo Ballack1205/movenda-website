@@ -1,0 +1,37 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./web/dist",
+      "url": [
+        "/",
+        "/team/",
+        "/mpc/",
+        "/contact/",
+        "/prijzen/",
+        "/faq/",
+        "/blog/",
+        "/kinesitherapie/",
+        "/training/"
+      ],
+      "numberOfRuns": 1,
+      "settings": {
+        "formFactor": "mobile",
+        "throttlingMethod": "simulate",
+        "screenEmulation": { "mobile": true, "width": 412, "height": 823, "deviceScaleFactor": 2.625 }
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.9 }],
+        "categories:accessibility": ["error", { "minScore": 0.9 }],
+        "categories:best-practices": ["error", { "minScore": 0.9 }],
+        "categories:seo": ["warn", { "minScore": 0.6 }],
+        "resource-summary:total:size": ["warn", { "maxNumericValue": 1048576 }],
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 2500 }]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

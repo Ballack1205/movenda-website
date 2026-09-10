@@ -60,6 +60,7 @@ export interface Dienst {
   titelEn?: string;
   intro: string;
   body: string;
+  bodyEn?: string;
   seoTitle: string;
   seoDescription: string;
   gekoppeldeTeamleden: string[];
@@ -160,7 +161,7 @@ const locatieProjection = `{
 
 const dienstProjection = `{
   "slug": slug.current,
-  categorie, titel, titelEn, intro, body, seoTitle, seoDescription,
+  categorie, titel, titelEn, intro, body, bodyEn, seoTitle, seoDescription,
   "gekoppeldeTeamleden": gekoppeldeTeamleden[]->slug.current
 }`;
 

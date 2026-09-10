@@ -1,0 +1,32 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Perf/accessibility/best-practices budget from DECISIONS.md + STACK.md
+# (Fase 3: "Lighthouse CI budget <1MB, LCP <2.5s, perf >=90"). SEO is
+# asserted as a low-severity "warn" only: this repo intentionally ships
+# noindex,nofollow while it's still a pitch preview (see Layout.astro /
+# PUBLIC_NOINDEX), which alone drops the Lighthouse SEO score — that's
+# expected here, not a regression. Flip PUBLIC_NOINDEX to "false" and
+# raise the seo assertion back to "error" once Movenda confirms go-live.
+jobs:
+  lhci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install web/ deps
+        run: cd web && npm install
+
+      - name: Build static site
+        run: cd web && npm run build
+
+      - name: Run Lighthouse CI
+        run: npx @lhci/cli@0.15.x autorun --config=./lighthouserc.json
