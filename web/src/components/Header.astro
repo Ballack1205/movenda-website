@@ -51,8 +51,17 @@ const langSwitchHref = lang === "en" ? altPath || "/" : altPath || "/en";
 
 <header class="bg-brand-header">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
-    <a href="/" class="font-heading text-lg font-bold tracking-tight text-white">
-      {brand === "mpc" ? "Movenda Performance Centre" : "Movenda"}
+    <a href="/" class="flex items-center gap-2" aria-label="Movenda">
+      {brand === "mpc" ? (
+        <>
+          <img src="/brand/logo-mpc.png" alt="" width="28" height="28" class="h-7 w-7" />
+          <span class="font-heading text-lg font-bold tracking-tight text-white">
+            Movenda Performance Centre
+          </span>
+        </>
+      ) : (
+        <img src="/brand/logo-wordmark.png" alt="Movenda" width="140" height="30" class="h-7 w-auto" />
+      )}
     </a>
     <nav class="hidden gap-6 text-sm font-medium md:flex">
       {nav.map((item) => (

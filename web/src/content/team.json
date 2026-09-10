@@ -1,6 +1,7 @@
 [
   {
     "slug": "andres-ruttens",
+    "fotoAssetId": "image-7eb65df7ef1040476bb7573b63369720b0a38b26-900x1350-jpg",
     "voornaam": "Andres",
     "naam": "Ruttens",
     "rol": "Zaakvoerder & manueel therapeut",
@@ -14,6 +15,7 @@
   },
   {
     "slug": "cedriek-swinnen",
+    "fotoAssetId": "image-f939839a9c27f83749e852cffcd2431e8690ef9a-900x1350-jpg",
     "voornaam": "Cedriek",
     "naam": "Swinnen",
     "rol": "Zaakvoerder & performance specialist",
@@ -27,6 +29,7 @@
   },
   {
     "slug": "josje-bazelmans",
+    "fotoAssetId": "image-0fe7dd651a478ec09fc8c3f05fb516f7d05a07ab-900x1350-jpg",
     "voornaam": "Josje",
     "naam": "Bazelmans",
     "rol": "Kinesitherapeut",
@@ -40,6 +43,7 @@
   },
   {
     "slug": "koen-daniels",
+    "fotoAssetId": "image-989a9e10fbef9c6791b37ba9e9760035680389fe-900x1350-jpg",
     "voornaam": "Koen",
     "naam": "Daniëls",
     "rol": "Kinesitherapeut",
@@ -53,6 +57,7 @@
   },
   {
     "slug": "jens-hendrickx",
+    "fotoAssetId": "image-5a34c7a223d1eed45fa802d7940d3be0d04de756-900x1350-jpg",
     "voornaam": "Jens",
     "naam": "Hendrickx",
     "rol": "Kinesitherapeut & sportspecialist",
@@ -66,6 +71,7 @@
   },
   {
     "slug": "pieter-hayen",
+    "fotoAssetId": "image-ccad24c8b334227c154a79bc1e7d3a55953b74e7-900x1350-jpg",
     "voornaam": "Pieter",
     "naam": "Hayen",
     "rol": "Kinesitherapeut & kinesitherapeut KRC Genk",
@@ -79,6 +85,7 @@
   },
   {
     "slug": "simon-cornelissen",
+    "fotoAssetId": "image-8f8896fc9fdb8f5213b1db0a80965160df979937-900x1350-jpg",
     "voornaam": "Simon",
     "naam": "Cornelissen",
     "rol": "Kinesitherapeut & personal trainer",
@@ -92,6 +99,7 @@
   },
   {
     "slug": "tanse-vanheusden",
+    "fotoAssetId": "image-db3f7da6c7c3f615c263d77fbf2e0fb38778f1f0-900x1350-jpg",
     "voornaam": "Tanse",
     "naam": "Vanheusden",
     "rol": "Kinesitherapeut & pre/postnataal specialist",
@@ -105,6 +113,7 @@
   },
   {
     "slug": "miel-briers",
+    "fotoAssetId": "image-6aa9f5301f3ae6ab69966ad3dbe6dbd3af80026d-900x1350-jpg",
     "voornaam": "Miel",
     "naam": "Briers",
     "rol": "Kinesitherapeut & kinesitherapeut STVV",
@@ -118,6 +127,7 @@
   },
   {
     "slug": "maarten-bernaerts",
+    "fotoAssetId": "image-2e41c53dbd08fd4165bbc1c3683363428ddae753-900x1350-jpg",
     "voornaam": "Maarten",
     "naam": "Bernaerts",
     "rol": "Kinesitherapeut & manueel therapeut",
@@ -131,6 +141,7 @@
   },
   {
     "slug": "arne-daniels",
+    "fotoAssetId": "image-ece071a472405d1ad4e55521a8ce4ffd0bbb122d-900x1350-jpg",
     "voornaam": "Arne",
     "naam": "Daniëls",
     "rol": "Kinesitherapeut & performance coach",
@@ -144,6 +155,7 @@
   },
   {
     "slug": "charlotte-vorstenbosch",
+    "fotoAssetId": "image-fc019c949f94114bc052d27098b40d1821aa2a25-900x1350-jpg",
     "voornaam": "Charlotte",
     "naam": "Vorstenbosch",
     "rol": "Personal trainer & groepscoach",
@@ -157,6 +169,7 @@
   },
   {
     "slug": "yannick-glorieux",
+    "fotoAssetId": "image-a0e1a02b3d17db351836412da0887f8ad9855e77-900x1350-jpg",
     "voornaam": "Yannick",
     "naam": "Glorieux",
     "rol": "Performance coach & data-analist",
@@ -170,6 +183,7 @@
   },
   {
     "slug": "jana-albrechts",
+    "fotoAssetId": "image-420c6e1ef9820b7a78c13f3e9974d1fee03a9112-900x1350-jpg",
     "voornaam": "Jana",
     "naam": "Albrechts",
     "rol": "Kinesitherapeut & personal trainer",
@@ -183,6 +197,7 @@
   },
   {
     "slug": "quinten-beckers",
+    "fotoAssetId": "image-c7db2ec51e966f2b02cdbfd5facf40f4821ea6ce-900x1350-jpg",
     "voornaam": "Quinten",
     "naam": "Beckers",
     "rol": "Personal trainer",
@@ -196,6 +211,7 @@
   },
   {
     "slug": "dimitri-vanempten",
+    "fotoAssetId": "image-c37b905389cc262d69929bf914fd70f391142e70-900x1350-jpg",
     "voornaam": "Dimitri",
     "naam": "Vanempten",
     "rol": "Boxing coach",
@@ -235,6 +251,7 @@
   },
   {
     "slug": "julie-spaas",
+    "fotoAssetId": "image-133a03153bbadef6002896914f01b285e2fbb924-900x1350-jpg",
     "voornaam": "Julie",
     "naam": "Spaas",
     "rol": "Office manager & marketing",

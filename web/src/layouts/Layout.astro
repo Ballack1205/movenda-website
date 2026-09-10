@@ -30,7 +30,7 @@ const {
   jsonLd = [],
   lang = "nl",
   altPath,
-  ogImage = "/og-default.svg",
+  ogImage = "/og-default.jpg",
 } = Astro.props;
 
 // Preview safety net: this site is a pitch preview until Movenda confirms
@@ -68,7 +68,9 @@ const enPath = lang === "en" ? path : altPath;
     <meta property="og:image" content={ogImageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImageUrl} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     {jsonLd.map((entry) => (
       <script type="application/ld+json" set:html={JSON.stringify(entry)} is:inline />
     ))}

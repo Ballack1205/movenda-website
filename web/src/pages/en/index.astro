@@ -1,9 +1,12 @@
 ---
+import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import BookingButton from "../../components/BookingButton.astro";
 import { getLocaties, getTeamleden, getSiteSettings } from "../../lib/content";
 import { organizationSchema, localBusinessSchema } from "../../lib/schema";
+import homeHero from "../../assets/marketing/home-hero.jpg";
+import mpcHero from "../../assets/marketing/mpc-hero.jpg";
 
 const locaties = await getLocaties();
 const olympia = locaties.find((l) => l.slug === "olympia")!;
@@ -22,36 +25,46 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
   lang="en"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-6xl px-4 py-16 text-center">
-    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">
-      Physiotherapy · Personal training · Performance
-    </p>
-    <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
-      Move, recover and perform in Hasselt
-    </h1>
-    <p class="mx-auto mt-4 max-w-2xl text-lg text-brand-muted">
-      With a team of {team.length}+ physiotherapists and trainers, we guide you through recovery,
-      injury prevention and a healthy, active lifestyle — medically sound and fully tailored to you.
-    </p>
-    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-      <a
-        href={`tel:${settings.telefoonOlympia.replace(/\s+/g, "")}`}
-        class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
-      >
-        Call {settings.telefoonOlympia}
-      </a>
-      <a
-        href="/en/contact"
-        class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary"
-      >
-        Contact us
-      </a>
-      <BookingButton />
+  <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 lg:grid-cols-2 lg:py-16">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">
+        Physiotherapy · Personal training · Performance
+      </p>
+      <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
+        Move, recover and perform in Hasselt
+      </h1>
+      <p class="mt-4 max-w-xl text-lg text-brand-muted">
+        With a team of {team.length}+ physiotherapists and trainers, we guide you through recovery,
+        injury prevention and a healthy, active lifestyle — medically sound and fully tailored to you.
+      </p>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <a
+          href={`tel:${settings.telefoonOlympia.replace(/\s+/g, "")}`}
+          class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+        >
+          Call {settings.telefoonOlympia}
+        </a>
+        <a
+          href="/en/contact"
+          class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary"
+        >
+          Contact us
+        </a>
+        <BookingButton />
+      </div>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <GoogleReviewBadge locatie="olympia" />
+        <GoogleReviewBadge locatie="mpc" />
+      </div>
     </div>
-    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-      <GoogleReviewBadge locatie="olympia" />
-      <GoogleReviewBadge locatie="mpc" />
-    </div>
+    <Image
+      src={homeHero}
+      alt="Personal trainer and client during a training session at Movenda"
+      width={640}
+      height={800}
+      class="aspect-[4/5] w-full rounded-3xl object-cover shadow-xl"
+      priority
+    />
   </section>
 
   <section class="mx-auto grid max-w-6xl gap-6 px-4 pb-16 sm:grid-cols-2">
@@ -64,28 +77,57 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
     </div>
     <a
       href="/en/mpc"
-      class="group rounded-2xl border border-brand-border bg-brand-header p-8 text-white transition hover:opacity-95"
+      class="group relative overflow-hidden rounded-2xl p-8 text-white transition hover:opacity-95"
     >
-      <h2 class="text-2xl font-bold text-white">Movenda Performance Centre</h2>
-      <p class="mt-2 text-white/70">
-        Performance training and sports rehabilitation in Kuringen, data-driven and one-on-one,
-        for recreational and professional athletes.
-      </p>
-      <span class="mt-4 inline-block font-semibold text-white group-hover:underline">
-        See MPC →
-      </span>
+      <Image src={mpcHero} alt="" width={640} height={480} class="absolute inset-0 h-full w-full object-cover" />
+      <div class="absolute inset-0 bg-brand-header/80"></div>
+      <div class="relative">
+        <h2 class="text-2xl font-bold text-white">Movenda Performance Centre</h2>
+        <p class="mt-2 text-white/80">
+          Performance training and sports rehabilitation in Kuringen, data-driven and one-on-one,
+          for recreational and professional athletes.
+        </p>
+        <span class="mt-4 inline-block font-semibold text-white group-hover:underline">
+          See MPC →
+        </span>
+      </div>
     </a>
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 pb-16">
-    <h2 class="text-2xl font-bold">Our team</h2>
-    <p class="mt-2 max-w-2xl text-brand-muted">
-      {team.length} physiotherapists, personal trainers and performance coaches — each with their
-      own specialisation.
-    </p>
-    <a href="/en/team" class="mt-4 inline-block font-semibold text-brand-primary hover:underline">
-      Meet the full team →
-    </a>
+  <section class="bg-brand-surface py-16">
+    <div class="mx-auto max-w-6xl px-4">
+      <h2 class="text-2xl font-bold">Our team</h2>
+      <p class="mt-2 max-w-2xl text-brand-muted">
+        {team.length} physiotherapists, personal trainers and performance coaches — each with their
+        own specialisation.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-4">
+        {team.slice(0, 8).map((lid) => (
+          <a href={`/team/${lid.slug}`} class="group w-24 text-center">
+            <div class="h-24 w-24 overflow-hidden rounded-full bg-brand-header">
+              {lid.foto ? (
+                <img
+                  src={`${lid.foto}?w=200&h=200&fit=crop&auto=format`}
+                  alt={`${lid.voornaam} ${lid.naam}`}
+                  width="96"
+                  height="96"
+                  loading="lazy"
+                  class="h-full w-full object-cover transition group-hover:scale-105"
+                />
+              ) : (
+                <div class="flex h-full w-full items-center justify-center text-lg font-bold text-white/80">
+                  {lid.voornaam[0]}{lid.naam[0]}
+                </div>
+              )}
+            </div>
+            <p class="mt-2 text-xs font-medium text-brand-text">{lid.voornaam}</p>
+          </a>
+        ))}
+      </div>
+      <a href="/en/team" class="mt-6 inline-block font-semibold text-brand-primary hover:underline">
+        Meet the full team →
+      </a>
+    </div>
   </section>
 
   <p class="mx-auto max-w-6xl px-4 pb-16 text-xs text-brand-muted">

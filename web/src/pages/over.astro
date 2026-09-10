@@ -2,9 +2,11 @@
 // Copy hieronder komt van de echte /over-pagina op movenda.be (visie,
 // partnerships, eerste-bezoek-stappen, feature-highlights) — verbatim
 // overgenomen en licht opgeschoond voor de nieuwe site.
+import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import { getLocaties } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
+import overHero from "../assets/marketing/over-hero.jpg";
 
 const locatie = (await getLocaties()).find((l) => l.slug === "olympia")!;
 
@@ -48,27 +50,37 @@ const jsonLd = [
   path="/over"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-3xl px-4 py-12">
-    <h1 class="text-3xl font-bold">De Movenda-visie</h1>
-    <p class="mt-4 text-brand-muted">
-      Movenda in Hasselt is dé groepspraktijk kinesitherapie en personal training die iedereen op
-      een gezonde en medisch verantwoorde manier wil laten bewegen. Wij werken met elke persoon
-      individueel, zowel voor kinesitherapie als voor personal training.
-    </p>
-    <p class="mt-4 text-brand-muted">
-      Elke patiënt wordt individueel behandeld, waardoor we kunnen ingaan op de specifieke
-      klachten in een ruimer kader. Voor een optimaal herstel benaderen we de patiënt in zijn
-      totaliteit, zodat ook onderliggende klachten deel uitmaken van het herstelproces. Daarom
-      combineren we onze passieve manuele behandeling steevast met actieve oefentherapie — we
-      motiveren onze patiënten om actief deel te nemen aan hun revalidatie, niet om volledig
-      afhankelijk te zijn van de therapeut.
-    </p>
-    <p class="mt-4 text-brand-muted">
-      Onze therapeuten volgen jaarlijks interne en externe bijscholingen — manuele therapie,
-      myofasciale therapie, osteopathie, acupunctuur, dry needling — om je op de best mogelijke
-      manier te blijven behandelen. We werken daarnaast samen met de opleiding kinesitherapie aan
-      de UHasselt en bieden elk jaar meerdere stageplaatsen aan.
-    </p>
+  <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 lg:grid-cols-2">
+    <div>
+      <h1 class="text-3xl font-bold">De Movenda-visie</h1>
+      <p class="mt-4 text-brand-muted">
+        Movenda in Hasselt is dé groepspraktijk kinesitherapie en personal training die iedereen op
+        een gezonde en medisch verantwoorde manier wil laten bewegen. Wij werken met elke persoon
+        individueel, zowel voor kinesitherapie als voor personal training.
+      </p>
+      <p class="mt-4 text-brand-muted">
+        Elke patiënt wordt individueel behandeld, waardoor we kunnen ingaan op de specifieke
+        klachten in een ruimer kader. Voor een optimaal herstel benaderen we de patiënt in zijn
+        totaliteit, zodat ook onderliggende klachten deel uitmaken van het herstelproces. Daarom
+        combineren we onze passieve manuele behandeling steevast met actieve oefentherapie — we
+        motiveren onze patiënten om actief deel te nemen aan hun revalidatie, niet om volledig
+        afhankelijk te zijn van de therapeut.
+      </p>
+      <p class="mt-4 text-brand-muted">
+        Onze therapeuten volgen jaarlijks interne en externe bijscholingen — manuele therapie,
+        myofasciale therapie, osteopathie, acupunctuur, dry needling — om je op de best mogelijke
+        manier te blijven behandelen. We werken daarnaast samen met de opleiding kinesitherapie aan
+        de UHasselt en bieden elk jaar meerdere stageplaatsen aan.
+      </p>
+    </div>
+    <Image
+      src={overHero}
+      alt="Coach en klant bij Movenda"
+      width={640}
+      height={480}
+      class="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl"
+      priority
+    />
   </section>
 
   <section class="mx-auto max-w-5xl px-4 pb-12">

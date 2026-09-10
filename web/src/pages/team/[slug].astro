@@ -33,8 +33,28 @@ const jsonLd = [
 >
   <article class="mx-auto max-w-3xl px-4 py-12">
     <a href="/team" class="text-sm font-medium text-brand-primary hover:underline">← Terug naar team</a>
-    <h1 class="mt-4 text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
-    <p class="mt-1 text-lg font-medium text-brand-primary">{lid.rol}</p>
+
+    <div class="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start">
+      <div class="h-40 w-40 shrink-0 overflow-hidden rounded-2xl bg-brand-header">
+        {lid.foto ? (
+          <img
+            src={`${lid.foto}?w=320&h=320&fit=crop&auto=format`}
+            alt={`${lid.voornaam} ${lid.naam}`}
+            width="160"
+            height="160"
+            class="h-full w-full object-cover"
+          />
+        ) : (
+          <div class="flex h-full w-full items-center justify-center text-3xl font-bold text-white/80">
+            {lid.voornaam[0]}{lid.naam[0]}
+          </div>
+        )}
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
+        <p class="mt-1 text-lg font-medium text-brand-primary">{lid.rol}</p>
+      </div>
+    </div>
 
     <p class="mt-6 text-brand-muted">{lid.bio}</p>
 

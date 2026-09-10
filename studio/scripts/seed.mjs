@@ -61,6 +61,9 @@ async function seedTeam() {
       email: lid.email,
       volgorde: lid.volgorde,
       actief: lid.actief,
+      ...(lid.fotoAssetId
+        ? { foto: { _type: "image", asset: { _type: "reference", _ref: lid.fotoAssetId } } }
+        : {}),
     });
   }
   console.log(`Seeded ${team.length} teamleden.`);

@@ -1,8 +1,11 @@
 ---
+import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import { getLocatieBySlug } from "../lib/content";
 import { breadcrumbSchema, localBusinessSchema } from "../lib/schema";
+import trainingHero from "../assets/marketing/training-hero.jpg";
+import trainingSecondary from "../assets/marketing/training-secondary.jpg";
 
 const locatie = (await getLocatieBySlug("olympia"))!;
 
@@ -60,36 +63,57 @@ const jsonLd = [
   path="/training"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="text-3xl font-bold">Personal Training Hasselt</h1>
-    <p class="mt-3 max-w-2xl text-brand-muted">
-      We hebben verschillende soorten trainingen waarin we samen de uitdaging aangaan om jouw
-      persoonlijke doelstellingen (spierontwikkeling, afslanken en conditietraining) te bereiken.
-      Een PT-sessie duurt minimaal een uur, maar kan zeker ook langer — alles wordt afgestemd op
-      wat jij wil!
-    </p>
-    <p class="mt-3 max-w-2xl text-brand-muted">
-      Bij Movenda train je onder begeleiding van een personal trainer die ook kinesitherapeut is.
-      Jouw schema wordt niet alleen afgestemd op je doelen, maar ook op je lichaam, beperkingen en
-      medische voorgeschiedenis.
-    </p>
-    <div class="mt-6 flex flex-wrap items-center gap-3">
-      <a
-        href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`}
-        class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
-      >
-        Bel {locatie.telefoon}
-      </a>
-      <GoogleReviewBadge locatie="olympia" />
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+      <div>
+        <h1 class="text-3xl font-bold">Personal Training Hasselt</h1>
+        <p class="mt-3 max-w-xl text-brand-muted">
+          We hebben verschillende soorten trainingen waarin we samen de uitdaging aangaan om jouw
+          persoonlijke doelstellingen (spierontwikkeling, afslanken en conditietraining) te
+          bereiken. Een PT-sessie duurt minimaal een uur, maar kan zeker ook langer — alles wordt
+          afgestemd op wat jij wil!
+        </p>
+        <p class="mt-3 max-w-xl text-brand-muted">
+          Bij Movenda train je onder begeleiding van een personal trainer die ook kinesitherapeut
+          is. Jouw schema wordt niet alleen afgestemd op je doelen, maar ook op je lichaam,
+          beperkingen en medische voorgeschiedenis.
+        </p>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <a
+            href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`}
+            class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+          >
+            Bel {locatie.telefoon}
+          </a>
+          <GoogleReviewBadge locatie="olympia" />
+        </div>
+      </div>
+      <Image
+        src={trainingHero}
+        alt="Personal training sessie bij Movenda"
+        width={640}
+        height={480}
+        class="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl"
+        priority
+      />
     </div>
 
-    <div class="mt-10 grid gap-4 sm:grid-cols-2">
-      {trainingen.map((t) => (
-        <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
-          <h2 class="font-semibold">{t.naam}</h2>
-          <p class="mt-1 text-sm text-brand-muted">{t.tekst}</p>
-        </div>
-      ))}
+    <div class="mt-10 grid gap-6 lg:grid-cols-3">
+      <div class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
+        {trainingen.map((t) => (
+          <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+            <h2 class="font-semibold">{t.naam}</h2>
+            <p class="mt-1 text-sm text-brand-muted">{t.tekst}</p>
+          </div>
+        ))}
+      </div>
+      <Image
+        src={trainingSecondary}
+        alt="Krachttraining bij Movenda"
+        width={480}
+        height={640}
+        class="hidden aspect-[3/4] w-full rounded-2xl object-cover lg:block"
+      />
     </div>
 
     <h2 class="mt-12 text-xl font-bold">Voor wie?</h2>
