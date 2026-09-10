@@ -19,10 +19,11 @@
   --brand-border: #d7e2ec;
 }
 
-/* `data-brand="mpc"` is kept as a hook for any future light differentiation,
-   but intentionally does NOT change colors: the real Movenda Performance
-   Centre site (mpc.movenda.be) uses the identical blue palette. */
+/* MPC stays in the same navy family, but the header is a slightly deeper
+   shade so the Performance Centre reads as a distinct space — not a second
+   brand, just a nuance. */
 [data-brand="mpc"] {
+  --brand-header: #1a3d6e;
 }
 
 @theme {

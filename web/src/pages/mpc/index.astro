@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
+import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import { getDienstenByCategorie, getLocatieBySlug } from "../../lib/content";
 import { localBusinessSchema, breadcrumbSchema } from "../../lib/schema";
 import mpcHero from "../../assets/marketing/mpc-hero.jpg";
@@ -51,6 +52,9 @@ const jsonLd = [
         <a href="/contact" class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary">
           Contacteer ons
         </a>
+      </div>
+      <div class="mt-6">
+        <GoogleReviewBadge locatie="mpc" />
       </div>
     </div>
     <Image

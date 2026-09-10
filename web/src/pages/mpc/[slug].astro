@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { getDienstenByCategorie, getDienstBySlug, getLocatieBySlug, getTeamleden } from "../../lib/content";
 import { serviceSchema, breadcrumbSchema } from "../../lib/schema";
+import { teamPhotoSrc } from "../../lib/images";
 
 export async function getStaticPaths() {
   const diensten = await getDienstenByCategorie("mpc");
@@ -53,7 +54,7 @@ const jsonLd = [
               <span class="h-7 w-7 overflow-hidden rounded-full bg-brand-header">
                 {lid.foto ? (
                   <img
-                    src={`${lid.foto}?w=56&h=56&fit=crop&auto=format`}
+                    src={teamPhotoSrc(lid.foto, "face")}
                     alt=""
                     width="28"
                     height="28"

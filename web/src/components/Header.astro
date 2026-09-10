@@ -1,5 +1,4 @@
 ---
-import { getSiteSettings } from "../lib/content";
 import BookingButton from "./BookingButton.astro";
 
 export interface Props {
@@ -9,9 +8,10 @@ export interface Props {
 }
 
 const { brand = "movenda", lang = "nl", altPath } = Astro.props;
-const settings = await getSiteSettings();
 
-const navMovendaNl = [
+type NavItem = { href: string; label: string; emphasize?: boolean };
+
+const navMovendaNl: NavItem[] = [
   { href: "/", label: "Home" },
   { href: "/over", label: "Over ons" },
   { href: "/kinesitherapie", label: "Kinesitherapie" },
@@ -20,18 +20,18 @@ const navMovendaNl = [
   { href: "/prijzen", label: "Prijzen" },
   { href: "/blog", label: "Blog" },
   { href: "/faq", label: "FAQ" },
-  { href: "/mpc", label: "MPC" },
+  { href: "/mpc", label: "MPC", emphasize: true },
   { href: "/contact", label: "Contact" },
 ];
 
-const navMovendaEn = [
+const navMovendaEn: NavItem[] = [
   { href: "/en", label: "Home" },
   { href: "/en/team", label: "Team" },
-  { href: "/en/mpc", label: "MPC" },
+  { href: "/en/mpc", label: "MPC", emphasize: true },
   { href: "/en/contact", label: "Contact" },
 ];
 
-const navMpc = [
+const navMpc: NavItem[] = [
   { href: "/mpc", label: "MPC Home" },
   { href: "/mpc/performance-training", label: "Performance" },
   { href: "/mpc/sportrevalidatie", label: "Sportrevalidatie" },
@@ -41,42 +41,42 @@ const navMpc = [
 ];
 
 const nav = brand === "mpc" ? navMpc : lang === "en" ? navMovendaEn : navMovendaNl;
-const phone = brand === "mpc" ? settings.telefoonMpc : settings.telefoonOlympia;
 
 // Language switcher target: use the explicit counterpart if the page
 // declares one, otherwise fall back to each language's homepage — never a
 // dead link (see DECISIONS.md: missing EN pages fall back gracefully).
 const langSwitchHref = lang === "en" ? altPath || "/" : altPath || "/en";
+
+const linkClass = (emphasize?: boolean) =>
+  emphasize
+    ? "font-bold text-white transition hover:text-white"
+    : "text-white/80 transition hover:text-white";
 ---
 
 <header class="bg-brand-header" data-header>
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
-    <a href="/" class="flex items-center gap-2" aria-label="Movenda">
+    <a
+      href={brand === "mpc" ? "/mpc" : "/"}
+      class="flex items-center gap-2"
+      aria-label={brand === "mpc" ? "Movenda Performance Centre" : "Movenda"}
+    >
       {brand === "mpc" ? (
         <>
           <img src="/brand/logo-mpc.png" alt="" width="28" height="28" class="h-7 w-7" />
-          <span class="font-heading text-lg font-bold tracking-tight text-white">
-            Movenda Performance Centre
-          </span>
+          <span class="font-heading text-lg font-bold tracking-tight text-white">MPC</span>
         </>
       ) : (
         <img src="/brand/logo-wordmark.png" alt="Movenda" width="140" height="30" class="h-7 w-auto" />
       )}
     </a>
-    <nav class="hidden gap-6 text-sm font-medium md:flex">
+    <nav class:list={["hidden gap-6 text-sm md:flex", brand === "mpc" ? "font-semibold" : "font-medium"]}>
       {nav.map((item) => (
-        <a href={item.href} class="text-white/80 transition hover:text-white">
+        <a href={item.href} class={linkClass(item.emphasize)}>
           {item.label}
         </a>
       ))}
     </nav>
     <div class="flex items-center gap-3">
-      <a
-        href={`tel:${phone.replace(/\s+/g, "")}`}
-        class="hidden text-sm font-semibold text-white sm:inline"
-      >
-        {phone}
-      </a>
       <a
         href={langSwitchHref}
         class="rounded-full border border-white/30 px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white hover:text-white"
@@ -107,16 +107,16 @@ const langSwitchHref = lang === "en" ? altPath || "/" : altPath || "/en";
   <nav id="mobile-nav" class="hidden border-t border-white/10 md:hidden" data-mobile-nav>
     <div class="mx-auto flex max-w-6xl flex-col px-4 py-3">
       {nav.map((item) => (
-        <a href={item.href} class="py-2.5 text-base font-medium text-white/90 transition hover:text-white">
+        <a
+          href={item.href}
+          class:list={[
+            "py-2.5 text-base transition hover:text-white",
+            item.emphasize ? "font-bold text-white" : "font-medium text-white/90",
+          ]}
+        >
           {item.label}
         </a>
       ))}
-      <a
-        href={`tel:${phone.replace(/\s+/g, "")}`}
-        class="mt-3 rounded-full bg-white px-5 py-3 text-center font-semibold text-brand-header"
-      >
-        {lang === "en" ? "Call" : "Bel"} {phone}
-      </a>
     </div>
   </nav>
 </header>

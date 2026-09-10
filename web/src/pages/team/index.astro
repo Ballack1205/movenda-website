@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getTeamleden } from "../../lib/content";
+import { teamPhotoSrc } from "../../lib/images";
 
 const team = await getTeamleden();
 ---
@@ -25,15 +26,15 @@ const team = await getTeamleden();
           href={`/team/${lid.slug}`}
           class="group overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary"
         >
-          <div class="aspect-[4/3] w-full overflow-hidden bg-brand-header">
+          <div class="aspect-[2/3] w-full overflow-hidden bg-brand-header">
             {lid.foto ? (
               <img
-                src={`${lid.foto}?w=640&h=480&fit=crop&auto=format`}
+                src={teamPhotoSrc(lid.foto, "card")}
                 alt={`${lid.voornaam} ${lid.naam}`}
-                width="640"
-                height="480"
+                width="600"
+                height="900"
                 loading="lazy"
-                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                class="h-full w-full object-cover object-top transition duration-300 group-hover:scale-105"
               />
             ) : (
               <div class="flex h-full w-full items-center justify-center text-3xl font-bold text-white/80">
