@@ -32,5 +32,12 @@
   "socials": {
     "instagram": "",
     "facebook": ""
+  },
+  "prijzenInfo": {
+    "basishonorarium": 37,
+    "intro": "Onze tarieven worden jaarlijks geïndexeerd en zijn in lijn met de aanbevelingen van Axxon, de beroepsvereniging voor kinesitherapeuten. Al onze therapeuten zijn gedeconventioneerd.",
+    "terugbetalingStandaard": "±€18 à €20 per sessie",
+    "terugbetalingVt": "Gunstigere tarieven — vraag na bij je ziekenfonds",
+    "voorwaarden": "Voorwaarden voor terugbetaling: je hebt een doktersvoorschrift nodig. Je behandeling start binnen de 2 maanden na datum op het voorschrift. Maximaal 18 sessies per aandoening per kalenderjaar worden terugbetaald. Voor chronische of zware aandoeningen kan dit hoger liggen — vraag dit na bij je arts of ziekenfonds."
   }
 }

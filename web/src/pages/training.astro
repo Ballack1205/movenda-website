@@ -1,0 +1,64 @@
+---
+import Layout from "../layouts/Layout.astro";
+import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
+import { getLocatieBySlug } from "../lib/content";
+import { breadcrumbSchema, localBusinessSchema } from "../lib/schema";
+
+const locatie = (await getLocatieBySlug("olympia"))!;
+
+const trainingen = [
+  { naam: "Personal Training", tekst: "1-op-1 training gericht op jouw doelen: kracht, conditie of afvallen." },
+  { naam: "Duotraining", tekst: "Train samen met een vriend of partner, begeleid door één trainer." },
+  { naam: "Sportspecifieke screening", tekst: "Uitgebreide test om gebreken of disbalans preventief op te sporen." },
+  { naam: "Sportspecifieke training", tekst: "Training afgestemd op de bewegingen en eisen van jouw sport." },
+  { naam: "Inspanningstesten", tekst: "Test op fiets, roeier of loopband, met of zonder lactaatmeting." },
+  { naam: "Pre- en postnatale training", tekst: "Training voor en na de bevalling, begeleid door een gespecialiseerde kinesist." },
+];
+
+const jsonLd = [
+  localBusinessSchema(locatie),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Training", path: "/training" },
+  ]),
+];
+---
+
+<Layout
+  title="Personal training Hasselt | Movenda"
+  description="Personal training, duotraining en sportspecifieke begeleiding in Hasselt, gegeven door kinesitherapeuten met sportspecifieke kennis."
+  path="/training"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Personal Training Hasselt</h1>
+    <p class="mt-3 max-w-2xl text-brand-muted">
+      Bij Movenda train je onder begeleiding van een personal trainer die ook kinesitherapeut is.
+      Jouw schema wordt niet alleen afgestemd op je doelen, maar ook op je lichaam, beperkingen en
+      medische voorgeschiedenis.
+    </p>
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <a
+        href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`}
+        class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+      >
+        Bel {locatie.telefoon}
+      </a>
+      <GoogleReviewBadge locatie="olympia" />
+    </div>
+
+    <div class="mt-10 grid gap-4 sm:grid-cols-2">
+      {trainingen.map((t) => (
+        <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+          <h2 class="font-semibold">{t.naam}</h2>
+          <p class="mt-1 text-sm text-brand-muted">{t.tekst}</p>
+        </div>
+      ))}
+    </div>
+
+    <p class="mt-8 text-sm text-brand-muted">
+      Voor performance training en topsportbegeleiding: bekijk het{" "}
+      <a href="/mpc" class="font-semibold text-brand-primary hover:underline">Movenda Performance Centre</a>.
+    </p>
+  </section>
+</Layout>

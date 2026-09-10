@@ -126,12 +126,96 @@ async function seedSiteSettings() {
     booking: settings.booking,
     googleReviews: settings.googleReviews,
     analytics: settings.analytics,
+    prijzenInfo: settings.prijzenInfo,
   });
   console.log("Seeded site-instellingen.");
+}
+
+async function seedFaqs() {
+  const faqs = readJson("faqs.json");
+  for (const faq of faqs) {
+    await client.createOrReplace({
+      _id: `faq-${slugify(faq.vraag)}`,
+      _type: "faq",
+      vraag: faq.vraag,
+      antwoord: faq.antwoord,
+      categorie: faq.categorie,
+      volgorde: faq.volgorde,
+    });
+  }
+  console.log(`Seeded ${faqs.length} FAQ's.`);
+}
+
+async function seedPrijzen() {
+  const prijzen = readJson("prijzen.json");
+  for (const item of prijzen) {
+    await client.createOrReplace({
+      _id: `prijsitem-${item.categorie}-${slugify(item.naam)}`,
+      _type: "prijsitem",
+      naam: item.naam,
+      categorie: item.categorie,
+      bedrag: item.bedrag,
+      eenheid: item.eenheid || undefined,
+      vanaf: item.vanaf,
+      opAanvraag: item.opAanvraag,
+      volgorde: item.volgorde,
+    });
+  }
+  console.log(`Seeded ${prijzen.length} prijzen.`);
+}
+
+// Converts the simplified { type, text/items } shape in blog.json into real
+// Sanity Portable Text blocks (what the "body" field of blogPost expects).
+function toPortableText(sections) {
+  return sections.flatMap((section, i) => {
+    if (section.type === "ul") {
+      return section.items.map((item, j) => ({
+        _type: "block",
+        _key: `l${i}-${j}`,
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: `l${i}-${j}-s`, text: item }],
+      }));
+    }
+    const style = section.type === "h3" ? "h3" : "normal";
+    return [
+      {
+        _type: "block",
+        _key: `b${i}`,
+        style,
+        children: [{ _type: "span", _key: `b${i}-s`, text: section.text }],
+      },
+    ];
+  });
+}
+
+async function seedBlogPosts() {
+  const posts = readJson("blog.json");
+  for (const post of posts) {
+    await client.createOrReplace({
+      _id: `blogPost-${post.slug}`,
+      _type: "blogPost",
+      titel: post.titel,
+      slug: { _type: "slug", current: post.slug },
+      excerpt: post.excerpt,
+      body: toPortableText(post.body),
+      auteur: post.auteurSlug
+        ? { _type: "reference", _ref: `teamlid-${post.auteurSlug}` }
+        : undefined,
+      publicatiedatum: post.publicatiedatum,
+      tags: post.tags,
+      seoTitle: post.seoTitle,
+    });
+  }
+  console.log(`Seeded ${posts.length} blogposts.`);
 }
 
 await seedTeam();
 await seedLocaties();
 await seedDiensten();
 await seedSiteSettings();
+await seedFaqs();
+await seedPrijzen();
+await seedBlogPosts();
 console.log("Done. Open https://movenda.sanity.studio to see the data.");

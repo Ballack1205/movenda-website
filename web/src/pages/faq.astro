@@ -1,0 +1,47 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getFaqs, getSiteSettings } from "../lib/content";
+import { breadcrumbSchema, faqPageSchema } from "../lib/schema";
+
+const faqs = await getFaqs();
+const settings = await getSiteSettings();
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "FAQ", path: "/faq" },
+  ]),
+  ...(faqs.length > 0 ? [faqPageSchema(faqs)] : []),
+];
+---
+
+<Layout
+  title="Veelgestelde vragen | Movenda Hasselt"
+  description="Antwoorden op de meest gestelde vragen over afspraken, tarieven, doktersvoorschrift en meer bij Movenda."
+  path="/faq"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-3xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Veelgestelde vragen</h1>
+    <p class="mt-2 text-brand-muted">
+      Staat je vraag er niet bij? Mail ons gerust op{" "}
+      <a href={`mailto:${settings.email}`} class="font-semibold text-brand-primary hover:underline">
+        {settings.email}
+      </a>.
+    </p>
+
+    <div class="mt-8 divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
+      {faqs.map((faq) => (
+        <details class="group px-6 py-4">
+          <summary class="cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden">
+            <span class="flex items-center justify-between gap-4">
+              {faq.vraag}
+              <span class="text-brand-primary transition group-open:rotate-45">+</span>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-brand-muted">{faq.antwoord}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+</Layout>

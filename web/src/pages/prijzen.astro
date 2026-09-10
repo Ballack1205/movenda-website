@@ -1,0 +1,101 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getPrijzenByCategorie, getSiteSettings } from "../lib/content";
+import { breadcrumbSchema } from "../lib/schema";
+
+const kine = await getPrijzenByCategorie("kine");
+const training = await getPrijzenByCategorie("training");
+const settings = await getSiteSettings();
+const info = settings.prijzenInfo;
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Prijzen", path: "/prijzen" },
+  ]),
+];
+
+function formatPrijs(item: { bedrag: number; eenheid?: string; vanaf: boolean; opAanvraag: boolean }) {
+  if (item.opAanvraag) return "Op aanvraag";
+  const prefix = item.vanaf ? "Vanaf " : "";
+  const eenheid = item.eenheid ? ` / ${item.eenheid}` : "";
+  return `${prefix}€${item.bedrag}${eenheid}`;
+}
+---
+
+<Layout
+  title="Tarieven & terugbetaling kinesitherapie en personal training | Movenda"
+  description="Overzicht van de tarieven voor kinesitherapie en personal training bij Movenda Hasselt, en hoeveel je terugkrijgt van je ziekenfonds."
+  path="/prijzen"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Tarieven &amp; terugbetaling</h1>
+    {info.intro && <p class="mt-3 max-w-2xl text-brand-muted">{info.intro}</p>}
+    {info.basishonorarium && (
+      <p class="mt-2 max-w-2xl text-brand-muted">
+        Ons basishonorarium is <strong>€{info.basishonorarium}</strong>. Het exacte tarief hangt
+        af van de behandelende therapeut, specialisatie en ervaring.
+      </p>
+    )}
+
+    {kine.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Kinesitherapie</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <tbody>
+              {kine.map((item, i) => (
+                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                  <td class="px-4 py-3">{item.naam}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {training.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Personal Training</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <tbody>
+              {training.map((item, i) => (
+                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                  <td class="px-4 py-3">{item.naam}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    <div class="mt-12 rounded-2xl border border-brand-border bg-brand-surface p-6">
+      <h2 class="text-xl font-semibold">Terugbetaling</h2>
+      <p class="mt-2 text-sm text-brand-muted">
+        Je ontvangt na elke sessie een getuigschrift voor verstrekte hulp. Daarmee vraag je zelf
+        een terugbetaling aan bij je ziekenfonds (via de app of op kantoor).
+      </p>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        {info.terugbetalingStandaard && (
+          <div>
+            <p class="text-sm font-semibold">Standaard verzekerde</p>
+            <p class="text-sm text-brand-muted">{info.terugbetalingStandaard}</p>
+          </div>
+        )}
+        {info.terugbetalingVt && (
+          <div>
+            <p class="text-sm font-semibold">Verhoogde tegemoetkoming (VT/BIM)</p>
+            <p class="text-sm text-brand-muted">{info.terugbetalingVt}</p>
+          </div>
+        )}
+      </div>
+      {info.voorwaarden && <p class="mt-4 text-xs text-brand-muted">{info.voorwaarden}</p>}
+    </div>
+  </section>
+</Layout>

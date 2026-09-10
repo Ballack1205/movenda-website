@@ -1,0 +1,91 @@
+---
+import { toHTML } from "@portabletext/to-html";
+import Layout from "../../layouts/Layout.astro";
+import { getBlogPosts, getBlogPostBySlug } from "../../lib/content";
+import { blogPostingSchema, breadcrumbSchema } from "../../lib/schema";
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts();
+  return posts.map((post) => ({ params: { slug: post.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await getBlogPostBySlug(slug!);
+
+if (!post) {
+  return Astro.redirect("/blog");
+}
+
+const bodyHtml = toHTML(post.body as any);
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: post.titel, path: `/blog/${post.slug}` },
+  ]),
+  blogPostingSchema(post),
+];
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric" });
+}
+---
+
+<Layout
+  title={post.seoTitle || `${post.titel} | Movenda blog`}
+  description={post.seoDescription || post.excerpt || ""}
+  path={`/blog/${post.slug}`}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-2xl px-4 py-12">
+    <p class="text-xs font-semibold uppercase tracking-wide text-brand-muted">
+      {formatDate(post.publicatiedatum)}{post.auteurNaam ? ` · Geschreven door ${post.auteurNaam}` : ""}
+    </p>
+    <h1 class="mt-2 text-3xl font-bold">{post.titel}</h1>
+    <div class="article-body mt-8" set:html={bodyHtml} />
+
+    <a href="/blog" class="mt-12 inline-block font-semibold text-brand-primary hover:underline">
+      ← Terug naar de blog
+    </a>
+  </article>
+</Layout>
+
+<style>
+  .article-body {
+    color: var(--brand-text);
+    line-height: 1.75;
+  }
+  .article-body > :global(p) {
+    margin-top: 1.25em;
+  }
+  .article-body > :global(h2) {
+    margin-top: 2em;
+    font-size: 1.375rem;
+    font-weight: 700;
+  }
+  .article-body > :global(h3),
+  .article-body > :global(h4) {
+    margin-top: 1.5em;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  .article-body :global(ul),
+  .article-body :global(ol) {
+    margin-top: 1em;
+    padding-left: 1.5em;
+  }
+  .article-body :global(li) {
+    margin-top: 0.4em;
+    list-style-type: disc;
+  }
+  .article-body :global(a) {
+    color: var(--brand-primary);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+  .article-body :global(img) {
+    margin-top: 1.5em;
+    border-radius: 1rem;
+  }
+</style>

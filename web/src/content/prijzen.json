@@ -1,0 +1,17 @@
+[
+  { "naam": "Manuele therapie (30 min)", "categorie": "kine", "bedrag": 37, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "volgorde": 1 },
+  { "naam": "Oefentherapie (30 min)", "categorie": "kine", "bedrag": 37, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "volgorde": 2 },
+  { "naam": "Dry Needling (30 min)", "categorie": "kine", "bedrag": 37, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "volgorde": 3 },
+  { "naam": "Cupping / Taping (30 min)", "categorie": "kine", "bedrag": 37, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "volgorde": 4 },
+  { "naam": "Cardiovasculaire revalidatie (30 min)", "categorie": "kine", "bedrag": 37, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "volgorde": 5 },
+  { "naam": "Pre- en postnatale kinesitherapie (30 min)", "categorie": "kine", "bedrag": 38, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "volgorde": 6 },
+  { "naam": "Acupunctuur (30 min)", "categorie": "kine", "bedrag": 45, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "volgorde": 7 },
+  { "naam": "Inspanningstest", "categorie": "kine", "bedrag": 154, "eenheid": "", "vanaf": true, "opAanvraag": false, "volgorde": 8 },
+  { "naam": "Personal Training (60 min)", "categorie": "training", "bedrag": 70, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "volgorde": 1 },
+  { "naam": "Personal Training (90 min)", "categorie": "training", "bedrag": 105, "eenheid": "90 min", "vanaf": true, "opAanvraag": false, "volgorde": 2 },
+  { "naam": "Duotraining (60 min)", "categorie": "training", "bedrag": 70, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "volgorde": 3 },
+  { "naam": "Sportspecifieke screening + schema (90 min)", "categorie": "training", "bedrag": 195, "eenheid": "90 min", "vanaf": true, "opAanvraag": false, "volgorde": 4 },
+  { "naam": "Sportspecifieke training (60 min)", "categorie": "training", "bedrag": 70, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "volgorde": 5 },
+  { "naam": "Pre- en postnatale training (60 min)", "categorie": "training", "bedrag": 76, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "volgorde": 6 },
+  { "naam": "Training aan huis", "categorie": "training", "bedrag": 0, "eenheid": "", "vanaf": false, "opAanvraag": true, "volgorde": 7 }
+]

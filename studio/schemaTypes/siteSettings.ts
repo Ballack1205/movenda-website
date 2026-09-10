@@ -39,5 +39,17 @@ export default defineType({
         defineField({ name: "ga4Id", title: "GA4 Measurement ID", type: "string" }),
       ],
     }),
+    defineField({
+      name: "prijzenInfo",
+      title: "Prijzen-pagina — algemene info",
+      type: "object",
+      fields: [
+        defineField({ name: "basishonorarium", title: "Basishonorarium (€)", type: "number" }),
+        defineField({ name: "intro", title: "Introtekst boven de tabellen", type: "text", rows: 3 }),
+        defineField({ name: "terugbetalingStandaard", title: "Terugbetaling — standaard verzekerde", type: "string" }),
+        defineField({ name: "terugbetalingVt", title: "Terugbetaling — verhoogde tegemoetkoming (VT/BIM)", type: "string" }),
+        defineField({ name: "voorwaarden", title: "Voorwaarden voor terugbetaling", type: "text", rows: 4 }),
+      ],
+    }),
   ],
 });

@@ -1,0 +1,54 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getBlogPosts } from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const posts = await getBlogPosts();
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+  ]),
+];
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric" });
+}
+---
+
+<Layout
+  title="Blog | Tips over kinesitherapie, training en herstel | Movenda"
+  description="Praktische tips over blessurepreventie, training en herstel, geschreven door het team van Movenda."
+  path="/blog"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Blog</h1>
+    <p class="mt-2 max-w-2xl text-brand-muted">
+      Praktische tips en inzichten van onze kinesisten en trainers.
+    </p>
+
+    {posts.length === 0 ? (
+      <p class="mt-10 text-brand-muted">Binnenkort verschijnen hier onze eerste blogposts.</p>
+    ) : (
+      <div class="mt-10 grid gap-6 sm:grid-cols-2">
+        {posts.map((post) => (
+          <a
+            href={`/blog/${post.slug}`}
+            class="rounded-2xl border border-brand-border bg-brand-surface p-6 transition hover:border-brand-primary"
+          >
+            <p class="text-xs font-semibold uppercase tracking-wide text-brand-muted">
+              {formatDate(post.publicatiedatum)}{post.auteurNaam ? ` · ${post.auteurNaam}` : ""}
+            </p>
+            <h2 class="mt-2 text-lg font-semibold">{post.titel}</h2>
+            {post.excerpt && <p class="mt-2 text-sm text-brand-muted line-clamp-3">{post.excerpt}</p>}
+            <span class="mt-4 inline-block font-semibold text-brand-primary group-hover:underline">
+              Lees meer →
+            </span>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+</Layout>

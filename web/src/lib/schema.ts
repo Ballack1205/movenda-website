@@ -2,7 +2,7 @@
 // (later) any API routes can reuse them. See DECISIONS.md for why there is
 // no AggregateRating here — reviews are shown as a badge linking to Google,
 // not as self-reported schema.
-import type { Dienst, Locatie, Teamlid } from "./content";
+import type { BlogPost, Dienst, Faq, Locatie, Teamlid } from "./content";
 
 const SITE_URL = "https://movenda-preview.onrender.com";
 
@@ -65,6 +65,33 @@ export function serviceSchema(dienst: Dienst, locatie: Locatie) {
     provider: { "@type": "Organization", name: locatie.naam },
     areaServed: "Hasselt",
     url: `${SITE_URL}/mpc/${dienst.slug}`,
+  };
+}
+
+export function faqPageSchema(faqs: Faq[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.vraag,
+      acceptedAnswer: { "@type": "Answer", text: faq.antwoord },
+    })),
+  };
+}
+
+export function blogPostingSchema(post: BlogPost) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.titel,
+    description: post.excerpt,
+    datePublished: post.publicatiedatum,
+    image: post.cover,
+    author: post.auteurNaam ? { "@type": "Person", name: post.auteurNaam } : undefined,
+    publisher: { "@type": "Organization", name: "Movenda" },
+    url: `${SITE_URL}/blog/${post.slug}`,
+    mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
   };
 }
 

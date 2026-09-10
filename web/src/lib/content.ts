@@ -73,6 +73,14 @@ export interface GoogleReviews {
   note?: string;
 }
 
+export interface PrijzenInfo {
+  basishonorarium?: number;
+  intro?: string;
+  terugbetalingStandaard?: string;
+  terugbetalingVt?: string;
+  voorwaarden?: string;
+}
+
 export interface SiteSettings {
   siteNaam: string;
   tagline: string;
@@ -83,6 +91,57 @@ export interface SiteSettings {
   googleReviews: Record<LocatieSlug, GoogleReviews>;
   analytics: { enabled: boolean; ga4Id: string };
   socials: { instagram: string; facebook: string };
+  prijzenInfo: PrijzenInfo;
+}
+
+export interface Faq {
+  vraag: string;
+  vraagEn?: string;
+  antwoord: string;
+  antwoordEn?: string;
+  categorie?: string;
+  volgorde: number;
+}
+
+export interface Prijsitem {
+  naam: string;
+  categorie: "kine" | "training";
+  bedrag: number;
+  eenheid?: string;
+  vanaf: boolean;
+  opAanvraag: boolean;
+  volgorde: number;
+}
+
+export interface BlogPost {
+  slug: string;
+  titel: string;
+  titelEn?: string;
+  excerpt?: string;
+  cover?: string;
+  body: unknown[];
+  bodyEn?: unknown[];
+  auteurNaam?: string;
+  publicatiedatum: string;
+  tags?: string[];
+  seoTitle?: string;
+  seoDescription?: string;
+}
+
+export interface Vacature {
+  slug: string;
+  titel: string;
+  locatieNaam?: string;
+  omschrijving: string;
+  contactEmail: string;
+  actief: boolean;
+}
+
+export interface SportaanbodItem {
+  naam: string;
+  tekst?: string;
+  link?: string;
+  volgorde: number;
 }
 
 const teamlidProjection = `{
@@ -151,7 +210,7 @@ export async function getDienstBySlug(slug: string): Promise<Dienst | undefined>
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
-    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, booking, googleReviews, analytics }`,
+    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, booking, googleReviews, analytics, prijzenInfo }`,
   );
   const olympia = await getLocatieBySlug("olympia");
   const mpc = await getLocatieBySlug("mpc");
@@ -168,5 +227,53 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     },
     analytics: settings?.analytics || { enabled: false, ga4Id: "" },
     socials: { instagram: "", facebook: "" },
+    prijzenInfo: settings?.prijzenInfo || {},
   };
+}
+
+export async function getFaqs(): Promise<Faq[]> {
+  return sanity.fetch(
+    `*[_type == "faq"] | order(volgorde asc) { vraag, vraagEn, antwoord, antwoordEn, categorie, volgorde }`,
+  );
+}
+
+export async function getPrijzen(): Promise<Prijsitem[]> {
+  return sanity.fetch(
+    `*[_type == "prijsitem"] | order(volgorde asc) { naam, categorie, bedrag, eenheid, vanaf, opAanvraag, volgorde }`,
+  );
+}
+
+export async function getPrijzenByCategorie(categorie: Prijsitem["categorie"]): Promise<Prijsitem[]> {
+  const prijzen = await getPrijzen();
+  return prijzen.filter((p) => p.categorie === categorie);
+}
+
+const blogPostProjection = `{
+  "slug": slug.current,
+  titel, titelEn, excerpt,
+  "cover": cover.asset->url,
+  body, bodyEn,
+  "auteurNaam": auteur->voornaam + " " + auteur->naam,
+  publicatiedatum, tags, seoTitle, seoDescription
+}`;
+
+export async function getBlogPosts(): Promise<BlogPost[]> {
+  return sanity.fetch(`*[_type == "blogPost"] | order(publicatiedatum desc) ${blogPostProjection}`);
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+  return sanity.fetch(
+    `*[_type == "blogPost" && slug.current == $slug][0] ${blogPostProjection}`,
+    { slug },
+  );
+}
+
+export async function getVacatures(): Promise<Vacature[]> {
+  return sanity.fetch(
+    `*[_type == "vacature" && actief == true] { "slug": slug.current, titel, "locatieNaam": locatie->naam, omschrijving, contactEmail, actief }`,
+  );
+}
+
+export async function getSportaanbod(): Promise<SportaanbodItem[]> {
+  return sanity.fetch(`*[_type == "sportaanbodItem"] | order(volgorde asc) { naam, tekst, link, volgorde }`);
 }
