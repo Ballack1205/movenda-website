@@ -6,6 +6,7 @@ import BookingButton from "../components/BookingButton.astro";
 import PartnerBand from "../components/PartnerBand.astro";
 import NewsletterBlock from "../components/NewsletterBlock.astro";
 import GetuigenisQuote from "../components/GetuigenisQuote.astro";
+import TeamCarousel from "../components/TeamCarousel.astro";
 import {
   getLocaties,
   getTeamleden,
@@ -15,7 +16,6 @@ import {
   getGetuigenissen,
   dienstHref,
 } from "../lib/content";
-import { teamPhotoSrc } from "../lib/images";
 import { organizationSchema, localBusinessSchema } from "../lib/schema";
 import homeHero from "../assets/marketing/home-hero.jpg";
 import mpcHero from "../assets/marketing/mpc-hero.jpg";
@@ -195,28 +195,8 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
         {team.length} kinesisten, personal trainers en performance coaches — elk met hun eigen
         specialisatie.
       </p>
-      <div class="mt-8 flex flex-wrap gap-4">
-        {team.slice(0, 8).map((lid) => (
-          <a href={`/team/${lid.slug}`} class="group w-24 text-center">
-            <div class="aspect-[2/3] w-full overflow-hidden rounded-xl bg-brand-header">
-              {lid.foto ? (
-                <img
-                  src={teamPhotoSrc(lid.foto, "card")}
-                  alt={`${lid.voornaam} ${lid.naam}`}
-                  width="96"
-                  height="144"
-                  loading="lazy"
-                  class="h-full w-full object-cover object-top transition group-hover:scale-105"
-                />
-              ) : (
-                <div class="flex h-full w-full items-center justify-center text-lg font-bold text-white/80">
-                  {lid.voornaam[0]}{lid.naam[0]}
-                </div>
-              )}
-            </div>
-            <p class="mt-2 text-xs font-medium text-brand-text">{lid.voornaam}</p>
-          </a>
-        ))}
+      <div class="mt-8">
+        <TeamCarousel team={team} />
       </div>
       <a href="/team" class="mt-6 inline-block font-semibold text-brand-primary hover:underline">
         Bekijk het volledige team →

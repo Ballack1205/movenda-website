@@ -1,0 +1,119 @@
+---
+/**
+ * Horizontal, swipeable strip with the whole team.
+ * Native scroll-snap does the swiping (touch, trackpad, keyboard); the arrows are
+ * a desktop convenience and are hidden when everything already fits.
+ */
+import type { Teamlid } from "../lib/content";
+import { teamPhotoSrc } from "../lib/images";
+
+export interface Props {
+  team: Teamlid[];
+  lang?: "nl" | "en";
+}
+
+const { team, lang = "nl" } = Astro.props;
+const t = {
+  prev: lang === "en" ? "Previous team members" : "Vorige teamleden",
+  next: lang === "en" ? "Next team members" : "Volgende teamleden",
+  list: lang === "en" ? "Team" : "Team",
+};
+---
+
+<div class="relative" data-team-carousel>
+  <div class="absolute -top-14 right-0 hidden gap-2 md:flex" data-carousel-controls hidden>
+    <button
+      type="button"
+      data-carousel-prev
+      aria-label={t.prev}
+      class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand-border bg-white text-brand-text transition hover:border-brand-primary hover:text-brand-primary disabled:cursor-default disabled:opacity-30 disabled:hover:border-brand-border disabled:hover:text-brand-text"
+    >
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m15 6-6 6 6 6" />
+      </svg>
+    </button>
+    <button
+      type="button"
+      data-carousel-next
+      aria-label={t.next}
+      class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand-border bg-white text-brand-text transition hover:border-brand-primary hover:text-brand-primary disabled:cursor-default disabled:opacity-30 disabled:hover:border-brand-border disabled:hover:text-brand-text"
+    >
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m9 6 6 6-6 6" />
+      </svg>
+    </button>
+  </div>
+
+  <ul
+    class="team-strip -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-4 pb-2 scroll-px-4 sm:gap-5"
+    data-carousel-track
+    aria-label={t.list}
+  >
+    {team.map((lid) => (
+      <li class="w-36 shrink-0 snap-start sm:w-40 lg:w-44">
+        <a href={`/team/${lid.slug}`} class="group block">
+          <div class="aspect-[2/3] w-full overflow-hidden rounded-xl bg-brand-header">
+            {lid.foto ? (
+              <img
+                src={teamPhotoSrc(lid.foto, "card")}
+                alt={`${lid.voornaam} ${lid.naam}`}
+                width="176"
+                height="264"
+                loading="lazy"
+                decoding="async"
+                class="h-full w-full object-cover object-top transition duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div class="flex h-full w-full items-center justify-center text-xl font-bold text-white/80">
+                {lid.voornaam[0]}{lid.naam[0]}
+              </div>
+            )}
+          </div>
+          <p class="mt-3 text-sm font-semibold text-brand-text group-hover:text-brand-primary">
+            {lid.voornaam} {lid.naam}
+          </p>
+          <p class="mt-0.5 text-xs text-brand-muted">
+            {lang === "en" ? lid.rolEn || lid.rol : lid.rol}
+          </p>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .team-strip {
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .team-strip::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
+<script>
+  function setup(root: HTMLElement) {
+    const track = root.querySelector<HTMLElement>("[data-carousel-track]");
+    const controls = root.querySelector<HTMLElement>("[data-carousel-controls]");
+    const prev = root.querySelector<HTMLButtonElement>("[data-carousel-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-carousel-next]");
+    if (!track || !controls || !prev || !next) return;
+
+    const step = () => Math.max(track.clientWidth * 0.8, 200);
+
+    const update = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      controls.hidden = max <= 1;
+      prev.disabled = track.scrollLeft <= 1;
+      next.disabled = track.scrollLeft >= max - 1;
+    };
+
+    prev.addEventListener("click", () => track.scrollBy({ left: -step(), behavior: "smooth" }));
+    next.addEventListener("click", () => track.scrollBy({ left: step(), behavior: "smooth" }));
+    track.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-team-carousel]").forEach(setup);
+</script>
