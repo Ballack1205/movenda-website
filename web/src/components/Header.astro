@@ -1,122 +1,190 @@
 ---
-import BookingButton from "./BookingButton.astro";
-import { getSportaanbod } from "../lib/content";
+// Site header: logo · primary nav (with dropdowns) · language switch · CTA · menu button.
+//
+// Breakpoints (measured, see chat 2026-09-10 "header review"):
+//   Movenda: 6 items + CTA ≈ 730px → desktop nav from `md` (768). Hamburger on phones only.
+//   MPC:     7 items with long Dutch labels (Sportrevalidatie, Groepslessen) ≈ 800px
+//            → desktop nav from `lg` (1024). iPad portrait gets the grouped panel.
+// Nav structure lives in src/lib/nav.ts; dropdown contents come from the CMS.
+import { getNavModel, isActiveItem, isCurrentPath } from "../lib/nav";
 
 export interface Props {
   brand?: "movenda" | "mpc";
   lang?: "nl" | "en";
+  /** Current page path, used for aria-current / active state. */
+  path?: string;
   altPath?: string;
 }
 
-const { brand = "movenda", lang = "nl", altPath } = Astro.props;
-const sportaanbod = await getSportaanbod();
+const { brand = "movenda", lang = "nl", path = "/", altPath } = Astro.props;
+const { items, cta, phone, contact } = await getNavModel(brand, lang);
 
-type NavItem = { href: string; label: string; emphasize?: boolean; external?: boolean };
-
-const navMovendaNl: NavItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/over", label: "Over ons" },
-  { href: "/kinesitherapie", label: "Kinesitherapie" },
-  { href: "/training", label: "Training" },
-  { href: "/team", label: "Team" },
-  { href: "/prijzen", label: "Prijzen" },
-  { href: "/faq", label: "FAQ" },
-  { href: "/blog", label: "Blog" },
-  { href: "/mpc", label: "MPC", emphasize: true },
-  { href: "/contact", label: "Contact" },
-];
-
-const navMovendaEn: NavItem[] = [
-  { href: "/en", label: "Home" },
-  { href: "/en/team", label: "Team" },
-  { href: "/en/mpc", label: "MPC", emphasize: true },
-  { href: "/en/contact", label: "Contact" },
-];
-
-const navMpc: NavItem[] = [
-  { href: "/mpc", label: "Training" },
-  { href: "/mpc/sportrevalidatie", label: "Sportrevalidatie" },
-  { href: "/mpc/groepslessen", label: "Groepslessen" },
-  { href: "/mpc/visie", label: "Visie" },
-  { href: "/team", label: "Team" },
-  { href: "/mpc#faq", label: "FAQ" },
-  { href: "/mpc/prijzen", label: "Prijzen" },
-  { href: "/", label: "Movenda", emphasize: true },
-  { href: "/contact", label: "Contact" },
-];
-
-const nav = brand === "mpc" ? navMpc : lang === "en" ? navMovendaEn : navMovendaNl;
 const langSwitchHref = lang === "en" ? altPath || "/" : altPath || "/en";
+// `md:` for Movenda, `lg:` for MPC — everything that flips between bar and panel uses these.
+const desktop = brand === "mpc" ? "lg" : "md";
+const showDesktop = desktop === "lg" ? "lg:flex" : "md:flex";
+const hideDesktop = desktop === "lg" ? "lg:hidden" : "md:hidden";
+// Sticky only while the hamburger is in use, so the overlay panel is always
+// anchored to a visible bar. Desktop keeps the static header.
+const stickyMobile = desktop === "lg" ? "sticky top-0 lg:static" : "sticky top-0 md:static";
+const desktopMinWidth = desktop === "lg" ? "64rem" : "48rem";
 
-const linkClass = (emphasize?: boolean) =>
-  emphasize
-    ? "font-bold text-white transition hover:text-white"
-    : "text-white/80 transition hover:text-white";
+const t = {
+  openMenu: lang === "en" ? "Open menu" : "Menu openen",
+  closeMenu: lang === "en" ? "Close menu" : "Menu sluiten",
+  submenu: lang === "en" ? "Open submenu" : "Submenu openen",
+  call: lang === "en" ? "Call" : "Bel",
+  langSwitch: lang === "en" ? "Bekijk in het Nederlands" : "View in English",
+  external: lang === "en" ? "(opens in a new tab)" : "(opent in een nieuw tabblad)",
+  brandName: brand === "mpc" ? "Movenda Performance Centre" : "Movenda",
+};
+
+const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+const telHref = (nr: string) => `tel:${nr.replace(/\s+/g, "")}`;
+
+// Groups (items with children) drive the panel columns; plain links are pooled in one list.
+const groups = items.filter((i) => i.children && i.children.length > 0);
+const plain = items.filter((i) => !i.children || i.children.length === 0);
 ---
 
-<header class="bg-brand-header" data-header>
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4">
+<header class:list={["relative z-40 bg-brand-header text-white", stickyMobile]} data-header data-desktop-min={desktopMinWidth}>
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 xl:gap-6">
     <a
-      href={brand === "mpc" ? "/mpc" : "/"}
+      href={lang === "en" ? (brand === "mpc" ? "/en/mpc" : "/en") : brand === "mpc" ? "/mpc" : "/"}
       class="flex shrink-0 items-center gap-2"
-      aria-label={brand === "mpc" ? "Movenda Performance Centre" : "Movenda"}
+      aria-label={t.brandName}
     >
       {brand === "mpc" ? (
         <img src="/brand/logo-mpc.png" alt="MPC" width="40" height="40" class="h-10 w-10" />
       ) : (
-        <img src="/brand/logo-wordmark.png" alt="Movenda" width="140" height="30" class="h-7 w-auto" />
+        <img src="/brand/logo-wordmark.png" alt="Movenda" width="140" height="30" class="h-6 w-auto xl:h-7" />
       )}
     </a>
+
     <nav
-      class:list={[
-        "hidden min-w-0 items-center text-sm",
-        brand === "mpc" ? "xl:flex xl:gap-3.5 font-semibold" : "lg:flex lg:gap-5 font-medium",
-      ]}
+      class:list={["hidden min-w-0 flex-1 items-center justify-center text-[13px] font-medium xl:text-sm", showDesktop]}
+      aria-label={lang === "en" ? "Main navigation" : "Hoofdnavigatie"}
     >
-      {nav.map((item) => (
-        <a href={item.href} class:list={[linkClass(item.emphasize), "whitespace-nowrap"]}>
-          {item.label}
-        </a>
-      ))}
-      {brand === "movenda" && lang === "nl" && sportaanbod.length > 0 && (
-        <details class="relative">
-          <summary class="cursor-pointer list-none text-white/80 hover:text-white [&::-webkit-details-marker]:hidden">
-            Sportaanbod Olympia
-          </summary>
-          <div class="absolute right-0 z-20 mt-2 min-w-56 rounded-xl border border-white/10 bg-brand-header p-2 shadow-xl">
-            {sportaanbod.map((item) => (
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="block rounded-lg px-3 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white"
+      <ul class="flex items-center gap-0.5 xl:gap-2">
+        {items.map((item) => {
+          const active = isActiveItem(item, path);
+          const base = [
+            "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-1.5 transition xl:px-3",
+            item.emphasize ? "font-bold text-white" : "text-white/80 hover:text-white",
+            active ? "bg-white/10 text-white" : "hover:bg-white/10",
+          ];
+          if (!item.children || item.children.length === 0) {
+            return (
+              <li>
+                <a href={item.href} class:list={base} aria-current={isCurrentPath(item.href, path) ? "page" : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            );
+          }
+          const id = `nav-${slug(item.label)}`;
+          const wide = item.children.length > 7;
+          return (
+            <li class="relative" data-nav-group>
+              <button
+                type="button"
+                class:list={[...base, "group"]}
+                aria-expanded="false"
+                aria-controls={id}
+                aria-current={active ? "true" : undefined}
+                data-nav-trigger
               >
-                {item.naam}
-              </a>
-            ))}
-          </div>
-        </details>
-      )}
+                {item.label}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  class="transition-transform duration-200 group-aria-expanded:rotate-180"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+              <div
+                id={id}
+                class:list={[
+                  "absolute left-0 top-full z-20 hidden pt-3",
+                  wide ? "w-[34rem]" : "w-64",
+                ]}
+                data-nav-panel
+              >
+                <ul
+                  class:list={[
+                    "rounded-xl border border-white/10 bg-brand-header p-2 shadow-xl",
+                    wide ? "grid grid-cols-2 gap-x-2" : "",
+                  ]}
+                >
+                  {item.children.map((child, index) => (
+                    <li class:list={[index === 0 ? "col-span-full mb-1 border-b border-white/10 pb-1" : ""]}>
+                      <a
+                        href={child.href}
+                        target={child.external ? "_blank" : undefined}
+                        rel={child.external ? "noopener noreferrer" : undefined}
+                        aria-current={isCurrentPath(child.href, path) ? "page" : undefined}
+                        class:list={[
+                          "flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm transition hover:bg-white/10 hover:text-white",
+                          index === 0 ? "font-semibold text-white" : "text-white/80",
+                          isCurrentPath(child.href, path) ? "bg-white/10 text-white" : "",
+                        ]}
+                      >
+                        <span>{child.label}</span>
+                        {index === 0 && !child.external && <span aria-hidden="true">→</span>}
+                        {child.external && (
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0 opacity-70">
+                            <path d="M7 17 17 7M8 7h9v9" />
+                          </svg>
+                        )}
+                        {child.external && <span class="sr-only">{t.external}</span>}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
-    <div class="flex shrink-0 items-center gap-3">
+
+    <div class="flex shrink-0 items-center gap-2 sm:gap-3">
       <a
         href={langSwitchHref}
         class="rounded-full border border-white/30 px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white hover:text-white"
-        aria-label={lang === "en" ? "Bekijk in het Nederlands" : "View in English"}
+        aria-label={t.langSwitch}
       >
         {lang === "en" ? "NL" : "EN"}
       </a>
-      <BookingButton size="sm" />
+      <a
+        href={cta.href}
+        target={cta.external ? "_blank" : undefined}
+        rel={cta.external ? "noopener noreferrer" : undefined}
+        class="hidden whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-brand-header transition hover:bg-white/90 min-[360px]:inline-flex xl:px-3.5 xl:text-sm"
+        data-cta={cta === contact ? "contact" : "booking"}
+      >
+        {cta.label}
+      </a>
       <button
         type="button"
         class:list={[
-          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white",
-          brand === "mpc" ? "xl:hidden" : "lg:hidden",
+          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white transition hover:border-white",
+          hideDesktop,
         ]}
-        aria-label={lang === "en" ? "Open menu" : "Menu openen"}
+        aria-label={t.openMenu}
         aria-expanded="false"
         aria-controls="mobile-nav"
         data-menu-toggle
+        data-label-open={t.openMenu}
+        data-label-close={t.closeMenu}
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" data-icon-open>
           <path d="M4 7h16M4 12h16M4 17h16" />
@@ -128,44 +196,240 @@ const linkClass = (emphasize?: boolean) =>
     </div>
   </div>
 
+  {/* Phone / tablet panel: overlays the page, grouped in columns, phone + CTA at the bottom. */}
   <nav
     id="mobile-nav"
-    class:list={["hidden border-t border-white/10", brand === "mpc" ? "xl:hidden" : "lg:hidden"]}
+    class:list={[
+      "absolute inset-x-0 top-full hidden max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-t border-white/10 bg-brand-header shadow-2xl",
+      hideDesktop,
+    ]}
+    aria-label={lang === "en" ? "Menu" : "Menu"}
     data-mobile-nav
   >
-    <div class="mx-auto flex max-w-6xl flex-col px-4 py-3">
-      {nav.map((item) => (
+    <div class="mx-auto max-w-6xl px-4 py-5">
+      <div class="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        {/* Phones: collapsed accordions (open the active one). Tablets (sm+): always expanded columns, summary is a plain heading. Script below keeps `open` in sync. */}
+        {groups.map((group) => (
+          <details class="group/acc" open data-mnav-group data-active={isActiveItem(group, path) ? "true" : undefined}>
+            <summary
+              class:list={[
+                "flex cursor-pointer list-none items-center justify-between rounded-lg px-2 py-2 font-heading text-base font-semibold text-white [&::-webkit-details-marker]:hidden sm:pointer-events-none sm:cursor-default",
+                isActiveItem(group, path) ? "bg-white/10" : "",
+              ]}
+            >
+              {group.label}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-white/60 transition-transform duration-200 group-open/acc:rotate-180 sm:hidden">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </summary>
+            <ul class="mt-1 border-l border-white/15 pl-1">
+              <li>
+                <a
+                  href={group.children![0].href}
+                  aria-current={isCurrentPath(group.children![0].href, path) ? "page" : undefined}
+                  class:list={[
+                    "flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-white transition hover:bg-white/10",
+                    isCurrentPath(group.children![0].href, path) ? "bg-white/10" : "",
+                  ]}
+                >
+                  <span>{group.children![0].label}</span>
+                  <span aria-hidden="true" class="text-white/60">→</span>
+                </a>
+              </li>
+              {group.children!.slice(1).map((child) => (
+                <li>
+                  <a
+                    href={child.href}
+                    target={child.external ? "_blank" : undefined}
+                    rel={child.external ? "noopener noreferrer" : undefined}
+                    aria-current={isCurrentPath(child.href, path) ? "page" : undefined}
+                    class:list={[
+                      "flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white/80 transition hover:bg-white/10 hover:text-white",
+                      isCurrentPath(child.href, path) ? "bg-white/10 text-white" : "",
+                    ]}
+                  >
+                    <span>{child.label}</span>
+                    {child.external && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="shrink-0 opacity-70">
+                        <path d="M7 17 17 7M8 7h9v9" />
+                      </svg>
+                    )}
+                    {child.external && <span class="sr-only">{t.external}</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        ))}
+
+        {plain.length > 0 && (
+          <ul class="flex flex-col">
+            {plain.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  aria-current={isCurrentPath(item.href, path) ? "page" : undefined}
+                  class:list={[
+                    "flex items-center justify-between rounded-lg px-2 py-2 font-heading text-base text-white transition hover:bg-white/10",
+                    item.emphasize ? "font-bold" : "font-semibold",
+                    isCurrentPath(item.href, path) ? "bg-white/10" : "",
+                  ]}
+                >
+                  {item.label}
+                  <span aria-hidden="true" class="text-white/60">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div class="mt-6 flex flex-wrap items-center gap-3 border-t border-white/10 pt-5">
         <a
-          href={item.href}
-          class:list={[
-            "py-2.5 text-base transition hover:text-white",
-            item.emphasize ? "font-bold text-white" : "font-medium text-white/90",
-          ]}
+          href={cta.href}
+          target={cta.external ? "_blank" : undefined}
+          rel={cta.external ? "noopener noreferrer" : undefined}
+          class="inline-flex items-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-brand-header transition hover:bg-white/90"
         >
-          {item.label}
+          {cta.label}
         </a>
-      ))}
-      {brand === "movenda" && lang === "nl" && sportaanbod.map((item) => (
-        <a href={item.link} target="_blank" rel="noopener noreferrer" class="py-2.5 text-base font-medium text-white/90">
-          {item.naam}
-        </a>
-      ))}
+        {cta !== contact && (
+          <a href={contact.href} class="inline-flex items-center rounded-full border border-white/30 px-5 py-2.5 text-sm font-semibold text-white transition hover:border-white">
+            {contact.label}
+          </a>
+        )}
+        {phone && (
+          <a href={telHref(phone)} class="inline-flex items-center gap-2 px-2 py-2 text-sm font-medium text-white/90 hover:text-white">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" />
+            </svg>
+            <span class="sr-only">{t.call} </span>{phone}
+          </a>
+        )}
+      </div>
     </div>
   </nav>
 </header>
 
 <script>
-  const header = document.querySelector("[data-header]");
+  const header = document.querySelector<HTMLElement>("[data-header]");
+
+  // --- Desktop dropdowns -------------------------------------------------
+  // Click/tap toggles (works on touch); mouse hover opens with a short delay
+  // and closes with a grace period. Esc, outside click and focus leaving the
+  // group all close it. Panels near the right edge flip to right alignment.
+  const groups = Array.from(header?.querySelectorAll<HTMLElement>("[data-nav-group]") ?? []);
+  const HOVER_OPEN_MS = 80;
+  const HOVER_CLOSE_MS = 180;
+
+  const setOpen = (group: HTMLElement, open: boolean) => {
+    const trigger = group.querySelector<HTMLButtonElement>("[data-nav-trigger]");
+    const panel = group.querySelector<HTMLElement>("[data-nav-panel]");
+    if (!trigger || !panel) return;
+    trigger.setAttribute("aria-expanded", String(open));
+    panel.classList.toggle("hidden", !open);
+    if (open) {
+      panel.classList.remove("right-0", "left-auto");
+      const rect = panel.getBoundingClientRect();
+      if (rect.right > window.innerWidth - 8) panel.classList.add("right-0", "left-auto");
+    }
+  };
+  const closeAll = (except?: HTMLElement) => groups.forEach((g) => g !== except && setOpen(g, false));
+  const isOpen = (group: HTMLElement) =>
+    group.querySelector("[data-nav-trigger]")?.getAttribute("aria-expanded") === "true";
+
+  groups.forEach((group) => {
+    const trigger = group.querySelector<HTMLButtonElement>("[data-nav-trigger]");
+    let timer: number | undefined;
+    const clear = () => window.clearTimeout(timer);
+
+    trigger?.addEventListener("click", () => {
+      const open = isOpen(group);
+      closeAll(group);
+      setOpen(group, !open);
+    });
+
+    group.addEventListener("pointerenter", (event) => {
+      if (event.pointerType !== "mouse") return;
+      clear();
+      timer = window.setTimeout(() => {
+        closeAll(group);
+        setOpen(group, true);
+      }, HOVER_OPEN_MS);
+    });
+    group.addEventListener("pointerleave", (event) => {
+      if (event.pointerType !== "mouse") return;
+      clear();
+      timer = window.setTimeout(() => setOpen(group, false), HOVER_CLOSE_MS);
+    });
+
+    group.addEventListener("focusout", (event) => {
+      const next = event.relatedTarget as Node | null;
+      if (!next || !group.contains(next)) setOpen(group, false);
+    });
+  });
+
+  // --- Mobile / tablet panel ---------------------------------------------
   const toggle = header?.querySelector<HTMLButtonElement>("[data-menu-toggle]");
   const panel = header?.querySelector<HTMLElement>("[data-mobile-nav]");
   const iconOpen = toggle?.querySelector("[data-icon-open]");
   const iconClose = toggle?.querySelector("[data-icon-close]");
 
-  toggle?.addEventListener("click", () => {
-    const open = toggle.getAttribute("aria-expanded") === "true";
-    toggle.setAttribute("aria-expanded", String(!open));
-    panel?.classList.toggle("hidden", open);
-    iconOpen?.classList.toggle("hidden", !open);
-    iconClose?.classList.toggle("hidden", open);
+  const setMenu = (open: boolean) => {
+    if (!toggle || !panel) return;
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", (open ? toggle.dataset.labelClose : toggle.dataset.labelOpen) ?? "");
+    panel.classList.toggle("hidden", !open);
+    iconOpen?.classList.toggle("hidden", open);
+    iconClose?.classList.toggle("hidden", !open);
+    document.body.classList.toggle("overflow-hidden", open);
+  };
+  const menuOpen = () => toggle?.getAttribute("aria-expanded") === "true";
+
+  toggle?.addEventListener("click", () => setMenu(!menuOpen()));
+
+  // Panel groups: accordions on phones (only the active group open), always
+  // expanded from `sm` up where there is room for columns.
+  const accordions = Array.from(panel?.querySelectorAll<HTMLDetailsElement>("[data-mnav-group]") ?? []);
+  const columnsQuery = window.matchMedia("(min-width: 40rem)");
+  const syncAccordions = () =>
+    accordions.forEach((d) => {
+      d.open = columnsQuery.matches || d.dataset.active === "true";
+    });
+  syncAccordions();
+  columnsQuery.addEventListener("change", syncAccordions);
+
+  // If the viewport grows past the breakpoint while the panel is open, the
+  // panel is hidden by CSS but the body scroll lock would linger. Reset.
+  const desktopQuery = window.matchMedia(`(min-width: ${header?.dataset.desktopMin ?? "48rem"})`);
+  desktopQuery.addEventListener("change", (e) => {
+    if (e.matches && menuOpen()) setMenu(false);
+  });
+
+  // --- Shared: Esc + outside click ----------------------------------------
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    const openGroup = groups.find(isOpen);
+    if (openGroup) {
+      setOpen(openGroup, false);
+      openGroup.querySelector<HTMLButtonElement>("[data-nav-trigger]")?.focus();
+    }
+    if (menuOpen()) {
+      setMenu(false);
+      toggle?.focus();
+    }
+  });
+  document.addEventListener("pointerdown", (event) => {
+    const target = event.target as Node | null;
+    if (!header || !target) return;
+    if (!header.contains(target)) {
+      closeAll();
+      if (menuOpen()) setMenu(false);
+      return;
+    }
+    // Inside the header but outside every open group: close dropdowns.
+    groups.forEach((g) => {
+      if (isOpen(g) && !g.contains(target)) setOpen(g, false);
+    });
   });
 </script>

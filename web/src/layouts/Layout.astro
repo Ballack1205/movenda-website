@@ -139,7 +139,7 @@ const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
     <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
   </head>
   <body class="flex min-h-screen flex-col bg-brand-bg text-brand-text">
-    <Header brand={brand} lang={lang} altPath={altPath} />
+    <Header brand={brand} lang={lang} path={path} altPath={altPath} />
     <main class="flex-1">
       <slot />
     </main>
