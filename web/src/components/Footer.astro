@@ -6,7 +6,7 @@ export interface Props {
 }
 
 const { brand = "movenda" } = Astro.props;
-const locaties = getLocaties();
+const locaties = await getLocaties();
 const year = new Date().getFullYear();
 ---
 

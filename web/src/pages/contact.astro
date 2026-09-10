@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import { getLocaties } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 
-const locaties = getLocaties();
+const locaties = await getLocaties();
 
 const jsonLd = [
   breadcrumbSchema([

@@ -7,7 +7,7 @@ export interface Props {
 }
 
 const { brand = "movenda" } = Astro.props;
-const settings = getSiteSettings();
+const settings = await getSiteSettings();
 
 const navMovenda = [
   { href: "/", label: "Home" },

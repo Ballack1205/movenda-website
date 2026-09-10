@@ -2,7 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { getTeamleden } from "../../lib/content";
 
-const team = getTeamleden();
+const team = await getTeamleden();
 ---
 
 <Layout

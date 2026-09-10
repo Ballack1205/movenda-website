@@ -3,19 +3,21 @@ import Layout from "../../layouts/Layout.astro";
 import { getDienstenByCategorie, getDienstBySlug, getLocatieBySlug, getTeamleden } from "../../lib/content";
 import { serviceSchema, breadcrumbSchema } from "../../lib/schema";
 
-export function getStaticPaths() {
-  return getDienstenByCategorie("mpc").map((dienst) => ({ params: { slug: dienst.slug } }));
+export async function getStaticPaths() {
+  const diensten = await getDienstenByCategorie("mpc");
+  return diensten.map((dienst) => ({ params: { slug: dienst.slug } }));
 }
 
 const { slug } = Astro.params;
-const dienst = getDienstBySlug(slug!);
+const dienst = await getDienstBySlug(slug!);
 
 if (!dienst) {
   return Astro.redirect("/mpc");
 }
 
-const locatie = getLocatieBySlug("mpc")!;
-const team = getTeamleden().filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
+const locatie = (await getLocatieBySlug("mpc"))!;
+const alleTeamleden = await getTeamleden();
+const team = alleTeamleden.filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
 
 const jsonLd = [
   serviceSchema(dienst, locatie),

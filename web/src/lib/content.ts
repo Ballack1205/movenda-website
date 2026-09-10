@@ -1,18 +1,15 @@
-// Data-access layer for all site content.
+// Data-access layer for all site content — now backed by the live Sanity
+// dataset (project k73l2by8 / production). Pages and components must
+// always import from this file, never query Sanity directly: this is the
+// one place that changes if the schema evolves, and it's what keeps Julie
+// able to edit records in the Studio without anyone touching this repo.
 //
-// IMPORTANT: pages and components must always import from this file,
-// never from ../content/*.json directly. Today this reads local JSON
-// (real copy pulled from the live movenda.be / mpc.movenda.be sites for
-// the pitch preview). Once Sanity is live, only the bodies of these
-// functions change to GROQ queries against @sanity/client — the shapes
-// below already match the planned Sanity schemas 1:1, and no page or
-// component needs to change. This is what keeps Julie able to edit
-// records without touching this repo.
+// The local JSON in web/src/content/*.json is no longer read at runtime —
+// it now only serves as the source for studio/scripts/seed.mjs (the
+// one-off script that populated the real Sanity data from the old
+// movenda.be / mpc.movenda.be copy).
 
-import teamJson from "../content/team.json";
-import locatiesJson from "../content/locaties.json";
-import dienstenJson from "../content/diensten.json";
-import siteSettingsJson from "../content/site-settings.json";
+import { sanity } from "./sanity";
 
 export type LocatieSlug = "olympia" | "mpc";
 
@@ -88,40 +85,88 @@ export interface SiteSettings {
   socials: { instagram: string; facebook: string };
 }
 
-export function getTeamleden(): Teamlid[] {
-  return (teamJson as Teamlid[])
-    .filter((t) => t.actief)
-    .sort((a, b) => a.volgorde - b.volgorde);
+const teamlidProjection = `{
+  "slug": slug.current,
+  voornaam, naam, rol, rolEn, locaties, specialisaties, email, bio, bioEn,
+  volgorde, actief,
+  "foto": foto.asset->url
+}`;
+
+const locatieProjection = `{
+  "slug": slug.current,
+  naam, brand, type, adres,
+  "geo": { "lat": geo.lat, "lng": geo.lng },
+  telefoon, email, uren, urenNote, btw, iban, bic, mapsUrl
+}`;
+
+const dienstProjection = `{
+  "slug": slug.current,
+  categorie, titel, titelEn, intro, body, seoTitle, seoDescription,
+  "gekoppeldeTeamleden": gekoppeldeTeamleden[]->slug.current
+}`;
+
+export async function getTeamleden(): Promise<Teamlid[]> {
+  return sanity.fetch(
+    `*[_type == "teamlid" && actief == true] | order(volgorde asc) ${teamlidProjection}`,
+  );
 }
 
-export function getTeamlidBySlug(slug: string): Teamlid | undefined {
-  return getTeamleden().find((t) => t.slug === slug);
+export async function getTeamlidBySlug(slug: string): Promise<Teamlid | undefined> {
+  return sanity.fetch(
+    `*[_type == "teamlid" && slug.current == $slug][0] ${teamlidProjection}`,
+    { slug },
+  );
 }
 
-export function getTeamledenByLocatie(locatie: LocatieSlug): Teamlid[] {
-  return getTeamleden().filter((t) => t.locaties.includes(locatie));
+export async function getTeamledenByLocatie(locatie: LocatieSlug): Promise<Teamlid[]> {
+  const team = await getTeamleden();
+  return team.filter((t) => t.locaties.includes(locatie));
 }
 
-export function getLocaties(): Locatie[] {
-  return locatiesJson as Locatie[];
+export async function getLocaties(): Promise<Locatie[]> {
+  return sanity.fetch(`*[_type == "locatie"] | order(slug.current asc) ${locatieProjection}`);
 }
 
-export function getLocatieBySlug(slug: LocatieSlug): Locatie | undefined {
-  return getLocaties().find((l) => l.slug === slug);
+export async function getLocatieBySlug(slug: LocatieSlug): Promise<Locatie | undefined> {
+  return sanity.fetch(`*[_type == "locatie" && slug.current == $slug][0] ${locatieProjection}`, {
+    slug,
+  });
 }
 
-export function getDiensten(): Dienst[] {
-  return dienstenJson as Dienst[];
+export async function getDiensten(): Promise<Dienst[]> {
+  return sanity.fetch(`*[_type == "dienst"] ${dienstProjection}`);
 }
 
-export function getDienstenByCategorie(categorie: Dienst["categorie"]): Dienst[] {
-  return getDiensten().filter((d) => d.categorie === categorie);
+export async function getDienstenByCategorie(categorie: Dienst["categorie"]): Promise<Dienst[]> {
+  return sanity.fetch(`*[_type == "dienst" && categorie == $categorie] ${dienstProjection}`, {
+    categorie,
+  });
 }
 
-export function getDienstBySlug(slug: string): Dienst | undefined {
-  return getDiensten().find((d) => d.slug === slug);
+export async function getDienstBySlug(slug: string): Promise<Dienst | undefined> {
+  return sanity.fetch(`*[_type == "dienst" && slug.current == $slug][0] ${dienstProjection}`, {
+    slug,
+  });
 }
 
-export function getSiteSettings(): SiteSettings {
-  return siteSettingsJson as SiteSettings;
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const settings = await sanity.fetch(
+    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, booking, googleReviews, analytics }`,
+  );
+  const olympia = await getLocatieBySlug("olympia");
+  const mpc = await getLocatieBySlug("mpc");
+  return {
+    siteNaam: settings?.siteNaam || "Movenda",
+    tagline: settings?.tagline || "",
+    telefoonOlympia: olympia?.telefoon || "",
+    telefoonMpc: mpc?.telefoon || "",
+    email: settings?.email || "info@movenda.be",
+    booking: settings?.booking || { enabled: false, url: "", label: "Maak een afspraak" },
+    googleReviews: settings?.googleReviews || {
+      olympia: { rating: 0, count: "", reviewUrl: "", writeReviewUrl: "" },
+      mpc: { rating: 0, count: "", reviewUrl: "", writeReviewUrl: "" },
+    },
+    analytics: settings?.analytics || { enabled: false, ga4Id: "" },
+    socials: { instagram: "", facebook: "" },
+  };
 }

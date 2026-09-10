@@ -3,12 +3,13 @@ import Layout from "../../layouts/Layout.astro";
 import { getTeamleden, getTeamlidBySlug } from "../../lib/content";
 import { personSchema, breadcrumbSchema } from "../../lib/schema";
 
-export function getStaticPaths() {
-  return getTeamleden().map((lid) => ({ params: { slug: lid.slug } }));
+export async function getStaticPaths() {
+  const team = await getTeamleden();
+  return team.map((lid) => ({ params: { slug: lid.slug } }));
 }
 
 const { slug } = Astro.params;
-const lid = getTeamlidBySlug(slug!);
+const lid = await getTeamlidBySlug(slug!);
 
 if (!lid) {
   return Astro.redirect("/team");

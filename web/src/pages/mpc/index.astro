@@ -4,8 +4,8 @@ import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import { getDienstenByCategorie, getLocatieBySlug } from "../../lib/content";
 import { localBusinessSchema, breadcrumbSchema } from "../../lib/schema";
 
-const diensten = getDienstenByCategorie("mpc");
-const locatie = getLocatieBySlug("mpc")!;
+const diensten = await getDienstenByCategorie("mpc");
+const locatie = (await getLocatieBySlug("mpc"))!;
 
 const jsonLd = [
   localBusinessSchema(locatie),

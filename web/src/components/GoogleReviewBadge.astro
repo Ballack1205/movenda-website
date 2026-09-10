@@ -13,7 +13,7 @@ export interface Props {
 }
 
 const { locatie, class: className = "" } = Astro.props;
-const settings = getSiteSettings();
+const settings = await getSiteSettings();
 const reviews = settings.googleReviews[locatie];
 ---
 

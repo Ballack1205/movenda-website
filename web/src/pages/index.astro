@@ -5,11 +5,11 @@ import BookingButton from "../components/BookingButton.astro";
 import { getLocaties, getTeamleden, getSiteSettings } from "../lib/content";
 import { organizationSchema, localBusinessSchema } from "../lib/schema";
 
-const locaties = getLocaties();
+const locaties = await getLocaties();
 const olympia = locaties.find((l) => l.slug === "olympia")!;
 const mpc = locaties.find((l) => l.slug === "mpc")!;
-const team = getTeamleden();
-const settings = getSiteSettings();
+const team = await getTeamleden();
+const settings = await getSiteSettings();
 
 const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusinessSchema(mpc)];
 ---

@@ -4,13 +4,14 @@ import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import { getLocaties, getLocatieBySlug, getTeamledenByLocatie } from "../../lib/content";
 import { localBusinessSchema, breadcrumbSchema } from "../../lib/schema";
 
-export function getStaticPaths() {
-  return getLocaties().map((locatie) => ({ params: { slug: locatie.slug } }));
+export async function getStaticPaths() {
+  const locaties = await getLocaties();
+  return locaties.map((locatie) => ({ params: { slug: locatie.slug } }));
 }
 
 const { slug } = Astro.params as { slug: "olympia" | "mpc" };
-const locatie = getLocatieBySlug(slug)!;
-const team = getTeamledenByLocatie(slug);
+const locatie = (await getLocatieBySlug(slug))!;
+const team = await getTeamledenByLocatie(slug);
 const brand = locatie.brand === "mpc" ? "mpc" : "movenda";
 
 const jsonLd = [
