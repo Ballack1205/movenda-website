@@ -1,0 +1,12 @@
+{
+  "name": "movenda-contact-api",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
