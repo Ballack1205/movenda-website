@@ -3,21 +3,16 @@ import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import DienstCard from "../components/DienstCard.astro";
-import { getDienstenByCategorie, getLocatieBySlug } from "../lib/content";
+import { getDienstenByCategorie, getLocatieBySlug, getSiteSettings } from "../lib/content";
 import { breadcrumbSchema, localBusinessSchema } from "../lib/schema";
 import trainingHero from "../assets/marketing/training-hero.jpg";
 import trainingSecondary from "../assets/marketing/training-secondary.jpg";
 
 const locatie = (await getLocatieBySlug("olympia"))!;
 const diensten = await getDienstenByCategorie("training");
-
-const doelgroepen = [
-  "Recreatieve sporters",
-  "Topsporters & atleten",
-  "Mensen in revalidatie",
-  "Zwangere vrouwen & jonge mama's",
-  "Iedereen die gezonder wil bewegen",
-];
+const settings = await getSiteSettings();
+// Same list Julie edits for the homepage pijler (siteSettings -> Homepage).
+const doelgroepen = settings.homePijlers.training.lijst;
 
 const jsonLd = [
   localBusinessSchema(locatie),

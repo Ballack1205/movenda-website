@@ -144,7 +144,8 @@ async function seedDiensten() {
 
 async function seedSiteSettings() {
   const settings = readJson("site-settings.json");
-  const { googleReviews, prijzenInfo, slogans, nieuwsbrief, partnerband, ...rest } = settings;
+  const { googleReviews, prijzenInfo, slogans, nieuwsbrief, partnerband, homePijlers, ...rest } =
+    settings;
   await client.createOrReplace({
     _id: "siteSettings",
     _type: "siteSettings",
@@ -179,6 +180,7 @@ async function seedSiteSettings() {
     slogans,
     nieuwsbrief,
     partnerband,
+    homePijlers,
   });
   console.log("Seeded site-instellingen.");
 }
@@ -272,13 +274,19 @@ async function seedLesrooster() {
 async function seedGetuigenissen() {
   const items = readJson("getuigenissen.json");
   for (const g of items) {
+    const id = `getuigenis-${g.slug}`;
+    const existing = await client.getDocument(id).catch(() => null);
     await client.createOrReplace({
-      _id: `getuigenis-${g.slug}`,
+      _id: id,
       _type: "getuigenis",
       tekst: g.tekst,
       naam: g.naam,
+      rol: g.rol,
       locatie: g.locatie,
       volgorde: g.volgorde,
+      slug: { _type: "slug", current: g.slug },
+      actief: existing?.actief !== false,
+      ...(existing?.foto ? { foto: existing.foto } : {}),
     });
   }
   console.log(`Seeded ${items.length} getuigenissen.`);

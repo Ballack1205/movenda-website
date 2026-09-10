@@ -2,7 +2,13 @@
 // dataset (project k73l2by8 / production). Pages and components must
 // always import from this file, never query Sanity directly.
 
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { sanity } from "./sanity";
+import seedSettings from "../content/site-settings.json";
+
+const blogCoversDir = fileURLToPath(new URL("../../public/blog-covers/", import.meta.url));
 
 export type LocatieSlug = "olympia" | "mpc";
 export type DienstCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep";
@@ -133,6 +139,25 @@ export const DEFAULT_ANALYTICS: AnalyticsSettings = {
   umami: { enabled: false, websiteId: "", scriptUrl: "https://cloud.umami.is/script.js" },
 };
 
+/**
+ * One homepage "pijler" (Kinesitherapie / Personal training / MPC). Julie
+ * edits the copy and the left-hand list in siteSettings -> Homepage; the
+ * technique list next to it is derived from the diensten records.
+ */
+export interface HomePijler {
+  titel: string;
+  titelEn?: string;
+  tekst: string;
+  tekstEn?: string;
+  lijstTitel: string;
+  lijstTitelEn?: string;
+  lijst: string[];
+  lijstEn?: string[];
+}
+
+export type HomePijlerKey = "kine" | "training" | "mpc";
+export type HomePijlers = Record<HomePijlerKey, HomePijler>;
+
 export interface SiteSettings {
   siteNaam: string;
   tagline: string;
@@ -158,6 +183,7 @@ export interface SiteSettings {
     socialProof?: string;
   };
   partnerband: PartnerbandSettings;
+  homePijlers: HomePijlers;
 }
 
 export interface Faq {
@@ -217,8 +243,11 @@ export interface Getuigenis {
   slug: string;
   tekst: string;
   naam: string;
-  locatie?: string;
+  rol?: string;
+  locatie?: LocatieSlug | "beide";
+  foto?: string;
   volgorde: number;
+  actief: boolean;
 }
 
 export interface BlogPost {
@@ -227,6 +256,10 @@ export interface BlogPost {
   titelEn?: string;
   excerpt?: string;
   cover?: string;
+  /** Extra practice photos shown in the article when Sanity has no inline images yet. */
+  photos?: string[];
+  /** Screenshot-style covers should not be cropped. */
+  coverFit?: "cover" | "contain";
   body: unknown[];
   bodyEn?: unknown[];
   auteurNaam?: string;
@@ -433,7 +466,7 @@ function normalizeDienst(row: Dienst): Dienst {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
-    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, partnerband }`,
+    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, partnerband, homePijlers }`,
   );
   const olympia = await getLocatieBySlug("olympia");
   const mpc = await getLocatieBySlug("mpc");
@@ -464,7 +497,54 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       snelheid: settings?.partnerband?.snelheid || "normaal",
       animatie: settings?.partnerband?.animatie !== false,
     },
+    homePijlers: {
+      kine: mergePijler("kine", settings?.homePijlers?.kine),
+      training: mergePijler("training", settings?.homePijlers?.training),
+      mpc: mergePijler("mpc", settings?.homePijlers?.mpc),
+    },
   };
+}
+
+// Until Julie fills in "Homepage — drie pijlers" in Sanity, the seed copy
+// (the same texts as the old movenda.be homepage) is used field by field.
+function mergePijler(key: HomePijlerKey, fromSanity?: Partial<HomePijler>): HomePijler {
+  const seed = seedSettings.homePijlers[key] as HomePijler;
+  return {
+    titel: fromSanity?.titel || seed.titel,
+    titelEn: fromSanity?.titelEn || seed.titelEn,
+    tekst: fromSanity?.tekst || seed.tekst,
+    tekstEn: fromSanity?.tekstEn || seed.tekstEn,
+    lijstTitel: fromSanity?.lijstTitel || seed.lijstTitel,
+    lijstTitelEn: fromSanity?.lijstTitelEn || seed.lijstTitelEn,
+    lijst: fromSanity?.lijst?.length ? fromSanity.lijst : seed.lijst,
+    lijstEn: fromSanity?.lijstEn?.length ? fromSanity.lijstEn : seed.lijstEn,
+  };
+}
+
+/** Strip the SEO-only " Hasselt" suffix some dienst titles carry ("Manuele therapie Hasselt"). */
+export function dienstKorteTitel(dienst: Pick<Dienst, "titel" | "titelEn">, lang: "nl" | "en" = "nl"): string {
+  const titel = lang === "en" ? dienst.titelEn || dienst.titel : dienst.titel;
+  return titel.replace(/ Hasselt$/, "");
+}
+
+/**
+ * Diensten to show for one homepage pijler: MPC drops titles that already
+ * appear under kine/training (dry needling, cupping, PT, ...) so the same
+ * word never shows twice on the homepage, and MPC is ordered training →
+ * rehab → groep so the flagship services come first.
+ */
+export function homePijlerDiensten(
+  key: HomePijlerKey,
+  all: { kine: Dienst[]; training: Dienst[]; mpc: Dienst[] },
+): Dienst[] {
+  if (key !== "mpc") return all[key];
+  const seen = new Set(
+    [...all.kine, ...all.training].map((d) => dienstKorteTitel(d).toLowerCase()),
+  );
+  const rank: Record<string, number> = { "mpc-training": 0, "mpc-rehab": 1, "mpc-groep": 2 };
+  return all.mpc
+    .filter((d) => !seen.has(dienstKorteTitel(d).toLowerCase()))
+    .sort((a, b) => (rank[a.categorie] ?? 9) - (rank[b.categorie] ?? 9) || a.volgorde - b.volgorde);
 }
 
 export async function getFaqs(site?: Exclude<FaqSite, "beide">): Promise<Faq[]> {
@@ -513,33 +593,92 @@ export async function getLesrooster(): Promise<LesroosterItem[]> {
   );
 }
 
-export async function getGetuigenissen(): Promise<Getuigenis[]> {
-  return sanity.fetch(
-    `*[_type == "getuigenis"] | order(volgorde asc) {
-      "slug": _id,
-      tekst, naam, locatie, volgorde
+export async function getGetuigenissen(locatie?: LocatieSlug): Promise<Getuigenis[]> {
+  const rows: Getuigenis[] = await sanity.fetch(
+    `*[_type == "getuigenis" && actief != false] | order(volgorde asc) {
+      "slug": coalesce(slug.current, _id),
+      tekst, naam, rol, locatie, volgorde,
+      "foto": foto.asset->url,
+      "actief": actief != false
     }`,
   );
+  const items = rows || [];
+  if (!locatie) return items;
+  return items.filter((g) => !g.locatie || g.locatie === "beide" || g.locatie === locatie);
 }
+
+const blogImageBlock = `{
+  ...,
+  _type == "image" => {
+    ...,
+    "url": asset->url,
+    "alt": coalesce(alt, asset->altText, "")
+  }
+}`;
 
 const blogPostProjection = `{
   "slug": slug.current,
   titel, titelEn, excerpt,
   "cover": cover.asset->url,
-  body, bodyEn,
+  coverFit,
+  body[] ${blogImageBlock},
+  bodyEn[] ${blogImageBlock},
   "auteurNaam": auteur->voornaam + " " + auteur->naam,
   publicatiedatum, tags, seoTitle, seoDescription
 }`;
 
+// Local photos: drop web/public/blog-covers/{slug}.jpg (+ optional -2.jpg, -3.jpg).
+// No per-post map — a new article only needs the Sanity record and those files.
+function blogCoverFile(slug: string, suffix = ""): string | undefined {
+  const name = `${slug}${suffix}.jpg`;
+  if (existsSync(join(blogCoversDir, name))) return `/blog-covers/${name}`;
+}
+
+function localBlogPhotos(slug: string): string[] {
+  const extras: string[] = [];
+  for (let i = 2; i <= 6; i++) {
+    const src = blogCoverFile(slug, `-${i}`);
+    if (!src) break;
+    extras.push(src);
+  }
+  return extras;
+}
+
+function normalizeBlogPost(row: BlogPost): BlogPost {
+  return {
+    ...row,
+    cover: row.cover || blogCoverFile(row.slug),
+    photos: row.photos?.length ? row.photos : localBlogPhotos(row.slug),
+    coverFit:
+      row.coverFit === "contain" || existsSync(join(blogCoversDir, `${row.slug}.contain`))
+        ? "contain"
+        : "cover",
+  };
+}
+
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  return sanity.fetch(`*[_type == "blogPost"] | order(publicatiedatum desc) ${blogPostProjection}`);
+  const rows: BlogPost[] = await sanity.fetch(
+    `*[_type == "blogPost"] | order(publicatiedatum desc) ${blogPostProjection}`,
+  );
+  return (rows || []).map(normalizeBlogPost);
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
-  return sanity.fetch(
+  const row = await sanity.fetch(
     `*[_type == "blogPost" && slug.current == $slug][0] ${blogPostProjection}`,
     { slug },
   );
+  return row ? normalizeBlogPost(row) : undefined;
+}
+
+export async function getRelatedBlogPosts(slug: string, limit = 3): Promise<BlogPost[]> {
+  const posts = await getBlogPosts();
+  const current = posts.find((post) => post.slug === slug);
+  const others = posts.filter((post) => post.slug !== slug);
+  if (!current?.tags?.length) return others.slice(0, limit);
+  const tagged = others.filter((post) => post.tags?.some((tag) => current.tags!.includes(tag)));
+  const rest = others.filter((post) => !tagged.includes(post));
+  return [...tagged, ...rest].slice(0, limit);
 }
 
 export async function getVacatures(): Promise<Vacature[]> {

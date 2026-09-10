@@ -22,6 +22,19 @@ export default defineType({
       options: { hotspot: true },
     }),
     defineField({
+      name: "coverFit",
+      title: "Cover bijsnijden",
+      type: "string",
+      options: {
+        list: [
+          { title: "Invullen (foto)", value: "cover" },
+          { title: "Volledig tonen (screenshot)", value: "contain" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "cover",
+    }),
+    defineField({
       name: "body",
       title: "Inhoud (NL)",
       type: "array",
@@ -54,9 +67,9 @@ export default defineType({
     { title: "Nieuwste eerst", name: "publicatiedatumDesc", by: [{ field: "publicatiedatum", direction: "desc" }] },
   ],
   preview: {
-    select: { title: "titel", date: "publicatiedatum" },
-    prepare({ title, date }) {
-      return { title, subtitle: date };
+    select: { title: "titel", date: "publicatiedatum", media: "cover" },
+    prepare({ title, date, media }) {
+      return { title, subtitle: date, media };
     },
   },
 });

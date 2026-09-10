@@ -17,6 +17,7 @@ export const deskStructure: StructureResolver = (S) =>
       S.documentTypeListItem("prijsitem").title("Prijzen"),
       S.documentTypeListItem("partner").title("Partners & logo's"),
       S.documentTypeListItem("faq").title("FAQ"),
+      S.documentTypeListItem("getuigenis").title("Getuigenissen"),
       S.documentTypeListItem("blogPost").title("Blogposts"),
       S.documentTypeListItem("vacature").title("Vacatures"),
       S.documentTypeListItem("sportaanbodItem").title("Olympia sportaanbod"),

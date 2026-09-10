@@ -3,6 +3,7 @@ import locatie from "./locatie";
 import dienst from "./dienst";
 import siteSettings from "./siteSettings";
 import googleReviewInfo from "./googleReviewInfo";
+import homePijler from "./homePijler";
 import faq from "./faq";
 import blogPost from "./blogPost";
 import vacature from "./vacature";
@@ -19,6 +20,7 @@ export const schemaTypes = [
   dienst,
   siteSettings,
   googleReviewInfo,
+  homePijler,
   faq,
   blogPost,
   vacature,

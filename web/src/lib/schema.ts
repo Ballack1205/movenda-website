@@ -80,6 +80,11 @@ export function faqPageSchema(faqs: Faq[]) {
   };
 }
 
+function absoluteUrl(pathOrUrl?: string) {
+  if (!pathOrUrl) return undefined;
+  return pathOrUrl.startsWith("http") ? pathOrUrl : `${SITE_URL}${pathOrUrl}`;
+}
+
 export function blogPostingSchema(post: BlogPost) {
   return {
     "@context": "https://schema.org",
@@ -87,11 +92,35 @@ export function blogPostingSchema(post: BlogPost) {
     headline: post.titel,
     description: post.excerpt,
     datePublished: post.publicatiedatum,
-    image: post.cover,
+    image: absoluteUrl(post.cover),
+    keywords: post.tags?.join(", "),
     author: post.auteurNaam ? { "@type": "Person", name: post.auteurNaam } : undefined,
     publisher: { "@type": "Organization", name: "Movenda" },
     url: `${SITE_URL}/blog/${post.slug}`,
     mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+    encoding: {
+      "@type": "MediaObject",
+      encodingFormat: "text/markdown",
+      url: `${SITE_URL}/blog/${post.slug}.md`,
+    },
+  };
+}
+
+export function blogListSchema(posts: BlogPost[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "Movenda blog",
+    description: "Praktische tips over kinesitherapie, training en herstel.",
+    url: `${SITE_URL}/blog`,
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.titel,
+      description: post.excerpt,
+      datePublished: post.publicatiedatum,
+      url: `${SITE_URL}/blog/${post.slug}`,
+      image: absoluteUrl(post.cover),
+    })),
   };
 }
 

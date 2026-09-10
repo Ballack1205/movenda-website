@@ -110,11 +110,12 @@ Listed in `render.yaml`. `/over` is a real page (do **not** redirect it to `/`).
 - Final go/no-go on Sanity after the Fase 1 "add a teammate" demo.
 - Price conflicts marked on MPC/Olympia `prijsitem.notitie` (Duo, PowerPlus hours, PT locatieverschil).
 - Exact Google Business Profile URLs (`place_id`) for the review badges.
-- **`Hubo Limburg United` still carries the *Hubo Handbal* shield** (both documents pointed at the same asset, named `partner-hubo-limburg-united.png` but actually the handball logo). Left in place for now — tell us if you prefer the name as text until the right file is uploaded.
-- Nine partners show as a styled name instead of a logo: AF Corse, Excelsior Tennis, MyMindWorks, STVV, Tennisclub Tenkie, VKM Godsheide, UHasselt, Drieskens & Dubois, Royal Crown. Julie fixes each by uploading the right file on the partner document.
+- Ten partners show as a styled name instead of a logo and need the real file uploaded on their document: AF Corse, Hubo Limburg United, Excelsior Tennis, MyMindWorks, STVV, Tennisclub Tenkie, VKM Godsheide, UHasselt, Drieskens & Dubois, Royal Crown.
 
 ### Own logos never go in the partner band (2026-09-10)
 
 The band is for third parties only. `AF Corse` was carrying **Movenda's own M mark** (the navy version of `web/public/brand/logo-m.png`, stored under the misleading filename `partner-af-corse.png`). Removed from the document and deleted from the media library so it cannot be picked again; AF Corse now shows as text until their real logo arrives.
+
+`Hubo Limburg United` (basketball) was showing the *Hubo Handbal* shield from the same shared asset, so its logo was removed too — it shows as text until the right file arrives. The asset itself is now titled "Hubo Handbal (schild)" in the media library so it cannot be mistaken for the basketball club again.
 
 Root cause was `studio/scripts/upload-dienst-media.mjs`: it matched a logo by the **first word** of the partner name, so "AF Corse" searched for `af` and matched Movenda's own file, and "Hubo Limburg United" matched on `hubo` and took the Handbal shield. The matcher now compares against the filename only, ignores words under 4 characters, requires two matching words when the name has them, skips anything that looks like a Movenda/MPC mark, and never overwrites a logo that is already set.

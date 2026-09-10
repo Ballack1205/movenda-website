@@ -1,0 +1,150 @@
+---
+// One homepage "pijler" block: photo + title + differentiator copy + two
+// columns ("waarvoor kom je" from siteSettings, "wat we doen" from the
+// diensten records) + two CTAs. Three of these, alternating photo side,
+// replace the flat wall of tag pills. Copy lives in Sanity (siteSettings ->
+// Homepage — drie pijlers); layout lives here.
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { dienstHref, dienstKorteTitel, type Dienst, type HomePijler } from "../lib/content";
+
+interface Props {
+  pijler: HomePijler;
+  diensten: Dienst[];
+  image: ImageMetadata;
+  imageAlt: string;
+  /** Overview page for this pijler ("Bekijk ons aanbod" + "+ n andere"). */
+  aanbodHref: string;
+  aanbodLabel: string;
+  afspraakHref: string;
+  reverse?: boolean;
+  lang?: "nl" | "en";
+  /** Language of the dienst detail pages linked to (EN home links kine/training to the NL pages, which are the only ones that exist). */
+  hrefLang?: "nl" | "en";
+  /** Max techniques shown before the "+ n andere" link. */
+  max?: number;
+}
+
+const {
+  pijler,
+  diensten,
+  image,
+  imageAlt,
+  aanbodHref,
+  aanbodLabel,
+  afspraakHref,
+  reverse = false,
+  lang = "nl",
+  hrefLang = lang,
+  max = 6,
+} = Astro.props;
+
+const t = {
+  nl: { doen: "Wat we doen", meer: (n: number) => `+ ${n} andere`, afspraak: "Maak een afspraak" },
+  en: { doen: "What we offer", meer: (n: number) => `+ ${n} more`, afspraak: "Book an appointment" },
+}[lang];
+
+const titel = lang === "en" ? pijler.titelEn || pijler.titel : pijler.titel;
+const tekst = lang === "en" ? pijler.tekstEn || pijler.tekst : pijler.tekst;
+const lijstTitel = lang === "en" ? pijler.lijstTitelEn || pijler.lijstTitel : pijler.lijstTitel;
+const lijst = lang === "en" && pijler.lijstEn?.length ? pijler.lijstEn : pijler.lijst;
+
+const shown = diensten.slice(0, max);
+const rest = diensten.length - shown.length;
+---
+
+<article class="grid items-center gap-8 py-12 lg:grid-cols-12 lg:gap-12 lg:py-16">
+  <div class={`lg:col-span-5 ${reverse ? "lg:order-last" : ""}`}>
+    <Image
+      src={image}
+      alt={imageAlt}
+      widths={[480, 768, 1024]}
+      sizes="(min-width: 1024px) 40vw, 100vw"
+      class="aspect-[16/10] w-full rounded-3xl object-cover shadow-lg sm:aspect-[2/1] lg:aspect-[4/5]"
+    />
+  </div>
+
+  <div class="lg:col-span-7">
+    <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">{titel}</h2>
+    <p class="mt-3 max-w-2xl text-brand-muted">{tekst}</p>
+
+    <div class="mt-7 grid gap-7 sm:grid-cols-2 sm:gap-8">
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-brand-primary">{lijstTitel}</h3>
+        <ul class="mt-3 space-y-2">
+          {lijst.map((item) => (
+            <li class="flex items-start gap-2.5 text-sm leading-snug text-brand-text">
+              <svg
+                class="mt-0.5 h-4 w-4 shrink-0 text-brand-primary"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="8" cy="8" r="6.5" class="opacity-30" />
+                <path d="M5 8.2l2 2 4-4.4" />
+              </svg>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-brand-primary">{t.doen}</h3>
+        <ul class="mt-3 space-y-2">
+          {shown.map((dienst) => (
+            <li>
+              <a
+                href={dienstHref(dienst, hrefLang)}
+                class="group flex items-start gap-2.5 text-sm leading-snug text-brand-text transition hover:text-brand-primary"
+              >
+                <svg
+                  class="mt-0.5 h-4 w-4 shrink-0 text-brand-muted transition group-hover:translate-x-0.5 group-hover:text-brand-primary"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5" />
+                </svg>
+                <span class="underline-offset-4 group-hover:underline">{dienstKorteTitel(dienst, lang)}</span>
+              </a>
+            </li>
+          ))}
+          {rest > 0 && (
+            <li>
+              <a
+                href={aanbodHref}
+                class="inline-flex items-start gap-2.5 pl-[26px] text-sm font-semibold text-brand-primary hover:underline"
+              >
+                {t.meer(rest)}
+              </a>
+            </li>
+          )}
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        href={aanbodHref}
+        class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+      >
+        {aanbodLabel}
+      </a>
+      <a
+        href={afspraakHref}
+        class="rounded-full border border-brand-border bg-brand-surface px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary"
+      >
+        {t.afspraak}
+      </a>
+    </div>
+  </div>
+</article>

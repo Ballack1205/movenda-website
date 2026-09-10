@@ -2,8 +2,10 @@
 import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
+import SocialLinks from "../../components/SocialLinks.astro";
 import DienstCard from "../../components/DienstCard.astro";
 import PartnerBand from "../../components/PartnerBand.astro";
+import GetuigenisCarousel from "../../components/GetuigenisCarousel.astro";
 import {
   getDienstenByCategorie,
   getLocatieBySlug,
@@ -23,7 +25,7 @@ const locatie = (await getLocatieBySlug("mpc"))!;
 const partners = await getPartners("mpc");
 const faqs = await getFaqs("mpc");
 const settings = await getSiteSettings();
-const quote = (await getGetuigenissen()).find((g) => /mpc|performance/i.test(`${g.naam} ${g.locatie || ""}`));
+const getuigenissen = await getGetuigenissen("mpc");
 
 const pillars = [
   {
@@ -88,8 +90,9 @@ const jsonLd = [
           Contacteer ons
         </a>
       </div>
-      <div class="mt-6">
+      <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
         <GoogleReviewBadge locatie="mpc" />
+        <SocialLinks brand="mpc" />
       </div>
     </div>
     <Image
@@ -166,12 +169,7 @@ const jsonLd = [
     </a>
   </section>
 
-  {quote && (
-    <section class="mx-auto max-w-3xl px-4 py-10 text-center">
-      <blockquote class="text-xl font-medium">“{quote.tekst}”</blockquote>
-      <p class="mt-3 text-sm text-brand-muted">— {quote.naam}</p>
-    </section>
-  )}
+  <GetuigenisCarousel items={getuigenissen} title="Wat onze atleten zeggen" />
 
   {partners.length > 0 && (
     <PartnerBand

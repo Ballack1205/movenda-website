@@ -22,6 +22,7 @@ export interface Props {
   /** Path of this same page in the other language, for hreflang + the nav switcher. Omit if no translated counterpart exists yet (falls back to /en/ or /). */
   altPath?: string;
   ogImage?: string;
+  extraLinks?: { rel: string; type?: string; href: string; title?: string }[];
 }
 
 const {
@@ -33,6 +34,7 @@ const {
   lang = "nl",
   altPath,
   ogImage = "/og-default.jpg",
+  extraLinks = [],
 } = Astro.props;
 
 // Preview safety net: this site is a pitch preview until Movenda confirms
@@ -74,6 +76,9 @@ const popup = await getActivePopup(path);
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    {extraLinks.map((link) => (
+      <link rel={link.rel} type={link.type} href={link.href} title={link.title} />
+    ))}
     {jsonLd.map((entry) => (
       <script type="application/ld+json" set:html={JSON.stringify(entry)} is:inline />
     ))}

@@ -66,6 +66,76 @@
     "prijzenKine": "The greatest WEALTH is HEALTH.",
     "prijzenPt": "Sweat is fat crying"
   },
+  "homePijlers": {
+    "kine": {
+      "titel": "Kinesitherapie in Hasselt",
+      "titelEn": "Physiotherapy in Hasselt",
+      "tekst": "Bij Movenda vind je een team van ervaren kinesisten die je begeleiden bij uiteenlopende spier- en gewrichtsklachten. Elke behandeling duurt 30 minuten één-op-één, afgestemd op jouw klacht en doel. We combineren manuele therapie met actieve oefentherapie — zodat jij zelf meewerkt aan je herstel.",
+      "tekstEn": "At Movenda you'll find a team of experienced physiotherapists for a wide range of muscle and joint complaints. Every session is 30 minutes one-on-one, tailored to your complaint and goal. We combine manual therapy with active exercise therapy — so you take part in your own recovery.",
+      "lijstTitel": "Waarvoor kom je bij ons",
+      "lijstTitelEn": "What we treat",
+      "lijst": [
+        "Rug- en nekklachten",
+        "Sportblessures & sportrevalidatie",
+        "Postoperatieve revalidatie",
+        "Pre- en postnatale klachten",
+        "Cardiovasculaire revalidatie",
+        "Chronische pijn"
+      ],
+      "lijstEn": [
+        "Back and neck pain",
+        "Sports injuries & rehabilitation",
+        "Post-operative rehabilitation",
+        "Pre- and postnatal complaints",
+        "Cardiac rehabilitation",
+        "Chronic pain"
+      ]
+    },
+    "training": {
+      "titel": "Personal training in Hasselt",
+      "titelEn": "Personal training in Hasselt",
+      "tekst": "Bij Movenda train je onder begeleiding van een personal trainer die ook kinesitherapeut is. Dat maakt het verschil: jouw schema wordt afgestemd op je doelen én op je lichaam, beperkingen en medische voorgeschiedenis. Afvallen, sterker worden, een sport opnemen of herstellen van een blessure — veilig en effectief.",
+      "tekstEn": "At Movenda you train with a personal trainer who is also a physiotherapist. That makes the difference: your programme is built around your goals and your body, limitations and medical history. Lose weight, get stronger, pick up a sport or recover from an injury — safely and effectively.",
+      "lijstTitel": "Voor wie",
+      "lijstTitelEn": "Who it's for",
+      "lijst": [
+        "Recreatieve sporters",
+        "Topsporters & atleten",
+        "Mensen in revalidatie",
+        "Zwangere vrouwen & jonge mama's",
+        "Iedereen die gezonder wil bewegen"
+      ],
+      "lijstEn": [
+        "Recreational athletes",
+        "Elite athletes",
+        "People in rehabilitation",
+        "Pregnant women & new mothers",
+        "Anyone who wants to move more healthily"
+      ]
+    },
+    "mpc": {
+      "titel": "Movenda Performance Centre",
+      "titelEn": "Movenda Performance Centre",
+      "tekst": "Onze tweede vestiging in Kuringen, gericht op performance training en sportrevalidatie voor recreatieve en professionele sporters. We werken data-gedreven met objectieve testen en meetmomenten — zodat je vooruitgang altijd zichtbaar en meetbaar is.",
+      "tekstEn": "Our second location in Kuringen, focused on performance training and sports rehabilitation for recreational and professional athletes. We work data-driven with objective tests and measurements — so your progress is always visible and measurable.",
+      "lijstTitel": "Voor wie",
+      "lijstTitelEn": "Who it's for",
+      "lijst": [
+        "Sporters die beter willen presteren",
+        "Topsporters, clubs & academies",
+        "Sportrevalidatie na een blessure",
+        "Kleine groepen & groepslessen",
+        "Bedrijven (corporate coaching)"
+      ],
+      "lijstEn": [
+        "Athletes who want to perform better",
+        "Elite athletes, clubs & academies",
+        "Sports rehabilitation after injury",
+        "Small groups & group classes",
+        "Companies (corporate coaching)"
+      ]
+    }
+  },
   "partnerband": {
     "titel": "Onze partners",
     "titelMpc": "Corporate partners",

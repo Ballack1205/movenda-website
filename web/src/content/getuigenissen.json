@@ -3,14 +3,54 @@
     "slug": "vanhees-g",
     "tekst": "Nooit gedacht dat ik ging sporten. Ondertussen ben ik 2 jaar aan het trainen bij Movenda, heb ik 3 marathons gelopen (Parijs, Berlijn en Rotterdam). Mijn lichaam is steviger en ik zit vol energie.",
     "naam": "Vanhees G.",
+    "rol": "Personal training",
     "locatie": "olympia",
-    "volgorde": 1
+    "volgorde": 1,
+    "actief": true
+  },
+  {
+    "slug": "placeholder-1",
+    "tekst": "Deze getuigenis volgt nog. Vervang in Sanity → Getuigenissen deze tekst door een echte quote, voeg een foto toe en publiceer.",
+    "naam": "Naam volgt",
+    "rol": "Kinesitherapie",
+    "locatie": "olympia",
+    "volgorde": 2,
+    "actief": true
+  },
+  {
+    "slug": "placeholder-2",
+    "tekst": "Deze getuigenis volgt nog. Vervang in Sanity → Getuigenissen deze tekst door een echte quote, voeg een foto toe en publiceer.",
+    "naam": "Naam volgt",
+    "rol": "Kinesitherapie",
+    "locatie": "olympia",
+    "volgorde": 3,
+    "actief": true
+  },
+  {
+    "slug": "placeholder-3",
+    "tekst": "Deze getuigenis volgt nog. Vervang in Sanity → Getuigenissen deze tekst door een echte quote, voeg een foto toe en publiceer.",
+    "naam": "Naam volgt",
+    "rol": "Personal training",
+    "locatie": "olympia",
+    "volgorde": 4,
+    "actief": true
+  },
+  {
+    "slug": "placeholder-4",
+    "tekst": "Deze getuigenis volgt nog. Vervang in Sanity → Getuigenissen deze tekst door een echte quote, voeg een foto toe en publiceer.",
+    "naam": "Naam volgt",
+    "rol": "Personal training",
+    "locatie": "olympia",
+    "volgorde": 5,
+    "actief": true
   },
   {
     "slug": "mpc-data-quote",
     "tekst": "With the support from our objective data we have been able to serve our athletes better than ever.",
     "naam": "Movenda Performance Centre",
+    "rol": "Performance",
     "locatie": "mpc",
-    "volgorde": 2
+    "volgorde": 6,
+    "actief": true
   }
 ]

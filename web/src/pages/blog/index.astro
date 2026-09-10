@@ -1,20 +1,21 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import BlogPostFeature from "../../components/BlogPostFeature.astro";
+import BlogPostCard from "../../components/BlogPostCard.astro";
 import { getBlogPosts } from "../../lib/content";
-import { breadcrumbSchema } from "../../lib/schema";
+import { blogListSchema, breadcrumbSchema } from "../../lib/schema";
 
 const posts = await getBlogPosts();
+const featured = posts[0];
+const rest = posts.slice(1);
 
 const jsonLd = [
   breadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Blog", path: "/blog" },
   ]),
+  blogListSchema(posts),
 ];
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric" });
-}
 ---
 
 <Layout
@@ -22,33 +23,38 @@ function formatDate(iso: string) {
   description="Praktische tips over blessurepreventie, training en herstel, geschreven door het team van Movenda."
   path="/blog"
   jsonLd={jsonLd}
+  extraLinks={[
+    { rel: "alternate", type: "application/rss+xml", href: "/rss.xml", title: "Movenda blog" },
+    { rel: "alternate", type: "text/markdown", href: "/blog.md", title: "Blog (Markdown)" },
+  ]}
 >
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="text-3xl font-bold">Blog</h1>
-    <p class="mt-2 max-w-2xl text-brand-muted">
-      Praktische tips en inzichten van onze kinesisten en trainers.
+  <section class="mx-auto max-w-6xl px-4 py-12 lg:py-16">
+    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">Blog</p>
+    <h1 class="mt-2 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
+      Tips van onze kinesisten en trainers
+    </h1>
+    <p class="mt-4 max-w-2xl text-lg text-brand-muted">
+      Praktische inzichten over blessurepreventie, herstel en training — recht uit de praktijk in
+      Hasselt.
     </p>
 
     {posts.length === 0 ? (
       <p class="mt-10 text-brand-muted">Binnenkort verschijnen hier onze eerste blogposts.</p>
     ) : (
-      <div class="mt-10 grid gap-6 sm:grid-cols-2">
-        {posts.map((post) => (
-          <a
-            href={`/blog/${post.slug}`}
-            class="rounded-2xl border border-brand-border bg-brand-surface p-6 transition hover:border-brand-primary"
-          >
-            <p class="text-xs font-semibold uppercase tracking-wide text-brand-muted">
-              {formatDate(post.publicatiedatum)}{post.auteurNaam ? ` · ${post.auteurNaam}` : ""}
-            </p>
-            <h2 class="mt-2 text-lg font-semibold">{post.titel}</h2>
-            {post.excerpt && <p class="mt-2 text-sm text-brand-muted line-clamp-3">{post.excerpt}</p>}
-            <span class="mt-4 inline-block font-semibold text-brand-primary group-hover:underline">
-              Lees meer →
-            </span>
-          </a>
-        ))}
-      </div>
+      <>
+        {featured && (
+          <div class="mt-14">
+            <BlogPostFeature post={featured} />
+          </div>
+        )}
+        {rest.length > 0 && (
+          <div class="mt-14 grid gap-6 sm:grid-cols-2">
+            {rest.map((post) => (
+              <BlogPostCard post={post} />
+            ))}
+          </div>
+        )}
+      </>
     )}
   </section>
 </Layout>

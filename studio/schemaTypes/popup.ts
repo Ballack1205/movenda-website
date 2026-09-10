@@ -54,24 +54,26 @@ export default defineType({
       type: "string",
       options: {
         list: [
-          { title: "Opent een inschrijfformulier", value: "formulier" },
-          { title: "Gaat naar een link (Google Form, pagina, …)", value: "link" },
+          { title: "Gaat naar een formulier-link (Google Form) — aanbevolen", value: "link" },
+          { title: "Opent een inschrijfformulier op de site", value: "formulier" },
         ],
         layout: "radio",
       },
-      initialValue: "formulier",
+      initialValue: "link",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "knopUrl",
-      title: "Link van de knop",
+      title: "Formulier-URL",
       type: "url",
+      description:
+        "Plak hier de Google Form-link, bv. https://forms.gle/… De knop opent die in een nieuw tabblad.",
       hidden: ({ parent }) => parent?.actie !== "link",
       validation: (Rule) =>
         Rule.uri({ allowRelative: true, scheme: ["http", "https", "mailto"] }).custom(
           (value, context) => {
             const actie = (context.parent as { actie?: string } | undefined)?.actie;
-            if (actie === "link" && !value) return "Vul een link in, of kies het inschrijfformulier.";
+            if (actie === "link" && !value) return "Plak de formulier-URL (Google Form of andere pagina).";
             return true;
           },
         ),

@@ -2,11 +2,14 @@
 import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
+import SocialLinks from "../components/SocialLinks.astro";
 import BookingButton from "../components/BookingButton.astro";
 import PartnerBand from "../components/PartnerBand.astro";
 import NewsletterBlock from "../components/NewsletterBlock.astro";
-import GetuigenisQuote from "../components/GetuigenisQuote.astro";
+import GetuigenisCarousel from "../components/GetuigenisCarousel.astro";
 import TeamCarousel from "../components/TeamCarousel.astro";
+import SloganBanner from "../components/SloganBanner.astro";
+import HomePijler from "../components/HomePijler.astro";
 import {
   getLocaties,
   getTeamleden,
@@ -14,23 +17,29 @@ import {
   getDienstenByCategorie,
   getPartners,
   getGetuigenissen,
-  dienstHref,
+  homePijlerDiensten,
 } from "../lib/content";
 import { organizationSchema, localBusinessSchema } from "../lib/schema";
 import homeHero from "../assets/marketing/home-hero.jpg";
 import mpcHero from "../assets/marketing/mpc-hero.jpg";
+import homeSquats from "../assets/marketing/home-squats.jpg";
+import kineHero from "../assets/marketing/kine-hero.jpg";
+import trainingSecondary from "../assets/marketing/training-secondary.jpg";
 
 const locaties = await getLocaties();
 const olympia = locaties.find((l) => l.slug === "olympia")!;
 const mpc = locaties.find((l) => l.slug === "mpc")!;
 const team = await getTeamleden();
 const settings = await getSiteSettings();
-const kine = await getDienstenByCategorie("kine");
-const training = await getDienstenByCategorie("training");
-const mpcDiensten = await getDienstenByCategorie("mpc");
+const alleDiensten = {
+  kine: await getDienstenByCategorie("kine"),
+  training: await getDienstenByCategorie("training"),
+  mpc: await getDienstenByCategorie("mpc"),
+};
+const afspraakHref =
+  settings.booking.enabled && settings.booking.url ? settings.booking.url : "/contact";
 const partners = await getPartners("movenda");
-const getuigenissen = await getGetuigenissen();
-const homeQuote = getuigenissen[0];
+const getuigenissen = await getGetuigenissen("olympia");
 
 const kinesistenCount = team.filter((t) => t.rol.toLowerCase().includes("kinesitherapeut")).length;
 const trainerCount = team.filter(
@@ -82,8 +91,9 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
         </a>
         <BookingButton />
       </div>
-      <div class="mt-6">
+      <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
         <GoogleReviewBadge locatie="olympia" />
+        <SocialLinks />
       </div>
     </div>
     <div class="relative">
@@ -99,47 +109,38 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
   </section>
 
   {settings.slogans.home && (
-    <p class="bg-brand-header py-6 text-center text-lg font-semibold text-white sm:text-xl">
-      {settings.slogans.home}
-    </p>
+    <SloganBanner quote={settings.slogans.home} image={homeSquats} />
   )}
 
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <h2 class="text-2xl font-bold">Kinesitherapie</h2>
-    <div class="mt-4 flex flex-wrap gap-2">
-      {kine.map((dienst) => (
-        <a
-          href={dienstHref(dienst)}
-          class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text transition hover:border-brand-primary"
-        >
-          {dienst.titel.replace(/ Hasselt$/, "")}
-        </a>
-      ))}
-    </div>
-
-    <h2 class="mt-10 text-2xl font-bold">Training</h2>
-    <div class="mt-4 flex flex-wrap gap-2">
-      {training.map((dienst) => (
-        <a
-          href={dienstHref(dienst)}
-          class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text transition hover:border-brand-primary"
-        >
-          {dienst.titel.replace(/ Hasselt$/, "")}
-        </a>
-      ))}
-    </div>
-
-    <h2 class="mt-10 text-2xl font-bold">Movenda Performance Centre</h2>
-    <div class="mt-4 flex flex-wrap gap-2">
-      {mpcDiensten.map((dienst) => (
-        <a
-          href={dienstHref(dienst)}
-          class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text transition hover:border-brand-primary"
-        >
-          {dienst.titel}
-        </a>
-      ))}
-    </div>
+  <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">
+    <HomePijler
+      pijler={settings.homePijlers.kine}
+      diensten={homePijlerDiensten("kine", alleDiensten)}
+      image={kineHero}
+      imageAlt="Kinesitherapeut behandelt een patiënt bij Movenda in Hasselt"
+      aanbodHref="/kinesitherapie"
+      aanbodLabel="Bekijk ons kine-aanbod"
+      afspraakHref={afspraakHref}
+    />
+    <HomePijler
+      pijler={settings.homePijlers.training}
+      diensten={homePijlerDiensten("training", alleDiensten)}
+      image={trainingSecondary}
+      imageAlt="Personal trainer begeleidt een klant tijdens een oefening bij Movenda"
+      aanbodHref="/training"
+      aanbodLabel="Bekijk ons trainingsaanbod"
+      afspraakHref={afspraakHref}
+      reverse
+    />
+    <HomePijler
+      pijler={settings.homePijlers.mpc}
+      diensten={homePijlerDiensten("mpc", alleDiensten)}
+      image={mpcHero}
+      imageAlt="Performance training in het Movenda Performance Centre in Kuringen"
+      aanbodHref="/mpc"
+      aanbodLabel="Ontdek het Performance Centre"
+      afspraakHref={afspraakHref}
+    />
   </section>
 
   <PartnerBand
@@ -204,7 +205,7 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
     </div>
   </section>
 
-  {homeQuote && <GetuigenisQuote item={homeQuote} />}
+  <GetuigenisCarousel items={getuigenissen} />
 
   <NewsletterBlock settings={settings} />
 </Layout>

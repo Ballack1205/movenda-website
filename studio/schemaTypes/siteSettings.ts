@@ -128,6 +128,19 @@ export default defineType({
       ],
     }),
     defineField({
+      name: "homePijlers",
+      title: "Homepage — drie pijlers",
+      description:
+        "De drie blokken onder de hero op de homepage. Per pijler: titel, korte tekst en de lijst 'waarvoor kom je / voor wie'. De technieken ernaast komen automatisch uit 'Diensten'.",
+      type: "object",
+      fields: [
+        defineField({ name: "kine", title: "Kinesitherapie", type: "homePijler" }),
+        defineField({ name: "training", title: "Personal training", type: "homePijler" }),
+        defineField({ name: "mpc", title: "Movenda Performance Centre", type: "homePijler" }),
+      ],
+      options: { collapsible: true, collapsed: true },
+    }),
+    defineField({
       name: "partnerband",
       title: "Partnerbalk",
       description: "De bewegende logobalk. De partners zelf beheer je onder 'Partners & logo's'.",

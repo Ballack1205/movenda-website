@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import GetuigenisQuote from "../components/GetuigenisQuote.astro";
+import GetuigenisCarousel from "../components/GetuigenisCarousel.astro";
 import {
   getPrijzenByCategorie,
   getSiteSettings,
@@ -13,12 +13,10 @@ import { breadcrumbSchema } from "../lib/schema";
 
 const kine = await getPrijzenByCategorie("kine");
 const training = await getPrijzenByCategorie("training");
-const mpc = await getPrijzenByCategorie("mpc");
-const screening = await getPrijzenByCategorie("screening");
 const settings = await getSiteSettings();
 const info = settings.prijzenInfo;
 const team = await getTeamleden();
-const quote = (await getGetuigenissen())[0];
+const getuigenissen = await getGetuigenissen("olympia");
 
 const kineTarieven = team.filter((t) => t.tariefKine);
 const ptTarieven = team.filter((t) => t.tariefPt || t.tariefPtMpc || t.tariefPerformance);
@@ -170,43 +168,15 @@ const jsonLd = [
       </div>
     )}
 
-    <div id="mpc" class="mt-12 scroll-mt-24">
+    <div id="mpc" class="mt-12 scroll-mt-24 rounded-2xl border border-brand-border bg-brand-surface p-6">
       <h2 class="text-xl font-semibold">Movenda Performance Centre</h2>
-      {info.exBtwMpc && <p class="mt-2 text-sm text-brand-muted">Prijzen exclusief BTW, enkel op afspraak.</p>}
-      {mpc.length > 0 && (
-        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
-          <table class="w-full text-left text-sm">
-            <tbody>
-              {mpc.map((item, i) => (
-                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
-                  <td class="px-4 py-3">
-                    {item.naam}
-                    {item.notitie && <span class="block text-xs text-brand-muted">{item.notitie}</span>}
-                  </td>
-                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      {screening.length > 0 && (
-        <div class="mt-6">
-          <h3 class="font-semibold">Screening &amp; data</h3>
-          <div class="mt-3 overflow-hidden rounded-2xl border border-brand-border">
-            <table class="w-full text-left text-sm">
-              <tbody>
-                {screening.map((item, i) => (
-                  <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
-                    <td class="px-4 py-3">{item.naam}</td>
-                    <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+      <p class="mt-2 text-sm text-brand-muted">
+        Training, sportrevalidatie en groepslessen in Kuringen. Prijzen exclusief BTW, enkel op
+        afspraak.
+      </p>
+      <a href="/mpc/prijzen" class="mt-4 inline-block font-semibold text-brand-primary hover:underline">
+        Bekijk de MPC-tarieven →
+      </a>
     </div>
 
     <div class="mt-12 rounded-2xl border border-brand-border bg-brand-surface p-6">
@@ -236,5 +206,5 @@ const jsonLd = [
     </div>
   </section>
 
-  {quote && <GetuigenisQuote item={quote} />}
+  <GetuigenisCarousel items={getuigenissen} />
 </Layout>

@@ -61,6 +61,7 @@ by hand.
 | `dienst` | `Dienst` |
 | `siteSettings` | `SiteSettings` (singleton — booking off by default, Google reviews) |
 | `popup` | `Popup` (event overlays Julie can turn on/off; signup form or link) |
+| `getuigenis` | `Getuigenis` (quote carousel: quote, naam, foto, locatie, volgorde, show/hide) |
 
 Once real Sanity data exists, update `web/src/lib/content.ts` to query
 `@sanity/client` with GROQ instead of reading the local JSON in

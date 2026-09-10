@@ -11,15 +11,8 @@ import kineSecondary from "../assets/marketing/kine-secondary.jpg";
 const locatie = (await getLocatieBySlug("olympia"))!;
 const diensten = await getDienstenByCategorie("kine");
 const settings = await getSiteSettings();
-
-const klachten = [
-  "Rug- en nekklachten",
-  "Sportblessures & sportrevalidatie",
-  "Postoperatieve revalidatie",
-  "Pre- en postnatale klachten",
-  "Cardiovasculaire revalidatie",
-  "Chronische pijn",
-];
+// Same list Julie edits for the homepage pijler (siteSettings -> Homepage).
+const klachten = settings.homePijlers.kine.lijst;
 
 const jsonLd = [
   localBusinessSchema(locatie),

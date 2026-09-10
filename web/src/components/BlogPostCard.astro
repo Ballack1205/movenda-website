@@ -1,0 +1,45 @@
+---
+import type { BlogPost } from "../lib/content";
+import { blogPhotoSrc } from "../lib/images";
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+const contain = post.coverFit === "contain";
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric" });
+}
+---
+
+<a
+  href={`/blog/${post.slug}`}
+  class="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary"
+>
+  {post.cover && (
+    <div class:list={["overflow-hidden", contain ? "bg-white" : "bg-brand-header/10"]}>
+      <img
+        src={blogPhotoSrc(post.cover, "card")}
+        alt={post.titel}
+        width="800"
+        height="500"
+        loading="lazy"
+        class:list={[
+          "aspect-[16/10] w-full transition duration-500 group-hover:scale-[1.03]",
+          contain ? "object-contain p-6" : "object-cover object-top",
+        ]}
+      />
+    </div>
+  )}
+  <div class="flex flex-1 flex-col p-5">
+    <p class="text-xs font-semibold uppercase tracking-wide text-brand-muted">
+      {formatDate(post.publicatiedatum)}
+      {post.auteurNaam ? ` · ${post.auteurNaam}` : ""}
+    </p>
+    <h2 class="mt-2 text-pretty text-lg font-semibold">{post.titel}</h2>
+    {post.excerpt && <p class="mt-2 line-clamp-3 text-sm text-brand-muted">{post.excerpt}</p>}
+    <span class="mt-4 inline-block text-sm font-semibold text-brand-primary">Meer lezen →</span>
+  </div>
+</a>

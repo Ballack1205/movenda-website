@@ -45,6 +45,7 @@ Day-one Sanity collections:
 | **Prijzen** | Label + amount + note (kine vs PT vs MPC) |
 | **Partners & logo's** | Add/edit a partner in the moving logo band: logo, website, Movenda/MPC/both, order, show/hide. Heading, speed and on/off live in Site-instellingen → Partnerbalk |
 | **Pop-up** | Create/edit the overlay visitors see when they open the site (photo, copy, signup form or link). Toggle actief to show/hide — same job as Squarespace’s promotional pop-up |
+| **Getuigenis** | Add/edit a quote in the homepage carousel: quote, naam, foto, locatie, volgorde, show/hide. Layout stays in code. |
 
 Studio copy in **Dutch**. One “Teamlid” list, filterable by locatie. Unpublished = hidden on the site.
 

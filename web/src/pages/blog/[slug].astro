@@ -1,8 +1,10 @@
 ---
 import { toHTML } from "@portabletext/to-html";
 import Layout from "../../layouts/Layout.astro";
-import { getBlogPosts, getBlogPostBySlug } from "../../lib/content";
+import { getBlogPosts, getBlogPostBySlug, getRelatedBlogPosts } from "../../lib/content";
+import { blogPhotoSrc } from "../../lib/images";
 import { blogPostingSchema, breadcrumbSchema } from "../../lib/schema";
+import BlogPostCard from "../../components/BlogPostCard.astro";
 
 export async function getStaticPaths() {
   const posts = await getBlogPosts();
@@ -16,7 +18,43 @@ if (!post) {
   return Astro.redirect("/blog");
 }
 
-const bodyHtml = toHTML(post.body as any);
+function escapeAttr(value: string) {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+
+const bodyHtml = toHTML(post.body as any, {
+  components: {
+    types: {
+      image: ({ value }) => {
+        const src = value?.url as string | undefined;
+        if (!src) return "";
+        const alt = escapeAttr((value.alt as string) || "");
+        return `<img src="${blogPhotoSrc(src, "inline")}" alt="${alt}" width="960" height="720" />`;
+      },
+    },
+  },
+});
+
+const hasInlineImages = /<img\b/i.test(bodyHtml);
+const extraPhotos = !hasInlineImages ? post.photos || [] : [];
+
+function injectPhotos(html: string, photos: string[]) {
+  if (!photos.length) return html;
+  const photoHtml = photos
+    .map(
+      (src) =>
+        `<img src="${blogPhotoSrc(src, "inline")}" alt="" width="960" height="720" />`,
+    )
+    .join("");
+  const match = html.match(/<\/h[2-4]>/i);
+  if (!match || match.index == null) return `${html}${photoHtml}`;
+  const idx = match.index + match[0].length;
+  return `${html.slice(0, idx)}${photoHtml}${html.slice(idx)}`;
+}
+
+const articleHtml = injectPhotos(bodyHtml, extraPhotos);
+const contain = post.coverFit === "contain";
+const related = await getRelatedBlogPosts(post.slug, 3);
 
 const jsonLd = [
   breadcrumbSchema([
@@ -37,17 +75,66 @@ function formatDate(iso: string) {
   description={post.seoDescription || post.excerpt || ""}
   path={`/blog/${post.slug}`}
   jsonLd={jsonLd}
+  ogImage={post.cover}
+  extraLinks={[
+    { rel: "alternate", type: "text/markdown", href: `/blog/${post.slug}.md`, title: "Artikel (Markdown)" },
+    { rel: "alternate", type: "application/rss+xml", href: "/rss.xml", title: "Movenda blog" },
+  ]}
 >
-  <article class="mx-auto max-w-2xl px-4 py-12">
-    <p class="text-xs font-semibold uppercase tracking-wide text-brand-muted">
-      {formatDate(post.publicatiedatum)}{post.auteurNaam ? ` · Geschreven door ${post.auteurNaam}` : ""}
-    </p>
-    <h1 class="mt-2 text-3xl font-bold">{post.titel}</h1>
-    <div class="article-body mt-8" set:html={bodyHtml} />
+  <article class="pb-16">
+    <header class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 lg:grid-cols-2 lg:py-16">
+      {post.cover && (
+        <div
+          class:list={[
+            "overflow-hidden rounded-3xl shadow-xl",
+            contain ? "bg-white" : "bg-brand-header/10",
+          ]}
+        >
+          <img
+            src={blogPhotoSrc(post.cover, "hero")}
+            alt={post.titel}
+            width="1400"
+            height="900"
+            class:list={[
+              "w-full",
+              contain
+                ? "aspect-[5/4] object-contain p-6 sm:p-10"
+                : "aspect-[16/10] object-cover object-top sm:aspect-[5/4] lg:aspect-[4/5]",
+            ]}
+          />
+        </div>
+      )}
+      <div>
+        <a href="/blog" class="text-sm font-semibold text-brand-primary hover:underline">
+          ← Blog
+        </a>
+        <p class="mt-5 text-xs font-semibold uppercase tracking-wide text-brand-muted">
+          {formatDate(post.publicatiedatum)}
+          {post.auteurNaam ? ` · Geschreven door ${post.auteurNaam}` : ""}
+        </p>
+        <h1 class="mt-3 text-pretty text-4xl font-bold tracking-tight sm:text-5xl">{post.titel}</h1>
+        {post.excerpt && <p class="mt-5 text-lg leading-relaxed text-brand-muted">{post.excerpt}</p>}
+      </div>
+    </header>
 
-    <a href="/blog" class="mt-12 inline-block font-semibold text-brand-primary hover:underline">
-      ← Terug naar de blog
-    </a>
+    <div class="article-body mx-auto max-w-2xl px-4" set:html={articleHtml} />
+
+    <div class="mx-auto mt-12 max-w-2xl px-4">
+      <a href="/blog" class="inline-block font-semibold text-brand-primary hover:underline">
+        ← Terug naar de blog
+      </a>
+    </div>
+
+    {related.length > 0 && (
+      <aside class="mx-auto mt-16 max-w-6xl px-4">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Meer lezen</h2>
+        <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {related.map((item) => (
+            <BlogPostCard post={item} />
+          ))}
+        </div>
+      </aside>
+    )}
   </article>
 </Layout>
 
@@ -85,7 +172,11 @@ function formatDate(iso: string) {
     text-decoration: underline;
   }
   .article-body :global(img) {
-    margin-top: 1.5em;
-    border-radius: 1rem;
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    width: 100%;
+    border-radius: 1.25rem;
+    object-fit: cover;
+    box-shadow: 0 20px 40px -24px rgb(20 36 51 / 0.45);
   }
 </style>

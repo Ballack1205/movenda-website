@@ -1,0 +1,221 @@
+---
+/**
+ * Quote carousel: one testimonial at a time, photo + quote.
+ * Julie edits the records in Sanity (Getuigenissen); layout stays here.
+ */
+import type { Getuigenis, LocatieSlug } from "../lib/content";
+import { getuigenisPhotoSrc } from "../lib/images";
+
+export interface Props {
+  items: Getuigenis[];
+  title?: string;
+  lang?: "nl" | "en";
+}
+
+const { items, title, lang = "nl" } = Astro.props;
+
+const locatieLabel: Record<string, string> = {
+  olympia: "Olympia",
+  mpc: "MPC",
+  beide: "Olympia & MPC",
+};
+
+function initials(naam: string): string {
+  const parts = naam.trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
+  return naam.slice(0, 2).toUpperCase();
+}
+
+const t = {
+  heading: title || (lang === "en" ? "What our clients say" : "Wat onze cliënten zeggen"),
+  kicker: lang === "en" ? "Testimonials" : "Getuigenissen",
+  prev: lang === "en" ? "Previous quote" : "Vorige getuigenis",
+  next: lang === "en" ? "Next quote" : "Volgende getuigenis",
+  list: lang === "en" ? "Client testimonials" : "Getuigenissen van cliënten",
+  photoSoon: lang === "en" ? "Photo coming soon" : "Foto volgt",
+  slide: (i: number, total: number) =>
+    lang === "en" ? `Quote ${i} of ${total}` : `Getuigenis ${i} van ${total}`,
+};
+
+function locatieTekst(locatie?: LocatieSlug | "beide"): string | undefined {
+  if (!locatie) return undefined;
+  return locatieLabel[locatie];
+}
+---
+
+{items.length > 0 && (
+<section class="py-16">
+  <div class="mx-auto max-w-6xl px-4" data-quote-carousel>
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">{t.kicker}</p>
+        <h2 class="mt-1 text-2xl font-bold sm:text-3xl">{t.heading}</h2>
+      </div>
+      {items.length > 1 && (
+        <div class="hidden gap-2 sm:flex" data-carousel-controls>
+          <button
+            type="button"
+            data-carousel-prev
+            aria-label={t.prev}
+            class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand-border bg-white text-brand-text transition hover:border-brand-primary hover:text-brand-primary disabled:cursor-default disabled:opacity-30 disabled:hover:border-brand-border disabled:hover:text-brand-text"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m15 6-6 6 6 6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            data-carousel-next
+            aria-label={t.next}
+            class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-brand-border bg-white text-brand-text transition hover:border-brand-primary hover:text-brand-primary disabled:cursor-default disabled:opacity-30 disabled:hover:border-brand-border disabled:hover:text-brand-text"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m9 6 6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      )}
+    </div>
+
+    <div
+      class="quote-strip mt-8 flex snap-x snap-mandatory overflow-x-auto scroll-smooth"
+      data-carousel-track
+      aria-label={t.list}
+      tabindex="0"
+    >
+      {items.map((item, index) => {
+        const plaats = locatieTekst(item.locatie);
+        const meta = [item.rol, plaats].filter(Boolean).join(" · ");
+        return (
+          <article
+            class="grid w-full min-w-full shrink-0 snap-start gap-6 rounded-3xl bg-brand-surface p-5 shadow-sm ring-1 ring-brand-border sm:gap-8 sm:p-8 lg:grid-cols-[16.5rem_minmax(0,1fr)] lg:items-center lg:gap-12 lg:p-10"
+            data-carousel-slide
+            aria-roledescription="slide"
+            aria-label={t.slide(index + 1, items.length)}
+          >
+            <div class="relative mx-auto aspect-[3/4] w-44 overflow-hidden rounded-2xl bg-brand-header sm:w-52 lg:mx-0 lg:w-full">
+              {item.foto ? (
+                <img
+                  src={getuigenisPhotoSrc(item.foto)}
+                  alt={item.naam}
+                  width="528"
+                  height="704"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  class="h-full w-full object-cover object-top"
+                />
+              ) : (
+                <div class="flex h-full w-full flex-col items-center justify-center gap-3 px-4 text-center">
+                  <span class="flex h-16 w-16 items-center justify-center rounded-full bg-white/10 text-xl font-bold text-white">
+                    {initials(item.naam)}
+                  </span>
+                  <span class="text-xs font-medium text-white/70">{t.photoSoon}</span>
+                </div>
+              )}
+            </div>
+
+            <div class="flex min-h-[14rem] flex-col justify-center text-center lg:min-h-0 lg:text-left">
+              <svg
+                class="mx-auto h-10 w-10 text-brand-primary/25 lg:mx-0"
+                viewBox="0 0 48 48"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path d="M18.5 38H6.8L16 10h12.2L18.5 38Zm22.7 0H29.5L38.7 10H51l-9.8 28Z" transform="translate(-6 -8)" />
+              </svg>
+              <blockquote class="mt-3 text-xl font-medium leading-relaxed text-brand-text sm:text-2xl">
+                <p>“{item.tekst}”</p>
+              </blockquote>
+              <footer class="mt-6">
+                <p class="font-heading text-base font-semibold text-brand-text">{item.naam}</p>
+                {meta && <p class="mt-1 text-sm text-brand-muted">{meta}</p>}
+              </footer>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    {items.length > 1 && (
+      <div class="mt-6 flex items-center justify-center gap-2" data-carousel-dots role="tablist" aria-label={t.list}>
+        {items.map((item, index) => (
+          <button
+            type="button"
+            role="tab"
+            data-carousel-dot
+            data-index={index}
+            aria-label={t.slide(index + 1, items.length)}
+            aria-selected={index === 0 ? "true" : "false"}
+            class="h-2.5 w-2.5 rounded-full bg-brand-border transition aria-selected:w-7 aria-selected:bg-brand-primary"
+          ></button>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+)}
+
+<style>
+  .quote-strip {
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .quote-strip::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
+<script>
+  function setup(root: HTMLElement) {
+    const track = root.querySelector<HTMLElement>("[data-carousel-track]");
+    const prev = root.querySelector<HTMLButtonElement>("[data-carousel-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-carousel-next]");
+    const dots = [...root.querySelectorAll<HTMLButtonElement>("[data-carousel-dot]")];
+    if (!track) return;
+
+    const slideWidth = () => track.clientWidth;
+
+    const currentIndex = () => {
+      const w = slideWidth();
+      if (w <= 0) return 0;
+      return Math.round(track.scrollLeft / w);
+    };
+
+    const goTo = (index: number) => {
+      const max = Math.max(0, track.querySelectorAll("[data-carousel-slide]").length - 1);
+      const nextIndex = Math.max(0, Math.min(max, index));
+      track.scrollTo({ left: nextIndex * slideWidth(), behavior: "smooth" });
+    };
+
+    const update = () => {
+      const index = currentIndex();
+      const max = track.scrollWidth - track.clientWidth;
+      if (prev) prev.disabled = track.scrollLeft <= 1;
+      if (next) next.disabled = track.scrollLeft >= max - 1;
+      dots.forEach((dot, i) => {
+        dot.setAttribute("aria-selected", i === index ? "true" : "false");
+      });
+    };
+
+    prev?.addEventListener("click", () => goTo(currentIndex() - 1));
+    next?.addEventListener("click", () => goTo(currentIndex() + 1));
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => goTo(Number(dot.dataset.index)));
+    });
+    track.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    track.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        goTo(currentIndex() - 1);
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        goTo(currentIndex() + 1);
+      }
+    });
+    update();
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-quote-carousel]").forEach(setup);
+</script>

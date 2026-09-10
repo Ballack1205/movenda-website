@@ -1,0 +1,173 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import {
+  getPrijzenByCategorie,
+  getSiteSettings,
+  getTeamleden,
+  getLocatieBySlug,
+  formatPrijs,
+  formatEuro,
+  type Prijsitem,
+} from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const settings = await getSiteSettings();
+const info = settings.prijzenInfo;
+const mpc = await getPrijzenByCategorie("mpc");
+const screening = await getPrijzenByCategorie("screening");
+const coaches = (await getTeamleden()).filter(
+  (t) => t.locaties.includes("mpc") && (t.tariefPtMpc || t.tariefPerformance),
+);
+const showPerformance = coaches.some((t) => t.tariefPerformance);
+
+const GROEP = /10 lessen|small group|boxing|corporate/i;
+const REHAB = /sportrevalidatie|manuele|oefentherapie|pre- en postnatale/i;
+
+const groep = mpc.filter((p) => GROEP.test(p.naam));
+const rehab = mpc.filter((p) => REHAB.test(p.naam));
+const training = mpc.filter((p) => !GROEP.test(p.naam) && !REHAB.test(p.naam));
+
+const sections: { title: string; items: Prijsitem[] }[] = [
+  { title: "Training", items: training },
+  { title: "Sportrevalidatie", items: rehab },
+  { title: "Groepslessen", items: groep },
+  { title: "Screening & data", items: screening },
+].filter((s) => s.items.length > 0);
+
+/** Drop internal Julie notes and copy already stated in the page intro. */
+function publicNote(notitie?: string): string | undefined {
+  if (!notitie) return undefined;
+  const text = notitie
+    .split("·")
+    .map((part) => part.trim())
+    .filter(
+      (part) =>
+        part &&
+        !/^Julie:/i.test(part) &&
+        !/^ex BTW( bij MPC)?$/i.test(part) &&
+        !/^enkel op afspraak$/i.test(part),
+    )
+    .join(" · ");
+  return text || undefined;
+}
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Movenda Performance Centre", path: "/mpc" },
+    { name: "Prijzen", path: "/mpc/prijzen" },
+  ]),
+];
+---
+
+<Layout
+  title="Prijzen | Movenda Performance Centre"
+  description="Tarieven van het Movenda Performance Centre in Kuringen: personal training, sportrevalidatie, groepslessen en screening. Exclusief BTW, enkel op afspraak."
+  path="/mpc/prijzen"
+  brand="mpc"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">MPC</p>
+    <h1 class="mt-2 text-3xl font-bold">Prijzen</h1>
+    <p class="mt-3 max-w-2xl text-brand-muted">
+      {info.exBtwMpc !== false
+        ? "Alle prijzen zijn exclusief BTW, enkel op afspraak. Je ontvangt een factuur na een aantal sessies."
+        : "Enkel op afspraak. Je ontvangt een factuur na een aantal sessies."}
+    </p>
+
+    {sections.map((section) => (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">{section.title}</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <tbody>
+              {section.items.map((item, i) => {
+                const note = publicNote(item.notitie);
+                return (
+                  <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                    <td class="px-4 py-3">
+                      {item.naam}
+                      {note && <span class="block text-xs text-brand-muted">{note}</span>}
+                    </td>
+                    <td class="px-4 py-3 text-right font-semibold whitespace-nowrap text-brand-primary">
+                      {formatPrijs(item)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ))}
+
+    {coaches.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Tarieven per coach</h2>
+        <div class="mt-4 overflow-x-auto rounded-2xl border border-brand-border">
+          <table class="w-full min-w-[28rem] text-left text-sm">
+            <thead class="bg-brand-surface text-brand-muted">
+              <tr>
+                <th class="px-4 py-2 font-medium">Coach</th>
+                <th class="px-4 py-2 text-right font-medium">Personal training</th>
+                {showPerformance && (
+                  <th class="px-4 py-2 text-right font-medium">High performance</th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {coaches.map((lid) => (
+                <tr class="border-t border-brand-border">
+                  <td class="px-4 py-3">
+                    <a href={`/team/${lid.slug}`} class="font-medium hover:text-brand-primary">
+                      {lid.voornaam} {lid.naam}
+                    </a>
+                    {lid.rol && <span class="text-brand-muted"> — {lid.rol}</span>}
+                  </td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">
+                    {formatEuro(lid.tariefPtMpc) || "—"}
+                  </td>
+                  {showPerformance && (
+                    <td class="px-4 py-3 text-right font-semibold text-brand-primary">
+                      {formatEuro(lid.tariefPerformance) || "—"}
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    <div class="mt-12 rounded-2xl border border-brand-border bg-brand-surface p-6">
+      {info.annulatiebeleid && (
+        <p class="text-sm text-brand-muted">
+          <strong>Annulatie:</strong> {info.annulatiebeleid}
+        </p>
+      )}
+      <p class="mt-4 text-sm text-brand-muted">
+        Kinesitherapie in de praktijk (Olympia) en terugbetaling via het ziekenfonds staan op de
+        {" "}
+        <a href="/prijzen" class="font-medium text-brand-primary hover:underline">tarievenpagina van Movenda</a>.
+      </p>
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-3">
+      <a
+        href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`}
+        class="rounded-full bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-primary-dark"
+      >
+        Bel {locatie.telefoon}
+      </a>
+      <a
+        href="/contact"
+        class="rounded-full border border-brand-border px-6 py-3 text-sm font-semibold text-brand-text transition hover:border-brand-primary"
+      >
+        Contacteer ons
+      </a>
+    </div>
+  </section>
+</Layout>

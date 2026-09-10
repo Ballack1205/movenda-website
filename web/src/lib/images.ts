@@ -4,10 +4,22 @@
 
 export type TeamPhotoVariant = "card" | "detail" | "face";
 
+export function blogPhotoSrc(src: string, variant: "card" | "hero" | "inline" = "card"): string {
+  if (src.startsWith("/")) return src;
+  if (variant === "hero") return `${src}?w=1400&h=900&fit=max&auto=format`;
+  if (variant === "inline") return `${src}?w=960&h=720&fit=max&auto=format`;
+  return `${src}?w=1100&h=1400&fit=max&auto=format`;
+}
+
 export function dienstPhotoSrc(src: string, variant: "card" | "hero" | "gallery" = "card"): string {
   if (variant === "hero") return `${src}?w=960&h=640&fit=max&auto=format`;
   if (variant === "gallery") return `${src}?w=720&h=540&fit=crop&auto=format`;
   return `${src}?w=800&h=500&fit=crop&auto=format`;
+}
+
+export function getuigenisPhotoSrc(foto: string): string {
+  if (foto.startsWith("/")) return foto;
+  return `${foto}?w=720&h=960&fit=crop&crop=focalpoint&auto=format`;
 }
 
 export function teamPhotoSrc(foto: string, variant: TeamPhotoVariant = "card"): string {
