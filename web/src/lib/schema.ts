@@ -12,7 +12,7 @@ export function organizationSchema() {
     "@type": "Organization",
     name: "Movenda",
     url: SITE_URL,
-    logo: `${SITE_URL}/brand/logo-m.png`,
+    logo: `${SITE_URL}/brand/logo-square.png`,
   };
 }
 
