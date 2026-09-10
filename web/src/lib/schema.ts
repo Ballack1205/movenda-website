@@ -6,7 +6,16 @@
 //
 // See DECISIONS.md for why there is no AggregateRating here — reviews are
 // shown as a badge linking to Google, not as self-reported schema.
-import type { BlogPost, Dienst, Faq, Locatie, Prijsitem, SiteSettings, Teamlid } from "./content";
+import {
+  dienstSeoDescriptionEn,
+  type BlogPost,
+  type Dienst,
+  type Faq,
+  type Locatie,
+  type Prijsitem,
+  type SiteSettings,
+  type Teamlid,
+} from "./content";
 import { SITE_URL, absoluteUrl } from "./site";
 
 export type JsonLdNode = Record<string, unknown>;
@@ -111,7 +120,7 @@ export function localBusinessNode(locatie: Locatie): JsonLdNode {
   const isMpc = locatie.brand === "mpc";
   const adres = parseAdres(locatie.adres);
   return compact({
-    "@type": isMpc ? ["SportsActivityLocation", "HealthAndBeautyBusiness"] : ["MedicalBusiness", "Physiotherapy"],
+    "@type": isMpc ? ["SportsActivityLocation", "HealthAndBeautyBusiness"] : "MedicalBusiness",
     "@id": ids.locatie(locatie.slug),
     name: locatie.naam,
     description: locatie.type,
@@ -217,7 +226,7 @@ export function serviceNode(dienst: Dienst, locatie: Locatie, opts: ServiceNodeO
     "@id": ids.service(opts.path),
     name: naam,
     serviceType: naam.replace(/ Hasselt$/, ""),
-    description: lang === "en" ? dienst.seoDescriptionEn || dienst.seoDescription : dienst.seoDescription,
+    description: lang === "en" ? dienstSeoDescriptionEn(dienst) : dienst.seoDescription,
     url,
     inLanguage: lang === "en" ? "en" : "nl-BE",
     image: absoluteUrl(dienst.afbeelding ? dienst.afbeelding.startsWith("http") ? `${dienst.afbeelding}?w=1200&h=630&fit=crop&auto=format` : dienst.afbeelding : undefined),

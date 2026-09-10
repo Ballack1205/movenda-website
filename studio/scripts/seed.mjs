@@ -216,6 +216,7 @@ async function seedPrijzen() {
       vanaf: item.vanaf,
       opAanvraag: item.opAanvraag,
       notitie: item.notitie,
+      interneNotitie: item.interneNotitie,
       volgorde: item.volgorde,
     });
   }
@@ -335,8 +336,7 @@ async function seedBlogPosts() {
   const posts = readJson("blog.json");
   for (const post of posts) {
     const id = `blogPost-${post.slug}`;
-    const existing = await client.getDocument(id).catch(() => null);
-    await client.createOrReplace({
+    await client.createIfNotExists({
       _id: id,
       _type: "blogPost",
       titel: post.titel,
@@ -349,11 +349,9 @@ async function seedBlogPosts() {
       publicatiedatum: post.publicatiedatum,
       tags: post.tags,
       seoTitle: post.seoTitle,
-      ...(existing?.cover ? { cover: existing.cover } : {}),
-      ...(existing?.coverFit ? { coverFit: existing.coverFit } : {}),
     });
   }
-  console.log(`Seeded ${posts.length} blogposts.`);
+  console.log(`Ensured ${posts.length} seed blogposts exist (existing CMS records were left untouched).`);
 }
 
 await seedTeam();

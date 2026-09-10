@@ -24,7 +24,19 @@ export default defineType({
     defineField({ name: "eenheid", title: "Eenheid (bv. '30 min')", type: "string" }),
     defineField({ name: "vanaf", title: "\"Vanaf\"-prijs (kan variëren per therapeut)", type: "boolean", initialValue: true }),
     defineField({ name: "opAanvraag", title: "Prijs op aanvraag (negeert bedrag)", type: "boolean", initialValue: false }),
-    defineField({ name: "notitie", title: "Noot (bv. ex BTW, 10 lessen)", type: "string" }),
+    defineField({
+      name: "notitie",
+      title: "Publieke noot (bv. ex BTW, 10 lessen)",
+      type: "string",
+      description: "Verschijnt op de website en in zoekmachine-/AI-data. Zet interne opmerkingen hieronder.",
+    }),
+    defineField({
+      name: "interneNotitie",
+      title: "Interne notitie",
+      type: "text",
+      rows: 2,
+      description: "Alleen zichtbaar in Sanity; wordt nooit naar de publieke website gestuurd.",
+    }),
     defineField({ name: "volgorde", title: "Volgorde", type: "number", initialValue: 0 }),
   ],
   orderings: [

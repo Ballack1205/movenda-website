@@ -1,5 +1,18 @@
 import { defineField, defineType } from "sanity";
 
+const BLOG_TAGS = [
+  { title: "Rugpijn", value: "rugpijn" },
+  { title: "Nekpijn", value: "nekpijn" },
+  { title: "Sportblessures", value: "sportblessures" },
+  { title: "Training", value: "training" },
+  { title: "Herstel", value: "herstel" },
+  { title: "Preventie", value: "preventie" },
+  { title: "Hitte", value: "hitte" },
+  { title: "Mentale training", value: "mentale-training" },
+] as const;
+
+const BLOG_TAG_VALUES = new Set<string>(BLOG_TAGS.map((tag) => tag.value));
+
 export default defineType({
   name: "blogPost",
   title: "Blogpost",
@@ -68,20 +81,17 @@ export default defineType({
       type: "array",
       of: [{ type: "string" }],
       options: {
-        list: [
-          { title: "Rugpijn", value: "rugpijn" },
-          { title: "Nekpijn", value: "nekpijn" },
-          { title: "Sportblessures", value: "sportblessures" },
-          { title: "Training", value: "training" },
-          { title: "Herstel", value: "herstel" },
-          { title: "Preventie", value: "preventie" },
-          { title: "Hitte", value: "hitte" },
-          { title: "Mentale training", value: "mentale-training" },
-        ],
+        list: [...BLOG_TAGS],
         layout: "tags",
       },
       description:
         "Kies uit de lijst. Zelfde tags koppelen artikelen onderaan (‘Meer lezen’). Tag-pagina’s komen later.",
+      validation: (Rule) =>
+        Rule.custom((tags) => {
+          if (!tags) return true;
+          const unknown = tags.filter((tag) => !BLOG_TAG_VALUES.has(tag));
+          return unknown.length ? `Onbekende tag(s): ${unknown.join(", ")}. Kies tags uit de lijst.` : true;
+        }),
     }),
     defineField({
       name: "seoTitle",
