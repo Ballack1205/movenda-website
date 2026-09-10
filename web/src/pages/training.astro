@@ -7,12 +7,42 @@ import { breadcrumbSchema, localBusinessSchema } from "../lib/schema";
 const locatie = (await getLocatieBySlug("olympia"))!;
 
 const trainingen = [
-  { naam: "Personal Training", tekst: "1-op-1 training gericht op jouw doelen: kracht, conditie of afvallen." },
-  { naam: "Duotraining", tekst: "Train samen met een vriend of partner, begeleid door één trainer." },
-  { naam: "Sportspecifieke screening", tekst: "Uitgebreide test om gebreken of disbalans preventief op te sporen." },
-  { naam: "Sportspecifieke training", tekst: "Training afgestemd op de bewegingen en eisen van jouw sport." },
-  { naam: "Inspanningstesten", tekst: "Test op fiets, roeier of loopband, met of zonder lactaatmeting." },
-  { naam: "Pre- en postnatale training", tekst: "Training voor en na de bevalling, begeleid door een gespecialiseerde kinesist." },
+  {
+    naam: "Personal Training",
+    tekst: "Eén-op-één trainingen waarin we samen de uitdaging aangaan om jouw persoonlijke doelstellingen (spierontwikkeling, conditietraining, afslanken, ...) te bereiken.",
+  },
+  {
+    naam: "Duotraining",
+    tekst: "Bij een duotraining werken jullie met 2 aan jullie persoonlijke doelstellingen — een training waarbij zweet en fun centraal staan. Een gespecialiseerde kinesitherapeut staat een heel uur voor jullie klaar en begeleidt enkel jullie 2.",
+  },
+  {
+    naam: "Sportspecifieke screening",
+    tekst: "Een uitgebreide test waarbij we sporters preventief bekijken om gebreken of disbalans vast te stellen. Aan de hand van deze screening wordt een schema opgemaakt, zodat trainingen progressief opgebouwd worden en de kans op blessures verkleint.",
+  },
+  {
+    naam: "Sportspecifieke training",
+    tekst: "Naast globale oefeningen trainen we specifiek op spiergroepen, reactiesnelheid of evenwicht binnen jouw eigen sport — preventief of tijdens revalidatie.",
+  },
+  {
+    naam: "Inspanningstesten",
+    tekst: "Inspanningstesten met of zonder lactaatmeting, op de fiets, roei-ergometer of loopband. Aan de hand van je lactaatwaarden en hartslag bepalen we jouw conditie en stellen we een specifiek programma op.",
+  },
+  {
+    naam: "Pre- en postnatale training",
+    tekst: "Eén-op-één sporttrainingen voor (prenataal) en na de bevalling (postnataal) bij een gespecialiseerde kinesist, inclusief ademhalingsoefeningen en begeleiding bij pijn- of incontinentieklachten.",
+  },
+  {
+    naam: "Training aan huis",
+    tekst: "Liever thuis trainen? Ook dat kan, volledig op maat van jouw ruimte en doelen.",
+  },
+];
+
+const doelgroepen = [
+  "Recreatieve sporters",
+  "Topsporters & atleten",
+  "Mensen in revalidatie",
+  "Zwangere vrouwen & jonge mama's",
+  "Iedereen die gezonder wil bewegen",
 ];
 
 const jsonLd = [
@@ -32,6 +62,12 @@ const jsonLd = [
 >
   <section class="mx-auto max-w-4xl px-4 py-12">
     <h1 class="text-3xl font-bold">Personal Training Hasselt</h1>
+    <p class="mt-3 max-w-2xl text-brand-muted">
+      We hebben verschillende soorten trainingen waarin we samen de uitdaging aangaan om jouw
+      persoonlijke doelstellingen (spierontwikkeling, afslanken en conditietraining) te bereiken.
+      Een PT-sessie duurt minimaal een uur, maar kan zeker ook langer — alles wordt afgestemd op
+      wat jij wil!
+    </p>
     <p class="mt-3 max-w-2xl text-brand-muted">
       Bij Movenda train je onder begeleiding van een personal trainer die ook kinesitherapeut is.
       Jouw schema wordt niet alleen afgestemd op je doelen, maar ook op je lichaam, beperkingen en
@@ -56,7 +92,16 @@ const jsonLd = [
       ))}
     </div>
 
-    <p class="mt-8 text-sm text-brand-muted">
+    <h2 class="mt-12 text-xl font-bold">Voor wie?</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {doelgroepen.map((d) => (
+        <span class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text">
+          {d}
+        </span>
+      ))}
+    </div>
+
+    <p class="mt-10 text-sm text-brand-muted">
       Voor performance training en topsportbegeleiding: bekijk het{" "}
       <a href="/mpc" class="font-semibold text-brand-primary hover:underline">Movenda Performance Centre</a>.
     </p>

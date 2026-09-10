@@ -11,6 +11,14 @@ const mpc = locaties.find((l) => l.slug === "mpc")!;
 const team = await getTeamleden();
 const settings = await getSiteSettings();
 
+// Stat badges (see movenda.be homepage: "13 Kinesisten · 5 Personal trainers ·
+// 2 Vestigingen · 10+ Jaar ervaring"). Computed from real team data instead
+// of hardcoded, so the count stays correct as Julie adds/removes teamleden.
+const kinesistenCount = team.filter((t) => t.rol.toLowerCase().includes("kinesitherapeut")).length;
+const trainerCount = team.filter(
+  (t) => t.rol.toLowerCase().includes("trainer") || t.rol.toLowerCase().includes("coach"),
+).length;
+
 const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusinessSchema(mpc)];
 ---
 
@@ -29,9 +37,17 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
       Bewegen, herstellen en presteren in Hasselt
     </h1>
     <p class="mx-auto mt-4 max-w-2xl text-lg text-brand-muted">
-      Met een team van {team.length}+ kinesisten en trainers begeleiden we jou bij herstel,
-      blessurepreventie en een gezonde, actieve levensstijl — medisch verantwoord en volledig op maat.
+      Sportpraktijk Movenda is dé plaats voor kinesitherapie en personal training in Hasselt. Met
+      een team van {kinesistenCount} kinesisten en {trainerCount} personal trainers begeleiden we
+      jou bij herstel, blessurepreventie en een gezonde, actieve levensstijl — medisch verantwoord
+      en volledig op maat.
     </p>
+    <div class="mx-auto mt-6 flex max-w-2xl flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm font-semibold text-brand-muted">
+      <span>{kinesistenCount} Kinesisten</span>
+      <span>{trainerCount} Personal trainers</span>
+      <span>{locaties.length} Vestigingen</span>
+      <span>10+ Jaar ervaring</span>
+    </div>
     <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
       <a
         href={`tel:${settings.telefoonOlympia.replace(/\s+/g, "")}`}

@@ -7,6 +7,11 @@ import { localBusinessSchema, breadcrumbSchema } from "../../lib/schema";
 const diensten = await getDienstenByCategorie("mpc");
 const locatie = (await getLocatieBySlug("mpc"))!;
 
+// Extra programma's van het echte MPC-aanbod die (nog) geen eigen CMS-dienst
+// hebben — zie movenda.be homepage. Zodra Julie hierover meer copy heeft,
+// verdienen deze een volwaardige `dienst`-record in de Studio.
+const extraProgrammas = ["Boxing", "Corporate coaching", "HIIT & Full Body", "PowerPlus & Running", "SkiFit", "Data-analyse"];
+
 const jsonLd = [
   localBusinessSchema(locatie),
   breadcrumbSchema([
@@ -60,9 +65,14 @@ const jsonLd = [
         </a>
       ))}
     </div>
-    <p class="mt-6 text-sm" style="color:#a3aab0;">
-      Meer diensten (small group training, boxing, corporate coaching, HIIT, SkiFit, running,
-      PowerPlus) volgen in de volgende fase.
-    </p>
+
+    <h2 class="mt-12 text-xl font-bold">Nog meer programma's</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {extraProgrammas.map((p) => (
+        <span class="rounded-full border px-4 py-1.5 text-sm" style="border-color:#262b2f; color:#a3aab0;">
+          {p}
+        </span>
+      ))}
+    </div>
   </section>
 </Layout>

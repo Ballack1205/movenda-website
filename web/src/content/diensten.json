@@ -5,8 +5,9 @@
     "titel": "Performance training Hasselt",
     "titelEn": "Performance training Hasselt",
     "intro": "Voor (semi-)professionele sporters die hun volledige atletische potentieel willen ontwikkelen.",
-    "body": "Performance training is gericht op (semi-)professionele sporters die hun volledige atletisch potentieel willen ontwikkelen. We combineren de nieuwste toestellen met evidence-based trainingsmethodes en systematische data-analyse. Om een traject te starten voeren we een reeks testen uit om de baseline van de sporter te bepalen. Eens de baseline vastligt, stellen we een individueel programma op dat zich richt op twee zaken: het risico op blessures minimaliseren en de prestaties van de sporter verbeteren. Doorheen het volledige programma wordt de sporter getest, zodat we de vooruitgang kunnen opvolgen en het programma kunnen bijsturen.",
-    "seoTitle": "Performance training Hasselt | Movenda Performance Centre",
+        "body": "Performance training is gericht op (semi-)professionele sporters die hun volledige atletisch potentieel willen ontwikkelen. We combineren de nieuwste toestellen met evidence-based trainingsmethodes en systematische data-analyse. Om een traject te starten voeren we een reeks testen uit om de baseline van de sporter te bepalen. Eens de baseline vastligt, stellen we een individueel programma op dat zich richt op twee zaken: het risico op blessures minimaliseren en de prestaties van de sporter verbeteren. Doorheen het volledige programma wordt de sporter getest, zodat we de vooruitgang kunnen opvolgen en het programma kunnen bijsturen.",
+        "bodyEn": "Performance training specializes in (professional) athletes that seek to develop their full athletic potential. We combine the latest equipment with evidence-based training methods and systematic data analysis. We have a unique approach utilizing both objective and standardized tests — our test-retest strategy allows us to monitor progression and adjust the load at every point during the trajectory.",
+        "seoTitle": "Performance training Hasselt | Movenda Performance Centre",
     "seoDescription": "Data-gedreven performance training in Hasselt/Kuringen voor (semi-)professionele sporters. Objectieve testen, individueel programma, meetbare progressie.",
     "gekoppeldeTeamleden": ["cedriek-swinnen", "yannick-glorieux"]
   },
@@ -17,8 +18,21 @@
     "titelEn": "Sports injury rehabilitation Hasselt",
     "intro": "Data-gedreven kinesitherapie die je begeleidt door elke fase van herstel na een sportblessure of operatie.",
     "body": "Onze data-gedreven aanpak van kinesitherapie begeleidt je door elke fase van het revalidatieproces voor een optimaal en snel herstel na orthopedische blessures of operaties. Tijdens een intakegesprek verzamelen we data via anamnese, klinisch onderzoek en functionele testen. Deze data laat ons toe een nauwkeurige inschatting te maken van de ernst van de blessure en de prognose voor terugkeer naar sport. Tijdens de revalidatie blijven we objectieve data gebruiken via gestandaardiseerde testen om inzicht te krijgen in je toestand, sterktes en werkpunten. Deze test-retest strategie laat ons toe je vooruitgang in concrete cijfers te meten.",
+    "bodyEn": "Our data-driven approach to physiotherapy will guide you through every stage of the rehabilitation process for optimal and fast recovery following orthopedic injuries or surgery. During an intake meeting we collect data through anamnesis, clinical investigation, and functional tests. Throughout the rehabilitation we keep using objective, standardized tests to understand your condition, strengths and points for improvement — our test-retest strategy lets us measure your progress in concrete numbers.",
     "seoTitle": "Sportrevalidatie Hasselt | Movenda Performance Centre",
     "seoDescription": "Sportrevalidatie in Hasselt/Kuringen na blessure of operatie: data-gedreven, één-op-één, functionele en sportspecifieke aanpak.",
     "gekoppeldeTeamleden": ["andres-ruttens", "arne-daniels", "jens-hendrickx"]
+  },
+  {
+    "slug": "kleine-groepstraining",
+    "categorie": "mpc",
+    "titel": "Kleine groepstraining",
+    "titelEn": "Small group training",
+    "intro": "Trainen in groep, met maximaal 8 personen per les voor optimale persoonlijke opvolging.",
+    "body": "Al onze groepslessen bij het Movenda Performance Centre zijn kleine groepstrainingen. Dat betekent maximaal 8 personen per groep, zodat de kwaliteit en de individuele opvolging van elke les optimaal blijft. Klaar om het beste uit jezelf te halen?",
+    "bodyEn": "All our group classes are small group training sessions. This means there are a maximum of 8 people in a group to ensure the quality and follow-up of the lesson is optimal. Are you ready to bring out the best in yourself?",
+    "seoTitle": "Kleine groepstraining Hasselt | Movenda Performance Centre",
+    "seoDescription": "Groepstrainingen bij het Movenda Performance Centre in Kuringen: maximaal 8 personen per groep voor optimale begeleiding.",
+    "gekoppeldeTeamleden": ["charlotte-vorstenbosch"]
   }
 ]

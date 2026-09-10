@@ -7,6 +7,15 @@ import { breadcrumbSchema, localBusinessSchema } from "../lib/schema";
 const locatie = (await getLocatieBySlug("olympia"))!;
 const team = await getTeamledenByLocatie("olympia");
 
+const klachten = [
+  "Rug- en nekklachten",
+  "Sportblessures & sportrevalidatie",
+  "Postoperatieve revalidatie",
+  "Pre- en postnatale klachten",
+  "Cardiovasculaire revalidatie",
+  "Chronische pijn",
+];
+
 const behandelingen = [
   { naam: "Manuele therapie", tekst: "Hands-on technieken om gewrichten en spieren te mobiliseren." },
   { naam: "Oefentherapie", tekst: "Actieve, opbouwende oefeningen die je zelf verder zet." },
@@ -15,6 +24,7 @@ const behandelingen = [
   { naam: "Dry needling", tekst: "Naaldtherapie tegen spanning en triggerpoints." },
   { naam: "Acupunctuur", tekst: "Traditionele naaldtechniek, aanvullend op kinesitherapie." },
   { naam: "Auriculotherapie", tekst: "Acupunctuur via specifieke punten op het oor." },
+  { naam: "Cupping", tekst: "Cuptherapie ter ondersteuning van spierherstel en doorbloeding." },
   { naam: "Taping", tekst: "Ondersteunende tape bij overbelasting of instabiliteit." },
 ];
 
@@ -37,8 +47,14 @@ const jsonLd = [
     <h1 class="text-3xl font-bold">Kinesitherapie Hasselt</h1>
     <p class="mt-3 max-w-2xl text-brand-muted">
       Bij Movenda in Hasselt vind je een team van {team.length}+ ervaren kinesisten die je
-      begeleiden bij uiteenlopende spier- en gewrichtsklachten. Elke behandeling duurt 30 minuten
-      één-op-één, waarna je extra tijd krijgt om je oefeningen zelfstandig verder te zetten.
+      begeleiden bij uiteenlopende spier- en gewrichtsklachten. Of je nu last hebt van rugpijn,
+      herstelt na een blessure of een operatie, of gewoon pijnvrij wil bewegen — onze
+      kinesitherapeuten stellen een behandeling op maat voor jou op.
+    </p>
+    <p class="mt-3 max-w-2xl text-brand-muted">
+      Wij combineren klassieke kinesitherapie met de nieuwste technieken en inzichten. Elke
+      behandeling duurt 30 minuten één-op-één, waarna je extra tijd krijgt om je oefeningen
+      zelfstandig verder te zetten. Zo werk jij actief mee aan je eigen herstel.
     </p>
     <div class="mt-6 flex flex-wrap items-center gap-3">
       <a
@@ -50,10 +66,20 @@ const jsonLd = [
       <GoogleReviewBadge locatie="olympia" />
     </div>
 
-    <div class="mt-10 grid gap-4 sm:grid-cols-2">
+    <h2 class="mt-12 text-xl font-bold">Klachten die we behandelen</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {klachten.map((k) => (
+        <span class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text">
+          {k}
+        </span>
+      ))}
+    </div>
+
+    <h2 class="mt-10 text-xl font-bold">Onze behandeltechnieken</h2>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
       {behandelingen.map((b) => (
         <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
-          <h2 class="font-semibold">{b.naam}</h2>
+          <h3 class="font-semibold">{b.naam}</h3>
           <p class="mt-1 text-sm text-brand-muted">{b.tekst}</p>
         </div>
       ))}
