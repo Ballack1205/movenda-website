@@ -1,0 +1,57 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getTeamleden, getTeamlidBySlug } from "../../lib/content";
+import { personSchema, breadcrumbSchema } from "../../lib/schema";
+
+export function getStaticPaths() {
+  return getTeamleden().map((lid) => ({ params: { slug: lid.slug } }));
+}
+
+const { slug } = Astro.params;
+const lid = getTeamlidBySlug(slug!);
+
+if (!lid) {
+  return Astro.redirect("/team");
+}
+
+const jsonLd = [
+  personSchema(lid),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Team", path: "/team" },
+    { name: `${lid.voornaam} ${lid.naam}`, path: `/team/${lid.slug}` },
+  ]),
+];
+---
+
+<Layout
+  title={`${lid.voornaam} ${lid.naam} — ${lid.rol} | Movenda`}
+  description={lid.bio.slice(0, 155)}
+  path={`/team/${lid.slug}`}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12">
+    <a href="/team" class="text-sm font-medium text-brand-primary hover:underline">← Terug naar team</a>
+    <h1 class="mt-4 text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
+    <p class="mt-1 text-lg font-medium text-brand-primary">{lid.rol}</p>
+
+    <p class="mt-6 text-brand-muted">{lid.bio}</p>
+
+    {lid.specialisaties.length > 0 && (
+      <div class="mt-8">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Specialisaties</h2>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {lid.specialisaties.map((s) => (
+            <li class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-text">{s}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <p class="mt-8">
+      <a href={`mailto:${lid.email}`} class="font-semibold text-brand-primary hover:underline">
+        {lid.email}
+      </a>
+    </p>
+  </article>
+</Layout>

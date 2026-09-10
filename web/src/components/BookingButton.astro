@@ -1,0 +1,29 @@
+---
+// Booking button — prepared but OFF by default (DECISIONS.md: booking).
+// Movenda flips `booking.enabled` to true in siteSettings once they pick a
+// scheduler (Progenda / Doctena / Introlution / other). Until then this
+// component renders nothing here and a "Bel of contacteer ons" CTA is used
+// instead on pages that need a primary action.
+import { getSiteSettings } from "../lib/content";
+
+export interface Props {
+  size?: "sm" | "md";
+  class?: string;
+}
+
+const { size = "md", class: className = "" } = Astro.props;
+const settings = getSiteSettings();
+const { booking } = settings;
+
+const sizeClasses = size === "sm" ? "px-3 py-1.5 text-sm" : "px-5 py-2.5 text-base";
+---
+
+{booking.enabled && booking.url && (
+  <a
+    href={booking.url}
+    class={`rounded-full bg-brand-primary font-semibold text-white transition hover:bg-brand-primary-dark ${sizeClasses} ${className}`}
+    data-cta="booking"
+  >
+    {booking.label}
+  </a>
+)}

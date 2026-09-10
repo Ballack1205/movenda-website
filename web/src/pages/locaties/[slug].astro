@@ -1,0 +1,85 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
+import { getLocaties, getLocatieBySlug, getTeamledenByLocatie } from "../../lib/content";
+import { localBusinessSchema, breadcrumbSchema } from "../../lib/schema";
+
+export function getStaticPaths() {
+  return getLocaties().map((locatie) => ({ params: { slug: locatie.slug } }));
+}
+
+const { slug } = Astro.params as { slug: "olympia" | "mpc" };
+const locatie = getLocatieBySlug(slug)!;
+const team = getTeamledenByLocatie(slug);
+const brand = locatie.brand === "mpc" ? "mpc" : "movenda";
+
+const jsonLd = [
+  localBusinessSchema(locatie),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: locatie.naam, path: `/locaties/${locatie.slug}` },
+  ]),
+];
+---
+
+<Layout
+  title={`${locatie.naam} | ${locatie.type} | Movenda`}
+  description={`${locatie.naam} — ${locatie.type} op ${locatie.adres}. Openingsuren, telefoon en team.`}
+  path={`/locaties/${locatie.slug}`}
+  brand={brand}
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-3xl font-bold">{locatie.naam}</h1>
+    <p class="mt-1 text-brand-muted">{locatie.type}</p>
+
+    <div class="mt-6">
+      <GoogleReviewBadge locatie={locatie.slug} />
+    </div>
+
+    <div class="mt-8 grid gap-8 sm:grid-cols-2">
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Adres</h2>
+        <p class="mt-2">{locatie.adres}</p>
+        <a href={locatie.mapsUrl} target="_blank" rel="noopener noreferrer" class="mt-1 inline-block text-sm font-semibold text-brand-primary hover:underline">
+          Bekijk op Google Maps →
+        </a>
+
+        <h2 class="mt-6 text-sm font-semibold uppercase tracking-wide text-brand-muted">Contact</h2>
+        <p class="mt-2">
+          <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="text-brand-primary hover:underline">{locatie.telefoon}</a>
+        </p>
+        <p>
+          <a href={`mailto:${locatie.email}`} class="text-brand-primary hover:underline">{locatie.email}</a>
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Openingsuren</h2>
+        {locatie.urenNote && <p class="mt-2 text-sm text-brand-muted">{locatie.urenNote}</p>}
+        <ul class="mt-2 space-y-1 text-sm">
+          {locatie.uren.map((u) => (
+            <li class="flex justify-between gap-4">
+              <span>{u.dag}</span>
+              <span>{u.van} – {u.tot}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    {team.length > 0 && (
+      <div class="mt-12">
+        <h2 class="text-xl font-bold">Team op deze locatie</h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          {team.map((lid) => (
+            <a href={`/team/${lid.slug}`} class="rounded-xl border border-brand-border p-4 transition hover:border-brand-primary">
+              <p class="font-semibold">{lid.voornaam} {lid.naam}</p>
+              <p class="text-sm text-brand-muted">{lid.rol}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </section>
+</Layout>

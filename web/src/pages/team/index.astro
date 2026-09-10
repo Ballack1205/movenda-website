@@ -1,0 +1,34 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getTeamleden } from "../../lib/content";
+
+const team = getTeamleden();
+---
+
+<Layout
+  title="Ons team | Kinesisten & personal trainers Hasselt | Movenda"
+  description="Maak kennis met het team van Movenda: kinesisten, personal trainers en performance coaches in Hasselt en Kuringen."
+  path="/team"
+>
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Ons team, jouw gezondheid</h1>
+    <p class="mt-2 max-w-2xl text-brand-muted">
+      {team.length} therapeuten en coaches, verdeeld over Movenda Olympia en het Movenda
+      Performance Centre. Elk teamlid heeft een eigen specialisatie — kies zelf wie het best
+      aansluit bij jouw klacht of doel.
+    </p>
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {team.map((lid) => (
+        <a
+          href={`/team/${lid.slug}`}
+          class="rounded-2xl border border-brand-border bg-brand-surface p-6 transition hover:border-brand-primary"
+        >
+          <h2 class="text-lg font-semibold">{lid.voornaam} {lid.naam}</h2>
+          <p class="mt-1 text-sm font-medium text-brand-primary">{lid.rol}</p>
+          <p class="mt-2 text-sm text-brand-muted line-clamp-3">{lid.bio}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>

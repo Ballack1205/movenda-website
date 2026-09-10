@@ -1,0 +1,96 @@
+---
+import Layout from "../layouts/Layout.astro";
+import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
+import BookingButton from "../components/BookingButton.astro";
+import { getLocaties, getTeamleden, getSiteSettings } from "../lib/content";
+import { organizationSchema, localBusinessSchema } from "../lib/schema";
+
+const locaties = getLocaties();
+const olympia = locaties.find((l) => l.slug === "olympia")!;
+const mpc = locaties.find((l) => l.slug === "mpc")!;
+const team = getTeamleden();
+const settings = getSiteSettings();
+
+const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusinessSchema(mpc)];
+---
+
+<Layout
+  title="Movenda Hasselt: kinesitherapie, personal training & performance"
+  description="Movenda is dé groepspraktijk kinesitherapie en personal training in Hasselt, met een tweede vestiging Movenda Performance Centre in Kuringen."
+  path="/"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 py-16 text-center">
+    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">
+      Kinesitherapie · Personal training · Performance
+    </p>
+    <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
+      Bewegen, herstellen en presteren in Hasselt
+    </h1>
+    <p class="mx-auto mt-4 max-w-2xl text-lg text-brand-muted">
+      Met een team van {team.length}+ kinesisten en trainers begeleiden we jou bij herstel,
+      blessurepreventie en een gezonde, actieve levensstijl — medisch verantwoord en volledig op maat.
+    </p>
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+      <a
+        href={`tel:${settings.telefoonOlympia.replace(/\s+/g, "")}`}
+        class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+      >
+        Bel {settings.telefoonOlympia}
+      </a>
+      <a
+        href="/contact"
+        class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary"
+      >
+        Contacteer ons
+      </a>
+      <BookingButton />
+    </div>
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+      <GoogleReviewBadge locatie="olympia" />
+      <GoogleReviewBadge locatie="mpc" />
+    </div>
+  </section>
+
+  <section class="mx-auto grid max-w-6xl gap-6 px-4 pb-16 sm:grid-cols-2">
+    <a
+      href="/locaties/olympia"
+      class="group rounded-2xl border border-brand-border bg-brand-surface p-8 transition hover:border-brand-primary"
+    >
+      <h2 class="text-2xl font-bold text-brand-primary">Movenda — Olympia</h2>
+      <p class="mt-2 text-brand-muted">
+        Kinesitherapie en personal training in Sportcentrum Olympia, Hasselt. Manuele therapie,
+        dry needling, acupunctuur, sportspecifieke training en meer.
+      </p>
+      <span class="mt-4 inline-block font-semibold text-brand-primary group-hover:underline">
+        Bekijk de vestiging →
+      </span>
+    </a>
+    <a
+      href="/mpc"
+      data-brand="mpc"
+      class="group rounded-2xl border border-brand-border p-8 transition hover:border-brand-primary"
+      style="background-color: #0b0e10; color: #f5f5f5;"
+    >
+      <h2 class="text-2xl font-bold" style="color:#ff4d2e;">Movenda Performance Centre</h2>
+      <p class="mt-2" style="color:#a3aab0;">
+        Performance training en sportrevalidatie in Kuringen, data-gedreven en één-op-één, voor
+        recreatieve en professionele sporters.
+      </p>
+      <span class="mt-4 inline-block font-semibold group-hover:underline" style="color:#ff4d2e;">
+        Bekijk MPC →
+      </span>
+    </a>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-16">
+    <h2 class="text-2xl font-bold">Ons team</h2>
+    <p class="mt-2 max-w-2xl text-brand-muted">
+      {team.length} kinesisten, personal trainers en performance coaches — elk met hun eigen
+      specialisatie.
+    </p>
+    <a href="/team" class="mt-4 inline-block font-semibold text-brand-primary hover:underline">
+      Bekijk het volledige team →
+    </a>
+  </section>
+</Layout>

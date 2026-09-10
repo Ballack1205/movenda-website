@@ -1,0 +1,63 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getLocaties } from "../lib/content";
+import { breadcrumbSchema } from "../lib/schema";
+
+const locaties = getLocaties();
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Contact", path: "/contact" },
+  ]),
+];
+---
+
+<Layout
+  title="Contact & afspraak | Movenda Hasselt"
+  description="Neem contact op met Movenda (Olympia, Hasselt) of het Movenda Performance Centre (Kuringen) via telefoon, e-mail of het contactformulier."
+  path="/contact"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Neem contact op</h1>
+    <p class="mt-2 max-w-2xl text-brand-muted">
+      Heb je een vraag of wil je een afspraak maken? Vul het formulier in en we nemen zo snel
+      mogelijk contact met je op. Je kan ons ook rechtstreeks bellen of mailen.
+    </p>
+
+    <div class="mt-10 grid gap-8 sm:grid-cols-2">
+      {locaties.map((locatie) => (
+        <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+          <h2 class="text-lg font-semibold text-brand-primary">{locatie.naam}</h2>
+          <p class="mt-2 text-sm text-brand-muted">{locatie.adres}</p>
+          <p class="mt-3 text-sm">
+            <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="font-semibold text-brand-primary hover:underline">
+              {locatie.telefoon}
+            </a>
+          </p>
+          <p class="text-sm">
+            <a href={`mailto:${locatie.email}`} class="font-semibold text-brand-primary hover:underline">
+              {locatie.email}
+            </a>
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <form class="mt-12 grid gap-4" data-contact-form>
+      <p class="text-sm text-brand-muted">
+        Formulierverzending via e-mail (Resend) volgt in de volgende fase. Voor nu: bel of mail
+        rechtstreeks via de gegevens hierboven.
+      </p>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Naam" disabled />
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="E-mail" disabled />
+      </div>
+      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Je vraag" disabled></textarea>
+      <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white opacity-60" disabled>
+        Verzenden (binnenkort actief)
+      </button>
+    </form>
+  </section>
+</Layout>

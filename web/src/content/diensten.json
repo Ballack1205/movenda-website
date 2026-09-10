@@ -1,0 +1,24 @@
+[
+  {
+    "slug": "performance-training",
+    "categorie": "mpc",
+    "titel": "Performance training Hasselt",
+    "titelEn": "Performance training Hasselt",
+    "intro": "Voor (semi-)professionele sporters die hun volledige atletische potentieel willen ontwikkelen.",
+    "body": "Performance training is gericht op (semi-)professionele sporters die hun volledige atletisch potentieel willen ontwikkelen. We combineren de nieuwste toestellen met evidence-based trainingsmethodes en systematische data-analyse. Om een traject te starten voeren we een reeks testen uit om de baseline van de sporter te bepalen. Eens de baseline vastligt, stellen we een individueel programma op dat zich richt op twee zaken: het risico op blessures minimaliseren en de prestaties van de sporter verbeteren. Doorheen het volledige programma wordt de sporter getest, zodat we de vooruitgang kunnen opvolgen en het programma kunnen bijsturen.",
+    "seoTitle": "Performance training Hasselt | Movenda Performance Centre",
+    "seoDescription": "Data-gedreven performance training in Hasselt/Kuringen voor (semi-)professionele sporters. Objectieve testen, individueel programma, meetbare progressie.",
+    "gekoppeldeTeamleden": ["cedriek-swinnen", "yannick-glorieux"]
+  },
+  {
+    "slug": "sportrevalidatie",
+    "categorie": "mpc",
+    "titel": "Sportrevalidatie Hasselt",
+    "titelEn": "Sports injury rehabilitation Hasselt",
+    "intro": "Data-gedreven kinesitherapie die je begeleidt door elke fase van herstel na een sportblessure of operatie.",
+    "body": "Onze data-gedreven aanpak van kinesitherapie begeleidt je door elke fase van het revalidatieproces voor een optimaal en snel herstel na orthopedische blessures of operaties. Tijdens een intakegesprek verzamelen we data via anamnese, klinisch onderzoek en functionele testen. Deze data laat ons toe een nauwkeurige inschatting te maken van de ernst van de blessure en de prognose voor terugkeer naar sport. Tijdens de revalidatie blijven we objectieve data gebruiken via gestandaardiseerde testen om inzicht te krijgen in je toestand, sterktes en werkpunten. Deze test-retest strategie laat ons toe je vooruitgang in concrete cijfers te meten.",
+    "seoTitle": "Sportrevalidatie Hasselt | Movenda Performance Centre",
+    "seoDescription": "Sportrevalidatie in Hasselt/Kuringen na blessure of operatie: data-gedreven, één-op-één, functionele en sportspecifieke aanpak.",
+    "gekoppeldeTeamleden": ["andres-ruttens", "arne-daniels", "jens-hendrickx"]
+  }
+]

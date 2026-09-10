@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: movenda-preview
+    runtime: static
+    buildCommand: cd web && npm install && npm run build
+    staticPublishPath: web/dist
+    autoDeploy: true
+    envVars:
+      - key: PUBLIC_NOINDEX
+        value: "true" # flip to "false" only after Movenda confirms go-live on movenda.be
+      - key: PUBLIC_SITE_URL
+        value: https://movenda-preview.onrender.com
+    headers:
+      - path: /*
+        name: X-Robots-Tag
+        value: "noindex, nofollow"
+    # The full 301 map (old movenda.be + mpc.movenda.be URLs) is added here
+    # in Fase 3, once Movenda confirms go-live. See HANDOFF.md IA section
+    # for the full list of legacy URLs to cover.

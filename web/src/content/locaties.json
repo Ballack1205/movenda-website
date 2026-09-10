@@ -1,0 +1,49 @@
+[
+  {
+    "slug": "olympia",
+    "naam": "Movenda Olympia",
+    "brand": "movenda",
+    "type": "Kinesitherapie & personal training",
+    "adres": "Kuringersteenweg 242, 3500 Hasselt",
+    "geo": { "lat": 50.9414, "lng": 5.3286 },
+    "telefoon": "+32 483 65 44 89",
+    "email": "info@movenda.be",
+    "geoApprox": true,
+    "uren": [
+      { "dag": "Maandag", "van": "08:00", "tot": "21:00" },
+      { "dag": "Dinsdag", "van": "08:00", "tot": "21:00" },
+      { "dag": "Woensdag", "van": "08:00", "tot": "21:00" },
+      { "dag": "Donderdag", "van": "08:00", "tot": "21:00" },
+      { "dag": "Vrijdag", "van": "08:00", "tot": "19:00" },
+      { "dag": "Zaterdag", "van": "08:30", "tot": "13:00" }
+    ],
+    "btw": "BE 0643.626.573",
+    "iban": "BE77 7370 4468 7842",
+    "bic": "KREDBEBB",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Kuringersteenweg+242+Hasselt"
+  },
+  {
+    "slug": "mpc",
+    "naam": "Movenda Performance Centre",
+    "brand": "mpc",
+    "type": "Performance training & sportrevalidatie",
+    "adres": "Lammerweg 33, 3511 Kuringen",
+    "geo": { "lat": 50.9563, "lng": 5.3491 },
+    "telefoon": "+32 480 68 94 36",
+    "email": "info@movenda.be",
+    "geoApprox": true,
+    "uren": [
+      { "dag": "Maandag", "van": "07:00", "tot": "22:00" },
+      { "dag": "Dinsdag", "van": "07:00", "tot": "22:00" },
+      { "dag": "Woensdag", "van": "07:00", "tot": "22:00" },
+      { "dag": "Donderdag", "van": "07:00", "tot": "22:00" },
+      { "dag": "Vrijdag", "van": "07:00", "tot": "22:00" },
+      { "dag": "Zaterdag", "van": "07:00", "tot": "22:00" },
+      { "dag": "Zondag", "van": "07:00", "tot": "22:00" }
+    ],
+    "urenNote": "Enkel op afspraak",
+    "btw": "BE 0803.487.226",
+    "iban": "BE43 7330 7357 1601",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Performance+Centre+Lammerweg+33+Kuringen"
+  }
+]

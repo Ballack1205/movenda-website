@@ -1,0 +1,28 @@
+---
+// Google review badge — sources score/count from siteSettings.googleReviews
+// (edited by Julie, not a paid reviews API). No AggregateRating JSON-LD is
+// emitted for this: Google no longer shows self-reported rich results for
+// LocalBusiness aggregate ratings; the real signal is the Google Business
+// Profile itself, which this badge links to. See DECISIONS.md.
+import type { LocatieSlug } from "../lib/content";
+import { getSiteSettings } from "../lib/content";
+
+export interface Props {
+  locatie: LocatieSlug;
+  class?: string;
+}
+
+const { locatie, class: className = "" } = Astro.props;
+const settings = getSiteSettings();
+const reviews = settings.googleReviews[locatie];
+---
+
+<a
+  href={reviews.reviewUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  class={`inline-flex items-center gap-2 rounded-full border border-brand-border bg-brand-surface px-4 py-2 text-sm font-medium text-brand-text transition hover:border-brand-primary ${className}`}
+>
+  <span aria-hidden="true" class="text-brand-accent">★★★★★</span>
+  <span>{reviews.rating.toFixed(1)} · {reviews.count} Google-reviews</span>
+</a>

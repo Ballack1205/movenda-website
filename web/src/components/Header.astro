@@ -1,0 +1,54 @@
+---
+import { getSiteSettings } from "../lib/content";
+import BookingButton from "./BookingButton.astro";
+
+export interface Props {
+  brand?: "movenda" | "mpc";
+}
+
+const { brand = "movenda" } = Astro.props;
+const settings = getSiteSettings();
+
+const navMovenda = [
+  { href: "/", label: "Home" },
+  { href: "/team", label: "Team" },
+  { href: "/mpc", label: "MPC" },
+  { href: "/contact", label: "Contact" },
+];
+
+const navMpc = [
+  { href: "/mpc", label: "MPC Home" },
+  { href: "/mpc/performance-training", label: "Performance" },
+  { href: "/mpc/sportrevalidatie", label: "Sportrevalidatie" },
+  { href: "/team", label: "Team" },
+  { href: "/", label: "Movenda" },
+  { href: "/contact", label: "Contact" },
+];
+
+const nav = brand === "mpc" ? navMpc : navMovenda;
+const phone = brand === "mpc" ? settings.telefoonMpc : settings.telefoonOlympia;
+---
+
+<header class="border-b border-brand-border bg-brand-bg">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
+    <a href="/" class="text-lg font-bold tracking-tight text-brand-primary">
+      {brand === "mpc" ? "Movenda Performance Centre" : "Movenda"}
+    </a>
+    <nav class="hidden gap-6 text-sm font-medium md:flex">
+      {nav.map((item) => (
+        <a href={item.href} class="text-brand-text/80 transition hover:text-brand-primary">
+          {item.label}
+        </a>
+      ))}
+    </nav>
+    <div class="flex items-center gap-3">
+      <a
+        href={`tel:${phone.replace(/\s+/g, "")}`}
+        class="hidden text-sm font-semibold text-brand-primary sm:inline"
+      >
+        {phone}
+      </a>
+      <BookingButton size="sm" />
+    </div>
+  </div>
+</header>

@@ -1,0 +1,61 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getDienstenByCategorie, getDienstBySlug, getLocatieBySlug, getTeamleden } from "../../lib/content";
+import { serviceSchema, breadcrumbSchema } from "../../lib/schema";
+
+export function getStaticPaths() {
+  return getDienstenByCategorie("mpc").map((dienst) => ({ params: { slug: dienst.slug } }));
+}
+
+const { slug } = Astro.params;
+const dienst = getDienstBySlug(slug!);
+
+if (!dienst) {
+  return Astro.redirect("/mpc");
+}
+
+const locatie = getLocatieBySlug("mpc")!;
+const team = getTeamleden().filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
+
+const jsonLd = [
+  serviceSchema(dienst, locatie),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Movenda Performance Centre", path: "/mpc" },
+    { name: dienst.titel, path: `/mpc/${dienst.slug}` },
+  ]),
+];
+---
+
+<Layout
+  title={dienst.seoTitle}
+  description={dienst.seoDescription}
+  path={`/mpc/${dienst.slug}`}
+  brand="mpc"
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-3xl px-4 py-16">
+    <a href="/mpc" class="text-sm font-medium" style="color:#ff4d2e;">← Terug naar MPC</a>
+    <h1 class="mt-4 text-3xl font-bold sm:text-4xl">{dienst.titel}</h1>
+    <p class="mt-4 leading-relaxed" style="color:#a3aab0;">{dienst.body}</p>
+
+    {team.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-sm font-semibold uppercase tracking-wide" style="color:#a3aab0;">Begeleid door</h2>
+        <div class="mt-3 flex flex-wrap gap-3">
+          {team.map((lid) => (
+            <a href={`/team/${lid.slug}`} class="rounded-full border px-4 py-2 text-sm" style="border-color:#262b2f;">
+              {lid.voornaam} {lid.naam}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <div class="mt-10">
+      <a href="/contact" class="rounded-full px-6 py-3 font-semibold text-white" style="background-color:#ff4d2e;">
+        Contacteer ons voor deze dienst
+      </a>
+    </div>
+  </article>
+</Layout>

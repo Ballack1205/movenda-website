@@ -1,0 +1,36 @@
+{
+  "siteNaam": "Movenda",
+  "tagline": "Kinesitherapie, personal training & performance in Hasselt",
+  "telefoonOlympia": "+32 483 65 44 89",
+  "telefoonMpc": "+32 480 68 94 36",
+  "email": "info@movenda.be",
+  "booking": {
+    "enabled": false,
+    "url": "",
+    "label": "Maak een afspraak"
+  },
+  "googleReviews": {
+    "olympia": {
+      "rating": 5.0,
+      "count": "30+",
+      "reviewUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Kuringersteenweg+242+Hasselt",
+      "writeReviewUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Kuringersteenweg+242+Hasselt",
+      "note": "TODO: vervang door het exacte Google Business Profile-linkje (incl. place_id) van Julie zodra beschikbaar."
+    },
+    "mpc": {
+      "rating": 5.0,
+      "count": "30+",
+      "reviewUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Performance+Centre+Lammerweg+33+Kuringen",
+      "writeReviewUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Performance+Centre+Lammerweg+33+Kuringen",
+      "note": "TODO: vervang door het exacte Google Business Profile-linkje (incl. place_id) van Julie zodra beschikbaar."
+    }
+  },
+  "analytics": {
+    "enabled": false,
+    "ga4Id": "G-WCV2RJG010"
+  },
+  "socials": {
+    "instagram": "",
+    "facebook": ""
+  }
+}

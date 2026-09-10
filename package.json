@@ -1,0 +1,14 @@
+{
+  "name": "movenda-website",
+  "private": true,
+  "workspaces": [
+    "web",
+    "studio"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace web",
+    "build": "npm run build --workspace web",
+    "studio:dev": "npm run dev --workspace studio",
+    "studio:deploy": "npm run deploy --workspace studio"
+  }
+}
