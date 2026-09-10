@@ -1,0 +1,122 @@
+---
+// Copy hieronder komt van de echte /over-pagina op movenda.be (visie,
+// partnerships, eerste-bezoek-stappen, feature-highlights) — verbatim
+// overgenomen en licht opgeschoond voor de nieuwe site.
+import Layout from "../layouts/Layout.astro";
+import { getLocaties } from "../lib/content";
+import { breadcrumbSchema } from "../lib/schema";
+
+const locatie = (await getLocaties()).find((l) => l.slug === "olympia")!;
+
+const features = [
+  { titel: "Individuele behandelingen", tekst: "Elke patiënt wordt individueel behandeld en krijgt een eigen schema." },
+  { titel: "Ruime locatie", tekst: "Gelegen in Sportcentrum Olympia te Hasselt." },
+  { titel: "Sfeer", tekst: "Een jong en dynamisch team zorgt voor een motiverende begeleiding." },
+  { titel: "Vooruitstrevend", tekst: "Kwalitatief en constant innoverend." },
+  { titel: "Professioneel team", tekst: "Onze gelicentieerde kinesisten scholen zich op regelmatige basis bij." },
+  { titel: "Netwerk", tekst: "Samenwerking met verschillende sportclubs." },
+];
+
+const stappen = [
+  { titel: "Maak een afspraak", tekst: "Neem contact op via telefoon, e-mail of ons contactformulier. We koppelen je aan de therapeut of coach die het best aansluit bij jouw klacht of doel. Je ontvangt een bevestiging met praktische info over de locatie en wat je best meebrengt." },
+  { titel: "Intake & screening", tekst: "Bij je eerste sessie nemen we de tijd voor een grondige intake. We bespreken je klachten, medische voorgeschiedenis en doelstellingen. Daarna volgt een functionele screening: we kijken hoe je beweegt, waar beperkingen zitten en wat de oorzaak is van het probleem — niet enkel het symptoom." },
+  { titel: "Behandeling of trainingsplan op maat", tekst: "Op basis van de screening stellen we een gepersonaliseerd traject op. Voor kinesitherapie combineren we passieve behandelingen zoals manuele therapie en dry needling met actieve oefentherapie. Voor personal training werk je met een schema dat perfect past bij jouw niveau, agenda en lichaam." },
+  { titel: "Opvolging & bijsturing", tekst: "Elke sessie wordt individueel begeleid. We evalueren regelmatig je vooruitgang en passen het schema aan waar nodig. Je bent nooit overgelaten aan jezelf." },
+  { titel: "Langetermijnaanpak", tekst: "Ons doel is niet alleen dat je klachtenvrij bent, maar dat je bewuster en actiever in het leven staat. We coachen je ook na de revalidatie zodat je terugval vermijdt en gezonde gewoonten aanhoudt." },
+];
+
+const partnerships = [
+  "Basketbalploeg HUBO Limburg United",
+  "Auto-raceteam AF Corse Ferrari 488",
+  "Tennisclub Tenkie",
+  "Verschillende motorcrossers die meerijden in het MXGP-circuit",
+  "Tennisclub Excelsior",
+  "Zaalvoetbalclub VKM Godsheide",
+];
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Over ons", path: "/over" },
+  ]),
+];
+---
+
+<Layout
+  title="Over Movenda | Groepspraktijk kinesitherapie & personal training Hasselt"
+  description="De visie van Movenda: individuele begeleiding, een actieve aanpak en samenwerking met sportclubs in en rond Hasselt."
+  path="/over"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-3xl px-4 py-12">
+    <h1 class="text-3xl font-bold">De Movenda-visie</h1>
+    <p class="mt-4 text-brand-muted">
+      Movenda in Hasselt is dé groepspraktijk kinesitherapie en personal training die iedereen op
+      een gezonde en medisch verantwoorde manier wil laten bewegen. Wij werken met elke persoon
+      individueel, zowel voor kinesitherapie als voor personal training.
+    </p>
+    <p class="mt-4 text-brand-muted">
+      Elke patiënt wordt individueel behandeld, waardoor we kunnen ingaan op de specifieke
+      klachten in een ruimer kader. Voor een optimaal herstel benaderen we de patiënt in zijn
+      totaliteit, zodat ook onderliggende klachten deel uitmaken van het herstelproces. Daarom
+      combineren we onze passieve manuele behandeling steevast met actieve oefentherapie — we
+      motiveren onze patiënten om actief deel te nemen aan hun revalidatie, niet om volledig
+      afhankelijk te zijn van de therapeut.
+    </p>
+    <p class="mt-4 text-brand-muted">
+      Onze therapeuten volgen jaarlijks interne en externe bijscholingen — manuele therapie,
+      myofasciale therapie, osteopathie, acupunctuur, dry needling — om je op de best mogelijke
+      manier te blijven behandelen. We werken daarnaast samen met de opleiding kinesitherapie aan
+      de UHasselt en bieden elk jaar meerdere stageplaatsen aan.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-4 pb-12">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {features.map((f) => (
+        <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+          <h3 class="font-semibold text-brand-primary">{f.titel}</h3>
+          <p class="mt-1 text-sm text-brand-muted">{f.tekst}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-4 pb-12">
+    <h2 class="text-2xl font-bold">Zo werkt een eerste bezoek bij Movenda</h2>
+    <p class="mt-2 text-brand-muted">
+      Of je nu komt voor kinesitherapie of personal training — bij Movenda weet je altijd op
+      voorhand wat je kunt verwachten. Geen verrassingen, wel een aanpak volledig op maat van
+      jouw lichaam en doelen.
+    </p>
+    <ol class="mt-6 grid gap-4">
+      {stappen.map((s, i) => (
+        <li class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+          <p class="text-sm font-semibold text-brand-primary">Stap {i + 1} — {s.titel}</p>
+          <p class="mt-1 text-sm text-brand-muted">{s.tekst}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-4 pb-16">
+    <h2 class="text-2xl font-bold">Partnerships</h2>
+    <p class="mt-2 text-brand-muted">
+      Wij zijn een dynamisch, sportief en gemotiveerd team dat graag de sportclubs in en rond
+      Hasselt ondersteunt met de juiste begeleiding. Zo werkt Movenda samen met:
+    </p>
+    <ul class="mt-4 grid gap-2 sm:grid-cols-2">
+      {partnerships.map((p) => (
+        <li class="rounded-xl border border-brand-border bg-brand-surface px-4 py-2 text-sm text-brand-text">
+          {p}
+        </li>
+      ))}
+    </ul>
+
+    <p class="mt-8 text-sm text-brand-muted">
+      Vragen over onze aanpak?{" "}
+      <a href="/contact" class="font-semibold text-brand-primary hover:underline">Neem contact op</a>{" "}
+      of bel <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="font-semibold text-brand-primary hover:underline">{locatie.telefoon}</a>.
+    </p>
+  </section>
+</Layout>

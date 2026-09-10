@@ -91,7 +91,7 @@ export interface SiteSettings {
   booking: { enabled: boolean; url: string; label: string };
   googleReviews: Record<LocatieSlug, GoogleReviews>;
   analytics: { enabled: boolean; ga4Id: string };
-  socials: { instagram: string; facebook: string };
+  socials: { instagram: string; facebook: string; linkedin: string };
   prijzenInfo: PrijzenInfo;
 }
 
@@ -211,7 +211,7 @@ export async function getDienstBySlug(slug: string): Promise<Dienst | undefined>
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
-    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, booking, googleReviews, analytics, prijzenInfo }`,
+    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo }`,
   );
   const olympia = await getLocatieBySlug("olympia");
   const mpc = await getLocatieBySlug("mpc");
@@ -227,7 +227,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       mpc: { rating: 0, count: "", reviewUrl: "", writeReviewUrl: "" },
     },
     analytics: settings?.analytics || { enabled: false, ga4Id: "" },
-    socials: { instagram: "", facebook: "" },
+    socials: settings?.socials || { instagram: "", facebook: "", linkedin: "" },
     prijzenInfo: settings?.prijzenInfo || {},
   };
 }

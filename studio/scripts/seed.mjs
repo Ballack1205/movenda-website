@@ -123,6 +123,7 @@ async function seedSiteSettings() {
     siteNaam: settings.siteNaam,
     tagline: settings.tagline,
     email: settings.email,
+    socials: settings.socials,
     booking: settings.booking,
     googleReviews: settings.googleReviews,
     analytics: settings.analytics,

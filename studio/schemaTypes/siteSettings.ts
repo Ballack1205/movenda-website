@@ -11,6 +11,16 @@ export default defineType({
     defineField({ name: "tagline", title: "Tagline", type: "string" }),
     defineField({ name: "email", title: "Algemeen e-mailadres", type: "string" }),
     defineField({
+      name: "socials",
+      title: "Social media",
+      type: "object",
+      fields: [
+        defineField({ name: "instagram", title: "Instagram-URL", type: "url" }),
+        defineField({ name: "facebook", title: "Facebook-URL", type: "url" }),
+        defineField({ name: "linkedin", title: "LinkedIn-URL", type: "url" }),
+      ],
+    }),
+    defineField({
       name: "booking",
       title: "Boekknop",
       type: "object",
