@@ -18,11 +18,11 @@
       "note": "TODO: vervang door het exacte Google Business Profile-linkje (incl. place_id) van Julie zodra beschikbaar."
     },
     "mpc": {
-      "rating": 5.0,
-      "count": "30+",
-      "reviewUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Performance+Centre+Lammerweg+33+Kuringen",
-      "writeReviewUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Performance+Centre+Lammerweg+33+Kuringen",
-      "note": "TODO: vervang door het exacte Google Business Profile-linkje (incl. place_id) van Julie zodra beschikbaar."
+      "rating": 0,
+      "count": "",
+      "reviewUrl": "",
+      "writeReviewUrl": "",
+      "note": "Bewust leeg: de Google-reviews horen bij Movenda (Olympia), mpc.movenda.be toont geen reviews. Badge verbergt zichzelf zolang rating 0 is. Invullen zodra MPC een eigen Google Business Profile met reviews heeft."
     }
   },
   "analytics": {

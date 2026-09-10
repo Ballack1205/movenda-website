@@ -15,14 +15,22 @@ export interface Props {
 const { locatie, class: className = "" } = Astro.props;
 const settings = await getSiteSettings();
 const reviews = settings.googleReviews[locatie];
+
+// Render nothing when there is no real review data for this location.
+// MPC currently has no Google reviews of its own (the live mpc.movenda.be
+// shows none) — the reviews all belong to Movenda Olympia. Julie can fill
+// in MPC's numbers in the Studio once that profile has reviews.
+const hasReviews = Boolean(reviews && reviews.rating > 0 && reviews.count && reviews.reviewUrl);
 ---
 
-<a
-  href={reviews.reviewUrl}
-  target="_blank"
-  rel="noopener noreferrer"
-  class={`inline-flex items-center gap-2 rounded-full border border-brand-border bg-brand-surface px-4 py-2 text-sm font-medium text-brand-text transition hover:border-brand-primary ${className}`}
->
-  <span aria-hidden="true" class="text-brand-accent">★★★★★</span>
-  <span>{reviews.rating.toFixed(1)} · {reviews.count} Google-reviews</span>
-</a>
+{hasReviews && (
+  <a
+    href={reviews.reviewUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    class={`inline-flex items-center gap-2 rounded-full border border-brand-border bg-brand-surface px-4 py-2 text-sm font-medium text-brand-text transition hover:border-brand-primary ${className}`}
+  >
+    <span aria-hidden="true" class="text-brand-accent">★★★★★</span>
+    <span>{reviews.rating.toFixed(1)} · {reviews.count} Google-reviews</span>
+  </a>
+)}
