@@ -10,67 +10,216 @@ const { brand = "movenda", lang = "nl" } = Astro.props;
 const locaties = await getLocaties();
 const settings = await getSiteSettings();
 const year = new Date().getFullYear();
+
+// Main practice (Olympia) first, MPC second. Sanity returns them ordered by slug.
+const ordered = [...locaties].sort((a, b) => (a.brand === "movenda" ? -1 : 0) - (b.brand === "movenda" ? -1 : 0));
+const shown = brand === "mpc" ? ordered.filter((l) => l.slug === "mpc") : ordered;
+const mpc = locaties.find((l) => l.slug === "mpc");
+
+// Info that is identical for every shown location is printed once (brand column) instead of per column.
+const sharedEmail = shown.length > 0 && shown.every((l) => l.email === shown[0].email) ? shown[0].email : null;
+const sharedNote =
+  shown.length > 0 && shown[0].urenNote && shown.every((l) => l.urenNote === shown[0].urenNote)
+    ? shown[0].urenNote
+    : null;
+
+// Location mark: the "M" for Movenda / Olympia, the MPC mark for the Performance Centre.
+const markFor = (slug: string) => (slug === "mpc" ? "/brand/logo-mpc.png" : "/brand/logo-m.png");
+const shortName = (naam: string) => naam.replace(/^Movenda\s*/i, "");
+
+const t = {
+  hours: lang === "en" ? "Opening hours" : "Openingsuren",
+  follow: lang === "en" ? "Follow us" : "Volg ons",
+  route: lang === "en" ? "Directions" : "Routebeschrijving",
+  vat: lang === "en" ? "VAT" : "BTW",
+};
+
+const navLinks =
+  lang === "en"
+    ? [
+        { href: "/en/team", label: "Team" },
+        { href: "/en/mpc", label: "MPC" },
+        { href: "/en/contact", label: "Contact" },
+      ]
+    : [
+        { href: "/over", label: "Over ons" },
+        { href: "/team", label: "Team" },
+        { href: "/prijzen", label: "Prijzen" },
+        { href: "/blog", label: "Blog" },
+        { href: "/faq", label: "FAQ" },
+        { href: "/jobs", label: "Vacatures" },
+        { href: "/mpc", label: "MPC" },
+        { href: "/contact", label: "Contact" },
+      ];
+
+// One social row per footer: Movenda's channels on Movenda pages, MPC's own channels on MPC pages.
+const socials = (
+  brand === "mpc"
+    ? [
+        { kind: "instagram", label: "Instagram", href: mpc?.instagram },
+        { kind: "facebook", label: "Facebook", href: mpc?.facebook },
+        { kind: "linkedin", label: "LinkedIn", href: settings.socials.linkedin },
+      ]
+    : [
+        { kind: "instagram", label: "Instagram", href: settings.socials.instagram },
+        { kind: "facebook", label: "Facebook", href: settings.socials.facebook },
+        { kind: "linkedin", label: "LinkedIn", href: settings.socials.linkedin },
+      ]
+).filter((s) => s.href);
+
+const iconClass = "mt-0.5 h-4 w-4 shrink-0 text-white/50";
+const socialClass =
+  "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/80 transition hover:border-white/40 hover:bg-white/10 hover:text-white";
 ---
 
 <footer class="bg-brand-footer text-white/80">
-  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-3">
-    {locaties.map((locatie) => (
-      <div>
-        <h3 class="font-heading font-semibold text-white">{locatie.naam}</h3>
-        <p class="mt-2 text-sm">{locatie.adres}</p>
-        <p class="mt-1 text-sm">
-          <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="hover:text-white">
-            {locatie.telefoon}
-          </a>
-        </p>
-        <p class="mt-1 text-sm">
-          <a href={`mailto:${locatie.email}`} class="hover:text-white">{locatie.email}</a>
-        </p>
-      </div>
-    ))}
-    <div>
-      <img src="/brand/logo-wordmark.png" alt="Movenda" width="140" height="30" class="h-7 w-auto" />
-      <p class="mt-3 text-sm">
+  <!--
+    Three columns: brand (wordmark, general contact, nav, socials) + one column per location.
+    On md+ the location columns are subgrids with 3 rows (name, contact, hours) so equal info
+    sits on the same line across columns, even when a line wraps.
+  -->
+  <div class:list={["mx-auto grid max-w-6xl gap-10 px-4 py-12 md:gap-x-10 md:gap-y-0", shown.length > 1 ? "md:grid-cols-3" : "md:grid-cols-2"]}>
+    <section class="flex flex-col text-sm md:row-span-3" aria-label="Movenda">
+      <a href={lang === "en" ? "/en" : "/"} class="self-start" aria-label="Movenda">
+        <img src="/brand/logo-wordmark.png" alt="Movenda" width="130" height="28" class="h-7 w-auto" />
+      </a>
+      <p class="mt-4 max-w-xs">
         {lang === "en"
           ? "Physiotherapy, personal training & performance in Hasselt, Belgium."
           : brand === "mpc"
             ? "Onderdeel van Movenda, kinesitherapie & personal training in Hasselt."
-            : "Met het Movenda Performance Centre als tweede vestiging in Kuringen."}
+            : "Kinesitherapie, personal training & performance in Hasselt."}
       </p>
-      {lang === "en" ? (
-        <nav class="mt-3 flex flex-col gap-1 text-sm">
-          <a href="/en/team" class="hover:text-white">Team</a>
-          <a href="/en/mpc" class="hover:text-white">Movenda Performance Centre</a>
-          <a href="/en/contact" class="hover:text-white">Contact</a>
-        </nav>
-      ) : (
-        <nav class="mt-3 flex flex-col gap-1 text-sm">
-          <a href="/over" class="hover:text-white">Over ons</a>
-          <a href="/team" class="hover:text-white">Team</a>
-          <a href="/prijzen" class="hover:text-white">Prijzen</a>
-          <a href="/blog" class="hover:text-white">Blog</a>
-          <a href="/faq" class="hover:text-white">FAQ</a>
-          <a href="/jobs" class="hover:text-white">Vacatures</a>
-          <a href="/mpc" class="hover:text-white">Movenda Performance Centre</a>
-          <a href="/contact" class="hover:text-white">Contact</a>
-        </nav>
+
+      {(sharedEmail || sharedNote) && (
+        <ul class="mt-5 space-y-2.5">
+          {sharedEmail && (
+            <li class="flex items-start gap-2.5">
+              <svg class={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m3 7 9 6 9-6" />
+              </svg>
+              <a href={`mailto:${sharedEmail}`} class="hover:text-white">{sharedEmail}</a>
+            </li>
+          )}
+          {sharedNote && (
+            <li class="flex items-start gap-2.5">
+              <svg class={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+              <span>{sharedNote}</span>
+            </li>
+          )}
+        </ul>
       )}
-      {(settings.socials.instagram || settings.socials.facebook || settings.socials.linkedin) && (
-        <div class="mt-4 flex gap-3 text-sm font-medium">
-          {settings.socials.instagram && (
-            <a href={settings.socials.instagram} target="_blank" rel="noopener" class="hover:text-white">Instagram</a>
-          )}
-          {settings.socials.facebook && (
-            <a href={settings.socials.facebook} target="_blank" rel="noopener" class="hover:text-white">Facebook</a>
-          )}
-          {settings.socials.linkedin && (
-            <a href={settings.socials.linkedin} target="_blank" rel="noopener" class="hover:text-white">LinkedIn</a>
-          )}
+
+      <nav class="mt-6 grid max-w-xs grid-cols-2 gap-x-6 gap-y-2" aria-label="Footer">
+        {navLinks.map((l) => (
+          <a href={l.href} class="hover:text-white">{l.label}</a>
+        ))}
+      </nav>
+
+      {socials.length > 0 && (
+        <div class="mt-auto pt-8">
+          <p class="text-xs font-semibold uppercase tracking-wide text-white/50">{t.follow}</p>
+          <div class="mt-2 flex gap-2">
+            {socials.map((s) => (
+              <a href={s.href} target="_blank" rel="noopener" class={socialClass} aria-label={`${brand === "mpc" ? "Movenda Performance Centre" : "Movenda"} op ${s.label}`}>
+                {s.kind === "instagram" && (
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="5" />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                  </svg>
+                )}
+                {s.kind === "facebook" && (
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21h3.1z" />
+                  </svg>
+                )}
+                {s.kind === "linkedin" && (
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M6.5 8.5H3.5V20h3V8.5zM5 4a1.75 1.75 0 1 0 0 3.5A1.75 1.75 0 0 0 5 4zM20.5 13.2c0-3.2-1.7-4.9-4.1-4.9-1.6 0-2.6.9-3 1.6V8.5h-3V20h3v-6c0-1.6.6-2.7 2-2.7 1.3 0 1.8 1 1.8 2.7v6h3.3v-6.8z" />
+                  </svg>
+                )}
+              </a>
+            ))}
+          </div>
         </div>
       )}
-    </div>
+    </section>
+
+    {shown.map((locatie) => (
+      <section class="text-sm md:row-span-3 md:grid md:grid-rows-subgrid" aria-labelledby={`footer-${locatie.slug}`}>
+        <div class="flex items-center gap-3">
+          <img src={markFor(locatie.slug)} alt="" width="40" height="40" class="h-10 w-10 shrink-0" />
+          <div>
+            <h3 id={`footer-${locatie.slug}`} class="font-heading text-base font-semibold leading-tight text-white">
+              {locatie.naam}
+            </h3>
+            <p class="mt-0.5 text-xs uppercase tracking-wide text-white/50">{locatie.type}</p>
+          </div>
+        </div>
+
+        <ul class="mt-5 space-y-2.5">
+          <li class="flex items-start gap-2.5">
+            <svg class={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 21s-6-5.4-6-11a6 6 0 1 1 12 0c0 5.6-6 11-6 11z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </svg>
+            <a href={locatie.mapsUrl} target="_blank" rel="noopener" class="hover:text-white" title={t.route}>
+              {locatie.adres}
+            </a>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" />
+            </svg>
+            <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="tabular-nums hover:text-white">
+              {locatie.telefoon}
+            </a>
+          </li>
+          {!sharedEmail && (
+            <li class="flex items-start gap-2.5">
+              <svg class={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m3 7 9 6 9-6" />
+              </svg>
+              <a href={`mailto:${locatie.email}`} class="hover:text-white">{locatie.email}</a>
+            </li>
+          )}
+        </ul>
+
+        <div class="mt-6">
+          <p class="text-xs font-semibold uppercase tracking-wide text-white/50">
+            {t.hours}
+            {!sharedNote && locatie.urenNote && (
+              <span class="font-normal normal-case tracking-normal"> · {locatie.urenNote}</span>
+            )}
+          </p>
+          <dl class="mt-2 grid max-w-xs grid-cols-[auto_1fr] gap-x-6 gap-y-1 tabular-nums">
+            {locatie.uren.map((u) => (
+              <>
+                <dt>{u.dag}</dt>
+                <dd class="text-right text-white">{u.van}–{u.tot}</dd>
+              </>
+            ))}
+          </dl>
+        </div>
+      </section>
+    ))}
   </div>
-  <div class="border-t border-white/10 px-4 py-4 text-center text-xs text-white/60">
-    © {year} Movenda · Preview in ontwikkeling — niet de live site van movenda.be
+
+  <div class="border-t border-white/10 px-4 py-5">
+    <div class="mx-auto flex max-w-6xl flex-col gap-2 text-xs text-white/60 md:flex-row md:items-center md:justify-between">
+      <p>
+        © {year} Movenda
+        {shown.map((l) => (
+          <span class="tabular-nums"> · {shortName(l.naam)} {t.vat} {l.btw}</span>
+        ))}
+      </p>
+      <p>Preview in ontwikkeling — niet de live site van movenda.be</p>
+    </div>
   </div>
 </footer>
