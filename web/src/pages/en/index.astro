@@ -8,22 +8,17 @@ import TeamCarousel from "../../components/TeamCarousel.astro";
 import SloganBanner from "../../components/SloganBanner.astro";
 import HomePijler from "../../components/HomePijler.astro";
 import {
-  getLocaties,
   getTeamleden,
   getSiteSettings,
   getDienstenByCategorie,
   homePijlerDiensten,
 } from "../../lib/content";
-import { organizationSchema, localBusinessSchema } from "../../lib/schema";
 import homeHero from "../../assets/marketing/home-hero.jpg";
 import mpcHero from "../../assets/marketing/mpc-hero.jpg";
 import homeSquats from "../../assets/marketing/home-squats.jpg";
 import kineHero from "../../assets/marketing/kine-hero.jpg";
 import trainingSecondary from "../../assets/marketing/training-secondary.jpg";
 
-const locaties = await getLocaties();
-const olympia = locaties.find((l) => l.slug === "olympia")!;
-const mpc = locaties.find((l) => l.slug === "mpc")!;
 const team = await getTeamleden();
 const settings = await getSiteSettings();
 const alleDiensten = {
@@ -34,16 +29,14 @@ const alleDiensten = {
 const afspraakHref =
   settings.booking.enabled && settings.booking.url ? settings.booking.url : "/en/contact";
 
-const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusinessSchema(mpc)];
 ---
 
 <Layout
-  title="Movenda Hasselt: physiotherapy, personal training & performance"
+  title="Physiotherapy & personal training Hasselt | Movenda"
   description="Movenda is the leading physiotherapy and personal training practice in Hasselt, Belgium, with a second location — Movenda Performance Centre — in Kuringen."
   path="/en"
   altPath="/"
   lang="en"
-  jsonLd={jsonLd}
 >
   <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 lg:grid-cols-2 lg:py-16">
     <div>

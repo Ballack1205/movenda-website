@@ -2,9 +2,18 @@
 import Layout from "../../layouts/Layout.astro";
 import { getTeamleden, getDiensten, matchSpecialisatieToDienst, dienstHref, formatEuro } from "../../lib/content";
 import { teamPhotoSrc } from "../../lib/images";
+import { breadcrumbNode, teamListNode } from "../../lib/schema";
 
 const team = await getTeamleden();
 const diensten = await getDiensten();
+
+const jsonLd = [
+  teamListNode(team, "/team"),
+  breadcrumbNode([
+    { name: "Home", path: "/" },
+    { name: "Team", path: "/team" },
+  ]),
+];
 
 const klachten = [...new Set(team.flatMap((t) => t.klachten))].sort();
 const regio = [...new Set(team.flatMap((t) => t.regio))].sort();
@@ -27,6 +36,7 @@ const payload = team.map((lid) => ({
   description="Maak kennis met het team van Movenda: kinesisten, personal trainers en performance coaches in Hasselt en Kuringen."
   path="/team"
   altPath="/en/team"
+  jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-6xl px-4 py-12">
     <h1 class="text-3xl font-bold">Ons team, jouw gezondheid</h1>

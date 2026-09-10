@@ -1,7 +1,16 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getTeamleden, getTeamlidBySlug, getDiensten, matchSpecialisatieToDienst, dienstHref, formatEuro } from "../../lib/content";
-import { personSchema, breadcrumbSchema } from "../../lib/schema";
+import {
+  getTeamleden,
+  getTeamlidBySlug,
+  getDiensten,
+  matchSpecialisatieToDienst,
+  dienstHref,
+  formatEuro,
+  rolKort,
+  truncateAtSentence,
+} from "../../lib/content";
+import { personNode, breadcrumbNode } from "../../lib/schema";
 import { teamPhotoSrc } from "../../lib/images";
 
 export async function getStaticPaths() {
@@ -19,20 +28,26 @@ if (!lid) {
 const diensten = await getDiensten();
 
 const jsonLd = [
-  personSchema(lid),
-  breadcrumbSchema([
+  personNode(lid),
+  breadcrumbNode([
     { name: "Home", path: "/" },
     { name: "Team", path: "/team" },
     { name: `${lid.voornaam} ${lid.naam}`, path: `/team/${lid.slug}` },
   ]),
 ];
+
+// "Pieter Hayen | Kinesitherapeut Hasselt | Movenda" — full role is in the H1.
+const title = `${lid.voornaam} ${lid.naam} | ${rolKort(lid.rol)} Hasselt | Movenda`;
 ---
 
 <Layout
-  title={`${lid.voornaam} ${lid.naam} — ${lid.rol} | Movenda`}
-  description={lid.bio.slice(0, 155)}
+  title={title.length <= 60 ? title : `${lid.voornaam} ${lid.naam} | ${rolKort(lid.rol)} | Movenda`}
+  description={truncateAtSentence(lid.bio, 155)}
   path={`/team/${lid.slug}`}
   jsonLd={jsonLd}
+  ogImage={lid.foto}
+  ogImageShape="square"
+  ogImageAlt={`${lid.voornaam} ${lid.naam}, ${lid.rol} bij Movenda`}
 >
   <article class="mx-auto max-w-3xl px-4 py-12">
     <a href="/team" class="text-sm font-medium text-brand-primary hover:underline">← Terug naar team</a>

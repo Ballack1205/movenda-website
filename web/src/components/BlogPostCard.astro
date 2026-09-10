@@ -1,6 +1,7 @@
 ---
 import type { BlogPost } from "../lib/content";
 import { blogPhotoSrc } from "../lib/images";
+import { blogTagLabel, formatBlogDate } from "../lib/blog";
 
 interface Props {
   post: BlogPost;
@@ -8,10 +9,7 @@ interface Props {
 
 const { post } = Astro.props;
 const contain = post.coverFit === "contain";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric" });
-}
+const tag = post.tags?.[0];
 ---
 
 <a
@@ -23,20 +21,21 @@ function formatDate(iso: string) {
       <img
         src={blogPhotoSrc(post.cover, "card")}
         alt={post.titel}
-        width="800"
-        height="500"
+        width="900"
+        height="560"
         loading="lazy"
+        decoding="async"
         class:list={[
           "aspect-[16/10] w-full transition duration-500 group-hover:scale-[1.03]",
-          contain ? "object-contain p-6" : "object-cover object-top",
+          contain ? "object-contain p-5" : "object-cover object-top",
         ]}
       />
     </div>
   )}
   <div class="flex flex-1 flex-col p-5">
     <p class="text-xs font-semibold uppercase tracking-wide text-brand-muted">
-      {formatDate(post.publicatiedatum)}
-      {post.auteurNaam ? ` · ${post.auteurNaam}` : ""}
+      {tag ? `${blogTagLabel(tag)} · ` : ""}
+      {formatBlogDate(post.publicatiedatum)}
     </p>
     <h2 class="mt-2 text-pretty text-lg font-semibold">{post.titel}</h2>
     {post.excerpt && <p class="mt-2 line-clamp-3 text-sm text-brand-muted">{post.excerpt}</p>}

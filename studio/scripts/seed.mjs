@@ -334,8 +334,10 @@ function toPortableText(sections) {
 async function seedBlogPosts() {
   const posts = readJson("blog.json");
   for (const post of posts) {
+    const id = `blogPost-${post.slug}`;
+    const existing = await client.getDocument(id).catch(() => null);
     await client.createOrReplace({
-      _id: `blogPost-${post.slug}`,
+      _id: id,
       _type: "blogPost",
       titel: post.titel,
       slug: { _type: "slug", current: post.slug },
@@ -347,6 +349,8 @@ async function seedBlogPosts() {
       publicatiedatum: post.publicatiedatum,
       tags: post.tags,
       seoTitle: post.seoTitle,
+      ...(existing?.cover ? { cover: existing.cover } : {}),
+      ...(existing?.coverFit ? { coverFit: existing.coverFit } : {}),
     });
   }
   console.log(`Seeded ${posts.length} blogposts.`);

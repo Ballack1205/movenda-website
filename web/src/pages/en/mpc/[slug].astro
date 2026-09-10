@@ -1,8 +1,18 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 import DienstDetail from "../../../components/DienstDetail.astro";
-import { getDienstenByCategorie, getDienstBySlug, getLocatieBySlug, getTeamleden, dienstHref } from "../../../lib/content";
-import { serviceSchema, breadcrumbSchema } from "../../../lib/schema";
+import {
+  getDienstenByCategorie,
+  getDienstBySlug,
+  getLocatieBySlug,
+  getTeamleden,
+  getPrijzen,
+  findPrijsVoorDienst,
+  dienstHref,
+  dienstSeoTitleEn,
+  dienstSeoDescriptionEn,
+} from "../../../lib/content";
+import { serviceNode, breadcrumbNode } from "../../../lib/schema";
 
 export async function getStaticPaths() {
   const diensten = await getDienstenByCategorie("mpc");
@@ -20,10 +30,11 @@ const locatie = (await getLocatieBySlug("mpc"))!;
 const alleTeamleden = await getTeamleden();
 const team = alleTeamleden.filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
 const path = dienstHref(dienst, "en");
+const prijs = findPrijsVoorDienst(dienst, await getPrijzen());
 
 const jsonLd = [
-  serviceSchema(dienst, locatie, path),
-  breadcrumbSchema([
+  serviceNode(dienst, locatie, { path, prijs, team, lang: "en" }),
+  breadcrumbNode([
     { name: "Home", path: "/en" },
     { name: "Movenda Performance Centre", path: "/en/mpc" },
     { name: dienst.titelEn || dienst.titel, path },
@@ -32,13 +43,15 @@ const jsonLd = [
 ---
 
 <Layout
-  title={dienst.titelEn || dienst.seoTitle}
-  description={dienst.bodyEn?.slice(0, 155) || dienst.seoDescription}
+  title={dienstSeoTitleEn(dienst)}
+  description={dienstSeoDescriptionEn(dienst)}
   path={path}
   altPath={dienstHref(dienst)}
   brand="mpc"
   lang="en"
   jsonLd={jsonLd}
+  ogImage={dienst.afbeelding}
+  ogImageAlt={`${dienst.titelEn || dienst.titel} at the Movenda Performance Centre`}
 >
   <DienstDetail
     dienst={dienst}

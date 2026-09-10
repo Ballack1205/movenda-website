@@ -2,6 +2,10 @@
 // and llms.txt so crawlers and assistants can cite the article without
 // parsing the marketing HTML.
 
+import type { BlogPost } from "./content";
+import { blogTagLabel } from "./blog";
+import { absoluteUrl } from "./site";
+
 export function portableTextToMarkdown(body: unknown): string {
   if (!Array.isArray(body)) return "";
   const lines: string[] = [];
@@ -46,4 +50,30 @@ export function escapeXml(value: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function markdownImage(src: string, alt: string): string {
+  return `![${alt}](${absoluteUrl(src)})`;
+}
+
+/** Full Markdown document for /blog/{slug}.md — body plus local fallback photos. */
+export function blogPostToMarkdown(post: BlogPost): string {
+  const body = portableTextToMarkdown(post.body);
+  const hasImages = /!\[[^\]]*\]\([^)]+\)/.test(body);
+  const extras =
+    !hasImages && post.photos?.length
+      ? post.photos.map((src) => markdownImage(src, post.titel)).join("\n\n")
+      : "";
+  const tags = post.tags?.length ? `\nTags: ${post.tags.map(blogTagLabel).join(", ")}` : "";
+  const byline = [post.publicatiedatum, post.auteurNaam].filter(Boolean).join(" · ");
+
+  return `# ${post.titel}
+
+${byline}${tags}
+
+${post.excerpt ? `> ${post.excerpt}\n` : ""}
+Bron: ${absoluteUrl(`/blog/${post.slug}`)}
+
+${body}${extras ? `\n\n${extras}` : ""}
+`;
 }

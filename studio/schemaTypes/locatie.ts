@@ -50,6 +50,13 @@ export default defineType({
     defineField({ name: "iban", title: "IBAN", type: "string" }),
     defineField({ name: "bic", title: "BIC", type: "string" }),
     defineField({ name: "mapsUrl", title: "Google Maps-link", type: "url" }),
+    defineField({
+      name: "googleBusinessUrl",
+      title: "Google Bedrijfsprofiel-URL (deze vestiging)",
+      type: "url",
+      description:
+        "De vaste link naar jullie Google-vermelding (Google Maps → Delen → 'Link kopiëren', of de g.page/maps.app.goo.gl-link uit het Bedrijfsprofiel). Koppelt deze vestiging in de structured data aan Google Maps; belangrijk voor lokale SEO en AI-zoekmachines.",
+    }),
     defineField({ name: "routebeschrijving", title: "Routebeschrijving eerste bezoek", type: "text", rows: 4 }),
     defineField({ name: "rpr", title: "RPR", type: "string" }),
     defineField({ name: "instagram", title: "Instagram-URL (deze vestiging)", type: "url" }),

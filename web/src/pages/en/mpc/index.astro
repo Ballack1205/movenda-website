@@ -21,12 +21,14 @@ const jsonLd = [
     { name: "Home", path: "/en" },
     { name: "Movenda Performance Centre", path: "/en/mpc" },
   ]),
-  ...(faqs.length > 0 ? [faqPageSchema(faqs.map((f) => ({ ...f, vraag: f.vraagEn || f.vraag, antwoord: f.antwoordEn || f.antwoord })))] : []),
+  ...(faqs.length > 0
+    ? [faqPageSchema(faqs.map((f) => ({ ...f, vraag: f.vraagEn || f.vraag, antwoord: f.antwoordEn || f.antwoord })), "/en/mpc")]
+    : []),
 ];
 ---
 
 <Layout
-  title="Performance training & sports rehabilitation Hasselt | Movenda Performance Centre"
+  title="Movenda Performance Centre | Sports performance Hasselt"
   description="Movenda Performance Centre in Kuringen: data-driven performance training and sports rehabilitation for recreational and professional athletes."
   path="/en/mpc"
   altPath="/mpc"

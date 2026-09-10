@@ -3,7 +3,9 @@ import { toHTML } from "@portabletext/to-html";
 import Layout from "../../layouts/Layout.astro";
 import { getBlogPosts, getBlogPostBySlug, getRelatedBlogPosts } from "../../lib/content";
 import { blogPhotoSrc } from "../../lib/images";
-import { blogPostingSchema, breadcrumbSchema } from "../../lib/schema";
+import { blogPostingNode, breadcrumbNode } from "../../lib/schema";
+import { absoluteUrl } from "../../lib/site";
+import { blogTagLabel, formatBlogDate } from "../../lib/blog";
 import BlogPostCard from "../../components/BlogPostCard.astro";
 
 export async function getStaticPaths() {
@@ -28,8 +30,8 @@ const bodyHtml = toHTML(post.body as any, {
       image: ({ value }) => {
         const src = value?.url as string | undefined;
         if (!src) return "";
-        const alt = escapeAttr((value.alt as string) || "");
-        return `<img src="${blogPhotoSrc(src, "inline")}" alt="${alt}" width="960" height="720" />`;
+        const alt = escapeAttr((value.alt as string) || post.titel);
+        return `<figure class="article-photo"><img src="${blogPhotoSrc(src, "inline")}" alt="${alt}" width="960" height="720" /></figure>`;
       },
     },
   },
@@ -38,36 +40,39 @@ const bodyHtml = toHTML(post.body as any, {
 const hasInlineImages = /<img\b/i.test(bodyHtml);
 const extraPhotos = !hasInlineImages ? post.photos || [] : [];
 
-function injectPhotos(html: string, photos: string[]) {
+function injectPhotos(html: string, photos: string[], alt: string) {
   if (!photos.length) return html;
-  const photoHtml = photos
-    .map(
-      (src) =>
-        `<img src="${blogPhotoSrc(src, "inline")}" alt="" width="960" height="720" />`,
-    )
-    .join("");
-  const match = html.match(/<\/h[2-4]>/i);
-  if (!match || match.index == null) return `${html}${photoHtml}`;
-  const idx = match.index + match[0].length;
-  return `${html.slice(0, idx)}${photoHtml}${html.slice(idx)}`;
+  const figures = photos.map(
+    (src) =>
+      `<figure class="article-photo"><img src="${blogPhotoSrc(src, "inline")}" alt="${escapeAttr(alt)}" width="960" height="720" /></figure>`,
+  );
+  const parts = html.split(/(<\/h[2-4]>)/i);
+  if (parts.length < 2) return `${html}${figures.join("")}`;
+  let photoIdx = 0;
+  let out = "";
+  for (const part of parts) {
+    out += part;
+    if (/<\/h[2-4]>/i.test(part) && photoIdx < figures.length) {
+      out += figures[photoIdx++];
+    }
+  }
+  if (photoIdx < figures.length) out += figures.slice(photoIdx).join("");
+  return out;
 }
 
-const articleHtml = injectPhotos(bodyHtml, extraPhotos);
+const articleHtml = injectPhotos(bodyHtml, extraPhotos, post.titel);
 const contain = post.coverFit === "contain";
 const related = await getRelatedBlogPosts(post.slug, 3);
+const tags = post.tags || [];
 
 const jsonLd = [
-  breadcrumbSchema([
+  breadcrumbNode([
     { name: "Home", path: "/" },
     { name: "Blog", path: "/blog" },
     { name: post.titel, path: `/blog/${post.slug}` },
   ]),
-  blogPostingSchema(post),
+  blogPostingNode(post),
 ];
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("nl-BE", { day: "numeric", month: "long", year: "numeric" });
-}
 ---
 
 <Layout
@@ -76,6 +81,14 @@ function formatDate(iso: string) {
   path={`/blog/${post.slug}`}
   jsonLd={jsonLd}
   ogImage={post.cover}
+  article={{
+    publishedTime: post.publicatiedatum,
+    modifiedTime: post.updatedAt,
+    // OG expects a profile URL here; the team page is the author's profile.
+    author: post.auteurSlug ? absoluteUrl(`/team/${post.auteurSlug}`) : post.auteurNaam,
+    section: "Blog",
+    tags: tags.map(blogTagLabel),
+  }}
   extraLinks={[
     { rel: "alternate", type: "text/markdown", href: `/blog/${post.slug}.md`, title: "Artikel (Markdown)" },
     { rel: "alternate", type: "application/rss+xml", href: "/rss.xml", title: "Movenda blog" },
@@ -94,12 +107,10 @@ function formatDate(iso: string) {
             src={blogPhotoSrc(post.cover, "hero")}
             alt={post.titel}
             width="1400"
-            height="900"
+            height="880"
             class:list={[
-              "w-full",
-              contain
-                ? "aspect-[5/4] object-contain p-6 sm:p-10"
-                : "aspect-[16/10] object-cover object-top sm:aspect-[5/4] lg:aspect-[4/5]",
+              "aspect-[16/10] w-full",
+              contain ? "object-contain p-6 sm:p-10" : "object-cover object-top",
             ]}
           />
         </div>
@@ -109,11 +120,20 @@ function formatDate(iso: string) {
           ← Blog
         </a>
         <p class="mt-5 text-xs font-semibold uppercase tracking-wide text-brand-muted">
-          {formatDate(post.publicatiedatum)}
+          {formatBlogDate(post.publicatiedatum)}
           {post.auteurNaam ? ` · Geschreven door ${post.auteurNaam}` : ""}
         </p>
         <h1 class="mt-3 text-pretty text-4xl font-bold tracking-tight sm:text-5xl">{post.titel}</h1>
         {post.excerpt && <p class="mt-5 text-lg leading-relaxed text-brand-muted">{post.excerpt}</p>}
+        {tags.length > 0 && (
+          <p class="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span class="rounded-full bg-brand-header/8 px-3 py-1 text-xs font-semibold text-brand-muted">
+                {blogTagLabel(tag)}
+              </span>
+            ))}
+          </p>
+        )}
       </div>
     </header>
 
@@ -171,9 +191,12 @@ function formatDate(iso: string) {
     font-weight: 600;
     text-decoration: underline;
   }
+  .article-body :global(.article-photo),
   .article-body :global(img) {
     margin-top: 2em;
     margin-bottom: 0.5em;
+  }
+  .article-body :global(img) {
     width: 100%;
     border-radius: 1.25rem;
     object-fit: cover;

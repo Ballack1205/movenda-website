@@ -2,13 +2,9 @@
 // dataset (project k73l2by8 / production). Pages and components must
 // always import from this file, never query Sanity directly.
 
-import { existsSync } from "node:fs";
-import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { sanity } from "./sanity";
 import seedSettings from "../content/site-settings.json";
-
-const blogCoversDir = fileURLToPath(new URL("../../public/blog-covers/", import.meta.url));
+import { resolveBlogMedia } from "./blog";
 
 export type LocatieSlug = "olympia" | "mpc";
 export type DienstCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep";
@@ -43,6 +39,8 @@ export interface Teamlid {
   regio: string[];
   sporten: string[];
   doelgroepen: string[];
+  /** Sanity _updatedAt (ISO) — sitemap lastmod. */
+  updatedAt?: string;
 }
 
 export interface Openingsuur {
@@ -67,11 +65,14 @@ export interface Locatie {
   iban: string;
   bic?: string;
   mapsUrl: string;
+  /** Google Business Profile link (sameAs in JSON-LD). Julie fills this in Sanity. */
+  googleBusinessUrl?: string;
   routebeschrijving?: string;
   rpr?: string;
   instagram?: string;
   facebook?: string;
   verdiepingNote?: string;
+  updatedAt?: string;
 }
 
 export interface Dienst {
@@ -87,10 +88,15 @@ export interface Dienst {
   ctaUrl?: string;
   seoTitle: string;
   seoDescription: string;
+  seoTitleEn?: string;
+  seoDescriptionEn?: string;
   gekoppeldeTeamleden: string[];
   afbeelding?: string;
   galerij: string[];
   volgorde: number;
+  /** Explicitly linked prijsitem (Sanity reference); see findPrijsVoorDienst for the fallback. */
+  prijs?: Prijsitem;
+  updatedAt?: string;
 }
 
 export interface GoogleReviews {
@@ -263,7 +269,9 @@ export interface BlogPost {
   body: unknown[];
   bodyEn?: unknown[];
   auteurNaam?: string;
+  auteurSlug?: string;
   publicatiedatum: string;
+  updatedAt?: string;
   tags?: string[];
   seoTitle?: string;
   seoDescription?: string;
@@ -350,24 +358,30 @@ const teamlidProjection = `{
   volgorde, actief,
   "foto": foto.asset->url,
   tariefKine, tariefPt, tariefPtMpc, tariefPerformance,
-  clubs, klachten, regio, sporten, doelgroepen
+  clubs, klachten, regio, sporten, doelgroepen,
+  "updatedAt": _updatedAt
 }`;
 
 const locatieProjection = `{
   "slug": slug.current,
   naam, brand, type, adres,
   "geo": { "lat": geo.lat, "lng": geo.lng },
-  telefoon, email, uren, urenNote, btw, iban, bic, mapsUrl,
-  routebeschrijving, rpr, instagram, facebook, verdiepingNote
+  telefoon, email, uren, urenNote, btw, iban, bic, mapsUrl, googleBusinessUrl,
+  routebeschrijving, rpr, instagram, facebook, verdiepingNote,
+  "updatedAt": _updatedAt
 }`;
+
+const prijsitemProjection = `{ naam, categorie, bedrag, eenheid, vanaf, opAanvraag, notitie, volgorde }`;
 
 const dienstProjection = `{
   "slug": slug.current,
   categorie, titel, titelEn, intro, slogan, body, bodyEn,
-  ctaLabel, ctaUrl, seoTitle, seoDescription, volgorde,
+  ctaLabel, ctaUrl, seoTitle, seoDescription, seoTitleEn, seoDescriptionEn, volgorde,
   "gekoppeldeTeamleden": gekoppeldeTeamleden[]->slug.current,
   "afbeelding": afbeelding.asset->url,
-  "galerij": galerij[].asset->url
+  "galerij": galerij[].asset->url,
+  "prijs": prijs->${prijsitemProjection},
+  "updatedAt": _updatedAt
 }`;
 
 export async function getTeamleden(): Promise<Teamlid[]> {
@@ -556,9 +570,82 @@ export async function getFaqs(site?: Exclude<FaqSite, "beide">): Promise<Faq[]> 
 }
 
 export async function getPrijzen(): Promise<Prijsitem[]> {
-  return sanity.fetch(
-    `*[_type == "prijsitem"] | order(volgorde asc) { naam, categorie, bedrag, eenheid, vanaf, opAanvraag, notitie, volgorde }`,
-  );
+  return sanity.fetch(`*[_type == "prijsitem"] | order(volgorde asc) ${prijsitemProjection}`);
+}
+
+const prijsCategorieVoorDienst: Record<DienstCategorie, PrijsCategorie[]> = {
+  kine: ["kine"],
+  training: ["training", "screening"],
+  "mpc-training": ["mpc", "screening"],
+  "mpc-rehab": ["mpc"],
+  "mpc-groep": ["mpc"],
+};
+
+function normalizeNaam(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/\s*\(.*?\)\s*/g, " ")
+    .replace(/ hasselt$/, "")
+    .replace(/[^a-z0-9 ]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Price to attach to a dienst page (JSON-LD Offer, llms-full.txt). Prefers the
+ * prijsitem Julie linked in Sanity; otherwise the first prijsitem in a matching
+ * price category whose name starts with the dienst title ("Dry needling" →
+ * "Dry Needling (30 min)"). Returns undefined for "op aanvraag" and no match,
+ * so we never publish a wrong price.
+ */
+export function findPrijsVoorDienst(dienst: Dienst, prijzen: Prijsitem[]): Prijsitem | undefined {
+  const linked = dienst.prijs;
+  if (linked) return linked.opAanvraag ? undefined : linked;
+  const naam = normalizeNaam(dienstKorteTitel(dienst));
+  if (!naam) return undefined;
+  const cats = prijsCategorieVoorDienst[dienst.categorie] || [];
+  const match = prijzen.find((p) => {
+    if (!cats.includes(p.categorie) || p.opAanvraag) return false;
+    const pn = normalizeNaam(p.naam);
+    return pn === naam || pn.startsWith(`${naam} `) || pn.startsWith(`${naam}/`);
+  });
+  return match;
+}
+
+/** Cut text at the last sentence boundary before `max` chars; falls back to a word cut with an ellipsis. */
+export function truncateAtSentence(text: string | undefined, max = 155): string {
+  if (!text) return "";
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const head = clean.slice(0, max);
+  const sentenceEnd = Math.max(head.lastIndexOf(". "), head.lastIndexOf("! "), head.lastIndexOf("? "));
+  if (sentenceEnd > max * 0.4) return head.slice(0, sentenceEnd + 1);
+  return `${head.slice(0, head.lastIndexOf(" "))}…`;
+}
+
+/**
+ * English <title> for an MPC dienst page. Julie's seoTitleEn wins; otherwise
+ * "<Title EN> in Hasselt | Movenda Performance Centre" ("in" keeps it distinct
+ * from the Dutch "<Titel> Hasselt | …" for language-neutral names like Boxing),
+ * dropping the city when that would push the title past 60 characters.
+ */
+export function dienstSeoTitleEn(dienst: Dienst): string {
+  if (dienst.seoTitleEn) return dienst.seoTitleEn;
+  const korte = dienstKorteTitel(dienst, "en");
+  const brand = "Movenda Performance Centre";
+  const withCity = `${korte} in Hasselt | ${brand}`;
+  return withCity.length <= 60 ? withCity : `${korte} | ${brand}`;
+}
+
+export function dienstSeoDescriptionEn(dienst: Dienst): string {
+  if (dienst.seoDescriptionEn) return dienst.seoDescriptionEn;
+  if (dienst.bodyEn) return truncateAtSentence(dienst.bodyEn, 155);
+  return `${dienstKorteTitel(dienst, "en")} at the Movenda Performance Centre in Kuringen (Hasselt): data-driven, one-on-one coaching for recreational and professional athletes.`;
+}
+
+/** "Kinesitherapeut & kinesitherapeut KRC Genk" → "Kinesitherapeut" (for <title>s that must stay short). */
+export function rolKort(rol: string): string {
+  return rol.split(/\s+(?:&|en|\/)\s+/)[0].trim();
 }
 
 export async function getPrijzenByCategorie(categorie: PrijsCategorie): Promise<Prijsitem[]> {
@@ -624,36 +711,13 @@ const blogPostProjection = `{
   body[] ${blogImageBlock},
   bodyEn[] ${blogImageBlock},
   "auteurNaam": auteur->voornaam + " " + auteur->naam,
-  publicatiedatum, tags, seoTitle, seoDescription
+  "auteurSlug": auteur->slug.current,
+  publicatiedatum, tags, seoTitle, seoDescription,
+  "updatedAt": _updatedAt
 }`;
 
-// Local photos: drop web/public/blog-covers/{slug}.jpg (+ optional -2.jpg, -3.jpg).
-// No per-post map — a new article only needs the Sanity record and those files.
-function blogCoverFile(slug: string, suffix = ""): string | undefined {
-  const name = `${slug}${suffix}.jpg`;
-  if (existsSync(join(blogCoversDir, name))) return `/blog-covers/${name}`;
-}
-
-function localBlogPhotos(slug: string): string[] {
-  const extras: string[] = [];
-  for (let i = 2; i <= 6; i++) {
-    const src = blogCoverFile(slug, `-${i}`);
-    if (!src) break;
-    extras.push(src);
-  }
-  return extras;
-}
-
 function normalizeBlogPost(row: BlogPost): BlogPost {
-  return {
-    ...row,
-    cover: row.cover || blogCoverFile(row.slug),
-    photos: row.photos?.length ? row.photos : localBlogPhotos(row.slug),
-    coverFit:
-      row.coverFit === "contain" || existsSync(join(blogCoversDir, `${row.slug}.contain`))
-        ? "contain"
-        : "cover",
-  };
+  return { ...row, ...resolveBlogMedia(row.slug, row) };
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {

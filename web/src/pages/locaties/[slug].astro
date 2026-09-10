@@ -2,7 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import { getLocaties, getLocatieBySlug, getTeamledenByLocatie } from "../../lib/content";
-import { localBusinessSchema, breadcrumbSchema } from "../../lib/schema";
+import { breadcrumbNode } from "../../lib/schema";
 
 export async function getStaticPaths() {
   const locaties = await getLocaties();
@@ -14,9 +14,9 @@ const locatie = (await getLocatieBySlug(slug))!;
 const team = await getTeamledenByLocatie(slug);
 const brand = locatie.brand === "mpc" ? "mpc" : "movenda";
 
+// The LocalBusiness node itself is part of every page's base graph (Layout).
 const jsonLd = [
-  localBusinessSchema(locatie),
-  breadcrumbSchema([
+  breadcrumbNode([
     { name: "Home", path: "/" },
     { name: locatie.naam, path: `/locaties/${locatie.slug}` },
   ]),
@@ -24,8 +24,8 @@ const jsonLd = [
 ---
 
 <Layout
-  title={`${locatie.naam} | ${locatie.type} | Movenda`}
-  description={`${locatie.naam} — ${locatie.type} op ${locatie.adres}. Openingsuren, telefoon en team.`}
+  title={`${locatie.naam} | Adres & openingsuren`}
+  description={`${locatie.naam} — ${locatie.type}, ${locatie.adres}. Openingsuren, telefoon, route en het team op deze locatie.`}
   path={`/locaties/${locatie.slug}`}
   brand={brand}
   jsonLd={jsonLd}

@@ -19,7 +19,6 @@ import {
   getGetuigenissen,
   homePijlerDiensten,
 } from "../lib/content";
-import { organizationSchema, localBusinessSchema } from "../lib/schema";
 import homeHero from "../assets/marketing/home-hero.jpg";
 import mpcHero from "../assets/marketing/mpc-hero.jpg";
 import homeSquats from "../assets/marketing/home-squats.jpg";
@@ -27,8 +26,6 @@ import kineHero from "../assets/marketing/kine-hero.jpg";
 import trainingSecondary from "../assets/marketing/training-secondary.jpg";
 
 const locaties = await getLocaties();
-const olympia = locaties.find((l) => l.slug === "olympia")!;
-const mpc = locaties.find((l) => l.slug === "mpc")!;
 const team = await getTeamleden();
 const settings = await getSiteSettings();
 const alleDiensten = {
@@ -46,15 +43,13 @@ const trainerCount = team.filter(
   (t) => t.rol.toLowerCase().includes("trainer") || t.rol.toLowerCase().includes("coach"),
 ).length;
 
-const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusinessSchema(mpc)];
 ---
 
 <Layout
-  title="Movenda Hasselt: kinesitherapie, personal training & performance"
+  title="Kinesitherapie & personal training Hasselt | Movenda"
   description="Movenda is dé groepspraktijk kinesitherapie en personal training in Hasselt, met een tweede vestiging Movenda Performance Centre in Kuringen."
   path="/"
   altPath="/en"
-  jsonLd={jsonLd}
 >
   <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 lg:grid-cols-2 lg:py-16">
     <div>

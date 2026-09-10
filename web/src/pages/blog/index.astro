@@ -43,12 +43,12 @@ const jsonLd = [
     ) : (
       <>
         {featured && (
-          <div class="mt-14">
+          <div class="mt-10">
             <BlogPostFeature post={featured} />
           </div>
         )}
         {rest.length > 0 && (
-          <div class="mt-14 grid gap-6 sm:grid-cols-2">
+          <div class="mt-10 grid gap-6 sm:grid-cols-2">
             {rest.map((post) => (
               <BlogPostCard post={post} />
             ))}

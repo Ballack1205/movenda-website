@@ -5,7 +5,7 @@
     "excerpt": "Sporten bij hoge temperaturen brengt extra uitdagingen met zich mee. Met deze tips blijf je ook tijdens warme dagen veilig sporten.",
     "publicatiedatum": "2026-07-02",
     "auteurSlug": "julie-spaas",
-    "tags": [],
+    "tags": ["hitte", "training", "preventie"],
     "seoTitle": "Sporten in de hitte: zo doe je het veilig | Movenda & MPC Hasselt",
     "body": [
       { "type": "p", "text": "De zomer is het ideale seizoen om buiten te sporten. Of je nu gaat lopen, fietsen, wandelen, padellen of een intensieve training afwerkt: langere dagen en aangename avonden maken het verleidelijk om meer te bewegen." },
@@ -47,8 +47,8 @@
     "excerpt": "Nekpijn door beeldschermwerk is een van de meest voorkomende klachten bij kantoorwerkers. Met drie gerichte oefeningen aan je bureau voorkom je dit grotendeels.",
     "publicatiedatum": "2026-06-01",
     "auteurSlug": "julie-spaas",
-    "tags": [],
-    "seoTitle": "Nekpijn door beeldschermwerk: tips van kinesitherapeut Hasselt | Movenda",
+    "tags": ["nekpijn", "preventie"],
+    "seoTitle": "Nekpijn door beeldschermwerk | Movenda Hasselt",
     "body": [
       { "type": "p", "text": "Je zit al een paar uur achter je scherm. De vergadering liep uit, de mails stapelen zich op, en plots merk je het: een stijve, zeurende pijn in je nek die zich verspreidt naar je schouders en soms zelfs naar je hoofd. Nekpijn door beeldschermwerk is een van de meest voorkomende klachten bij kantoorwerkers, maar ook bij mensen die thuis veel aan een laptop werken." },
       { "type": "p", "text": "Het goede nieuws: met drie gerichte oefeningen die je gewoon aan je bureau kan doen, kan je nekpijn grotendeels voorkomen. Ze kosten je minder dan vijf minuten en je hebt er geen materiaal voor nodig." },
@@ -82,7 +82,7 @@
     "excerpt": "Movenda & MPC kondigen de samenwerking met MyMindWorks aan: een digitale trainingsapplicatie die de mentale, cognitieve, visuele en neurologische kant van presteren actief traint.",
     "publicatiedatum": "2026-05-18",
     "auteurSlug": "julie-spaas",
-    "tags": ["training", "mentale training", "mymindworks"],
+    "tags": ["training", "mentale-training"],
     "seoTitle": "Je hoofd trainen zoals je spieren | Movenda & MPC",
     "body": [
       { "type": "p", "text": "Je traint je kracht, je uithouding, je mobiliteit. Maar train jij ook je hoofd?" },
@@ -112,8 +112,8 @@
     "excerpt": "Hoe voorkom je sportblessures en wat doe je als het toch misloopt? Praktische tips en uitleg over behandeling van de kinesitherapeuten van Movenda Hasselt.",
     "publicatiedatum": "2026-03-30",
     "auteurSlug": "julie-spaas",
-    "tags": [],
-    "seoTitle": "Sportblessures voorkomen en behandelen | Kinesitherapie Hasselt bij Movenda",
+    "tags": ["sportblessures", "preventie", "herstel"],
+    "seoTitle": "Sportblessures voorkomen en behandelen | Movenda Hasselt",
     "body": [
       { "type": "p", "text": "Sporten is gezond, maar helaas krijgen zowel recreatieve als professionele sporters vroeg of laat te maken met een blessure. Denk aan knieklachten, spierletsels of overbelasting." },
       { "type": "p", "text": "Bij Movenda in Hasselt en MPC in Kuringen zien we dagelijks sporters die tijdelijk moeten stoppen met hun favoriete activiteit. Het goede nieuws? Met de juiste aanpak kan je sneller herstellen én toekomstige blessures vermijden." },
@@ -148,7 +148,7 @@
     "excerpt": "Rugpijn is één van de meest voorkomende klachten in de kinesitherapiepraktijk. Wat veroorzaakt het en wat kan je er zelf aan doen?",
     "publicatiedatum": "2026-03-09",
     "auteurSlug": "julie-spaas",
-    "tags": [],
+    "tags": ["rugpijn", "herstel"],
     "seoTitle": "Rugpijn: oorzaken, behandeling en tips van de kinesitherapeut",
     "body": [
       { "type": "p", "text": "Rugpijn is één van de meest voorkomende klachten in de kinesitherapiepraktijk. Bij Movenda in Hasselt zien we dagelijks patiënten met pijn in de lage rug. Zowel jonge sporters, mensen met een zittend beroep als actieve ouderen kunnen ermee te maken krijgen." },

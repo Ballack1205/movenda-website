@@ -1,13 +1,13 @@
 import type { APIRoute } from "astro";
 import { getBlogPosts } from "../lib/content";
+import { SITE_URL } from "../lib/site";
 
-export const GET: APIRoute = async ({ site }) => {
-  const origin = site?.origin || "https://movenda-preview.onrender.com";
+export const GET: APIRoute = async () => {
   const posts = await getBlogPosts();
   const items = posts
     .map((post) => {
       const excerpt = post.excerpt ? `\n\n${post.excerpt}` : "";
-      return `## [${post.titel}](${origin}/blog/${post.slug})\n\n${post.publicatiedatum}${post.auteurNaam ? ` · ${post.auteurNaam}` : ""}${excerpt}\n\nVolledige tekst: ${origin}/blog/${post.slug}.md`;
+      return `## [${post.titel}](${SITE_URL}/blog/${post.slug})\n\n${post.publicatiedatum}${post.auteurNaam ? ` · ${post.auteurNaam}` : ""}${excerpt}\n\nVolledige tekst: ${SITE_URL}/blog/${post.slug}.md`;
     })
     .join("\n\n");
 

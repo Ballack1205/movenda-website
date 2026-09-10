@@ -1,9 +1,20 @@
 import type { APIRoute } from "astro";
-import { getBlogPosts } from "../lib/content";
+import { getBlogPosts, getLocaties } from "../lib/content";
+import { NOINDEX, SITE_URL } from "../lib/site";
 
-export const GET: APIRoute = async ({ site }) => {
-  const origin = site?.origin || "https://movenda-preview.onrender.com";
+export const GET: APIRoute = async () => {
+  const origin = SITE_URL;
   const posts = await getBlogPosts();
+  const locaties = await getLocaties();
+  const locatieLines = locaties
+    .map((l) => `- ${l.naam}: ${l.adres}. ${l.type}. Phone: ${l.telefoon}.`)
+    .join("\n");
+  const previewNote = NOINDEX
+    ? `Note: this is a pre-launch pitch preview (see robots.txt). Content below reflects the real
+practice; the domain will move to movenda.be after go-live.
+
+`
+    : "";
   const blogLines = posts
     .map((post) => {
       const excerpt = post.excerpt ? ` — ${post.excerpt}` : "";
@@ -17,15 +28,12 @@ export const GET: APIRoute = async ({ site }) => {
 > location, Movenda Performance Centre (MPC), focused on performance training and sports
 > rehabilitation in Kuringen. Movenda has 30+ five-star Google reviews.
 
-Note: this is a pre-launch pitch preview (see robots.txt). Content below reflects the real
-practice; the domain will move to movenda.be after go-live.
+${previewNote}Full plain-text dump (services, prices, opening hours, team, FAQ), regenerated at every
+build from the practice's CMS: ${origin}/llms-full.txt
 
 ## Locations
 
-- Movenda — Olympia: Kuringersteenweg 242, 3500 Hasselt. Physiotherapy & personal training.
-  Phone: +32 483 65 44 89.
-- Movenda Performance Centre (MPC): Lammerweg 33, 3511 Kuringen. Performance training &
-  sports rehabilitation. Phone: +32 480 68 94 36.
+${locatieLines}
 
 Both locations share info@movenda.be and work strictly by appointment.
 
@@ -57,9 +65,16 @@ ${blogLines || "- No posts yet."}
 - The practice is Dutch-speaking; Dutch is the source of truth. English pages exist at /en
   for a subset of content, with Dutch as the fallback for anything not yet translated.
 - Prices, team members, opening hours and reviews are maintained by the practice via a CMS —
-  always prefer the live page content over cached summaries when giving current prices.
+  always prefer the live page content (or /llms-full.txt) over cached summaries when giving
+  current prices.
+- Every page carries one JSON-LD @graph (Organization, both locations, Person, Service with
+  Offer, BlogPosting) with stable @id's; use it for structured facts.${
+    NOINDEX
+      ? `
 - Do not present this preview URL as the practice's permanent website; the canonical domain is
-  movenda.be.
+  movenda.be.`
+      : ""
+  }
 `;
 
   return new Response(body, {

@@ -20,6 +20,8 @@ export default defineType({
       title: "Coverfoto",
       type: "image",
       options: { hotspot: true },
+      description:
+        "Foto bovenaan het artikel en op het overzicht. Leeg laten mag — het team zet dan een fallback-foto klaar.",
     }),
     defineField({
       name: "coverFit",
@@ -33,6 +35,7 @@ export default defineType({
         layout: "radio",
       },
       initialValue: "cover",
+      description: "Kies ‘Volledig tonen’ voor een screenshot of infographic die niet mag worden afgesneden.",
     }),
     defineField({
       name: "body",
@@ -59,8 +62,34 @@ export default defineType({
       type: "date",
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: "tags", title: "Tags", type: "array", of: [{ type: "string" }] }),
-    defineField({ name: "seoTitle", title: "SEO-titel", type: "string", validation: (Rule) => Rule.max(60) }),
+    defineField({
+      name: "tags",
+      title: "Tags",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        list: [
+          { title: "Rugpijn", value: "rugpijn" },
+          { title: "Nekpijn", value: "nekpijn" },
+          { title: "Sportblessures", value: "sportblessures" },
+          { title: "Training", value: "training" },
+          { title: "Herstel", value: "herstel" },
+          { title: "Preventie", value: "preventie" },
+          { title: "Hitte", value: "hitte" },
+          { title: "Mentale training", value: "mentale-training" },
+        ],
+        layout: "tags",
+      },
+      description:
+        "Kies uit de lijst. Zelfde tags koppelen artikelen onderaan (‘Meer lezen’). Tag-pagina’s komen later.",
+    }),
+    defineField({
+      name: "seoTitle",
+      title: "SEO-titel",
+      type: "string",
+      description: "Leeg = artikeltitel + ' | Movenda blog'. Hou het onder 60 tekens, anders kapt Google af.",
+      validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
+    }),
     defineField({ name: "seoDescription", title: "SEO-omschrijving", type: "text", rows: 2, validation: (Rule) => Rule.max(160) }),
   ],
   orderings: [

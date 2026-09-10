@@ -1,5 +1,0 @@
-# Pitch preview — do not index. Movenda has not confirmed go-live yet.
-# See DECISIONS.md. This file becomes permissive (allow all + AI crawlers)
-# once PUBLIC_NOINDEX is flipped to "false" for the real movenda.be launch.
-User-agent: *
-Disallow: /

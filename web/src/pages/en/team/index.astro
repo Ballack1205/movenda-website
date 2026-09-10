@@ -2,16 +2,26 @@
 import Layout from "../../../layouts/Layout.astro";
 import { getTeamleden } from "../../../lib/content";
 import { teamPhotoSrc } from "../../../lib/images";
+import { breadcrumbNode, teamListNode } from "../../../lib/schema";
 
 const team = await getTeamleden();
+
+const jsonLd = [
+  teamListNode(team, "/en/team", "en"),
+  breadcrumbNode([
+    { name: "Home", path: "/en" },
+    { name: "Team", path: "/en/team" },
+  ]),
+];
 ---
 
 <Layout
-  title="Our team | Physiotherapists & personal trainers Hasselt | Movenda"
+  title="Our team | Physiotherapists & trainers Hasselt | Movenda"
   description="Meet the Movenda team: physiotherapists, personal trainers and performance coaches in Hasselt and Kuringen."
   path="/en/team"
   altPath="/team"
   lang="en"
+  jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-6xl px-4 py-12">
     <h1 class="text-3xl font-bold">Our team, your health</h1>

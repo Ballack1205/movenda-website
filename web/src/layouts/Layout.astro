@@ -10,18 +10,37 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Analytics from "../components/Analytics.astro";
 import PromoPopup from "../components/PromoPopup.astro";
-import { getActivePopup } from "../lib/content";
+import { getActivePopup, getLocaties, getSiteSettings } from "../lib/content";
+import { ogImageSrc, type OgShape } from "../lib/images";
+import { baseGraph, toGraph, type JsonLdNode } from "../lib/schema";
+import { NOINDEX, absoluteUrl } from "../lib/site";
+
+export interface ArticleMeta {
+  publishedTime: string;
+  modifiedTime?: string;
+  author?: string;
+  section?: string;
+  tags?: string[];
+}
 
 export interface Props {
   title: string;
   description: string;
   brand?: "movenda" | "mpc";
   path?: string;
-  jsonLd?: Record<string, unknown>[];
+  /** Page-specific JSON-LD nodes (no @context needed). Layout merges them with Organization + locations into one @graph. */
+  jsonLd?: JsonLdNode[];
   lang?: "nl" | "en";
   /** Path of this same page in the other language, for hreflang + the nav switcher. Omit if no translated counterpart exists yet (falls back to /en/ or /). */
   altPath?: string;
-  ogImage?: string;
+  /** Sanity asset URL or /public path. Sanity images are cropped to 1200×630 (or 1200×1200 for portraits). null/undefined → og-default.jpg. */
+  ogImage?: string | null;
+  ogImageShape?: OgShape;
+  ogImageAlt?: string;
+  /** Set for blog posts: og:type=article + article:* tags. */
+  article?: ArticleMeta;
+  /** Force noindex for this page regardless of the preview flag (thank-you / QR landing pages). */
+  noindex?: boolean;
   extraLinks?: { rel: string; type?: string; href: string; title?: string }[];
 }
 
@@ -34,24 +53,47 @@ const {
   lang = "nl",
   altPath,
   ogImage = "/og-default.jpg",
+  ogImageShape = "wide",
+  ogImageAlt,
+  article,
+  noindex: pageNoindex = false,
   extraLinks = [],
 } = Astro.props;
 
 // Preview safety net: this site is a pitch preview until Movenda confirms
 // go-live. PUBLIC_NOINDEX defaults to "true" so search engines never index
 // it by accident. Set PUBLIC_NOINDEX=false in Render env vars only after
-// DNS cutover (see DECISIONS.md).
-const noindex = import.meta.env.PUBLIC_NOINDEX !== "false";
-const siteUrl = import.meta.env.PUBLIC_SITE_URL || "https://movenda-preview.onrender.com";
-const canonical = new URL(path, siteUrl).toString();
-const ogImageUrl = new URL(ogImage, siteUrl).toString();
+// DNS cutover (see DECISIONS.md). robots.txt.ts reads the same flag.
+const noindex = NOINDEX || pageNoindex;
+const canonical = absoluteUrl(path);
+// Sanity returns null (not undefined) for a missing image, so the prop default does not kick in.
+const og = ogImageSrc(ogImage || "/og-default.jpg", ogImage ? ogImageShape : "wide");
+const ogImageUrl = absoluteUrl(og.url);
+const siteName = brand === "mpc" ? "Movenda Performance Centre" : "Movenda";
+const ogLocale = lang === "en" ? "en_GB" : "nl_BE";
+const ogLocaleAlt = lang === "en" ? "nl_BE" : "en_GB";
 
 // hreflang pair: NL is the default/x-default version (see DECISIONS.md — NL
 // is the primary language of the practice). Only emitted when a translated
 // counterpart page actually exists (altPath set).
 const nlPath = lang === "en" ? altPath : path;
 const enPath = lang === "en" ? path : altPath;
-const popup = await getActivePopup(path);
+
+const defaultLinks = [
+  { rel: "alternate", type: "text/plain", href: "/llms.txt", title: "LLM context" },
+  { rel: "alternate", type: "application/rss+xml", href: "/rss.xml", title: "Movenda blog" },
+];
+const headLinks = [
+  ...defaultLinks.filter((link) => !extraLinks.some((extra) => extra.href === link.href)),
+  ...extraLinks,
+];
+
+const [popup, settings, locaties] = await Promise.all([getActivePopup(path), getSiteSettings(), getLocaties()]);
+
+// One @graph per page: Organization + WebSite + both vestigingen always, plus
+// whatever the page passes in (Person, Service, BreadcrumbList, ...), deduped
+// by @id so a page may pass a richer version of a shared node.
+const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
 ---
 
 <!doctype html>
@@ -63,25 +105,38 @@ const popup = await getActivePopup(path);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    {nlPath && <link rel="alternate" hreflang="nl-BE" href={new URL(nlPath, siteUrl).toString()} />}
-    {enPath && <link rel="alternate" hreflang="en" href={new URL(enPath, siteUrl).toString()} />}
-    {nlPath && <link rel="alternate" hreflang="x-default" href={new URL(nlPath, siteUrl).toString()} />}
-    <meta property="og:type" content="website" />
+    {nlPath && <link rel="alternate" hreflang="nl-BE" href={absoluteUrl(nlPath)} />}
+    {enPath && <link rel="alternate" hreflang="en" href={absoluteUrl(enPath)} />}
+    {nlPath && <link rel="alternate" hreflang="x-default" href={absoluteUrl(nlPath)} />}
+    <meta property="og:type" content={article ? "article" : "website"} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content={ogLocale} />
+    {altPath && <meta property="og:locale:alternate" content={ogLocaleAlt} />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImageUrl} />
+    {og.width && <meta property="og:image:width" content={String(og.width)} />}
+    {og.height && <meta property="og:image:height" content={String(og.height)} />}
+    <meta property="og:image:alt" content={ogImageAlt || title} />
+    {article && <meta property="article:published_time" content={article.publishedTime} />}
+    {article?.modifiedTime && <meta property="article:modified_time" content={article.modifiedTime} />}
+    {article?.author && <meta property="article:author" content={article.author} />}
+    {article?.section && <meta property="article:section" content={article.section} />}
+    {article?.tags?.map((tag) => <meta property="article:tag" content={tag} />)}
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={ogImageAlt || title} />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    {extraLinks.map((link) => (
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    {headLinks.map((link) => (
       <link rel={link.rel} type={link.type} href={link.href} title={link.title} />
     ))}
-    {jsonLd.map((entry) => (
-      <script type="application/ld+json" set:html={JSON.stringify(entry)} is:inline />
-    ))}
+    <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
   </head>
   <body class="flex min-h-screen flex-col bg-brand-bg text-brand-text">
     <Header brand={brand} lang={lang} altPath={altPath} />

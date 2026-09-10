@@ -1,13 +1,13 @@
 import type { APIRoute } from "astro";
 import { getBlogPosts } from "../lib/content";
 import { escapeXml } from "../lib/blog-text";
+import { SITE_URL } from "../lib/site";
 
-export const GET: APIRoute = async ({ site }) => {
-  const origin = site?.origin || "https://movenda-preview.onrender.com";
+export const GET: APIRoute = async () => {
   const posts = await getBlogPosts();
   const items = posts
     .map((post) => {
-      const link = `${origin}/blog/${post.slug}`;
+      const link = `${SITE_URL}/blog/${post.slug}`;
       return `    <item>
       <title>${escapeXml(post.titel)}</title>
       <link>${link}</link>
@@ -22,7 +22,7 @@ export const GET: APIRoute = async ({ site }) => {
 <rss version="2.0">
   <channel>
     <title>Movenda blog</title>
-    <link>${origin}/blog</link>
+    <link>${SITE_URL}/blog</link>
     <description>Praktische tips over kinesitherapie, training en herstel.</description>
     <language>nl-be</language>
 ${items}

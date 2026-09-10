@@ -1,8 +1,16 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import DienstDetail from "../../components/DienstDetail.astro";
-import { getDienstenByCategorie, getDienstBySlug, getLocatieBySlug, getTeamleden, dienstHref } from "../../lib/content";
-import { serviceSchema, breadcrumbSchema } from "../../lib/schema";
+import {
+  getDienstenByCategorie,
+  getDienstBySlug,
+  getLocatieBySlug,
+  getTeamleden,
+  getPrijzen,
+  findPrijsVoorDienst,
+  dienstHref,
+} from "../../lib/content";
+import { serviceNode, breadcrumbNode } from "../../lib/schema";
 
 export async function getStaticPaths() {
   const diensten = await getDienstenByCategorie("mpc");
@@ -20,10 +28,11 @@ const locatie = (await getLocatieBySlug("mpc"))!;
 const alleTeamleden = await getTeamleden();
 const team = alleTeamleden.filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
 const path = dienstHref(dienst);
+const prijs = findPrijsVoorDienst(dienst, await getPrijzen());
 
 const jsonLd = [
-  serviceSchema(dienst, locatie, path),
-  breadcrumbSchema([
+  serviceNode(dienst, locatie, { path, prijs, team }),
+  breadcrumbNode([
     { name: "Home", path: "/" },
     { name: "Movenda Performance Centre", path: "/mpc" },
     { name: dienst.titel, path },
@@ -38,6 +47,8 @@ const jsonLd = [
   altPath={`/en/mpc/${dienst.slug}`}
   brand="mpc"
   jsonLd={jsonLd}
+  ogImage={dienst.afbeelding}
+  ogImageAlt={`${dienst.titel} in het Movenda Performance Centre`}
 >
   <DienstDetail
     dienst={dienst}
