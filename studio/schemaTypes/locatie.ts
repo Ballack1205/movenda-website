@@ -50,5 +50,10 @@ export default defineType({
     defineField({ name: "iban", title: "IBAN", type: "string" }),
     defineField({ name: "bic", title: "BIC", type: "string" }),
     defineField({ name: "mapsUrl", title: "Google Maps-link", type: "url" }),
+    defineField({ name: "routebeschrijving", title: "Routebeschrijving eerste bezoek", type: "text", rows: 4 }),
+    defineField({ name: "rpr", title: "RPR", type: "string" }),
+    defineField({ name: "instagram", title: "Instagram-URL (deze vestiging)", type: "url" }),
+    defineField({ name: "facebook", title: "Facebook-URL (deze vestiging)", type: "url" }),
+    defineField({ name: "verdiepingNote", title: "Verdieping / extra locatie-noot", type: "string" }),
   ],
 });

@@ -1,0 +1,179 @@
+---
+// Privacy & cookie policy (NL). Legal copy lives in code, not in the CMS:
+// Julie edits records (team, prices, hours), not legal text. The two legal
+// entities, addresses and BTW numbers are pulled from the Locatie records so
+// they never go out of sync with the footer / contact page.
+import Layout from "../layouts/Layout.astro";
+import { getLocaties, getSiteSettings } from "../lib/content";
+import { breadcrumbSchema } from "../lib/schema";
+
+const locaties = (await getLocaties()).sort((a, b) =>
+  a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
+);
+const settings = await getSiteSettings();
+const { analytics } = settings;
+const gaActive = analytics.enabled && !!analytics.ga4Id;
+const umamiActive = analytics.enabled && analytics.umami.enabled && !!analytics.umami.websiteId;
+
+const updated = "10 september 2026";
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Privacy", path: "/privacy" },
+  ]),
+];
+---
+
+<Layout
+  title="Privacy & cookies | Movenda Hasselt"
+  description="Hoe Movenda omgaat met je persoonsgegevens en welke cookies deze website gebruikt."
+  path="/privacy"
+  altPath="/en/privacy"
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Privacy & cookies</h1>
+    <p class="mt-2 text-sm text-brand-muted">Laatst bijgewerkt: {updated}</p>
+
+    <p class="mt-6 text-brand-muted">
+      Movenda gaat zorgvuldig om met je gegevens. Op deze pagina lees je welke gegevens we via deze
+      website verzamelen, waarom, en welke keuzes je hebt. Dit gaat enkel over de website. Voor je
+      dossier als patiënt of klant gelden de afspraken die je met je therapeut of trainer maakt.
+    </p>
+
+    <h2 class="mt-10 text-xl font-semibold">1. Wie is verantwoordelijk?</h2>
+    <p class="mt-2 text-brand-muted">
+      Movenda bestaat uit twee vestigingen met elk een eigen onderneming. Beide zijn
+      verwerkingsverantwoordelijke voor de gegevens die je via deze site aan hun vestiging bezorgt.
+    </p>
+    <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+      {locaties.map((l) => (
+        <li class="rounded-2xl border border-brand-border bg-brand-surface p-5 text-sm">
+          <p class="font-semibold text-brand-primary">{l.naam}</p>
+          <p class="mt-1 text-brand-muted">{l.adres}</p>
+          <p class="mt-1 text-brand-muted">BTW {l.btw}</p>
+          <p class="mt-1">
+            <a href={`mailto:${l.email}`} class="font-semibold text-brand-primary hover:underline">{l.email}</a>
+          </p>
+        </li>
+      ))}
+    </ul>
+
+    <h2 class="mt-10 text-xl font-semibold">2. Welke gegevens verzamelen we en waarom?</h2>
+    <dl class="mt-3 space-y-4 text-brand-muted">
+      <div>
+        <dt class="font-semibold text-brand-text">Contactformulier</dt>
+        <dd class="mt-1">
+          Naam, e-mailadres, telefoonnummer, gekozen vestiging en je bericht. We gebruiken dit
+          enkel om je vraag te beantwoorden of een afspraak in te plannen. Grondslag: uitvoering
+          van de overeenkomst / ons gerechtvaardigd belang om op je vraag te reageren. We bewaren
+          deze berichten maximaal 12 maanden, tenzij ze deel worden van je dossier.
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-brand-text">Nieuwsbrief en inschrijvingen via pop-up</dt>
+        <dd class="mt-1">
+          Je e-mailadres (en eventueel je naam). Grondslag: jouw toestemming. Je kan je op elk
+          moment uitschrijven via de link onderaan elke mail. E-mails worden verstuurd via Resend
+          (EU/VS, met passende waarborgen).
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-brand-text">Websitestatistieken</dt>
+        <dd class="mt-1">
+          Anonieme informatie over hoe de site gebruikt wordt (bezochte pagina's, apparaat,
+          herkomst). Zie <a href="#cookies" class="font-semibold text-brand-primary hover:underline">cookies</a>.
+        </dd>
+      </div>
+    </dl>
+    <p class="mt-4 text-brand-muted">
+      We verkopen geen gegevens en delen ze niet met derden, behalve met de dienstverleners
+      hieronder die ons helpen de site te laten werken.
+    </p>
+
+    <h2 id="cookies" class="mt-10 scroll-mt-24 text-xl font-semibold">3. Cookies</h2>
+    <p class="mt-2 text-brand-muted">
+      Deze site werkt zonder cookies tot je zelf een keuze maakt. Je keuze kan je altijd wijzigen
+      via <button type="button" data-consent-open class="font-semibold text-brand-primary hover:underline">Cookievoorkeuren</button>
+      onderaan elke pagina.
+    </p>
+
+    <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border bg-brand-surface">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-brand-bg text-xs uppercase tracking-wide text-brand-muted">
+          <tr>
+            <th class="px-4 py-3 font-semibold">Wat</th>
+            <th class="px-4 py-3 font-semibold">Doel</th>
+            <th class="px-4 py-3 font-semibold">Bewaartermijn</th>
+            <th class="px-4 py-3 font-semibold">Toestemming</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-brand-border text-brand-muted">
+          <tr>
+            <td class="px-4 py-3 font-semibold text-brand-text">movenda-consent</td>
+            <td class="px-4 py-3">Onthoudt je cookiekeuze (lokale opslag, geen cookie).</td>
+            <td class="px-4 py-3">Tot je hem wist</td>
+            <td class="px-4 py-3">Niet nodig (noodzakelijk)</td>
+          </tr>
+          {gaActive && (
+            <tr>
+              <td class="px-4 py-3 font-semibold text-brand-text">_ga, _ga_*</td>
+              <td class="px-4 py-3">
+                Google Analytics 4: anonieme bezoekersstatistieken (IP wordt ingekort). Wordt pas
+                geplaatst nadat je op "Oké" klikt.
+              </td>
+              <td class="px-4 py-3">Max. 2 jaar</td>
+              <td class="px-4 py-3">Ja</td>
+            </tr>
+          )}
+          {umamiActive && (
+            <tr>
+              <td class="px-4 py-3 font-semibold text-brand-text">Umami</td>
+              <td class="px-4 py-3">
+                Cookieloze, anonieme statistieken. Plaatst geen cookies en slaat geen persoonsgegevens op.
+              </td>
+              <td class="px-4 py-3">—</td>
+              <td class="px-4 py-3">Niet nodig</td>
+            </tr>
+          )}
+          <tr>
+            <td class="px-4 py-3 font-semibold text-brand-text">Google Maps</td>
+            <td class="px-4 py-3">
+              De kaart op de contactpagina laadt pas nadat je op "Kaart tonen" klikt. Pas dan kan
+              Google cookies plaatsen.
+            </td>
+            <td class="px-4 py-3">Volgens Google</td>
+            <td class="px-4 py-3">Via je klik</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="mt-10 text-xl font-semibold">4. Dienstverleners</h2>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-brand-muted">
+      <li>Render (hosting van de website en het contactformulier)</li>
+      <li>Sanity (beheer van de inhoud van de site)</li>
+      <li>Resend (versturen van e-mails uit het contactformulier en de nieuwsbrief)</li>
+      {gaActive && <li>Google Analytics (statistieken, enkel na toestemming)</li>}
+      {umamiActive && <li>Umami (cookieloze statistieken)</li>}
+      <li>Google Maps (kaart, enkel na je klik)</li>
+    </ul>
+
+    <h2 class="mt-10 text-xl font-semibold">5. Je rechten</h2>
+    <p class="mt-2 text-brand-muted">
+      Je hebt het recht op inzage, verbetering en verwijdering van je gegevens, en je kan bezwaar
+      maken tegen de verwerking of je toestemming intrekken. Mail daarvoor naar{" "}
+      <a href={`mailto:${settings.email}`} class="font-semibold text-brand-primary hover:underline">{settings.email}</a>.
+      We antwoorden binnen 30 dagen. Ben je niet tevreden, dan kan je klacht indienen bij de{" "}
+      <a href="https://www.gegevensbeschermingsautoriteit.be" target="_blank" rel="noopener" class="font-semibold text-brand-primary hover:underline">
+        Gegevensbeschermingsautoriteit
+      </a>.
+    </p>
+
+    <h2 class="mt-10 text-xl font-semibold">6. Wijzigingen</h2>
+    <p class="mt-2 text-brand-muted">
+      Als we iets aan deze pagina veranderen, passen we de datum bovenaan aan.
+    </p>
+  </article>
+</Layout>

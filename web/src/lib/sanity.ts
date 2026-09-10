@@ -13,5 +13,7 @@ export const sanity = createClient({
   projectId,
   dataset,
   apiVersion: "2026-01-01",
-  useCdn: true,
+  // Static builds need the live API: the CDN can hide newly seeded types
+  // (partners, rooster, getuigenissen) for a few minutes after a write.
+  useCdn: false,
 });

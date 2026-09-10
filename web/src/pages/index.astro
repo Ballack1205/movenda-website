@@ -3,7 +3,18 @@ import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import BookingButton from "../components/BookingButton.astro";
-import { getLocaties, getTeamleden, getSiteSettings } from "../lib/content";
+import PartnerBand from "../components/PartnerBand.astro";
+import NewsletterBlock from "../components/NewsletterBlock.astro";
+import GetuigenisQuote from "../components/GetuigenisQuote.astro";
+import {
+  getLocaties,
+  getTeamleden,
+  getSiteSettings,
+  getDienstenByCategorie,
+  getPartners,
+  getGetuigenissen,
+  dienstHref,
+} from "../lib/content";
 import { teamPhotoSrc } from "../lib/images";
 import { organizationSchema, localBusinessSchema } from "../lib/schema";
 import homeHero from "../assets/marketing/home-hero.jpg";
@@ -14,10 +25,13 @@ const olympia = locaties.find((l) => l.slug === "olympia")!;
 const mpc = locaties.find((l) => l.slug === "mpc")!;
 const team = await getTeamleden();
 const settings = await getSiteSettings();
+const kine = await getDienstenByCategorie("kine");
+const training = await getDienstenByCategorie("training");
+const mpcDiensten = await getDienstenByCategorie("mpc");
+const partners = await getPartners("movenda");
+const getuigenissen = await getGetuigenissen();
+const homeQuote = getuigenissen[0];
 
-// Stat badges (see movenda.be homepage: "13 Kinesisten · 5 Personal trainers ·
-// 2 Vestigingen · 10+ Jaar ervaring"). Computed from real team data instead
-// of hardcoded, so the count stays correct as Julie adds/removes teamleden.
 const kinesistenCount = team.filter((t) => t.rol.toLowerCase().includes("kinesitherapeut")).length;
 const trainerCount = team.filter(
   (t) => t.rol.toLowerCase().includes("trainer") || t.rol.toLowerCase().includes("coach"),
@@ -84,7 +98,58 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
     </div>
   </section>
 
-  <section class="mx-auto grid max-w-6xl gap-6 px-4 pb-16 sm:grid-cols-2">
+  {settings.slogans.home && (
+    <p class="bg-brand-header py-6 text-center text-lg font-semibold text-white sm:text-xl">
+      {settings.slogans.home}
+    </p>
+  )}
+
+  <section class="mx-auto max-w-6xl px-4 py-16">
+    <h2 class="text-2xl font-bold">Kinesitherapie</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {kine.map((dienst) => (
+        <a
+          href={dienstHref(dienst)}
+          class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text transition hover:border-brand-primary"
+        >
+          {dienst.titel.replace(/ Hasselt$/, "")}
+        </a>
+      ))}
+    </div>
+
+    <h2 class="mt-10 text-2xl font-bold">Training</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {training.map((dienst) => (
+        <a
+          href={dienstHref(dienst)}
+          class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text transition hover:border-brand-primary"
+        >
+          {dienst.titel.replace(/ Hasselt$/, "")}
+        </a>
+      ))}
+    </div>
+
+    <h2 class="mt-10 text-2xl font-bold">Movenda Performance Centre</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {mpcDiensten.map((dienst) => (
+        <a
+          href={dienstHref(dienst)}
+          class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text transition hover:border-brand-primary"
+        >
+          {dienst.titel}
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <PartnerBand
+    partners={partners}
+    title={settings.partnerband.titel}
+    snelheid={settings.partnerband.snelheid}
+    animatie={settings.partnerband.animatie}
+  />
+
+  <section class="mx-auto grid max-w-6xl gap-6 px-4 py-16 sm:grid-cols-2">
     <a
       href="/locaties/olympia"
       class="group rounded-2xl border border-brand-border bg-brand-surface p-8 transition hover:border-brand-primary"
@@ -158,4 +223,8 @@ const jsonLd = [organizationSchema(), localBusinessSchema(olympia), localBusines
       </a>
     </div>
   </section>
+
+  {homeQuote && <GetuigenisQuote item={homeQuote} />}
+
+  <NewsletterBlock settings={settings} />
 </Layout>

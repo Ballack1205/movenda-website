@@ -2,18 +2,49 @@
 import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
-import { getDienstenByCategorie, getLocatieBySlug } from "../../lib/content";
-import { localBusinessSchema, breadcrumbSchema } from "../../lib/schema";
+import DienstCard from "../../components/DienstCard.astro";
+import PartnerBand from "../../components/PartnerBand.astro";
+import {
+  getDienstenByCategorie,
+  getLocatieBySlug,
+  getPartners,
+  getFaqs,
+  getSiteSettings,
+  getGetuigenissen,
+} from "../../lib/content";
+import { localBusinessSchema, breadcrumbSchema, faqPageSchema } from "../../lib/schema";
 import mpcHero from "../../assets/marketing/mpc-hero.jpg";
 import mpcSecondary from "../../assets/marketing/mpc-secondary.jpg";
 
-const diensten = await getDienstenByCategorie("mpc");
+const training = await getDienstenByCategorie("mpc-training");
+const rehab = await getDienstenByCategorie("mpc-rehab");
+const groep = await getDienstenByCategorie("mpc-groep");
 const locatie = (await getLocatieBySlug("mpc"))!;
+const partners = await getPartners("mpc");
+const faqs = await getFaqs("mpc");
+const settings = await getSiteSettings();
+const quote = (await getGetuigenissen()).find((g) => /mpc|performance/i.test(`${g.naam} ${g.locatie || ""}`));
 
-// Extra programma's van het echte MPC-aanbod die (nog) geen eigen CMS-dienst
-// hebben — zie movenda.be homepage. Zodra Julie hierover meer copy heeft,
-// verdienen deze een volwaardige `dienst`-record in de Studio.
-const extraProgrammas = ["Boxing", "Corporate coaching", "HIIT & Full Body", "PowerPlus & Running", "SkiFit", "Data-analyse"];
+const pillars = [
+  {
+    href: "#training",
+    titel: "Training",
+    tekst: "Performance, personal training, duo en data-analyse.",
+    foto: training.find((d) => d.afbeelding)?.afbeelding,
+  },
+  {
+    href: "#sportrevalidatie",
+    titel: "Sportrevalidatie",
+    tekst: "Herstel na blessure, dry needling, cupping en taping.",
+    foto: rehab.find((d) => d.afbeelding)?.afbeelding,
+  },
+  {
+    href: "/mpc/groepslessen",
+    titel: "Groepslessen",
+    tekst: "HIIT, Full Body, PowerPlus, boxing, running en meer. Max. 8 personen.",
+    foto: groep.find((d) => d.afbeelding)?.afbeelding,
+  },
+];
 
 const jsonLd = [
   localBusinessSchema(locatie),
@@ -21,6 +52,7 @@ const jsonLd = [
     { name: "Home", path: "/" },
     { name: "Movenda Performance Centre", path: "/mpc" },
   ]),
+  ...(faqs.length > 0 ? [faqPageSchema(faqs)] : []),
 ];
 ---
 
@@ -32,24 +64,27 @@ const jsonLd = [
   brand="mpc"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 lg:grid-cols-2">
-    <div>
+  <section class="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 md:grid-cols-2 md:gap-10 md:py-16">
+    <div class="min-w-0">
       <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">
         Movenda Performance Centre
       </p>
-      <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
+      <h1 class="mt-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl xl:text-5xl">
         Presteer op je hoogste niveau, data-gedreven begeleid
       </h1>
-      <p class="mt-4 max-w-xl text-brand-muted">
+      {settings.slogans.mpc && (
+        <p class="mt-2 text-pretty text-lg font-medium text-brand-primary">{settings.slogans.mpc}</p>
+      )}
+      <p class="mt-4 max-w-xl text-pretty text-brand-muted">
         Een multidisciplinair performance centre gericht op prestatiemaximalisatie van
         (semi-)professionele sporters en medische revalidatie op basis van data-analyse. Open
         ruimte, hoogwaardige toestellen en een één-op-één begeleiding.
       </p>
       <div class="mt-6 flex flex-wrap gap-3">
-        <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+        <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="rounded-full bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-primary-dark sm:px-6 sm:text-base">
           Bel {locatie.telefoon}
         </a>
-        <a href="/contact" class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary">
+        <a href="/contact" class="rounded-full border border-brand-border px-5 py-3 text-sm font-semibold text-brand-text transition hover:border-brand-primary sm:px-6 sm:text-base">
           Contacteer ons
         </a>
       </div>
@@ -60,41 +95,109 @@ const jsonLd = [
     <Image
       src={mpcHero}
       alt="Movenda Performance Centre trainingsruimte"
-      width={640}
-      height={800}
-      class="aspect-[4/5] w-full rounded-3xl object-cover shadow-xl"
+      width={800}
+      height={600}
+      class="aspect-[16/10] w-full rounded-3xl object-cover object-top shadow-xl md:aspect-[4/3] xl:aspect-[5/4]"
       priority
     />
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 pb-16">
-    <h2 class="text-2xl font-bold">Onze diensten</h2>
-    <div class="mt-6 grid gap-6 lg:grid-cols-3">
-      <div class="grid gap-6 sm:grid-cols-2 lg:col-span-2">
-        {diensten.map((dienst) => (
-          <a href={`/mpc/${dienst.slug}`} class="rounded-2xl border border-brand-border bg-brand-surface p-8 transition hover:border-brand-primary">
-            <h3 class="text-xl font-semibold">{dienst.titel}</h3>
-            <p class="mt-2 text-brand-muted">{dienst.intro}</p>
-            <span class="mt-4 inline-block font-semibold text-brand-primary">Meer info →</span>
-          </a>
-        ))}
+  <section class="mx-auto max-w-6xl px-4 pb-8">
+    <h2 class="text-2xl font-bold">Drie pijlers</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {pillars.map((p) => (
+        <a href={p.href} class="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary">
+          {p.foto && (
+            <img
+              src={`${p.foto}?w=800&h=500&fit=crop&auto=format`}
+              alt=""
+              width="800"
+              height="500"
+              class="aspect-[16/10] w-full object-cover"
+            />
+          )}
+          <div class="p-5">
+            <h3 class="text-lg font-semibold">{p.titel}</h3>
+            <p class="mt-1 text-sm text-brand-muted">{p.tekst}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section id="training" class="mx-auto max-w-6xl px-4 py-10">
+    <h2 class="text-2xl font-bold">Training</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      {training.map((dienst) => (
+        <DienstCard dienst={dienst} />
+      ))}
+    </div>
+  </section>
+
+  <section id="sportrevalidatie" class="mx-auto max-w-6xl px-4 py-10">
+    <div class="grid items-start gap-6 xl:grid-cols-3">
+      <div class="min-w-0 xl:col-span-2">
+        <h2 class="text-2xl font-bold">Sportrevalidatie</h2>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          {rehab.map((dienst) => (
+            <DienstCard dienst={dienst} />
+          ))}
+        </div>
       </div>
       <Image
         src={mpcSecondary}
         alt="Trainingsruimte bij het Movenda Performance Centre"
-        width={480}
-        height={640}
-        class="hidden aspect-[3/4] w-full rounded-2xl object-cover lg:block"
+        width={640}
+        height={480}
+        class="aspect-[16/10] w-full rounded-2xl object-cover xl:aspect-[3/4] xl:mt-14"
       />
     </div>
+  </section>
 
-    <h2 class="mt-12 text-xl font-bold">Nog meer programma's</h2>
-    <div class="mt-4 flex flex-wrap gap-2">
-      {extraProgrammas.map((p) => (
-        <span class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-muted">
-          {p}
-        </span>
+  <section class="mx-auto max-w-6xl px-4 py-10">
+    <h2 class="text-2xl font-bold">Groepslessen</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {groep.map((dienst) => (
+        <DienstCard dienst={dienst} />
       ))}
     </div>
+    <a href="/mpc/groepslessen" class="mt-6 inline-block font-semibold text-brand-primary hover:underline">
+      Bekijk het lesrooster →
+    </a>
   </section>
+
+  {quote && (
+    <section class="mx-auto max-w-3xl px-4 py-10 text-center">
+      <blockquote class="text-xl font-medium">“{quote.tekst}”</blockquote>
+      <p class="mt-3 text-sm text-brand-muted">— {quote.naam}</p>
+    </section>
+  )}
+
+  {partners.length > 0 && (
+    <PartnerBand
+      partners={partners}
+      title={settings.partnerband.titelMpc}
+      snelheid={settings.partnerband.snelheid}
+      animatie={settings.partnerband.animatie}
+    />
+  )}
+
+  {faqs.length > 0 && (
+    <section id="faq" class="mx-auto max-w-3xl px-4 py-16">
+      <h2 class="text-2xl font-bold">Veelgestelde vragen</h2>
+      <div class="mt-6 divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
+        {faqs.map((faq) => (
+          <details class="group px-6 py-4">
+            <summary class="cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden">
+              <span class="flex items-center justify-between gap-4">
+                {faq.vraag}
+                <span class="text-brand-primary transition group-open:rotate-45">+</span>
+              </span>
+            </summary>
+            <p class="mt-3 text-sm text-brand-muted">{faq.antwoord}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  )}
 </Layout>

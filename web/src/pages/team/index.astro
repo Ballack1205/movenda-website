@@ -1,9 +1,25 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getTeamleden } from "../../lib/content";
+import { getTeamleden, getDiensten, matchSpecialisatieToDienst, dienstHref, formatEuro } from "../../lib/content";
 import { teamPhotoSrc } from "../../lib/images";
 
 const team = await getTeamleden();
+const diensten = await getDiensten();
+
+const klachten = [...new Set(team.flatMap((t) => t.klachten))].sort();
+const regio = [...new Set(team.flatMap((t) => t.regio))].sort();
+const sporten = [...new Set(team.flatMap((t) => t.sporten))].sort();
+const doelgroepen = [...new Set(team.flatMap((t) => t.doelgroepen))].sort();
+
+const payload = team.map((lid) => ({
+  slug: lid.slug,
+  rol: lid.rol,
+  locaties: lid.locaties,
+  klachten: lid.klachten,
+  regio: lid.regio,
+  sporten: lid.sporten,
+  doelgroepen: lid.doelgroepen,
+}));
 ---
 
 <Layout
@@ -20,35 +36,181 @@ const team = await getTeamleden();
       aansluit bij jouw klacht of doel.
     </p>
 
+    <div class="mt-6 flex flex-wrap gap-2" data-team-filters>
+      <button type="button" data-filter="all" class="rounded-full bg-brand-primary px-4 py-1.5 text-sm font-semibold text-white">Allen</button>
+      <button type="button" data-filter="kine" class="rounded-full border border-brand-border px-4 py-1.5 text-sm">Kine</button>
+      <button type="button" data-filter="pt" class="rounded-full border border-brand-border px-4 py-1.5 text-sm">PT</button>
+      <button type="button" data-filter="mpc" class="rounded-full border border-brand-border px-4 py-1.5 text-sm">MPC</button>
+      <button type="button" data-filter="olympia" class="rounded-full border border-brand-border px-4 py-1.5 text-sm">Olympia</button>
+    </div>
+
+    <div id="keuzehulp" class="mt-10 scroll-mt-24 rounded-2xl border border-brand-border bg-brand-surface p-6">
+      <h2 class="text-xl font-bold">Wie past bij mij?</h2>
+      <p class="mt-1 text-sm text-brand-muted">
+        Drie stappen — dezelfde routering als ons verwijskompas, zonder de kaart. Geen medisch advies.
+      </p>
+      <div class="mt-4 grid gap-4 md:grid-cols-3">
+        <label class="text-sm">
+          <span class="font-semibold">Klacht of context</span>
+          <select data-keuze="klachten" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2">
+            <option value="">Alle</option>
+            {klachten.map((k) => <option value={k}>{k}</option>)}
+          </select>
+        </label>
+        <label class="text-sm">
+          <span class="font-semibold">Regio of sport</span>
+          <select data-keuze="regio-sport" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2">
+            <option value="">Alle</option>
+            <optgroup label="Regio">
+              {regio.map((k) => <option value={`regio:${k}`}>{k}</option>)}
+            </optgroup>
+            <optgroup label="Sport">
+              {sporten.map((k) => <option value={`sport:${k}`}>{k}</option>)}
+            </optgroup>
+          </select>
+        </label>
+        <label class="text-sm">
+          <span class="font-semibold">Doelgroep / training</span>
+          <select data-keuze="doelgroepen" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2">
+            <option value="">Alle</option>
+            {doelgroepen.map((k) => <option value={k}>{k}</option>)}
+          </select>
+        </label>
+      </div>
+      <p class="mt-3 text-sm text-brand-muted" data-keuze-status></p>
+    </div>
+
     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {team.map((lid) => (
-        <a
-          href={`/team/${lid.slug}`}
-          class="group overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary"
-        >
-          <div class="aspect-[2/3] w-full overflow-hidden bg-brand-header">
-            {lid.foto ? (
-              <img
-                src={teamPhotoSrc(lid.foto, "card")}
-                alt={`${lid.voornaam} ${lid.naam}`}
-                width="600"
-                height="900"
-                loading="lazy"
-                class="h-full w-full object-cover object-top transition duration-300 group-hover:scale-105"
-              />
-            ) : (
-              <div class="flex h-full w-full items-center justify-center text-3xl font-bold text-white/80">
-                {lid.voornaam[0]}{lid.naam[0]}
+      {team.map((lid) => {
+        const isKine = /kinesi|manueel|osteopath|vroed/i.test(lid.rol);
+        const isPt = /trainer|coach|performance/i.test(lid.rol);
+        return (
+          <article
+            class="group overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary"
+            data-card
+            data-slug={lid.slug}
+            data-kine={isKine ? "1" : "0"}
+            data-pt={isPt ? "1" : "0"}
+            data-mpc={lid.locaties.includes("mpc") ? "1" : "0"}
+            data-olympia={lid.locaties.includes("olympia") ? "1" : "0"}
+          >
+            <a href={`/team/${lid.slug}`}>
+              <div class="aspect-[2/3] w-full overflow-hidden bg-brand-header">
+                {lid.foto ? (
+                  <img
+                    src={teamPhotoSrc(lid.foto, "card")}
+                    alt={`${lid.voornaam} ${lid.naam}`}
+                    width="600"
+                    height="900"
+                    loading="lazy"
+                    class="h-full w-full object-cover object-top transition duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div class="flex h-full w-full items-center justify-center text-3xl font-bold text-white/80">
+                    {lid.voornaam[0]}{lid.naam[0]}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          <div class="p-6">
-            <h2 class="text-lg font-semibold">{lid.voornaam} {lid.naam}</h2>
-            <p class="mt-1 text-sm font-medium text-brand-primary">{lid.rol}</p>
-            <p class="mt-2 text-sm text-brand-muted line-clamp-3">{lid.bio}</p>
-          </div>
-        </a>
-      ))}
+            </a>
+            <div class="p-6">
+              <h2 class="text-lg font-semibold">
+                <a href={`/team/${lid.slug}`}>{lid.voornaam} {lid.naam}</a>
+              </h2>
+              <p class="mt-1 text-sm font-medium text-brand-primary">{lid.rol}</p>
+              {(lid.tariefKine || lid.tariefPt || lid.tariefPerformance) && (
+                <p class="mt-1 text-xs text-brand-muted">
+                  {lid.tariefKine && <>Kine {formatEuro(lid.tariefKine)} </>}
+                  {lid.tariefPt && <>· PT {formatEuro(lid.tariefPt)} </>}
+                  {lid.tariefPerformance && <>· Perf. {formatEuro(lid.tariefPerformance)}</>}
+                </p>
+              )}
+              <p class="mt-2 text-sm text-brand-muted line-clamp-3">{lid.bio}</p>
+              {lid.specialisaties.length > 0 && (
+                <ul class="mt-3 flex flex-wrap gap-1">
+                  {lid.specialisaties.map((s) => {
+                    const match = matchSpecialisatieToDienst(s, diensten);
+                    return match ? (
+                      <li>
+                        <a href={dienstHref(match)} class="rounded-full bg-white px-2 py-0.5 text-xs text-brand-primary hover:underline">{s}</a>
+                      </li>
+                    ) : (
+                      <li class="rounded-full bg-white px-2 py-0.5 text-xs">{s}</li>
+                    );
+                  })}
+                </ul>
+              )}
+              {lid.clubs.length > 0 && (
+                <p class="mt-2 text-xs text-brand-muted">
+                  {lid.clubs.map((c) =>
+                    c.url ? (
+                      <a href={c.url} class="hover:underline" target="_blank" rel="noopener">{c.naam}</a>
+                    ) : (
+                      c.naam
+                    )
+                  )}
+                </p>
+              )}
+            </div>
+          </article>
+        );
+      })}
     </div>
   </section>
 </Layout>
+
+<script define:vars={{ payload }} is:inline>
+  const buttons = document.querySelectorAll("[data-team-filters] [data-filter]");
+  const cards = [...document.querySelectorAll("[data-card]")];
+  const status = document.querySelector("[data-keuze-status]");
+  let roleFilter = "all";
+
+  function applies(lid, key, value) {
+    if (!value) return true;
+    return (lid[key] || []).includes(value);
+  }
+
+  function matchesKeuze(lid) {
+    const klacht = document.querySelector("[data-keuze=klachten]")?.value;
+    const regioSport = document.querySelector("[data-keuze='regio-sport']")?.value;
+    const doel = document.querySelector("[data-keuze=doelgroepen]")?.value;
+    if (klacht && !applies(lid, "klachten", klacht)) return false;
+    if (doel && !applies(lid, "doelgroepen", doel)) return false;
+    if (regioSport) {
+      const [kind, val] = regioSport.split(":");
+      if (kind === "regio" && !applies(lid, "regio", val)) return false;
+      if (kind === "sport" && !applies(lid, "sporten", val)) return false;
+    }
+    return true;
+  }
+
+  function matchesRole(card) {
+    if (roleFilter === "all") return true;
+    return card.dataset[roleFilter] === "1";
+  }
+
+  function render() {
+    let visible = 0;
+    cards.forEach((card) => {
+      const lid = payload.find((p) => p.slug === card.dataset.slug);
+      const show = matchesRole(card) && matchesKeuze(lid);
+      card.classList.toggle("hidden", !show);
+      if (show) visible += 1;
+    });
+    if (status) status.textContent = `${visible} collega${visible === 1 ? "" : "'s"}`;
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      roleFilter = btn.dataset.filter;
+      buttons.forEach((b) => {
+        b.classList.toggle("bg-brand-primary", b === btn);
+        b.classList.toggle("text-white", b === btn);
+        b.classList.toggle("border", b !== btn);
+      });
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-keuze]").forEach((el) => el.addEventListener("change", render));
+  render();
+</script>

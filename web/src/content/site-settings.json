@@ -26,8 +26,14 @@
     }
   },
   "analytics": {
-    "enabled": false,
-    "ga4Id": "G-WCV2RJG010"
+    "enabled": true,
+    "mode": "test",
+    "ga4Id": "G-WCV2RJG010",
+    "umami": {
+      "enabled": false,
+      "websiteId": "",
+      "scriptUrl": "https://cloud.umami.is/script.js"
+    }
   },
   "socials": {
     "instagram": "https://www.instagram.com/groepspraktijk_movenda/",
@@ -39,6 +45,37 @@
     "intro": "Onze tarieven worden jaarlijks geïndexeerd en zijn in lijn met de aanbevelingen van Axxon, de beroepsvereniging voor kinesitherapeuten. Al onze therapeuten zijn gedeconventioneerd.",
     "terugbetalingStandaard": "±€18 à €20 per sessie",
     "terugbetalingVt": "Gunstigere tarieven — vraag na bij je ziekenfonds",
-    "voorwaarden": "Voorwaarden voor terugbetaling: je hebt een doktersvoorschrift nodig. Je behandeling start binnen de 2 maanden na datum op het voorschrift. Maximaal 18 sessies per aandoening per kalenderjaar worden terugbetaald. Voor chronische of zware aandoeningen kan dit hoger liggen — vraag dit na bij je arts of ziekenfonds."
+    "voorwaarden": "Voorwaarden voor terugbetaling: je hebt een doktersvoorschrift nodig. Je behandeling start binnen de 2 maanden na datum op het voorschrift. Maximaal 18 sessies per aandoening per kalenderjaar worden terugbetaald. Voor chronische of zware aandoeningen kan dit hoger liggen — vraag dit na bij je arts of ziekenfonds.",
+    "exBtwMpc": true,
+    "annulatiebeleid": "Verwittig minstens 24 uur op voorhand telefonisch of per mail. Later of no-show: we rekenen de volledige behandeling aan.",
+    "nomenclatuur": [
+      { "categorie": "Courant", "omschrijving": "1e beurt & verslag", "bedrag": "€37 + €7" },
+      { "categorie": "Courant", "omschrijving": "2e t.e.m. 18e beurt", "bedrag": "€37" },
+      { "categorie": "F-acuut", "omschrijving": "Verslag", "bedrag": "€30,65" },
+      { "categorie": "F-acuut", "omschrijving": "1e t.e.m. 60e beurt", "bedrag": "€37" },
+      { "categorie": "F-chronisch", "omschrijving": "Verslag", "bedrag": "€30,65" },
+      { "categorie": "F-chronisch", "omschrijving": "1e t.e.m. 60e beurt", "bedrag": "€37" },
+      { "categorie": "E-pathologie", "omschrijving": "Verslag", "bedrag": "€30,65" },
+      { "categorie": "E-pathologie", "omschrijving": "1e t.e.m. 60e beurt", "bedrag": "€37" }
+    ]
+  },
+  "slogans": {
+    "home": "Life has its ups and downs. We call them squats!",
+    "kine": "A physical therapist turns pain into power",
+    "mpc": "We support your best sport performance!",
+    "prijzenKine": "The greatest WEALTH is HEALTH.",
+    "prijzenPt": "Sweat is fat crying"
+  },
+  "partnerband": {
+    "titel": "Onze partners",
+    "titelMpc": "Corporate partners",
+    "snelheid": "normaal",
+    "animatie": true
+  },
+  "nieuwsbrief": {
+    "enabled": true,
+    "titel": "Ontvang tips om je gezondheid en prestaties te verbeteren",
+    "tekst": "Geregeld delen we praktische oefentips, nieuws uit de praktijk en alles over kinesitherapie en performance training.",
+    "socialProof": "Meer dan 2.000 mensen gingen je voor"
   }
 }

@@ -1,0 +1,103 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import DienstCard from "../../components/DienstCard.astro";
+import {
+  getDienstenByCategorie,
+  getLesrooster,
+  getLocatieBySlug,
+  getPrijzenByCategorie,
+  formatPrijs,
+  dienstHref,
+} from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const rooster = await getLesrooster();
+const groep = await getDienstenByCategorie("mpc-groep");
+const memberships = (await getPrijzenByCategorie("mpc")).filter((p) =>
+  /10 lessen|small group|boxing/i.test(p.naam),
+);
+
+const dagen = ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"];
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Movenda Performance Centre", path: "/mpc" },
+    { name: "Groepslessen", path: "/mpc/groepslessen" },
+  ]),
+];
+---
+
+<Layout
+  title="Groepslessen & lesrooster | Movenda Performance Centre"
+  description="Lesrooster van het Movenda Performance Centre in Kuringen: HIIT, Full Body, PowerPlus, boxing, corporate en meer. Maximaal 8 personen."
+  path="/mpc/groepslessen"
+  brand="mpc"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">MPC</p>
+    <h1 class="mt-2 text-3xl font-bold">Groepslessen</h1>
+    <p class="mt-3 max-w-2xl text-brand-muted">
+      Kleine groepen, maximaal 8 personen, begeleid door een coach. Eerste running-les is gratis;
+      PowerPlus heeft een gratis proefles. {locatie.verdiepingNote}
+    </p>
+
+    <h2 class="mt-10 text-xl font-bold">Lesrooster</h2>
+    <div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {dagen.map((dag) => {
+        const lessen = rooster.filter((r) => r.dag === dag);
+        return (
+          <div class="rounded-2xl border border-brand-border bg-brand-surface p-5">
+            <h3 class="font-semibold text-brand-primary">{dag}</h3>
+            {lessen.length === 0 ? (
+              <p class="mt-2 text-sm text-brand-muted">Geen les</p>
+            ) : (
+              <ul class="mt-3 space-y-2 text-sm">
+                {lessen.map((les) => (
+                  <li>
+                    <span class="font-medium">{les.van}–{les.tot}</span>
+                    {" · "}
+                    {les.dienstSlug && les.dienstCategorie ? (
+                      <a href={dienstHref({ slug: les.dienstSlug, categorie: les.dienstCategorie })} class="text-brand-primary hover:underline">{les.les}</a>
+                    ) : (
+                      les.les
+                    )}
+                    {les.coachNaam && <span class="text-brand-muted"> — {les.coachNaam}</span>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+
+    {memberships.length > 0 && (
+      <div class="mt-12">
+        <h2 class="text-xl font-bold">Memberships</h2>
+        <p class="mt-2 text-sm text-brand-muted">Prijzen exclusief BTW. Annuleren tot 24u op voorhand.</p>
+        <div class="mt-4 overflow-x-auto rounded-2xl border border-brand-border">
+          <table class="w-full min-w-[28rem] text-left text-sm">
+            <tbody>
+              {memberships.map((item, i) => (
+                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                  <td class="px-4 py-3">{item.naam}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    <h2 class="mt-12 text-xl font-bold">Programma's</h2>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {groep.map((dienst) => (
+        <DienstCard dienst={dienst} />
+      ))}
+    </div>
+  </section>
+</Layout>

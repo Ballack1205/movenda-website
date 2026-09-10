@@ -22,6 +22,19 @@ export default defineType({
         ],
       },
     }),
+    defineField({
+      name: "site",
+      title: "Tonen op",
+      type: "string",
+      options: {
+        list: [
+          { title: "Movenda (Olympia)", value: "movenda" },
+          { title: "MPC", value: "mpc" },
+          { title: "Beide", value: "beide" },
+        ],
+      },
+      initialValue: "movenda",
+    }),
     defineField({ name: "volgorde", title: "Volgorde", type: "number", initialValue: 0 }),
   ],
   orderings: [

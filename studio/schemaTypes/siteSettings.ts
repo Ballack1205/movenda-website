@@ -44,9 +44,45 @@ export default defineType({
       name: "analytics",
       title: "Analytics",
       type: "object",
+      description:
+        "Google Analytics start pas nadat een bezoeker op 'Oké' klikt in de cookiebalk. Umami is cookieloos en telt altijd anoniem mee (geen toestemming nodig).",
       fields: [
-        defineField({ name: "enabled", title: "Analytics actief (na cookie-toestemming)", type: "boolean", initialValue: false }),
-        defineField({ name: "ga4Id", title: "GA4 Measurement ID", type: "string" }),
+        defineField({ name: "enabled", title: "Analytics actief", type: "boolean", initialValue: false }),
+        defineField({
+          name: "mode",
+          title: "Modus",
+          type: "string",
+          description:
+            "Testmodus: de cookiebalk en events werken, maar er wordt niets naar Google of Umami gestuurd (events verschijnen enkel in de browserconsole). Zet op Live bij de go-live.",
+          options: {
+            list: [
+              { title: "Test (niets wordt verstuurd)", value: "test" },
+              { title: "Live", value: "live" },
+            ],
+            layout: "radio",
+          },
+          initialValue: "test",
+        }),
+        defineField({ name: "ga4Id", title: "Google Analytics 4 — Measurement ID (G-XXXX)", type: "string" }),
+        defineField({
+          name: "umami",
+          title: "Umami (cookieloos)",
+          type: "object",
+          description:
+            "Privacyvriendelijk alternatief/aanvulling zonder cookies. Maak een gratis account op umami.is, voeg de website toe en plak hier het Website ID.",
+          options: { collapsible: true, collapsed: true },
+          fields: [
+            defineField({ name: "enabled", title: "Umami actief", type: "boolean", initialValue: false }),
+            defineField({ name: "websiteId", title: "Website ID", type: "string" }),
+            defineField({
+              name: "scriptUrl",
+              title: "Script-URL",
+              type: "url",
+              description: "Standaard https://cloud.umami.is/script.js (EU-regio: https://eu.umami.is/script.js). Enkel wijzigen bij self-hosting.",
+              initialValue: "https://cloud.umami.is/script.js",
+            }),
+          ],
+        }),
       ],
     }),
     defineField({
@@ -59,6 +95,79 @@ export default defineType({
         defineField({ name: "terugbetalingStandaard", title: "Terugbetaling — standaard verzekerde", type: "string" }),
         defineField({ name: "terugbetalingVt", title: "Terugbetaling — verhoogde tegemoetkoming (VT/BIM)", type: "string" }),
         defineField({ name: "voorwaarden", title: "Voorwaarden voor terugbetaling", type: "text", rows: 4 }),
+        defineField({ name: "exBtwMpc", title: "MPC-prijzen exclusief BTW", type: "boolean", initialValue: true }),
+        defineField({ name: "annulatiebeleid", title: "Annulatiebeleid", type: "text", rows: 3 }),
+        defineField({
+          name: "nomenclatuur",
+          title: "Nomenclatuurtabel (kine)",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              name: "nomenItem",
+              fields: [
+                { name: "categorie", type: "string", title: "Categorie" },
+                { name: "omschrijving", type: "string", title: "Omschrijving" },
+                { name: "bedrag", type: "string", title: "Ereloon" },
+              ],
+            },
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: "slogans",
+      title: "Slogans",
+      type: "object",
+      fields: [
+        defineField({ name: "home", title: "Homepage", type: "string" }),
+        defineField({ name: "kine", title: "Kinesitherapie", type: "string" }),
+        defineField({ name: "mpc", title: "MPC", type: "string" }),
+        defineField({ name: "prijzenKine", title: "Prijzen kine", type: "string" }),
+        defineField({ name: "prijzenPt", title: "Prijzen PT", type: "string" }),
+      ],
+    }),
+    defineField({
+      name: "partnerband",
+      title: "Partnerbalk",
+      description: "De bewegende logobalk. De partners zelf beheer je onder 'Partners & logo's'.",
+      type: "object",
+      fields: [
+        defineField({ name: "titel", title: "Titel boven de balk (Movenda)", type: "string", initialValue: "Onze partners" }),
+        defineField({ name: "titelMpc", title: "Titel boven de balk (MPC)", type: "string", initialValue: "Corporate partners" }),
+        defineField({
+          name: "snelheid",
+          title: "Snelheid",
+          type: "string",
+          options: {
+            list: [
+              { title: "Rustig", value: "rustig" },
+              { title: "Normaal", value: "normaal" },
+              { title: "Snel", value: "snel" },
+            ],
+            layout: "radio",
+          },
+          initialValue: "normaal",
+        }),
+        defineField({
+          name: "animatie",
+          title: "Logo's laten bewegen",
+          type: "boolean",
+          description: "Uit = alle logo's stilstaand naast elkaar.",
+          initialValue: true,
+        }),
+      ],
+      options: { collapsible: true, collapsed: true },
+    }),
+    defineField({
+      name: "nieuwsbrief",
+      title: "Nieuwsbriefblok",
+      type: "object",
+      fields: [
+        defineField({ name: "enabled", title: "Tonen", type: "boolean", initialValue: true }),
+        defineField({ name: "titel", title: "Titel", type: "string" }),
+        defineField({ name: "tekst", title: "Tekst", type: "text", rows: 2 }),
+        defineField({ name: "socialProof", title: "Social proof (bv. 2.000+)", type: "string" }),
       ],
     }),
   ],

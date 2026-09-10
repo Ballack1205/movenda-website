@@ -1,12 +1,27 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { getPrijzenByCategorie, getSiteSettings } from "../lib/content";
+import GetuigenisQuote from "../components/GetuigenisQuote.astro";
+import {
+  getPrijzenByCategorie,
+  getSiteSettings,
+  getTeamleden,
+  getGetuigenissen,
+  formatPrijs,
+  formatEuro,
+} from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 
 const kine = await getPrijzenByCategorie("kine");
 const training = await getPrijzenByCategorie("training");
+const mpc = await getPrijzenByCategorie("mpc");
+const screening = await getPrijzenByCategorie("screening");
 const settings = await getSiteSettings();
 const info = settings.prijzenInfo;
+const team = await getTeamleden();
+const quote = (await getGetuigenissen())[0];
+
+const kineTarieven = team.filter((t) => t.tariefKine);
+const ptTarieven = team.filter((t) => t.tariefPt || t.tariefPtMpc || t.tariefPerformance);
 
 const jsonLd = [
   breadcrumbSchema([
@@ -14,13 +29,6 @@ const jsonLd = [
     { name: "Prijzen", path: "/prijzen" },
   ]),
 ];
-
-function formatPrijs(item: { bedrag: number; eenheid?: string; vanaf: boolean; opAanvraag: boolean }) {
-  if (item.opAanvraag) return "Op aanvraag";
-  const prefix = item.vanaf ? "Vanaf " : "";
-  const eenheid = item.eenheid ? ` / ${item.eenheid}` : "";
-  return `${prefix}€${item.bedrag}${eenheid}`;
-}
 ---
 
 <Layout
@@ -38,10 +46,34 @@ function formatPrijs(item: { bedrag: number; eenheid?: string; vanaf: boolean; o
         af van de behandelende therapeut, specialisatie en ervaring.
       </p>
     )}
+    {settings.slogans.prijzenKine && (
+      <p class="mt-4 text-lg font-semibold text-brand-primary">{settings.slogans.prijzenKine}</p>
+    )}
+
+    {kineTarieven.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Tarieven per therapeut — kinesitherapie</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <tbody>
+              {kineTarieven.map((lid, i) => (
+                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                  <td class="px-4 py-3">
+                    <a href={`/team/${lid.slug}`} class="font-medium hover:text-brand-primary">{lid.voornaam} {lid.naam}</a>
+                    <span class="text-brand-muted"> — {lid.rol}</span>
+                  </td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatEuro(lid.tariefKine)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
 
     {kine.length > 0 && (
       <div class="mt-10">
-        <h2 class="text-xl font-semibold">Kinesitherapie</h2>
+        <h2 class="text-xl font-semibold">Kinesitherapie — behandelingen</h2>
         <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
           <table class="w-full text-left text-sm">
             <tbody>
@@ -57,15 +89,78 @@ function formatPrijs(item: { bedrag: number; eenheid?: string; vanaf: boolean; o
       </div>
     )}
 
+    {info.nomenclatuur && info.nomenclatuur.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Nomenclatuur</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-brand-surface text-brand-muted">
+              <tr>
+                <th class="px-4 py-2 font-medium">Categorie</th>
+                <th class="px-4 py-2 font-medium">Omschrijving</th>
+                <th class="px-4 py-2 text-right font-medium">Ereloon</th>
+              </tr>
+            </thead>
+            <tbody>
+              {info.nomenclatuur.map((n) => (
+                <tr class="border-t border-brand-border">
+                  <td class="px-4 py-2">{n.categorie}</td>
+                  <td class="px-4 py-2">{n.omschrijving}</td>
+                  <td class="px-4 py-2 text-right font-semibold">{n.bedrag}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {settings.slogans.prijzenPt && (
+      <p class="mt-12 text-lg font-semibold text-brand-primary">{settings.slogans.prijzenPt}</p>
+    )}
+
+    {ptTarieven.length > 0 && (
+      <div class="mt-6">
+        <h2 class="text-xl font-semibold">Tarieven per therapeut — training</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-brand-surface text-brand-muted">
+              <tr>
+                <th class="px-4 py-2 font-medium">Therapeut</th>
+                <th class="px-4 py-2 text-right font-medium">Olympia</th>
+                <th class="px-4 py-2 text-right font-medium">MPC</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ptTarieven.map((lid) => (
+                <tr class="border-t border-brand-border">
+                  <td class="px-4 py-3">
+                    <a href={`/team/${lid.slug}`} class="font-medium hover:text-brand-primary">{lid.voornaam} {lid.naam}</a>
+                  </td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatEuro(lid.tariefPt) || "—"}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">
+                    {formatEuro(lid.tariefPerformance || lid.tariefPtMpc) || "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
     {training.length > 0 && (
       <div class="mt-10">
-        <h2 class="text-xl font-semibold">Personal Training</h2>
+        <h2 class="text-xl font-semibold">Personal Training — Olympia</h2>
         <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
           <table class="w-full text-left text-sm">
             <tbody>
               {training.map((item, i) => (
                 <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
-                  <td class="px-4 py-3">{item.naam}</td>
+                  <td class="px-4 py-3">
+                    {item.naam}
+                    {item.notitie && <span class="block text-xs text-brand-muted">{item.notitie}</span>}
+                  </td>
                   <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item)}</td>
                 </tr>
               ))}
@@ -74,6 +169,45 @@ function formatPrijs(item: { bedrag: number; eenheid?: string; vanaf: boolean; o
         </div>
       </div>
     )}
+
+    <div id="mpc" class="mt-12 scroll-mt-24">
+      <h2 class="text-xl font-semibold">Movenda Performance Centre</h2>
+      {info.exBtwMpc && <p class="mt-2 text-sm text-brand-muted">Prijzen exclusief BTW, enkel op afspraak.</p>}
+      {mpc.length > 0 && (
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <tbody>
+              {mpc.map((item, i) => (
+                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                  <td class="px-4 py-3">
+                    {item.naam}
+                    {item.notitie && <span class="block text-xs text-brand-muted">{item.notitie}</span>}
+                  </td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {screening.length > 0 && (
+        <div class="mt-6">
+          <h3 class="font-semibold">Screening &amp; data</h3>
+          <div class="mt-3 overflow-hidden rounded-2xl border border-brand-border">
+            <table class="w-full text-left text-sm">
+              <tbody>
+                {screening.map((item, i) => (
+                  <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                    <td class="px-4 py-3">{item.naam}</td>
+                    <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
 
     <div class="mt-12 rounded-2xl border border-brand-border bg-brand-surface p-6">
       <h2 class="text-xl font-semibold">Terugbetaling</h2>
@@ -96,6 +230,11 @@ function formatPrijs(item: { bedrag: number; eenheid?: string; vanaf: boolean; o
         )}
       </div>
       {info.voorwaarden && <p class="mt-4 text-xs text-brand-muted">{info.voorwaarden}</p>}
+      {info.annulatiebeleid && (
+        <p class="mt-4 text-sm text-brand-muted"><strong>Annulatie:</strong> {info.annulatiebeleid}</p>
+      )}
     </div>
   </section>
+
+  {quote && <GetuigenisQuote item={quote} />}
 </Layout>

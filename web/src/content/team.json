@@ -6,12 +6,39 @@
     "naam": "Ruttens",
     "rol": "Zaakvoerder & manueel therapeut",
     "rolEn": "Owner & manual therapist",
-    "locaties": ["olympia", "mpc"],
-    "specialisaties": ["Manuele therapie", "Advanced Dry Needling", "Personal Training", "Sportspecifieke Screening + Training"],
+    "locaties": [
+      "olympia",
+      "mpc"
+    ],
+    "specialisaties": [
+      "Manuele therapie",
+      "Advanced Dry Needling",
+      "Personal Training",
+      "Sportspecifieke Screening + Training"
+    ],
     "email": "andres@movenda.be",
     "bio": "Met meer dan 10 jaar ervaring begeleidt Andres sporters en patiënten bij complexe musculoskeletale klachten. Hij combineert manuele therapie met doorgedreven oefentherapie en staat bekend om zijn analytische aanpak en oog voor detail. Naast zijn werk bij Movenda is hij ook actief bij het Movenda Performance Centre.",
     "volgorde": 1,
-    "actief": true
+    "actief": true,
+    "tariefKine": 40,
+    "tariefPt": 73,
+    "tariefPtMpc": 77,
+    "clubs": [],
+    "klachten": [
+      "Operatie",
+      "Complex of terugkerend",
+      "Oefentherapie"
+    ],
+    "regio": [
+      "Middenrug/nek/schouder"
+    ],
+    "sporten": [
+      "Alle sporten"
+    ],
+    "doelgroepen": [
+      "Ondernemers",
+      "Sporters (algemeen)"
+    ]
   },
   {
     "slug": "cedriek-swinnen",
@@ -20,12 +47,28 @@
     "naam": "Swinnen",
     "rol": "Zaakvoerder & performance specialist",
     "rolEn": "Owner & performance specialist",
-    "locaties": ["mpc"],
-    "specialisaties": ["Performance coaching", "Data-analyse"],
+    "locaties": [
+      "mpc"
+    ],
+    "specialisaties": [
+      "Performance coaching",
+      "Data-analyse"
+    ],
     "email": "ce@mpc.movenda.be",
     "bio": "Met meer dan 10 jaar ervaring is hij een echte performance specialist. Hij werkt graag met data om zo objectieve progressie te kunnen aantonen en algehele prestatie te verbeteren.",
     "volgorde": 2,
-    "actief": true
+    "actief": true,
+    "tariefPtMpc": 77,
+    "tariefPerformance": 80,
+    "clubs": [],
+    "klachten": [],
+    "regio": [],
+    "sporten": [
+      "Voetbal"
+    ],
+    "doelgroepen": [
+      "Topsport"
+    ]
   },
   {
     "slug": "josje-bazelmans",
@@ -34,12 +77,39 @@
     "naam": "Bazelmans",
     "rol": "Kinesitherapeut",
     "rolEn": "Physiotherapist",
-    "locaties": ["olympia"],
-    "specialisaties": ["Manuele therapie", "Musculoskeletale revalidatie", "Advanced Dry Needling", "Schouder- en polsrevalidatie", "Personal Training"],
+    "locaties": [
+      "olympia"
+    ],
+    "specialisaties": [
+      "Manuele therapie",
+      "Musculoskeletale revalidatie",
+      "Advanced Dry Needling",
+      "Schouder- en polsrevalidatie",
+      "Personal Training"
+    ],
     "email": "josje@movenda.be",
     "bio": "Met meer dan 10 jaar ervaring staat Josje bekend om haar directe en duidelijke aanpak, volledig afgestemd op de noden van elke patiënt. Ze heeft een bijzondere expertise in schouder- en polsklachten.",
     "volgorde": 3,
-    "actief": true
+    "actief": true,
+    "tariefKine": 40,
+    "tariefPt": 70,
+    "klachten": [
+      "Complex of terugkerend",
+      "Dry needling"
+    ],
+    "regio": [
+      "Schouder"
+    ],
+    "sporten": [
+      "Gymnastiek",
+      "Lopen",
+      "Hyrox"
+    ],
+    "doelgroepen": [
+      "Gymnastiek",
+      "Hyrox",
+      "Lopers"
+    ]
   },
   {
     "slug": "koen-daniels",
@@ -48,12 +118,38 @@
     "naam": "Daniëls",
     "rol": "Kinesitherapeut",
     "rolEn": "Physiotherapist",
-    "locaties": ["olympia"],
-    "specialisaties": ["Manuele therapie", "Musculoskeletale revalidatie", "Auriculotherapie", "Personal Training"],
+    "locaties": [
+      "olympia"
+    ],
+    "specialisaties": [
+      "Manuele therapie",
+      "Musculoskeletale revalidatie",
+      "Auriculotherapie",
+      "Personal Training"
+    ],
     "email": "koen@movenda.be",
     "bio": "Met meer dan 10 jaar ervaring benadert Koen elke patiënt vanuit een holistische kijk. Hij combineert klassieke kinesitherapie met oosterse behandeltechnieken zoals acupunctuur en auriculotherapie.",
     "volgorde": 4,
-    "actief": true
+    "actief": true,
+    "tariefKine": 40,
+    "tariefPt": 71,
+    "klachten": [
+      "Operatie",
+      "Complex of terugkerend"
+    ],
+    "regio": [
+      "Lage rug",
+      "Middenrug/nek/schouder",
+      "Schouder",
+      "Knie",
+      "Heup",
+      "Voet/enkel"
+    ],
+    "sporten": [],
+    "doelgroepen": [
+      "Ondernemers",
+      "Recreatieve sporters"
+    ]
   },
   {
     "slug": "jens-hendrickx",
@@ -62,12 +158,44 @@
     "naam": "Hendrickx",
     "rol": "Kinesitherapeut & sportspecialist",
     "rolEn": "Physiotherapist & sports specialist",
-    "locaties": ["olympia", "mpc"],
-    "specialisaties": ["Manuele therapie", "Dry Needling", "Personal Training", "Sportspecifieke training", "Inspanningstesten met lactaatmeting"],
+    "locaties": [
+      "olympia",
+      "mpc"
+    ],
+    "specialisaties": [
+      "Manuele therapie",
+      "Dry Needling",
+      "Personal Training",
+      "Sportspecifieke training",
+      "Inspanningstesten met lactaatmeting"
+    ],
     "email": "jens@movenda.be",
     "bio": "Jens werkt zowel bij Movenda als bij het Movenda Performance Centre waar hij naast de klassieke revalidaties instaat voor sportspecifieke revalidaties en trainingen. Hij heeft een extra expertise in motorcross.",
     "volgorde": 5,
-    "actief": true
+    "actief": true,
+    "tariefKine": 39,
+    "tariefPt": 70,
+    "tariefPtMpc": 75,
+    "tariefPerformance": 78,
+    "klachten": [
+      "Dry needling",
+      "Oefentherapie",
+      "Inspanningstesten",
+      "Looptesten"
+    ],
+    "regio": [],
+    "sporten": [
+      "Lopen",
+      "Motorcross",
+      "BMX",
+      "Autosport"
+    ],
+    "doelgroepen": [
+      "Topsport",
+      "Lopers",
+      "Recreatieve sporters",
+      "Motorcross"
+    ]
   },
   {
     "slug": "pieter-hayen",
@@ -76,12 +204,33 @@
     "naam": "Hayen",
     "rol": "Kinesitherapeut & kinesitherapeut KRC Genk",
     "rolEn": "Physiotherapist",
-    "locaties": ["olympia"],
-    "specialisaties": ["Manuele therapie", "Musculoskeletale revalidatie", "Sportspecifieke training", "Personal Training", "Dry Needling", "Taping"],
+    "locaties": [
+      "olympia"
+    ],
+    "specialisaties": [
+      "Manuele therapie",
+      "Musculoskeletale revalidatie",
+      "Sportspecifieke training",
+      "Personal Training",
+      "Dry Needling",
+      "Taping"
+    ],
     "email": "pieter@movenda.be",
     "bio": "Pieter is fulltime kinesitherapeut bij KRC Genk en blijft daarnaast verbonden met Movenda. Brede expertise in sportrevalidatie en blessurepreventie.",
     "volgorde": 6,
-    "actief": true
+    "actief": true,
+    "tariefKine": 39,
+    "tariefPt": 70,
+    "clubs": [
+      {
+        "naam": "KRC Genk",
+        "url": "https://www.krcgenk.be/nl"
+      }
+    ],
+    "klachten": [],
+    "regio": [],
+    "sporten": [],
+    "doelgroepen": []
   },
   {
     "slug": "simon-cornelissen",
@@ -90,12 +239,38 @@
     "naam": "Cornelissen",
     "rol": "Kinesitherapeut & personal trainer",
     "rolEn": "Physiotherapist & personal trainer",
-    "locaties": ["olympia"],
-    "specialisaties": ["Manuele therapie", "Musculoskeletale revalidatie", "Sportspecifieke training", "Personal Training"],
+    "locaties": [
+      "olympia"
+    ],
+    "specialisaties": [
+      "Manuele therapie",
+      "Musculoskeletale revalidatie",
+      "Sportspecifieke training",
+      "Personal Training"
+    ],
     "email": "simon@movenda.be",
     "bio": "Simon begeleidt zijn patiënten en sporters met een actieve aanpak waarbij revalidatie en training hand in hand gaan.",
     "volgorde": 7,
-    "actief": true
+    "actief": true,
+    "tariefKine": 39,
+    "tariefPt": 70,
+    "klachten": [
+      "Jeugd"
+    ],
+    "regio": [
+      "Schouder",
+      "Knie",
+      "Heup",
+      "Voet/enkel",
+      "ACL (knie)"
+    ],
+    "sporten": [
+      "Slagsporten"
+    ],
+    "doelgroepen": [
+      "Jonge atleten",
+      "Bovenhandse slagsporten"
+    ]
   },
   {
     "slug": "tanse-vanheusden",
@@ -104,12 +279,33 @@
     "naam": "Vanheusden",
     "rol": "Kinesitherapeut & pre/postnataal specialist",
     "rolEn": "Physiotherapist & pre/postnatal specialist",
-    "locaties": ["olympia"],
-    "specialisaties": ["Pelvische reëducatie", "Pre- en postnatale revalidatie", "Vroedvrouw", "Musculoskeletale revalidatie", "Pre- en postnatale training"],
+    "locaties": [
+      "olympia"
+    ],
+    "specialisaties": [
+      "Pelvische reëducatie",
+      "Pre- en postnatale revalidatie",
+      "Vroedvrouw",
+      "Musculoskeletale revalidatie",
+      "Pre- en postnatale training"
+    ],
     "email": "tanse@movenda.be",
     "bio": "Tanse is de enige therapeut bij Movenda met een dubbele achtergrond als kinesitherapeut én vroedvrouw. Unieke, holistische begeleiding voor vrouwen tijdens en na de zwangerschap.",
     "volgorde": 8,
-    "actief": true
+    "actief": true,
+    "tariefKine": 40,
+    "tariefPt": 70,
+    "klachten": [
+      "Pre- en postnataal",
+      "Bekkenbodem/pelvische reëducatie"
+    ],
+    "regio": [
+      "Bekken"
+    ],
+    "sporten": [],
+    "doelgroepen": [
+      "Pre- en postnatale training"
+    ]
   },
   {
     "slug": "miel-briers",
@@ -118,12 +314,42 @@
     "naam": "Briers",
     "rol": "Kinesitherapeut & kinesitherapeut STVV",
     "rolEn": "Physiotherapist",
-    "locaties": ["olympia"],
-    "specialisaties": ["Manuele therapie", "Musculoskeletale revalidatie", "Osteopathie (i.o.)", "Sportspecifieke training", "Personal Training"],
+    "locaties": [
+      "olympia"
+    ],
+    "specialisaties": [
+      "Manuele therapie",
+      "Musculoskeletale revalidatie",
+      "Osteopathie (i.o.)",
+      "Sportspecifieke training",
+      "Personal Training"
+    ],
     "email": "miel@movenda.be",
     "bio": "Miel combineert een bachelor LO met kinesitherapie en is in opleiding voor osteopathie. Ook actief als kinesitherapeut bij STVV.",
     "volgorde": 9,
-    "actief": true
+    "actief": true,
+    "tariefKine": 38,
+    "tariefPt": 70,
+    "clubs": [
+      {
+        "naam": "STVV",
+        "url": "https://stvv.com/nl"
+      }
+    ],
+    "klachten": [
+      "Osteopathie",
+      "Hoofdpijnen",
+      "Stressgerelateerde klachten"
+    ],
+    "regio": [
+      "Lage rug",
+      "Knie",
+      "Heup",
+      "Voet/enkel",
+      "Bekken"
+    ],
+    "sporten": [],
+    "doelgroepen": []
   },
   {
     "slug": "maarten-bernaerts",
@@ -132,12 +358,41 @@
     "naam": "Bernaerts",
     "rol": "Kinesitherapeut & manueel therapeut",
     "rolEn": "Physiotherapist & manual therapist",
-    "locaties": ["olympia"],
-    "specialisaties": ["Manuele therapie", "Musculoskeletale revalidatie", "Sportspecifieke training", "Personal Training"],
+    "locaties": [
+      "olympia"
+    ],
+    "specialisaties": [
+      "Manuele therapie",
+      "Musculoskeletale revalidatie",
+      "Sportspecifieke training",
+      "Personal Training"
+    ],
     "email": "maarten@movenda.be",
     "bio": "Maarten combineert zijn praktijkervaring bij Movenda met zijn rol als kinesitherapeut bij voetbalclub STVV.",
     "volgorde": 10,
-    "actief": true
+    "actief": true,
+    "tariefKine": 37,
+    "tariefPt": 70,
+    "clubs": [
+      {
+        "naam": "STVV",
+        "url": "https://stvv.com/nl"
+      }
+    ],
+    "klachten": [],
+    "regio": [
+      "Knie",
+      "Heup",
+      "Voet/enkel"
+    ],
+    "sporten": [
+      "Fitness",
+      "Balsporten"
+    ],
+    "doelgroepen": [
+      "Recreatieve sporters",
+      "Balsporten"
+    ]
   },
   {
     "slug": "arne-daniels",
@@ -146,12 +401,40 @@
     "naam": "Daniëls",
     "rol": "Kinesitherapeut & performance coach",
     "rolEn": "Physiotherapist & performance coach",
-    "locaties": ["mpc"],
-    "specialisaties": ["Musculoskeletale revalidatie", "Performance coaching", "Sportspecifieke training", "Physical coach Hubo Limburg United"],
+    "locaties": [
+      "mpc"
+    ],
+    "specialisaties": [
+      "Musculoskeletale revalidatie",
+      "Performance coaching",
+      "Sportspecifieke training",
+      "Physical coach Hubo Limburg United"
+    ],
     "email": "arne@mpc.movenda.be",
     "bio": "Arne combineert zijn expertise als kinesitherapeut met een sterke passie voor sportprestaties, actief bij Hubo Limburg United.",
     "volgorde": 11,
-    "actief": true
+    "actief": true,
+    "tariefKine": 38,
+    "tariefPtMpc": 76,
+    "tariefPerformance": 78,
+    "clubs": [
+      {
+        "naam": "Hubo Limburg United",
+        "url": "https://www.hubolimburgunited.be/nl"
+      }
+    ],
+    "klachten": [
+      "Operatie",
+      "Oefentherapie"
+    ],
+    "regio": [],
+    "sporten": [
+      "Basket",
+      "Autosport"
+    ],
+    "doelgroepen": [
+      "Alle sporten"
+    ]
   },
   {
     "slug": "charlotte-vorstenbosch",
@@ -160,12 +443,27 @@
     "naam": "Vorstenbosch",
     "rol": "Personal trainer & groepscoach",
     "rolEn": "Personal trainer & group coach",
-    "locaties": ["mpc"],
-    "specialisaties": ["Personal Training", "HIIT", "Full Body coaching"],
+    "locaties": [
+      "mpc"
+    ],
+    "specialisaties": [
+      "Personal Training",
+      "HIIT",
+      "Full Body coaching"
+    ],
     "email": "charlotte@mpc.movenda.be",
     "bio": "Charlotte brengt energie en structuur in elke training, individueel en in groep.",
     "volgorde": 12,
-    "actief": true
+    "actief": true,
+    "tariefPtMpc": 74,
+    "klachten": [],
+    "regio": [],
+    "sporten": [],
+    "doelgroepen": [
+      "Ondernemers",
+      "Dames",
+      "Corporate coaching"
+    ]
   },
   {
     "slug": "yannick-glorieux",
@@ -174,12 +472,25 @@
     "naam": "Glorieux",
     "rol": "Performance coach & data-analist",
     "rolEn": "Performance coach & data analyst",
-    "locaties": ["mpc"],
-    "specialisaties": ["Performance coaching", "Data-analyse"],
+    "locaties": [
+      "mpc"
+    ],
+    "specialisaties": [
+      "Performance coaching",
+      "Data-analyse"
+    ],
     "email": "yannick@mpc.movenda.be",
     "bio": "Yannick combineert zijn passie voor sport met een analytische kijk op prestaties.",
     "volgorde": 13,
-    "actief": true
+    "actief": true,
+    "tariefPtMpc": 74,
+    "klachten": [],
+    "regio": [],
+    "sporten": [],
+    "doelgroepen": [
+      "Topsport",
+      "Corporate coaching"
+    ]
   },
   {
     "slug": "jana-albrechts",
@@ -188,12 +499,32 @@
     "naam": "Albrechts",
     "rol": "Kinesitherapeut & personal trainer",
     "rolEn": "Physiotherapist & personal trainer",
-    "locaties": ["olympia", "mpc"],
-    "specialisaties": ["Musculoskeletale revalidatie", "Sportrevalidatie", "Personal Training", "Sportspecifieke training"],
+    "locaties": [
+      "olympia",
+      "mpc"
+    ],
+    "specialisaties": [
+      "Musculoskeletale revalidatie",
+      "Sportrevalidatie",
+      "Personal Training",
+      "Sportspecifieke training"
+    ],
     "email": "jana@movenda.be",
     "bio": "Jana combineert haar passie voor sportrevalidatie met gerichte personal training.",
     "volgorde": 14,
-    "actief": true
+    "actief": true,
+    "tariefKine": 37,
+    "tariefPt": 70,
+    "tariefPtMpc": 74,
+    "klachten": [
+      "Preventie",
+      "Jeugd"
+    ],
+    "regio": [],
+    "sporten": [],
+    "doelgroepen": [
+      "Alle sporten"
+    ]
   },
   {
     "slug": "quinten-beckers",
@@ -202,12 +533,32 @@
     "naam": "Beckers",
     "rol": "Personal trainer",
     "rolEn": "Personal trainer",
-    "locaties": ["mpc"],
-    "specialisaties": ["Personal Training", "Physical coach HLU Academy"],
+    "locaties": [
+      "mpc"
+    ],
+    "specialisaties": [
+      "Personal Training",
+      "Physical coach HLU Academy"
+    ],
     "email": "quinten@mpc.movenda.be",
     "bio": "Quinten daagt je uit én ondersteunt je om je doelen te bereiken, van recreatieve sporters tot jonge talenten.",
     "volgorde": 15,
-    "actief": true
+    "actief": true,
+    "tariefPtMpc": 74,
+    "clubs": [
+      {
+        "naam": "HLU Academy",
+        "url": "https://www.hubolimburgunited.be/nl/academy/over-onze-academy"
+      }
+    ],
+    "klachten": [],
+    "regio": [],
+    "sporten": [],
+    "doelgroepen": [
+      "Recreatieve sporters",
+      "Jonge atleten",
+      "Alle sporten"
+    ]
   },
   {
     "slug": "dimitri-vanempten",
@@ -216,12 +567,23 @@
     "naam": "Vanempten",
     "rol": "Boxing coach",
     "rolEn": "Boxing coach",
-    "locaties": ["mpc"],
-    "specialisaties": ["Boxing coaching"],
+    "locaties": [
+      "mpc"
+    ],
+    "specialisaties": [
+      "Boxing coaching"
+    ],
     "email": "dimi@mpc.movenda.be",
     "bio": "Dimitri is de boksingspecialist van het Movenda Performance Centre.",
     "volgorde": 16,
-    "actief": true
+    "actief": true,
+    "tariefPtMpc": 74,
+    "klachten": [],
+    "regio": [],
+    "sporten": [],
+    "doelgroepen": [
+      "Boksen"
+    ]
   },
   {
     "slug": "stijn-de-meyer",
@@ -229,12 +591,35 @@
     "naam": "De Meyer",
     "rol": "Kinesitherapeut",
     "rolEn": "Physiotherapist",
-    "locaties": ["olympia"],
-    "specialisaties": ["Manuele therapie", "Dry Needling", "Kaakklachten (TMJ)", "Sprint- en loopblessures"],
+    "locaties": [
+      "olympia"
+    ],
+    "specialisaties": [
+      "Manuele therapie",
+      "Dry Needling",
+      "Kaakklachten (TMJ)",
+      "Sprint- en loopblessures"
+    ],
     "email": "stijn@movenda.be",
     "bio": "Stijn combineert een brede sportachtergrond met een wetenschappelijk onderbouwde aanpak, gericht op de onderliggende oorzaak voor duurzaam herstel.",
     "volgorde": 17,
-    "actief": true
+    "actief": true,
+    "tariefKine": 37,
+    "klachten": [
+      "Preventie",
+      "Jeugd",
+      "Dry needling",
+      "Inspanningstesten",
+      "Looptesten"
+    ],
+    "regio": [
+      "Kaak"
+    ],
+    "sporten": [
+      "Lopen",
+      "Fietsen"
+    ],
+    "doelgroepen": []
   },
   {
     "slug": "an-janssen",
@@ -242,12 +627,24 @@
     "naam": "Janssen",
     "rol": "Kinesitherapeut & lymfedrainage specialist",
     "rolEn": "Physiotherapist & lymphatic drainage specialist",
-    "locaties": ["olympia"],
-    "specialisaties": ["Manuele lymfedrainage", "Musculoskeletale revalidatie"],
+    "locaties": [
+      "olympia"
+    ],
+    "specialisaties": [
+      "Manuele lymfedrainage",
+      "Musculoskeletale revalidatie"
+    ],
     "email": "an@movenda.be",
     "bio": "An brengt jarenlange ervaring mee uit ziekenhuizen en privépraktijken en is de enige met de specialisatie manuele lymfedrainage.",
     "volgorde": 18,
-    "actief": true
+    "actief": true,
+    "tariefKine": 37,
+    "klachten": [
+      "Lymfedrainage"
+    ],
+    "regio": [],
+    "sporten": [],
+    "doelgroepen": []
   },
   {
     "slug": "julie-spaas",
@@ -256,7 +653,10 @@
     "naam": "Spaas",
     "rol": "Office manager & marketing",
     "rolEn": "Office manager & marketing",
-    "locaties": ["olympia", "mpc"],
+    "locaties": [
+      "olympia",
+      "mpc"
+    ],
     "specialisaties": [],
     "email": "julie@movenda.be",
     "bio": "Julie is de kracht achter zowel Movenda als het Movenda Performance Centre: website, marketing, communicatie en boekhouding.",

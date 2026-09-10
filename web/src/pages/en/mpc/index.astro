@@ -2,12 +2,17 @@
 import { Image } from "astro:assets";
 import Layout from "../../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../../components/GoogleReviewBadge.astro";
-import { getDienstenByCategorie, getLocatieBySlug } from "../../../lib/content";
-import { localBusinessSchema, breadcrumbSchema } from "../../../lib/schema";
+import DienstCard from "../../../components/DienstCard.astro";
+import { getDienstenByCategorie, getLocatieBySlug, getFaqs, getSiteSettings } from "../../../lib/content";
+import { localBusinessSchema, breadcrumbSchema, faqPageSchema } from "../../../lib/schema";
 import mpcHero from "../../../assets/marketing/mpc-hero.jpg";
 
-const diensten = await getDienstenByCategorie("mpc");
+const training = await getDienstenByCategorie("mpc-training");
+const rehab = await getDienstenByCategorie("mpc-rehab");
+const groep = await getDienstenByCategorie("mpc-groep");
 const locatie = (await getLocatieBySlug("mpc"))!;
+const faqs = await getFaqs("mpc");
+const settings = await getSiteSettings();
 
 const jsonLd = [
   localBusinessSchema(locatie),
@@ -15,6 +20,7 @@ const jsonLd = [
     { name: "Home", path: "/en" },
     { name: "Movenda Performance Centre", path: "/en/mpc" },
   ]),
+  ...(faqs.length > 0 ? [faqPageSchema(faqs.map((f) => ({ ...f, vraag: f.vraagEn || f.vraag, antwoord: f.antwoordEn || f.antwoord })))] : []),
 ];
 ---
 
@@ -27,24 +33,27 @@ const jsonLd = [
   lang="en"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 lg:grid-cols-2">
-    <div>
+  <section class="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 md:grid-cols-2 md:gap-10 md:py-16">
+    <div class="min-w-0">
       <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">
         Movenda Performance Centre
       </p>
-      <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
+      <h1 class="mt-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl xl:text-5xl">
         Perform at your highest level, data-driven
       </h1>
-      <p class="mt-4 max-w-xl text-brand-muted">
+      {settings.slogans.mpc && (
+        <p class="mt-2 text-pretty text-lg font-medium text-brand-primary">{settings.slogans.mpc}</p>
+      )}
+      <p class="mt-4 max-w-xl text-pretty text-brand-muted">
         A multidisciplinary performance centre focused on maximising performance for
         (semi-)professional athletes and evidence-based medical rehabilitation. Open space,
         high-end equipment and one-on-one coaching.
       </p>
       <div class="mt-6 flex flex-wrap gap-3">
-        <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+        <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="rounded-full bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-primary-dark sm:px-6 sm:text-base">
           Call {locatie.telefoon}
         </a>
-        <a href="/en/contact" class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary">
+        <a href="/en/contact" class="rounded-full border border-brand-border px-5 py-3 text-sm font-semibold text-brand-text transition hover:border-brand-primary sm:px-6 sm:text-base">
           Contact us
         </a>
       </div>
@@ -55,22 +64,45 @@ const jsonLd = [
     <Image
       src={mpcHero}
       alt="Movenda Performance Centre training space"
-      width={640}
-      height={800}
-      class="aspect-[4/5] w-full rounded-3xl object-cover shadow-xl"
+      width={800}
+      height={600}
+      class="aspect-[16/10] w-full rounded-3xl object-cover object-top shadow-xl md:aspect-[4/3] xl:aspect-[5/4]"
       priority
     />
   </section>
 
   <section class="mx-auto max-w-6xl px-4 pb-16">
-    <h2 class="text-2xl font-bold">Our services</h2>
-    <div class="mt-6 grid gap-6 sm:grid-cols-2">
-      {diensten.map((dienst) => (
-        <div class="rounded-2xl border border-brand-border bg-brand-surface p-8">
-          <h3 class="text-xl font-semibold">{dienst.titelEn || dienst.titel}</h3>
-          <p class="mt-2 text-brand-muted">{dienst.intro}</p>
-        </div>
+    <h2 class="text-2xl font-bold">Training</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      {training.map((dienst) => (
+        <DienstCard dienst={dienst} lang="en" />
+      ))}
+    </div>
+    <h2 class="mt-12 text-2xl font-bold">Sports rehabilitation</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      {rehab.map((dienst) => (
+        <DienstCard dienst={dienst} lang="en" />
+      ))}
+    </div>
+    <h2 class="mt-12 text-2xl font-bold">Group classes</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {groep.map((dienst) => (
+        <DienstCard dienst={dienst} lang="en" />
       ))}
     </div>
   </section>
+
+  {faqs.length > 0 && (
+    <section class="mx-auto max-w-3xl px-4 pb-16">
+      <h2 class="text-2xl font-bold">FAQ</h2>
+      <div class="mt-6 divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
+        {faqs.map((faq) => (
+          <details class="group px-6 py-4">
+            <summary class="cursor-pointer list-none font-semibold">{faq.vraagEn || faq.vraag}</summary>
+            <p class="mt-3 text-sm text-brand-muted">{faq.antwoordEn || faq.antwoord}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  )}
 </Layout>

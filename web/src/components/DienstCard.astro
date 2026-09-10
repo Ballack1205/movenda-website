@@ -1,0 +1,37 @@
+---
+import { dienstHref, type Dienst } from "../lib/content";
+import { dienstPhotoSrc } from "../lib/images";
+
+interface Props {
+  dienst: Dienst;
+  lang?: "nl" | "en";
+}
+
+const { dienst, lang = "nl" } = Astro.props;
+const href = dienstHref(dienst, lang);
+const titel = lang === "en" ? dienst.titelEn || dienst.titel : dienst.titel;
+const foto = dienst.afbeelding || dienst.galerij[0];
+---
+
+<a
+  href={href}
+  class="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary"
+>
+  {foto && (
+    <img
+      src={dienstPhotoSrc(foto, "card")}
+      alt=""
+      width="800"
+      height="500"
+      loading="lazy"
+      class="aspect-[16/10] w-full object-cover"
+    />
+  )}
+  <div class="flex flex-1 flex-col p-5">
+    <h2 class="font-semibold text-pretty">{titel}</h2>
+    <p class="mt-1 line-clamp-3 text-sm text-brand-muted">{dienst.intro}</p>
+    <span class="mt-3 inline-block text-sm font-semibold text-brand-primary">
+      {lang === "en" ? "More info →" : "Meer info →"}
+    </span>
+  </div>
+</a>

@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import { getFaqs, getSiteSettings } from "../lib/content";
 import { breadcrumbSchema, faqPageSchema } from "../lib/schema";
 
-const faqs = await getFaqs();
+const faqs = await getFaqs("movenda");
 const settings = await getSiteSettings();
 
 const jsonLd = [

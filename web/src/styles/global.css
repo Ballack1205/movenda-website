@@ -23,7 +23,8 @@
    shade so the Performance Centre reads as a distinct space — not a second
    brand, just a nuance. */
 [data-brand="mpc"] {
-  --brand-header: #1a3d6e;
+  --brand-header: #122f56;
+  --brand-bg: #e4ebf3;
 }
 
 @theme {

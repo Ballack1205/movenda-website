@@ -1,0 +1,229 @@
+---
+import type { Partner, PartnerbandSnelheid } from "../lib/content";
+
+interface Props {
+  partners: Partner[];
+  title?: string;
+  snelheid?: PartnerbandSnelheid;
+  animatie?: boolean;
+}
+
+const { partners, title = "Onze partners", snelheid = "normaal", animatie = true } = Astro.props;
+
+// Seconds one logo needs to travel its own slot. Julie picks a label in the
+// CMS; scaling the duration by the number of logos keeps the pixel speed the
+// same whether the band holds 6 partners or 30.
+// Measured on the built site: one slot is ~150-190px, so these land at
+// roughly 35 / 60 / 95 px per second.
+const secondsPerLogo: Record<PartnerbandSnelheid, number> = {
+  rustig: 4.5,
+  normaal: 2.8,
+  snel: 1.8,
+};
+
+// The rail is built from identical groups that each slide left by exactly
+// their own width, so any group count from 2 up loops without a seam. Repeats
+// exist to keep the rail densely filled when there are only a few partners;
+// every repeat after the first is decorative (hidden from AT, not tabbable).
+const groups = animatie ? Math.max(2, Math.ceil(14 / Math.max(partners.length, 1))) : 1;
+const duration = Math.round(Math.max(partners.length, 1) * secondsPerLogo[snelheid] * 10) / 10;
+
+const logoSrc = (logo: string, height: number) => `${logo}?h=${height}&fit=max&auto=format`;
+---
+
+{
+  partners.length > 0 && (
+    <section class="border-y border-brand-border bg-brand-surface py-10">
+      <h2 class="px-4 text-center text-sm font-semibold uppercase tracking-wide text-brand-muted">{title}</h2>
+      <div
+        class:list={["partnerband", "mt-6", { "partnerband--static": !animatie }]}
+        style={`--partnerband-duration:${duration}s`}
+      >
+        <div class="partnerband__track">
+          {Array.from({ length: groups }).map((_, groupIndex) => {
+            const isClone = groupIndex > 0;
+            return (
+              <ul class="partnerband__group" aria-hidden={isClone ? "true" : undefined}>
+                {partners.map((p) => {
+                  const inner = p.logo ? (
+                    <img
+                      src={logoSrc(p.logo, 96)}
+                      srcset={`${logoSrc(p.logo, 96)} 1x, ${logoSrc(p.logo, 192)} 2x`}
+                      alt={isClone ? "" : p.naam}
+                      height="48"
+                      decoding="async"
+                      class="partnerband__logo"
+                    />
+                  ) : (
+                    <span class="partnerband__naam">{p.naam}</span>
+                  );
+                  return (
+                    <li class="partnerband__item">
+                      {p.url ? (
+                        <a
+                          href={p.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          tabindex={isClone ? -1 : undefined}
+                          title={p.naam}
+                        >
+                          {inner}
+                        </a>
+                      ) : (
+                        <span title={p.naam}>{inner}</span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .partnerband {
+    --partnerband-gap: 3rem;
+    /* Kept narrow on phones: a wide fade would swallow a 360px screen. */
+    --partnerband-fade: 2rem;
+    overflow: hidden;
+    /* Logos dissolve into the band edges instead of being cut off mid-word. */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--partnerband-fade),
+      black calc(100% - var(--partnerband-fade)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--partnerband-fade),
+      black calc(100% - var(--partnerband-fade)),
+      transparent
+    );
+  }
+
+  .partnerband__track {
+    display: flex;
+    /* Groups overflow this box on purpose; .partnerband clips them. */
+    width: 100%;
+  }
+
+  .partnerband__group {
+    display: flex;
+    flex: 0 0 auto;
+    /* Never narrower than the band itself, so the group sliding in always
+       covers the full width — also on an ultrawide monitor. */
+    min-width: 100%;
+    align-items: center;
+    justify-content: space-around;
+    gap: var(--partnerband-gap);
+    padding-inline: calc(var(--partnerband-gap) / 2);
+    margin: 0;
+    list-style: none;
+  }
+
+  .partnerband:not(.partnerband--static) .partnerband__group {
+    animation: partnerband-scroll var(--partnerband-duration) linear infinite;
+    will-change: transform;
+  }
+
+  /* Every group shifts left by its own full width in lockstep, so each one
+     lands exactly where its neighbour was: the seam is invisible. */
+  @keyframes partnerband-scroll {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* Let visitors stop the rail to read a logo, keyboard users included. */
+  .partnerband:hover .partnerband__group,
+  .partnerband:focus-within .partnerband__group {
+    animation-play-state: paused;
+  }
+
+  .partnerband__item {
+    display: flex;
+    align-items: center;
+  }
+
+  .partnerband__item a:focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+
+  .partnerband__logo {
+    height: 2.5rem;
+    width: auto;
+    max-width: 9rem;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.65;
+    transition: filter 0.25s ease, opacity 0.25s ease;
+  }
+
+  .partnerband__naam {
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--brand-muted);
+    transition: color 0.25s ease;
+  }
+
+  .partnerband__item:hover .partnerband__logo {
+    filter: none;
+    opacity: 1;
+  }
+
+  .partnerband__item:hover .partnerband__naam {
+    color: var(--brand-primary);
+  }
+
+  @media (min-width: 768px) {
+    .partnerband {
+      --partnerband-fade: 5rem;
+    }
+
+    .partnerband__logo {
+      height: 3rem;
+      max-width: 11rem;
+    }
+  }
+
+  /* No animation — either Julie switched it off or the visitor asked for
+     reduced motion: fall back to a centred, wrapping row and drop the
+     duplicates, which only exist to feed the loop. */
+  .partnerband--static .partnerband__group {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem var(--partnerband-gap);
+  }
+
+  .partnerband--static .partnerband__group[aria-hidden="true"] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .partnerband {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .partnerband .partnerband__group {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem var(--partnerband-gap);
+      animation: none;
+    }
+
+    .partnerband .partnerband__group[aria-hidden="true"] {
+      display: none;
+    }
+  }
+</style>

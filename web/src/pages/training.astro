@@ -2,43 +2,14 @@
 import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
-import { getLocatieBySlug } from "../lib/content";
+import DienstCard from "../components/DienstCard.astro";
+import { getDienstenByCategorie, getLocatieBySlug } from "../lib/content";
 import { breadcrumbSchema, localBusinessSchema } from "../lib/schema";
 import trainingHero from "../assets/marketing/training-hero.jpg";
 import trainingSecondary from "../assets/marketing/training-secondary.jpg";
 
 const locatie = (await getLocatieBySlug("olympia"))!;
-
-const trainingen = [
-  {
-    naam: "Personal Training",
-    tekst: "Eén-op-één trainingen waarin we samen de uitdaging aangaan om jouw persoonlijke doelstellingen (spierontwikkeling, conditietraining, afslanken, ...) te bereiken.",
-  },
-  {
-    naam: "Duotraining",
-    tekst: "Bij een duotraining werken jullie met 2 aan jullie persoonlijke doelstellingen — een training waarbij zweet en fun centraal staan. Een gespecialiseerde kinesitherapeut staat een heel uur voor jullie klaar en begeleidt enkel jullie 2.",
-  },
-  {
-    naam: "Sportspecifieke screening",
-    tekst: "Een uitgebreide test waarbij we sporters preventief bekijken om gebreken of disbalans vast te stellen. Aan de hand van deze screening wordt een schema opgemaakt, zodat trainingen progressief opgebouwd worden en de kans op blessures verkleint.",
-  },
-  {
-    naam: "Sportspecifieke training",
-    tekst: "Naast globale oefeningen trainen we specifiek op spiergroepen, reactiesnelheid of evenwicht binnen jouw eigen sport — preventief of tijdens revalidatie.",
-  },
-  {
-    naam: "Inspanningstesten",
-    tekst: "Inspanningstesten met of zonder lactaatmeting, op de fiets, roei-ergometer of loopband. Aan de hand van je lactaatwaarden en hartslag bepalen we jouw conditie en stellen we een specifiek programma op.",
-  },
-  {
-    naam: "Pre- en postnatale training",
-    tekst: "Eén-op-één sporttrainingen voor (prenataal) en na de bevalling (postnataal) bij een gespecialiseerde kinesist, inclusief ademhalingsoefeningen en begeleiding bij pijn- of incontinentieklachten.",
-  },
-  {
-    naam: "Training aan huis",
-    tekst: "Liever thuis trainen? Ook dat kan, volledig op maat van jouw ruimte en doelen.",
-  },
-];
+const diensten = await getDienstenByCategorie("training");
 
 const doelgroepen = [
   "Recreatieve sporters",
@@ -100,11 +71,8 @@ const jsonLd = [
 
     <div class="mt-10 grid gap-6 lg:grid-cols-3">
       <div class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
-        {trainingen.map((t) => (
-          <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
-            <h2 class="font-semibold">{t.naam}</h2>
-            <p class="mt-1 text-sm text-brand-muted">{t.tekst}</p>
-          </div>
+        {diensten.map((dienst) => (
+          <DienstCard dienst={dienst} />
         ))}
       </div>
       <Image
@@ -112,7 +80,7 @@ const jsonLd = [
         alt="Krachttraining bij Movenda"
         width={480}
         height={640}
-        class="hidden aspect-[3/4] w-full rounded-2xl object-cover lg:block"
+        class="aspect-[16/10] w-full rounded-2xl object-cover lg:aspect-[3/4]"
       />
     </div>
 

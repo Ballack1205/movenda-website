@@ -4,6 +4,12 @@
 
 export type TeamPhotoVariant = "card" | "detail" | "face";
 
+export function dienstPhotoSrc(src: string, variant: "card" | "hero" | "gallery" = "card"): string {
+  if (variant === "hero") return `${src}?w=960&h=640&fit=max&auto=format`;
+  if (variant === "gallery") return `${src}?w=720&h=540&fit=crop&auto=format`;
+  return `${src}?w=800&h=500&fit=crop&auto=format`;
+}
+
 export function teamPhotoSrc(foto: string, variant: TeamPhotoVariant = "card"): string {
   if (variant === "face") {
     // Small chip next to a name: keep the face, which sits in the upper fifth.

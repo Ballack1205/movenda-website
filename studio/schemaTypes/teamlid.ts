@@ -79,6 +79,29 @@ export default defineType({
       title: "E-mailadres",
       type: "string",
     }),
+    defineField({ name: "tariefKine", title: "Tarief kinesitherapie (€ / 30 min)", type: "number" }),
+    defineField({ name: "tariefPt", title: "Tarief personal training Olympia (€ / 60 min)", type: "number" }),
+    defineField({ name: "tariefPtMpc", title: "Tarief personal training MPC (€ / 60 min)", type: "number" }),
+    defineField({ name: "tariefPerformance", title: "Tarief high performance (€ / sessie)", type: "number" }),
+    defineField({
+      name: "clubs",
+      title: "Clubs / partners",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "club",
+          fields: [
+            { name: "naam", type: "string", title: "Naam" },
+            { name: "url", type: "url", title: "Link" },
+          ],
+        },
+      ],
+    }),
+    defineField({ name: "klachten", title: "Keuzehulp — klachten", type: "array", of: [{ type: "string" }] }),
+    defineField({ name: "regio", title: "Keuzehulp — lichaamsregio", type: "array", of: [{ type: "string" }] }),
+    defineField({ name: "sporten", title: "Keuzehulp — sporten", type: "array", of: [{ type: "string" }] }),
+    defineField({ name: "doelgroepen", title: "Keuzehulp — doelgroepen", type: "array", of: [{ type: "string" }] }),
     defineField({
       name: "volgorde",
       title: "Volgorde",

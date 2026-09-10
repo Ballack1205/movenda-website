@@ -1,5 +1,6 @@
 ---
 import BookingButton from "./BookingButton.astro";
+import { getSportaanbod } from "../lib/content";
 
 export interface Props {
   brand?: "movenda" | "mpc";
@@ -8,8 +9,9 @@ export interface Props {
 }
 
 const { brand = "movenda", lang = "nl", altPath } = Astro.props;
+const sportaanbod = await getSportaanbod();
 
-type NavItem = { href: string; label: string; emphasize?: boolean };
+type NavItem = { href: string; label: string; emphasize?: boolean; external?: boolean };
 
 const navMovendaNl: NavItem[] = [
   { href: "/", label: "Home" },
@@ -18,7 +20,6 @@ const navMovendaNl: NavItem[] = [
   { href: "/training", label: "Training" },
   { href: "/team", label: "Team" },
   { href: "/prijzen", label: "Prijzen" },
-  { href: "/blog", label: "Blog" },
   { href: "/faq", label: "FAQ" },
   { href: "/mpc", label: "MPC", emphasize: true },
   { href: "/contact", label: "Contact" },
@@ -32,19 +33,18 @@ const navMovendaEn: NavItem[] = [
 ];
 
 const navMpc: NavItem[] = [
-  { href: "/mpc", label: "MPC Home" },
-  { href: "/mpc/performance-training", label: "Performance" },
+  { href: "/mpc", label: "Training" },
   { href: "/mpc/sportrevalidatie", label: "Sportrevalidatie" },
+  { href: "/mpc/groepslessen", label: "Groepslessen" },
+  { href: "/mpc/visie", label: "Visie" },
   { href: "/team", label: "Team" },
-  { href: "/", label: "Movenda" },
+  { href: "/mpc#faq", label: "FAQ" },
+  { href: "/prijzen#mpc", label: "Prijzen" },
+  { href: "/", label: "Movenda", emphasize: true },
   { href: "/contact", label: "Contact" },
 ];
 
 const nav = brand === "mpc" ? navMpc : lang === "en" ? navMovendaEn : navMovendaNl;
-
-// Language switcher target: use the explicit counterpart if the page
-// declares one, otherwise fall back to each language's homepage — never a
-// dead link (see DECISIONS.md: missing EN pages fall back gracefully).
 const langSwitchHref = lang === "en" ? altPath || "/" : altPath || "/en";
 
 const linkClass = (emphasize?: boolean) =>
@@ -54,29 +54,50 @@ const linkClass = (emphasize?: boolean) =>
 ---
 
 <header class="bg-brand-header" data-header>
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4">
     <a
       href={brand === "mpc" ? "/mpc" : "/"}
-      class="flex items-center gap-2"
+      class="flex shrink-0 items-center gap-2"
       aria-label={brand === "mpc" ? "Movenda Performance Centre" : "Movenda"}
     >
       {brand === "mpc" ? (
-        <>
-          <img src="/brand/logo-mpc.png" alt="" width="28" height="28" class="h-7 w-7" />
-          <span class="font-heading text-lg font-bold tracking-tight text-white">MPC</span>
-        </>
+        <img src="/brand/logo-mpc.png" alt="MPC" width="40" height="40" class="h-10 w-10" />
       ) : (
         <img src="/brand/logo-wordmark.png" alt="Movenda" width="140" height="30" class="h-7 w-auto" />
       )}
     </a>
-    <nav class:list={["hidden gap-6 text-sm md:flex", brand === "mpc" ? "font-semibold" : "font-medium"]}>
+    <nav
+      class:list={[
+        "hidden min-w-0 items-center text-sm",
+        brand === "mpc" ? "xl:flex xl:gap-3.5 font-semibold" : "lg:flex lg:gap-5 font-medium",
+      ]}
+    >
       {nav.map((item) => (
-        <a href={item.href} class={linkClass(item.emphasize)}>
+        <a href={item.href} class:list={[linkClass(item.emphasize), "whitespace-nowrap"]}>
           {item.label}
         </a>
       ))}
+      {brand === "movenda" && lang === "nl" && sportaanbod.length > 0 && (
+        <details class="relative">
+          <summary class="cursor-pointer list-none text-white/80 hover:text-white [&::-webkit-details-marker]:hidden">
+            Sportaanbod Olympia
+          </summary>
+          <div class="absolute right-0 z-20 mt-2 min-w-56 rounded-xl border border-white/10 bg-brand-header p-2 shadow-xl">
+            {sportaanbod.map((item) => (
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block rounded-lg px-3 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white"
+              >
+                {item.naam}
+              </a>
+            ))}
+          </div>
+        </details>
+      )}
     </nav>
-    <div class="flex items-center gap-3">
+    <div class="flex shrink-0 items-center gap-3">
       <a
         href={langSwitchHref}
         class="rounded-full border border-white/30 px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white hover:text-white"
@@ -87,7 +108,10 @@ const linkClass = (emphasize?: boolean) =>
       <BookingButton size="sm" />
       <button
         type="button"
-        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white md:hidden"
+        class:list={[
+          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white",
+          brand === "mpc" ? "xl:hidden" : "lg:hidden",
+        ]}
         aria-label={lang === "en" ? "Open menu" : "Menu openen"}
         aria-expanded="false"
         aria-controls="mobile-nav"
@@ -103,8 +127,11 @@ const linkClass = (emphasize?: boolean) =>
     </div>
   </div>
 
-  <!-- Mobile nav: hidden until toggled; desktop uses the inline nav above. -->
-  <nav id="mobile-nav" class="hidden border-t border-white/10 md:hidden" data-mobile-nav>
+  <nav
+    id="mobile-nav"
+    class:list={["hidden border-t border-white/10", brand === "mpc" ? "xl:hidden" : "lg:hidden"]}
+    data-mobile-nav
+  >
     <div class="mx-auto flex max-w-6xl flex-col px-4 py-3">
       {nav.map((item) => (
         <a
@@ -115,6 +142,11 @@ const linkClass = (emphasize?: boolean) =>
           ]}
         >
           {item.label}
+        </a>
+      ))}
+      {brand === "movenda" && lang === "nl" && sportaanbod.map((item) => (
+        <a href={item.link} target="_blank" rel="noopener noreferrer" class="py-2.5 text-base font-medium text-white/90">
+          {item.naam}
         </a>
       ))}
     </div>

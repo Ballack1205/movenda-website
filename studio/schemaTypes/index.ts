@@ -8,6 +8,10 @@ import blogPost from "./blogPost";
 import vacature from "./vacature";
 import sportaanbodItem from "./sportaanbodItem";
 import prijsitem from "./prijsitem";
+import partner from "./partner";
+import lesrooster from "./lesrooster";
+import getuigenis from "./getuigenis";
+import popup from "./popup";
 
 export const schemaTypes = [
   teamlid,
@@ -20,4 +24,8 @@ export const schemaTypes = [
   vacature,
   sportaanbodItem,
   prijsitem,
+  partner,
+  lesrooster,
+  getuigenis,
+  popup,
 ];

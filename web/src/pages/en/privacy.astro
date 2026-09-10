@@ -1,0 +1,172 @@
+---
+// English counterpart of /privacy. See that file for why this lives in code.
+import Layout from "../../layouts/Layout.astro";
+import { getLocaties, getSiteSettings } from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const locaties = (await getLocaties()).sort((a, b) =>
+  a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
+);
+const settings = await getSiteSettings();
+const { analytics } = settings;
+const gaActive = analytics.enabled && !!analytics.ga4Id;
+const umamiActive = analytics.enabled && analytics.umami.enabled && !!analytics.umami.websiteId;
+
+const updated = "10 September 2026";
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Privacy", path: "/en/privacy" },
+  ]),
+];
+---
+
+<Layout
+  title="Privacy & cookies | Movenda Hasselt"
+  description="How Movenda handles your personal data and which cookies this website uses."
+  path="/en/privacy"
+  altPath="/privacy"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Privacy & cookies</h1>
+    <p class="mt-2 text-sm text-brand-muted">Last updated: {updated}</p>
+
+    <p class="mt-6 text-brand-muted">
+      Movenda handles your data with care. This page explains which data we collect through this
+      website, why, and what your choices are. It covers the website only; your patient or client
+      file is governed by the arrangements you make with your therapist or trainer.
+    </p>
+
+    <h2 class="mt-10 text-xl font-semibold">1. Who is responsible?</h2>
+    <p class="mt-2 text-brand-muted">
+      Movenda consists of two locations, each a separate company. Both act as data controller for
+      the data you send to their location through this site.
+    </p>
+    <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+      {locaties.map((l) => (
+        <li class="rounded-2xl border border-brand-border bg-brand-surface p-5 text-sm">
+          <p class="font-semibold text-brand-primary">{l.naam}</p>
+          <p class="mt-1 text-brand-muted">{l.adres}</p>
+          <p class="mt-1 text-brand-muted">VAT {l.btw}</p>
+          <p class="mt-1">
+            <a href={`mailto:${l.email}`} class="font-semibold text-brand-primary hover:underline">{l.email}</a>
+          </p>
+        </li>
+      ))}
+    </ul>
+
+    <h2 class="mt-10 text-xl font-semibold">2. What we collect and why</h2>
+    <dl class="mt-3 space-y-4 text-brand-muted">
+      <div>
+        <dt class="font-semibold text-brand-text">Contact form</dt>
+        <dd class="mt-1">
+          Name, email address, phone number, chosen location and your message. Used only to answer
+          your question or schedule an appointment. Legal basis: performance of a contract / our
+          legitimate interest in responding. Kept for at most 12 months unless it becomes part of
+          your file.
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-brand-text">Newsletter and pop-up sign-ups</dt>
+        <dd class="mt-1">
+          Your email address (and optionally your name). Legal basis: your consent. You can
+          unsubscribe at any time via the link in every email. Emails are sent through Resend
+          (EU/US, with appropriate safeguards).
+        </dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-brand-text">Website statistics</dt>
+        <dd class="mt-1">
+          Anonymous information about how the site is used (pages visited, device, referrer). See{" "}
+          <a href="#cookies" class="font-semibold text-brand-primary hover:underline">cookies</a>.
+        </dd>
+      </div>
+    </dl>
+    <p class="mt-4 text-brand-muted">
+      We never sell data and only share it with the service providers below that help run the site.
+    </p>
+
+    <h2 id="cookies" class="mt-10 scroll-mt-24 text-xl font-semibold">3. Cookies</h2>
+    <p class="mt-2 text-brand-muted">
+      This site sets no cookies until you make a choice. You can change that choice at any time via{" "}
+      <button type="button" data-consent-open class="font-semibold text-brand-primary hover:underline">Cookie preferences</button>
+      at the bottom of every page.
+    </p>
+
+    <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border bg-brand-surface">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-brand-bg text-xs uppercase tracking-wide text-brand-muted">
+          <tr>
+            <th class="px-4 py-3 font-semibold">What</th>
+            <th class="px-4 py-3 font-semibold">Purpose</th>
+            <th class="px-4 py-3 font-semibold">Retention</th>
+            <th class="px-4 py-3 font-semibold">Consent</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-brand-border text-brand-muted">
+          <tr>
+            <td class="px-4 py-3 font-semibold text-brand-text">movenda-consent</td>
+            <td class="px-4 py-3">Remembers your cookie choice (local storage, not a cookie).</td>
+            <td class="px-4 py-3">Until you clear it</td>
+            <td class="px-4 py-3">Not required (essential)</td>
+          </tr>
+          {gaActive && (
+            <tr>
+              <td class="px-4 py-3 font-semibold text-brand-text">_ga, _ga_*</td>
+              <td class="px-4 py-3">
+                Google Analytics 4: anonymous visitor statistics (IP truncated). Only set after you
+                click "OK".
+              </td>
+              <td class="px-4 py-3">Up to 2 years</td>
+              <td class="px-4 py-3">Yes</td>
+            </tr>
+          )}
+          {umamiActive && (
+            <tr>
+              <td class="px-4 py-3 font-semibold text-brand-text">Umami</td>
+              <td class="px-4 py-3">Cookieless, anonymous statistics. Sets no cookies and stores no personal data.</td>
+              <td class="px-4 py-3">—</td>
+              <td class="px-4 py-3">Not required</td>
+            </tr>
+          )}
+          <tr>
+            <td class="px-4 py-3 font-semibold text-brand-text">Google Maps</td>
+            <td class="px-4 py-3">
+              The map on the contact page only loads after you click "Show map". Only then can
+              Google set cookies.
+            </td>
+            <td class="px-4 py-3">Per Google</td>
+            <td class="px-4 py-3">By your click</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="mt-10 text-xl font-semibold">4. Service providers</h2>
+    <ul class="mt-2 list-disc space-y-1 pl-5 text-brand-muted">
+      <li>Render (hosting of the website and contact form)</li>
+      <li>Sanity (content management)</li>
+      <li>Resend (contact form and newsletter emails)</li>
+      {gaActive && <li>Google Analytics (statistics, only after consent)</li>}
+      {umamiActive && <li>Umami (cookieless statistics)</li>}
+      <li>Google Maps (map, only after your click)</li>
+    </ul>
+
+    <h2 class="mt-10 text-xl font-semibold">5. Your rights</h2>
+    <p class="mt-2 text-brand-muted">
+      You have the right to access, correct and delete your data, to object to processing and to
+      withdraw consent. Email{" "}
+      <a href={`mailto:${settings.email}`} class="font-semibold text-brand-primary hover:underline">{settings.email}</a>.
+      We reply within 30 days. If you are not satisfied you can lodge a complaint with the Belgian{" "}
+      <a href="https://www.dataprotectionauthority.be" target="_blank" rel="noopener" class="font-semibold text-brand-primary hover:underline">
+        Data Protection Authority
+      </a>.
+    </p>
+
+    <h2 class="mt-10 text-xl font-semibold">6. Changes</h2>
+    <p class="mt-2 text-brand-muted">If we change this page, we update the date at the top.</p>
+  </article>
+</Layout>

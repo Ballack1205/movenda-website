@@ -1,0 +1,100 @@
+---
+import { formatEuro, type Dienst, type Locatie, type Teamlid } from "../lib/content";
+import { dienstPhotoSrc, teamPhotoSrc } from "../lib/images";
+
+interface Props {
+  dienst: Dienst;
+  team: Teamlid[];
+  locatie: Locatie;
+  backHref: string;
+  backLabel: string;
+  lang?: "nl" | "en";
+}
+
+const { dienst, team, locatie, backHref, backLabel, lang = "nl" } = Astro.props;
+const titel = lang === "en" ? dienst.titelEn || dienst.titel : dienst.titel;
+const body = lang === "en" ? dienst.bodyEn || dienst.body : dienst.body;
+const paragraphs = (body || "").split(/\n\n+/).filter(Boolean);
+const ctaLabel = dienst.ctaLabel || (lang === "en" ? "Contact us" : "Maak een afspraak");
+const ctaUrl = dienst.ctaUrl || "/contact";
+
+function tariefFor(lid: Teamlid): string | undefined {
+  if (dienst.categorie === "kine") return formatEuro(lid.tariefKine);
+  if (dienst.categorie === "training") return formatEuro(lid.tariefPt);
+  return formatEuro(lid.tariefPerformance || lid.tariefPtMpc);
+}
+---
+
+<article class="mx-auto max-w-3xl px-4 py-16">
+  <a href={backHref} class="text-sm font-medium text-brand-primary">{backLabel}</a>
+  <h1 class="mt-4 text-3xl font-bold sm:text-4xl">{titel}</h1>
+  {dienst.slogan && <p class="mt-3 text-lg font-medium text-brand-primary">{dienst.slogan}</p>}
+
+  {dienst.afbeelding && (
+    <img
+      src={dienstPhotoSrc(dienst.afbeelding, "hero")}
+      alt=""
+      width="960"
+      height="640"
+      class="mt-8 aspect-[16/10] w-full rounded-3xl object-cover"
+    />
+  )}
+
+  <div class="mt-8 space-y-4 leading-relaxed text-brand-muted">
+    {paragraphs.map((p) => (
+      <p>{p}</p>
+    ))}
+  </div>
+
+  {dienst.galerij.length > 0 && (
+    <div class="mt-10 grid gap-3 sm:grid-cols-2">
+      {dienst.galerij.map((src) => (
+        <img
+          src={dienstPhotoSrc(src, "gallery")}
+          alt=""
+          width="720"
+          height="540"
+          loading="lazy"
+          class="aspect-[4/3] w-full rounded-2xl object-cover"
+        />
+      ))}
+    </div>
+  )}
+
+  {team.length > 0 && (
+    <div class="mt-10">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">
+        {lang === "en" ? "Guided by" : "Begeleid door"}
+      </h2>
+      <div class="mt-3 flex flex-wrap gap-3">
+        {team.map((lid) => (
+          <a
+            href={`/team/${lid.slug}`}
+            class="flex items-center gap-2 rounded-full border border-brand-border px-3 py-1.5 text-sm transition hover:border-brand-primary"
+          >
+            <span class="h-7 w-7 overflow-hidden rounded-full bg-brand-header">
+              {lid.foto ? (
+                <img src={teamPhotoSrc(lid.foto, "face")} alt="" width="28" height="28" class="h-full w-full object-cover" />
+              ) : (
+                <span class="flex h-full w-full items-center justify-center text-[10px] font-bold text-white/80">
+                  {lid.voornaam[0]}{lid.naam[0]}
+                </span>
+              )}
+            </span>
+            {lid.voornaam} {lid.naam}
+            {tariefFor(lid) && <span class="text-brand-muted">{tariefFor(lid)}</span>}
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div class="mt-10 flex flex-wrap items-center gap-3">
+    <a href={ctaUrl} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+      {ctaLabel}
+    </a>
+    <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="text-sm font-semibold text-brand-primary hover:underline">
+      {locatie.telefoon}
+    </a>
+  </div>
+</article>

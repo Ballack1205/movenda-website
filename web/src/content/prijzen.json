@@ -13,5 +13,20 @@
   { "naam": "Sportspecifieke screening + schema (90 min)", "categorie": "training", "bedrag": 195, "eenheid": "90 min", "vanaf": true, "opAanvraag": false, "volgorde": 4 },
   { "naam": "Sportspecifieke training (60 min)", "categorie": "training", "bedrag": 70, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "volgorde": 5 },
   { "naam": "Pre- en postnatale training (60 min)", "categorie": "training", "bedrag": 76, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "volgorde": 6 },
-  { "naam": "Training aan huis", "categorie": "training", "bedrag": 0, "eenheid": "", "vanaf": false, "opAanvraag": true, "volgorde": 7 }
+  { "naam": "Training aan huis", "categorie": "training", "bedrag": 0, "eenheid": "", "vanaf": false, "opAanvraag": true, "volgorde": 7 },
+  { "naam": "Sportrevalidatie (30 min)", "categorie": "mpc", "bedrag": 37, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW · enkel op afspraak", "volgorde": 1 },
+  { "naam": "Manuele therapie (30 min)", "categorie": "mpc", "bedrag": 37, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW", "volgorde": 2 },
+  { "naam": "Oefentherapie (30 min)", "categorie": "mpc", "bedrag": 37, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW", "volgorde": 3 },
+  { "naam": "Pre- en postnatale kinesitherapie (30 min)", "categorie": "mpc", "bedrag": 38, "eenheid": "30 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW", "volgorde": 4 },
+  { "naam": "Personal Training (60 min)", "categorie": "mpc", "bedrag": 74, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW · Julie: Olympia is €70, MPC €74", "volgorde": 5 },
+  { "naam": "Personal Training (90 min)", "categorie": "mpc", "bedrag": 111, "eenheid": "90 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW", "volgorde": 6 },
+  { "naam": "Duotraining (60 min)", "categorie": "mpc", "bedrag": 111, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW · Julie: Olympia-pagina zegt €70, oude prijspt €105", "volgorde": 7 },
+  { "naam": "High Performance Training (60 min)", "categorie": "mpc", "bedrag": 78, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW · incl. opvolging", "volgorde": 8 },
+  { "naam": "High Performance Specialization (60 min)", "categorie": "mpc", "bedrag": 80, "eenheid": "60 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW", "volgorde": 9 },
+  { "naam": "Small group training — 10 lessen", "categorie": "mpc", "bedrag": 215, "eenheid": "10 lessen", "vanaf": false, "opAanvraag": false, "notitie": "ex BTW · HIIT, Full Body, Core, PowerPlus, SkiFit", "volgorde": 10 },
+  { "naam": "Boxing — 10 lessen", "categorie": "mpc", "bedrag": 200, "eenheid": "10 lessen", "vanaf": false, "opAanvraag": false, "notitie": "ex BTW", "volgorde": 11 },
+  { "naam": "Corporate coaching", "categorie": "mpc", "bedrag": 0, "eenheid": "", "vanaf": false, "opAanvraag": true, "notitie": "ex BTW", "volgorde": 12 },
+  { "naam": "Sportspecifieke screening (90 min)", "categorie": "screening", "bedrag": 195, "eenheid": "90 min", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW bij MPC", "volgorde": 1 },
+  { "naam": "Lactaatdrempel-screening", "categorie": "screening", "bedrag": 155, "eenheid": "", "vanaf": true, "opAanvraag": false, "notitie": "ex BTW", "volgorde": 2 },
+  { "naam": "Data-analyse", "categorie": "screening", "bedrag": 0, "eenheid": "", "vanaf": false, "opAanvraag": true, "volgorde": 3 }
 ]

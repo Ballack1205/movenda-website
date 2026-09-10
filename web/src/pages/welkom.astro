@@ -1,0 +1,77 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getLocatieBySlug } from "../lib/content";
+
+const locatie = (await getLocatieBySlug("olympia"))!;
+const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
+---
+
+<Layout
+  title="Welkom bij Movenda | Olympia"
+  description="Vertel ons waarmee we je kunnen helpen. We nemen zo snel mogelijk contact met je op."
+  path="/welkom"
+>
+  <section class="mx-auto max-w-xl px-4 py-16">
+    <h1 class="text-3xl font-bold">Welkom bij Movenda</h1>
+    <p class="mt-2 text-lg font-medium text-brand-primary">Vertel ons waarmee we je kunnen helpen.</p>
+    <p class="mt-2 text-sm text-brand-muted">
+      We nemen zo snel mogelijk contact met je op. Of bel {locatie.telefoon}.
+    </p>
+
+    <form class="mt-8 grid gap-4" data-contact-form>
+      <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Naam" required />
+      <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="E-mail" required />
+      <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Telefoon" required />
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">Waarvoor wil je langskomen?</legend>
+        <div class="mt-2 flex flex-col gap-2 text-sm">
+          <label><input type="checkbox" name="waarvoor" value="Kinesitherapie" /> Kinesitherapie</label>
+          <label><input type="checkbox" name="waarvoor" value="Personal training" /> Personal training</label>
+          <label><input type="checkbox" name="waarvoor" value="Andere" /> Andere</label>
+        </div>
+      </fieldset>
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">Heb je een voorschrift van je arts?</legend>
+        <p class="text-xs text-brand-muted">Geen voorschrift? Geen enkel probleem, we helpen je graag verder.</p>
+        <div class="mt-2 flex flex-wrap gap-4 text-sm">
+          <label><input type="radio" name="voorschrift" value="Ja" /> Ja</label>
+          <label><input type="radio" name="voorschrift" value="Nee" /> Nee</label>
+          <label><input type="radio" name="voorschrift" value="Niet van toepassing" /> Niet van toepassing</label>
+        </div>
+      </fieldset>
+      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="4" placeholder="Stel hier je vraag" required minlength="5"></textarea>
+      <input type="hidden" name="locatie" value="Movenda Olympia (QR / placemat)" />
+      <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
+      <button type="submit" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">Versturen</button>
+      <p class="text-sm" data-contact-status role="status" aria-live="polite"></p>
+    </form>
+  </section>
+</Layout>
+
+<script define:vars={{ apiUrl: contactApiUrl }} is:inline>
+  const form = document.querySelector("[data-contact-form]");
+  const status = document.querySelector("[data-contact-status]");
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const data = Object.fromEntries(fd.entries());
+    data.waarvoor = fd.getAll("waarvoor").join(", ");
+    const button = form.querySelector("button[type=submit]");
+    button.disabled = true;
+    status.textContent = "Verzenden…";
+    try {
+      const res = await fetch(`${apiUrl}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("failed");
+      status.textContent = "Bedankt voor je mail. We hebben je vraag goed ontvangen.";
+      form.reset();
+    } catch {
+      status.textContent = "Er ging iets mis. Bel ons gerust.";
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>

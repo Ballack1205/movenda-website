@@ -3,7 +3,9 @@ import Layout from "../../layouts/Layout.astro";
 import { getLocaties } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
 
-const locaties = await getLocaties();
+const locaties = (await getLocaties()).sort((a, b) =>
+  a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
+);
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
 
 const jsonLd = [
@@ -92,7 +94,7 @@ const jsonLd = [
       if (!res.ok) throw new Error("send_failed");
       status.textContent = "Thanks! We'll get back to you as soon as possible.";
       status.className = "text-sm font-semibold text-brand-primary";
-      window.gtag?.("event", "form_submit", { form: "contact" });
+      window.mvTrack?.("form_submit", { form: "contact" });
       form.reset();
     } catch {
       status.textContent = "Something went wrong sending this. Please call or email us directly — see above.";

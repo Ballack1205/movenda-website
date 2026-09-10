@@ -56,7 +56,7 @@ export function personSchema(teamlid: Teamlid) {
   };
 }
 
-export function serviceSchema(dienst: Dienst, locatie: Locatie) {
+export function serviceSchema(dienst: Dienst, locatie: Locatie, path?: string) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -64,7 +64,7 @@ export function serviceSchema(dienst: Dienst, locatie: Locatie) {
     description: dienst.seoDescription,
     provider: { "@type": "Organization", name: locatie.naam },
     areaServed: "Hasselt",
-    url: `${SITE_URL}/mpc/${dienst.slug}`,
+    url: `${SITE_URL}${path || `/mpc/${dienst.slug}`}`,
   };
 }
 

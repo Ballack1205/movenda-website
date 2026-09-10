@@ -20,31 +20,138 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
-    # 301 map: old movenda.be slugs -> new IA. NOTE: this service was created
-    # directly via the Render MCP (create_static_site), not via a Blueprint
-    # sync, so this `routes` block is prepared IaC that isn't live yet —
-    # either run a Blueprint sync against this file, or copy these rules
-    # into Dashboard > Settings > Redirects/Rewrites, before go-live.
-    # Blog post slugs were kept identical on purpose, so /blog/* needs no
-    # redirect. mpc.movenda.be -> movenda.be/mpc/* is a host-level redirect
-    # that only makes sense after the Fase 4 DNS cutover (out of scope here —
-    # see AGENTS.md: don't touch movenda.be DNS/Squarespace unless asked).
+    # 301 map: old movenda.be + mpc.movenda.be slugs → new IA.
+    # This service was created via the Render MCP, not a Blueprint sync —
+    # copy these rules into Dashboard > Settings > Redirects/Rewrites, or
+    # run a Blueprint sync, before go-live. Blog slugs stayed identical.
+    # Host-level mpc.movenda.be → /mpc/* is Fase 4 DNS (out of scope here).
     routes:
+      - type: redirect
+        source: /home
+        destination: /
       - type: redirect
         source: /kine
         destination: /kinesitherapie
       - type: redirect
+        source: /manuele
+        destination: /kinesitherapie/manuele-therapie
+      - type: redirect
+        source: /oefentherapie
+        destination: /kinesitherapie/oefentherapie
+      - type: redirect
+        source: /pre-en-post-natale
+        destination: /kinesitherapie/pre-en-postnatale-kinesitherapie
+      - type: redirect
+        source: /lymfedrainage
+        destination: /kinesitherapie/lymfedrainage
+      - type: redirect
+        source: /dryneedling
+        destination: /kinesitherapie/dry-needling
+      - type: redirect
+        source: /acupunctuur
+        destination: /kinesitherapie/acupunctuur
+      - type: redirect
+        source: /auriculotherapie
+        destination: /kinesitherapie/auriculotherapie
+      - type: redirect
+        source: /cardiovasculaire
+        destination: /kinesitherapie/cardiovasculaire-revalidatie
+      - type: redirect
+        source: /cupping
+        destination: /kinesitherapie/cupping
+      - type: redirect
+        source: /taping
+        destination: /kinesitherapie/taping
+      - type: redirect
         source: /olympia
         destination: /training
+      - type: redirect
+        source: /personal-training
+        destination: /training/personal-training
+      - type: redirect
+        source: /duo-training
+        destination: /training/duotraining
+      - type: redirect
+        source: /sportspecifieke-screening
+        destination: /training/sportspecifieke-screening
+      - type: redirect
+        source: /sportspecifieke-training
+        destination: /training/sportspecifieke-training
+      - type: redirect
+        source: /inspanningstesten
+        destination: /training/inspanningstesten
+      - type: redirect
+        source: /pre-en-post-natale-training
+        destination: /training/pre-en-postnatale-training
+      - type: redirect
+        source: /prijskine
+        destination: /prijzen
+      - type: redirect
+        source: /prijspt
+        destination: /prijzen
       - type: redirect
         source: /faqs
         destination: /faq
       - type: redirect
+        source: /veelgestelde-vragen
+        destination: /faq
+      - type: redirect
+        source: /contactqr
+        destination: /welkom
+      - type: redirect
+        source: /appointments-2-2-2
+        destination: /team
+      - type: redirect
         source: /join
         destination: /jobs
       - type: redirect
-        source: /over
-        destination: /
-      - type: redirect
         source: /cart
         destination: /
+      - type: redirect
+        source: /performance
+        destination: /mpc/performance-training
+      - type: redirect
+        source: /vison
+        destination: /mpc/visie
+      - type: redirect
+        source: /sportrehab
+        destination: /mpc/sportrevalidatie
+      - type: redirect
+        source: /duotraining
+        destination: /mpc/duotraining
+      - type: redirect
+        source: /boxing1
+        destination: /mpc/boxing
+      - type: redirect
+        source: /boxing2
+        destination: /mpc/boxing
+      - type: redirect
+        source: /dry-needling
+        destination: /mpc/dry-needling
+      - type: redirect
+        source: /data-analysis
+        destination: /mpc/data-analyse
+      - type: redirect
+        source: /hiit
+        destination: /mpc/hiit
+      - type: redirect
+        source: /full-body
+        destination: /mpc/full-body
+      - type: redirect
+        source: /corporatecoaching
+        destination: /mpc/corporate-coaching
+      - type: redirect
+        source: /sgt
+        destination: /mpc/groepslessen
+      - type: redirect
+        source: /powerplus
+        destination: /mpc/powerplus
+      - type: redirect
+        source: /skifit
+        destination: /mpc/skifit
+      - type: redirect
+        source: /running
+        destination: /mpc/running
+      - type: redirect
+        source: /prices
+        destination: /prijzen

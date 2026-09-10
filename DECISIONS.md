@@ -29,8 +29,92 @@ Answers to `HANDOFF.md` §8, confirmed by the founder on 2026-09-10. This file i
 ## Analytics
 
 - Existing GA4 property `G-WCV2RJG010` is reused, gated behind a consent banner (Consent Mode v2). Elfsight is dropped.
+- **Strict consent (2026-09-10):** `gtag.js` is only injected after the visitor clicks "Oké"; before that nothing is loaded and no cookie is set. Choice is stored in `localStorage["movenda-consent"]` and can be changed via the footer link "Cookievoorkeuren". Banner is a small bottom-left card, equal-weight Oké / Liever niet, no overlay, no scroll-lock.
+- **Test mode:** `siteSettings.analytics.mode` (Studio radio: Test / Live). Currently **enabled + test**: banner and events run, nothing is sent to Google; events print as `[analytics:test]` in the browser console. Flip to Live at go-live.
+- **Umami** (cookieless) is wired as an optional second tool (`analytics.umami`), off until Movenda creates a free umami.is account and pastes the Website ID. No consent needed for it.
+- One tracking helper: `window.mvTrack(name, params)` → GA4 (if consented) + Umami. Events: `form_submit` (contact/newsletter/popup), `contact_click` (phone/email/route), `booking_click`, `map_load`.
+- Google Maps embed on `/contact` is click-to-load, so the site is cookie-free by default.
+- `/privacy` + `/en/privacy` (legal copy in code, entities/BTW pulled from Locatie records) linked from the footer. Draft — have Movenda's accountant/legal contact read it before go-live.
+
+## Content takeover (2026-09-10)
+
+All 45 content pages from `movenda.be` + `mpc.movenda.be` are now records in Sanity (diensten, partners, lesrooster, getuigenissen, per-therapist tariffs, keuzehulp tags) plus matching Astro routes. Julie edits records; we own layout.
+
+Defaults confirmed with the founder in the takeover plan:
+
+- Newsletter: block on the homepage; signups go through the existing Render contact API to a Resend audience (`RESEND_AUDIENCE_ID`). No Brevo (would be new SaaS).
+- Keuzehulp: 3-step filter on `/team#keuzehulp` using CMS tags (same routing data as the old Verwijskompas SVG).
+- Elfsight widgets (reviews/Instagram feeds) are not rebuilt; reviews stay a Google badge + getuigenissen, Instagram is a link.
+- Partner logos may be reused (already public on movenda.be).
+- SkiFit / Running: only the existing `/sgt` blurb + rooster + prijs — no invented copy.
+- Price conflicts flagged on the prijsitem `notitie` for Julie (Duo €70 vs €105; PowerPlus 9:30–10:30 vs rooster 9:30–11:30; MPC PT €74 vs Olympia €70).
+
+### Partnerbalk (2026-09-10)
+
+The partner logos are a **moving band** (marquee): one row that scrolls continuously on `/`, `/over` and `/mpc`. It pauses when a visitor hovers or tabs into it, and falls back to a static wrapping row for `prefers-reduced-motion` or when Julie switches the animation off. Pure CSS, no JavaScript, so it costs nothing in Lighthouse.
+
+Julie owns the whole thing from the Studio:
+
+- **Partners & logo's** — one document per partner (logo, website, type, Movenda/MPC/both, order, show-in-band toggle). This list was previously invisible in the Studio; it is now a top-level item.
+- **Site-instellingen → Partnerbalk** — the heading above the band (Movenda and MPC separately), the speed (rustig / normaal / snel) and an on/off switch for the movement itself.
+
+A partner without a logo shows as a styled name instead of an empty gap, so the band never breaks while logos are still missing.
+
+### Old URL → new route (301)
+
+Listed in `render.yaml`. `/over` is a real page (do **not** redirect it to `/`). `/join` stays `/jobs` (decision #5). Host-level `mpc.movenda.be` → `/mpc/*` waits for the Fase 4 DNS cutover.
+
+| Old | New |
+|---|---|
+| `/kine` | `/kinesitherapie` |
+| `/manuele` | `/kinesitherapie/manuele-therapie` |
+| `/oefentherapie` | `/kinesitherapie/oefentherapie` |
+| `/pre-en-post-natale` | `/kinesitherapie/pre-en-postnatale-kinesitherapie` |
+| `/lymfedrainage` | `/kinesitherapie/lymfedrainage` |
+| `/dryneedling` | `/kinesitherapie/dry-needling` |
+| `/acupunctuur` | `/kinesitherapie/acupunctuur` |
+| `/auriculotherapie` | `/kinesitherapie/auriculotherapie` |
+| `/cardiovasculaire` | `/kinesitherapie/cardiovasculaire-revalidatie` |
+| `/cupping` | `/kinesitherapie/cupping` |
+| `/taping` | `/kinesitherapie/taping` |
+| `/olympia` | `/training` |
+| `/personal-training` | `/training/personal-training` |
+| `/duo-training` | `/training/duotraining` |
+| `/sportspecifieke-screening` | `/training/sportspecifieke-screening` |
+| `/sportspecifieke-training` | `/training/sportspecifieke-training` |
+| `/inspanningstesten` | `/training/inspanningstesten` |
+| `/pre-en-post-natale-training` | `/training/pre-en-postnatale-training` |
+| `/prijskine`, `/prijspt`, `/prices` | `/prijzen` |
+| `/faqs`, `/veelgestelde-vragen` | `/faq` |
+| `/contactqr` | `/welkom` |
+| `/appointments-2-2-2` | `/team` |
+| `/join` | `/jobs` |
+| `/vison` | `/mpc/visie` |
+| `/sgt` | `/mpc/groepslessen` |
+| `/boxing1`, `/boxing2` | `/mpc/boxing` |
+| `/performance` | `/mpc/performance-training` |
+| `/sportrehab` | `/mpc/sportrevalidatie` |
+| `/data-analysis` | `/mpc/data-analyse` |
+| `/hiit` | `/mpc/hiit` |
+| `/full-body` | `/mpc/full-body` |
+| `/corporatecoaching` | `/mpc/corporate-coaching` |
+| `/powerplus` | `/mpc/powerplus` |
+| `/skifit` | `/mpc/skifit` |
+| `/running` | `/mpc/running` |
+| `/dry-needling` | `/mpc/dry-needling` |
+| `/duotraining` | `/mpc/duotraining` |
 
 ## Not yet decided / to confirm with Julie
 
 - Exact scheduler tool for the booking button, once Movenda picks a CMS/dev partner.
 - Final go/no-go on Sanity after the Fase 1 "add a teammate" demo.
+- Price conflicts marked on MPC/Olympia `prijsitem.notitie` (Duo, PowerPlus hours, PT locatieverschil).
+- Exact Google Business Profile URLs (`place_id`) for the review badges.
+- **`Hubo Limburg United` still carries the *Hubo Handbal* shield** (both documents pointed at the same asset, named `partner-hubo-limburg-united.png` but actually the handball logo). Left in place for now — tell us if you prefer the name as text until the right file is uploaded.
+- Nine partners show as a styled name instead of a logo: AF Corse, Excelsior Tennis, MyMindWorks, STVV, Tennisclub Tenkie, VKM Godsheide, UHasselt, Drieskens & Dubois, Royal Crown. Julie fixes each by uploading the right file on the partner document.
+
+### Own logos never go in the partner band (2026-09-10)
+
+The band is for third parties only. `AF Corse` was carrying **Movenda's own M mark** (the navy version of `web/public/brand/logo-m.png`, stored under the misleading filename `partner-af-corse.png`). Removed from the document and deleted from the media library so it cannot be picked again; AF Corse now shows as text until their real logo arrives.
+
+Root cause was `studio/scripts/upload-dienst-media.mjs`: it matched a logo by the **first word** of the partner name, so "AF Corse" searched for `af` and matched Movenda's own file, and "Hubo Limburg United" matched on `hubo` and took the Handbal shield. The matcher now compares against the filename only, ignores words under 4 characters, requires two matching words when the name has them, skips anything that looks like a Movenda/MPC mark, and never overwrites a logo that is already set.

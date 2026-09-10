@@ -1,8 +1,8 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getDienstenByCategorie, getDienstBySlug, getLocatieBySlug, getTeamleden } from "../../lib/content";
+import DienstDetail from "../../components/DienstDetail.astro";
+import { getDienstenByCategorie, getDienstBySlug, getLocatieBySlug, getTeamleden, dienstHref } from "../../lib/content";
 import { serviceSchema, breadcrumbSchema } from "../../lib/schema";
-import { teamPhotoSrc } from "../../lib/images";
 
 export async function getStaticPaths() {
   const diensten = await getDienstenByCategorie("mpc");
@@ -10,7 +10,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const dienst = await getDienstBySlug(slug!);
+const dienst = await getDienstBySlug(slug!, "mpc");
 
 if (!dienst) {
   return Astro.redirect("/mpc");
@@ -19,13 +19,14 @@ if (!dienst) {
 const locatie = (await getLocatieBySlug("mpc"))!;
 const alleTeamleden = await getTeamleden();
 const team = alleTeamleden.filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
+const path = dienstHref(dienst);
 
 const jsonLd = [
-  serviceSchema(dienst, locatie),
+  serviceSchema(dienst, locatie, path),
   breadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Movenda Performance Centre", path: "/mpc" },
-    { name: dienst.titel, path: `/mpc/${dienst.slug}` },
+    { name: dienst.titel, path },
   ]),
 ];
 ---
@@ -33,50 +34,16 @@ const jsonLd = [
 <Layout
   title={dienst.seoTitle}
   description={dienst.seoDescription}
-  path={`/mpc/${dienst.slug}`}
+  path={path}
+  altPath={`/en/mpc/${dienst.slug}`}
   brand="mpc"
   jsonLd={jsonLd}
 >
-  <article class="mx-auto max-w-3xl px-4 py-16">
-    <a href="/mpc" class="text-sm font-medium text-brand-primary">← Terug naar MPC</a>
-    <h1 class="mt-4 text-3xl font-bold sm:text-4xl">{dienst.titel}</h1>
-    <p class="mt-4 leading-relaxed text-brand-muted">{dienst.body}</p>
-
-    {team.length > 0 && (
-      <div class="mt-10">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Begeleid door</h2>
-        <div class="mt-3 flex flex-wrap gap-3">
-          {team.map((lid) => (
-            <a
-              href={`/team/${lid.slug}`}
-              class="flex items-center gap-2 rounded-full border border-brand-border px-3 py-1.5 text-sm transition hover:border-brand-primary"
-            >
-              <span class="h-7 w-7 overflow-hidden rounded-full bg-brand-header">
-                {lid.foto ? (
-                  <img
-                    src={teamPhotoSrc(lid.foto, "face")}
-                    alt=""
-                    width="28"
-                    height="28"
-                    class="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span class="flex h-full w-full items-center justify-center text-[10px] font-bold text-white/80">
-                    {lid.voornaam[0]}{lid.naam[0]}
-                  </span>
-                )}
-              </span>
-              {lid.voornaam} {lid.naam}
-            </a>
-          ))}
-        </div>
-      </div>
-    )}
-
-    <div class="mt-10">
-      <a href="/contact" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
-        Contacteer ons voor deze dienst
-      </a>
-    </div>
-  </article>
+  <DienstDetail
+    dienst={dienst}
+    team={team}
+    locatie={locatie}
+    backHref="/mpc"
+    backLabel="← Terug naar MPC"
+  />
 </Layout>

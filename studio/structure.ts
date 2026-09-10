@@ -9,11 +9,13 @@ export const deskStructure: StructureResolver = (S) =>
       S.listItem()
         .title("Site-instellingen")
         .child(S.document().schemaType("siteSettings").documentId("siteSettings")),
+      S.documentTypeListItem("popup").title("Pop-ups"),
       S.divider(),
       S.documentTypeListItem("teamlid").title("Teamleden"),
       S.documentTypeListItem("locatie").title("Locaties"),
       S.documentTypeListItem("dienst").title("Diensten"),
       S.documentTypeListItem("prijsitem").title("Prijzen"),
+      S.documentTypeListItem("partner").title("Partners & logo's"),
       S.documentTypeListItem("faq").title("FAQ"),
       S.documentTypeListItem("blogPost").title("Blogposts"),
       S.documentTypeListItem("vacature").title("Vacatures"),

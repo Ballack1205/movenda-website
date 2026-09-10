@@ -66,8 +66,23 @@ const jsonLd = [
             </li>
           ))}
         </ul>
+        {locatie.verdiepingNote && <p class="mt-2 text-xs text-brand-muted">{locatie.verdiepingNote}</p>}
       </div>
     </div>
+
+    {locatie.routebeschrijving && (
+      <div class="mt-8 rounded-2xl border border-brand-border bg-brand-surface p-6">
+        <h2 class="font-semibold">Route</h2>
+        <p class="mt-2 text-sm text-brand-muted">{locatie.routebeschrijving}</p>
+      </div>
+    )}
+
+    <p class="mt-8 text-xs text-brand-muted">
+      BTW {locatie.btw}
+      {locatie.iban && <> · IBAN {locatie.iban}</>}
+      {locatie.bic && <> · BIC {locatie.bic}</>}
+      {locatie.rpr && <> · {locatie.rpr}</>}
+    </p>
 
     {team.length > 0 && (
       <div class="mt-12">

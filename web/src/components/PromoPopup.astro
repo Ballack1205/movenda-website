@@ -1,0 +1,298 @@
+---
+import { toHTML } from "@portabletext/to-html";
+import type { Popup } from "../lib/content";
+
+interface Props {
+  popup?: Popup;
+  lang?: "nl" | "en";
+}
+
+const { popup, lang = "nl" } = Astro.props;
+const isEn = lang === "en";
+const titel = popup ? (isEn && popup.titelEn) || popup.titel : "";
+const knopTekst = popup ? (isEn && popup.knopTekstEn) || popup.knopTekst : "";
+const inhoud = popup
+  ? ((isEn && popup.inhoudEn?.length ? popup.inhoudEn : popup.inhoud) as any)
+  : [];
+const bodyHtml = inhoud?.length ? toHTML(inhoud) : "";
+const extraVragen = popup?.extraVragen || [];
+const apiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
+const afbeelding = popup?.afbeelding
+  ? `${popup.afbeelding}?w=960&h=540&fit=crop&auto=format`
+  : undefined;
+---
+
+{
+  popup && (
+    <div
+      data-promo-popup
+      data-popup-id={popup.id}
+      data-once={popup.eenKeerPerBezoeker ? "true" : "false"}
+      data-from={popup.geldigVan || ""}
+      data-until={popup.geldigTot || ""}
+      hidden
+    >
+      <dialog
+        class="promo-dialog max-h-[90vh] w-[calc(100%-1.5rem)] max-w-lg overflow-y-auto rounded-2xl border-0 bg-white p-0 shadow-2xl"
+        aria-labelledby="promo-popup-title"
+      >
+        <div class="relative min-h-12">
+          {afbeelding && (
+            <img src={afbeelding} alt="" class="h-48 w-full object-cover sm:h-56" />
+          )}
+          <button
+            type="button"
+            data-promo-close
+            class:list={[
+              "absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none",
+              afbeelding ? "bg-black/45 text-white hover:bg-black/60" : "bg-black/10 text-brand-text hover:bg-black/20",
+            ]}
+            aria-label={isEn ? "Close" : "Sluiten"}
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="px-6 py-6 sm:px-8">
+          <h2 id="promo-popup-title" class="text-2xl font-bold tracking-tight">{titel}</h2>
+          {bodyHtml && <div class="promo-body mt-4 text-sm text-brand-text" set:html={bodyHtml} />}
+
+          {popup.actie === "link" && popup.knopUrl ? (
+            <div class="mt-6 flex justify-center">
+              <a
+                href={popup.knopUrl}
+                data-promo-cta
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex rounded-md bg-brand-primary px-8 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+              >
+                {knopTekst}
+              </a>
+            </div>
+          ) : (
+            <>
+              <div class="mt-6 flex justify-center">
+                <button
+                  type="button"
+                  data-promo-open-form
+                  class="rounded-md bg-brand-primary px-8 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+                >
+                  {knopTekst}
+                </button>
+              </div>
+              <form class="mt-6 grid gap-3" data-promo-form hidden>
+                <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder={isEn ? "Name" : "Naam"} required />
+                <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder={isEn ? "Email" : "E-mail"} required />
+                <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder={isEn ? "Phone" : "Telefoon"} required />
+                {extraVragen.map((vraag, index) =>
+                  vraag.type === "keuze" ? (
+                    <label class="text-sm">
+                      <span class="font-semibold">{vraag.label}</span>
+                      <select
+                        class="mt-1 w-full rounded-lg border border-brand-border px-4 py-3"
+                        name={`extra-${index}`}
+                        required={vraag.verplicht}
+                      >
+                        <option value="">{isEn ? "Choose…" : "Kies…"}</option>
+                        {vraag.opties.map((optie) => (
+                          <option value={optie}>{optie}</option>
+                        ))}
+                      </select>
+                    </label>
+                  ) : (
+                    <input
+                      class="rounded-lg border border-brand-border px-4 py-3"
+                      type="text"
+                      name={`extra-${index}`}
+                      placeholder={vraag.label}
+                      required={vraag.verplicht}
+                    />
+                  ),
+                )}
+                <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
+                <input type="hidden" name="popupId" value={popup.id} />
+                <input type="hidden" name="popupTitel" value={titel} />
+                <button type="submit" class="w-fit rounded-md bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+                  {isEn ? "Send" : "Verstuur"}
+                </button>
+                <p class="text-sm" data-promo-status role="status" aria-live="polite"></p>
+              </form>
+            </>
+          )}
+        </div>
+      </dialog>
+    </div>
+  )
+}
+
+<script define:vars={{ apiUrl, extraVragen, lang: isEn ? "en" : "nl" }} is:inline>
+    (function () {
+      var root = document.querySelector("[data-promo-popup]");
+      if (!root) return;
+      var dialog = root.querySelector("dialog");
+      if (!dialog) return;
+
+      var id = root.getAttribute("data-popup-id") || "";
+      var once = root.getAttribute("data-once") === "true";
+      var from = root.getAttribute("data-from");
+      var until = root.getAttribute("data-until");
+      var storageKey = "movenda-popup-dismissed:" + id;
+      var now = Date.now();
+
+      if (from && now < Date.parse(from)) return;
+      if (until && now > Date.parse(until)) return;
+      try {
+        if (once && localStorage.getItem(storageKey)) return;
+      } catch {}
+
+      function remember() {
+        if (!once) return;
+        try {
+          localStorage.setItem(storageKey, "1");
+        } catch {}
+      }
+
+      function closePopup() {
+        dialog.close();
+        remember();
+      }
+
+      root.hidden = false;
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+
+      root.querySelector("[data-promo-close]")?.addEventListener("click", closePopup);
+      dialog.addEventListener("click", function (e) {
+        var rect = dialog.getBoundingClientRect();
+        if (
+          e.clientX < rect.left ||
+          e.clientX > rect.right ||
+          e.clientY < rect.top ||
+          e.clientY > rect.bottom
+        ) {
+          closePopup();
+        }
+      });
+      dialog.addEventListener("close", remember);
+
+      var openForm = root.querySelector("[data-promo-open-form]");
+      var form = root.querySelector("[data-promo-form]");
+      openForm?.addEventListener("click", function () {
+        if (!form) return;
+        openForm.hidden = true;
+        form.hidden = false;
+        var first = form.querySelector("input:not([type=hidden]), select");
+        first?.focus();
+      });
+
+      var cta = root.querySelector("[data-promo-cta]");
+      cta?.addEventListener("click", remember);
+
+      form?.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        var status = root.querySelector("[data-promo-status]");
+        var button = form.querySelector("button[type=submit]");
+        var fd = new FormData(form);
+        var extras = {};
+        (extraVragen || []).forEach(function (vraag, index) {
+          extras[vraag.label] = fd.get("extra-" + index) || "";
+        });
+        var payload = {
+          naam: fd.get("naam"),
+          email: fd.get("email"),
+          telefoon: fd.get("telefoon"),
+          website: fd.get("website"),
+          popupId: fd.get("popupId"),
+          popupTitel: fd.get("popupTitel"),
+          extra: extras,
+        };
+        button.disabled = true;
+        if (status) status.textContent = lang === "en" ? "Sending…" : "Verzenden…";
+        try {
+          var res = await fetch(apiUrl + "/api/popup-signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (res.status === 404) {
+            var extraLines = Object.keys(extras)
+              .map(function (k) {
+                return k + ": " + extras[k];
+              })
+              .join("\n");
+            res = await fetch(apiUrl + "/api/contact", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                naam: payload.naam,
+                email: payload.email,
+                telefoon: payload.telefoon,
+                website: payload.website,
+                eventNaam: payload.popupTitel,
+                bericht:
+                  "Inschrijving pop-up: " +
+                  payload.popupTitel +
+                  "\nTelefoon: " +
+                  payload.telefoon +
+                  (extraLines ? "\n" + extraLines : ""),
+              }),
+            });
+          }
+          if (!res.ok) throw new Error("failed");
+          if (status) {
+            status.textContent =
+              lang === "en"
+                ? "Thanks — you're signed up. We'll be in touch."
+                : "Bedankt — je bent ingeschreven. We nemen contact op.";
+            status.className = "text-sm font-semibold text-brand-primary";
+          }
+          window.mvTrack?.("form_submit", { form: "popup" });
+          remember();
+          setTimeout(function () {
+            dialog.close();
+          }, 1400);
+        } catch {
+          if (status) {
+            status.textContent =
+              lang === "en"
+                ? "Something went wrong. Please try again or email us."
+                : "Er ging iets mis. Probeer opnieuw of mail ons.";
+            status.className = "text-sm font-semibold text-red-600";
+          }
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+
+<style>
+  .promo-dialog {
+    margin: auto;
+  }
+  .promo-dialog::backdrop {
+    background: rgb(20 36 51 / 0.55);
+  }
+  .promo-body {
+    line-height: 1.65;
+  }
+  .promo-body :global(p + p),
+  .promo-body :global(p + ul),
+  .promo-body :global(ul + p) {
+    margin-top: 0.9em;
+  }
+  .promo-body :global(strong) {
+    font-weight: 700;
+  }
+  .promo-body :global(ul) {
+    padding-left: 1.25em;
+  }
+  .promo-body :global(li) {
+    margin-top: 0.3em;
+    list-style-type: disc;
+  }
+  .promo-body :global(a) {
+    color: var(--brand-primary);
+    font-weight: 600;
+  }
+</style>

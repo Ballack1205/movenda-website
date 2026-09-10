@@ -9,6 +9,8 @@ import "@fontsource/poppins/700.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Analytics from "../components/Analytics.astro";
+import PromoPopup from "../components/PromoPopup.astro";
+import { getActivePopup } from "../lib/content";
 
 export interface Props {
   title: string;
@@ -47,6 +49,7 @@ const ogImageUrl = new URL(ogImage, siteUrl).toString();
 // counterpart page actually exists (altPath set).
 const nlPath = lang === "en" ? altPath : path;
 const enPath = lang === "en" ? path : altPath;
+const popup = await getActivePopup(path);
 ---
 
 <!doctype html>
@@ -81,6 +84,7 @@ const enPath = lang === "en" ? path : altPath;
       <slot />
     </main>
     <Footer brand={brand} lang={lang} />
+    <PromoPopup popup={popup} lang={lang} />
     <Analytics lang={lang} />
   </body>
 </html>

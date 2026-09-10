@@ -43,6 +43,8 @@ Day-one Sanity collections:
 | **FAQ** | Question / answer |
 | **Blog** (if kept) | Title, body, image, publish date |
 | **Prijzen** | Label + amount + note (kine vs PT vs MPC) |
+| **Partners & logo's** | Add/edit a partner in the moving logo band: logo, website, Movenda/MPC/both, order, show/hide. Heading, speed and on/off live in Site-instellingen → Partnerbalk |
+| **Pop-up** | Create/edit the overlay visitors see when they open the site (photo, copy, signup form or link). Toggle actief to show/hide — same job as Squarespace’s promotional pop-up |
 
 Studio copy in **Dutch**. One “Teamlid” list, filterable by locatie. Unpublished = hidden on the site.
 
@@ -78,7 +80,7 @@ New paid vendor = founder OK first (`AGENTS.md`).
 
 ## EU / GDPR note
 
-Team photos and names are personal data. Prefer **Sanity EU dataset** (or confirm region before go-live). Cookie banner only if we keep GA4 / Elfsight; default: no Elfsight, analytics only if Julie still wants it.
+Team photos and names are personal data. Prefer **Sanity EU dataset** (or confirm region before go-live). Movenda wants GA4, so there is a minimal consent banner (strict: nothing loads before "Oké"); Umami (cookieless) is available as an extra. See `DECISIONS.md` → Analytics.
 
 ---
 

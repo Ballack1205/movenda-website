@@ -1,0 +1,73 @@
+---
+import type { SiteSettings } from "../lib/content";
+
+interface Props {
+  settings: SiteSettings;
+  lang?: "nl" | "en";
+}
+
+const { settings, lang = "nl" } = Astro.props;
+const nb = settings.nieuwsbrief;
+const apiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
+---
+
+{
+  nb.enabled && (
+    <section class="bg-brand-header py-14 text-white">
+      <div class="mx-auto max-w-2xl px-4 text-center">
+        <h2 class="text-2xl font-bold">{nb.titel || (lang === "en" ? "Stay in the loop" : "Blijf op de hoogte")}</h2>
+        {nb.tekst && <p class="mt-3 text-white/80">{nb.tekst}</p>}
+        {nb.socialProof && <p class="mt-2 text-sm font-semibold text-white/70">{nb.socialProof}</p>}
+        <form class="mt-6 flex flex-col gap-3 sm:flex-row" data-newsletter-form>
+          <label class="sr-only" for="newsletter-email">{lang === "en" ? "Email" : "E-mail"}</label>
+          <input
+            id="newsletter-email"
+            class="flex-1 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-white placeholder:text-white/50"
+            type="email"
+            name="email"
+            required
+            placeholder={lang === "en" ? "Your email" : "Jouw e-mailadres"}
+          />
+          <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
+          <button type="submit" class="rounded-full bg-white px-6 py-3 font-semibold text-brand-header transition hover:bg-white/90">
+            {lang === "en" ? "Subscribe" : "Inschrijven"}
+          </button>
+        </form>
+        <p class="mt-3 text-sm" data-newsletter-status role="status" aria-live="polite"></p>
+      </div>
+    </section>
+  )
+}
+
+<script define:vars={{ apiUrl, lang }} is:inline>
+  const form = document.querySelector("[data-newsletter-form]");
+  const status = document.querySelector("[data-newsletter-status]");
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    const button = form.querySelector("button[type=submit]");
+    button.disabled = true;
+    status.textContent = lang === "en" ? "Sending…" : "Verzenden…";
+    try {
+      const res = await fetch(`${apiUrl}/api/newsletter`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("failed");
+      status.textContent =
+        lang === "en"
+          ? "Thanks — you're on the list."
+          : "Bedankt — je staat op de lijst.";
+      form.reset();
+      window.mvTrack?.("form_submit", { form: "newsletter" });
+    } catch {
+      status.textContent =
+        lang === "en"
+          ? "Something went wrong. Please try again or email us."
+          : "Er ging iets mis. Probeer opnieuw of mail ons.";
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>

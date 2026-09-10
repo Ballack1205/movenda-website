@@ -60,6 +60,7 @@ by hand.
 | `locatie` | `Locatie` (2 documents: Olympia, MPC — do not add more without asking) |
 | `dienst` | `Dienst` |
 | `siteSettings` | `SiteSettings` (singleton — booking off by default, Google reviews) |
+| `popup` | `Popup` (event overlays Julie can turn on/off; signup form or link) |
 
 Once real Sanity data exists, update `web/src/lib/content.ts` to query
 `@sanity/client` with GROQ instead of reading the local JSON in

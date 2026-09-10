@@ -1,0 +1,51 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import DienstDetail from "../../../components/DienstDetail.astro";
+import { getDienstenByCategorie, getDienstBySlug, getLocatieBySlug, getTeamleden, dienstHref } from "../../../lib/content";
+import { serviceSchema, breadcrumbSchema } from "../../../lib/schema";
+
+export async function getStaticPaths() {
+  const diensten = await getDienstenByCategorie("mpc");
+  return diensten.map((dienst) => ({ params: { slug: dienst.slug } }));
+}
+
+const { slug } = Astro.params;
+const dienst = await getDienstBySlug(slug!, "mpc");
+
+if (!dienst) {
+  return Astro.redirect("/en/mpc");
+}
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const alleTeamleden = await getTeamleden();
+const team = alleTeamleden.filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
+const path = dienstHref(dienst, "en");
+
+const jsonLd = [
+  serviceSchema(dienst, locatie, path),
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Movenda Performance Centre", path: "/en/mpc" },
+    { name: dienst.titelEn || dienst.titel, path },
+  ]),
+];
+---
+
+<Layout
+  title={dienst.titelEn || dienst.seoTitle}
+  description={dienst.bodyEn?.slice(0, 155) || dienst.seoDescription}
+  path={path}
+  altPath={dienstHref(dienst)}
+  brand="mpc"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <DienstDetail
+    dienst={dienst}
+    team={team}
+    locatie={locatie}
+    backHref="/en/mpc"
+    backLabel="← Back to MPC"
+    lang="en"
+  />
+</Layout>

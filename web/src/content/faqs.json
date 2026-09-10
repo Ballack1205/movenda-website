@@ -1,74 +1,170 @@
 [
   {
     "vraag": "Wat kan ik bij jullie laten behandelen?",
-    "antwoord": "Bij Movenda in Hasselt bieden we kinesitherapie en personal training aan. In het Movenda Performance Centre in Kuringen focussen we op performance training en sportrevalidatie. Klik gerust rond op /kinesitherapie, /training of /mpc voor het volledige aanbod.",
+    "antwoord": "Bij Movenda in Hasselt bieden we kinesitherapie en personal training aan. In het Movenda Performance Centre in Kuringen focussen we op performance training en sportrevalidatie. Bekijk /kinesitherapie, /training of /mpc voor het volledige aanbod.",
     "categorie": "behandelingen",
+    "site": "movenda",
     "volgorde": 1
   },
   {
     "vraag": "Wat zijn jullie openingsuren?",
     "antwoord": "Wij werken enkel op afspraak. Maandag t.e.m. donderdag van 08u00 tot 21u00, vrijdag van 08u00 tot 19u00 en zaterdag van 08u30 tot 13u00.",
     "categorie": "praktisch",
+    "site": "movenda",
     "volgorde": 2
   },
   {
     "vraag": "Hoe maak ik een afspraak?",
     "antwoord": "Telefonisch op +32 483 65 44 89, via mail naar info@movenda.be, of rechtstreeks bij je therapeut.",
     "categorie": "afspraken",
+    "site": "movenda",
     "volgorde": 3
   },
   {
     "vraag": "Hoe kan ik betalen?",
     "antwoord": "Je kan betalen via overschrijving.",
     "categorie": "prijzen",
+    "site": "movenda",
     "volgorde": 4
   },
   {
     "vraag": "Ik ben te laat, wat nu?",
     "antwoord": "We vragen je om altijd telefonisch te verwittigen indien je later bent, via +32 483 65 44 89.",
     "categorie": "praktisch",
+    "site": "movenda",
     "volgorde": 5
   },
   {
     "vraag": "Hoe annuleer ik een afspraak?",
     "antwoord": "Je kan ons telefonisch (+32 483 65 44 89) of via mail (info@movenda.be) verwittigen. Verwittig je minstens 24u op voorhand, dan is dat geen probleem. Annuleer je later of kom je niet opdagen, dan zijn we genoodzaakt de volledige behandeling aan te rekenen.",
     "categorie": "afspraken",
+    "site": "movenda",
     "volgorde": 6
   },
   {
     "vraag": "Heb ik een doktersvoorschrift nodig?",
-    "antwoord": "Ja, wij vragen al onze patiënten eerst een arts te raadplegen. Breng je voorschrift steeds mee naar je eerste afspraak.",
+    "antwoord": "Ja, wij vragen al onze patiënten eerst een arts te raadplegen. Breng je voorschrift steeds mee naar je eerste afspraak. Zonder voorschrift kan je komen, maar dan is er geen terugbetaling via de mutualiteit.",
     "categorie": "afspraken",
+    "site": "movenda",
     "volgorde": 7
   },
   {
     "vraag": "Wat moet ik meebrengen naar mijn eerste afspraak?",
-    "antwoord": "Een doktersvoorschrift, je identiteitskaart, sportieve of gemakkelijke kledij, en eventuele relevante medische info (zoals medische beeldvorming) indien beschikbaar.",
+    "antwoord": "Een doktersvoorschrift, je identiteitskaart, sportkleding en schoenen, een handdoek, en eventuele relevante medische info (beeldvorming, verslagen) indien beschikbaar.",
     "categorie": "praktisch",
+    "site": "movenda",
     "volgorde": 8
   },
   {
     "vraag": "Wat trek ik best aan?",
     "antwoord": "Draag sportieve of gemakkelijke kledij voor je afspraken. We doen veel oefentherapie waarbij sportieve oefeningen aan bod komen.",
     "categorie": "praktisch",
+    "site": "movenda",
     "volgorde": 9
   },
   {
     "vraag": "Kan ik mijn eigen therapeut kiezen?",
     "antwoord": "Ja, uiteraard! Let wel: niet elke therapeut heeft dezelfde specialisaties, dus kunnen we je mogelijks iemand van ons team adviseren voor een specifieke behandeling.",
     "categorie": "afspraken",
+    "site": "movenda",
     "volgorde": 10
   },
   {
     "vraag": "Doen jullie huisbezoeken?",
     "antwoord": "Wij doen geen vaste huisbezoeken. We kunnen een uitzondering maken voor patiënten in de eerste weken na een operatie.",
     "categorie": "behandelingen",
+    "site": "movenda",
     "volgorde": 11
   },
   {
     "vraag": "Waar vind ik jullie precies?",
-    "antwoord": "Sportcentrum Olympia, Kuringersteenweg 242, 3500 Hasselt. Neem de sportieve ingang links aan het gebouw waar Movenda op het venster staat, meld je aan bij de infobalie en zeg dat je voor de kiné komt. Je krijgt een toegangskaart en een begeleider wijst je de weg.",
+    "antwoord": "Sportcentrum Olympia, Kuringersteenweg 242, 3500 Hasselt. Neem de sportieve ingang links aan het gebouw waar Movenda op het venster staat, meld je aan bij de infobalie en zeg dat je voor de kiné komt. Je krijgt een toegangskaart en een begeleider wijst je de weg tot boven. Weet je al bij wie je terecht wil? Bekijk het team.",
     "categorie": "praktisch",
+    "site": "movenda",
     "volgorde": 12
+  },
+  {
+    "vraag": "Wordt de behandeling terugbetaald?",
+    "antwoord": "Al onze therapeuten zijn gedeconventioneerd. Je ontvangt na elke sessie een getuigschrift voor verstrekte hulp. Daarmee vraag je zelf terugbetaling aan bij je ziekenfonds. Standaard ±€18 à €20 per sessie; bij verhoogde tegemoetkoming gunstigere tarieven.",
+    "categorie": "prijzen",
+    "site": "movenda",
+    "volgorde": 13
+  },
+  {
+    "vraag": "Hoe lang duurt een sessie?",
+    "antwoord": "Kinesitherapie: 30 minuten één-op-één, plus extra tijd om oefeningen zelfstandig verder te zetten. Personal training: 60 of 90 minuten.",
+    "categorie": "praktisch",
+    "site": "movenda",
+    "volgorde": 14
+  },
+  {
+    "vraag": "Waar vind ik de prijzen?",
+    "antwoord": "Bekijk de volledige tarieven en terugbetaling op de prijzenpagina.",
+    "categorie": "prijzen",
+    "site": "movenda",
+    "volgorde": 15
+  },
+  {
+    "vraag": "Wat zijn de openingsuren van MPC?",
+    "vraagEn": "Opening hours",
+    "antwoord": "We werken enkel op afspraak. Maandag tot zondag: 07u00–22u00.",
+    "antwoordEn": "We only work by appointment. Monday–Sunday: 07:00–22:00.",
+    "categorie": "praktisch",
+    "site": "mpc",
+    "volgorde": 20
+  },
+  {
+    "vraag": "Hoe maak ik een afspraak bij MPC?",
+    "vraagEn": "How do I make an appointment?",
+    "antwoord": "Enkel op afspraak: telefonisch +32 480 68 94 36, via mail naar info@mpc.movenda.be of rechtstreeks bij je performance specialist via de teampagina.",
+    "antwoordEn": "We only work by appointment. Call +32 480 68 94 36, email info@mpc.movenda.be or contact your performance specialist via the team page.",
+    "categorie": "afspraken",
+    "site": "mpc",
+    "volgorde": 21
+  },
+  {
+    "vraag": "Hoe betaal ik bij MPC?",
+    "vraagEn": "Payment",
+    "antwoord": "Je ontvangt een factuur na een aantal trainingssessies. Alle MPC-prijzen zijn exclusief BTW.",
+    "antwoordEn": "You will receive an invoice after a number of training sessions. All MPC prices are exclusive of VAT.",
+    "categorie": "prijzen",
+    "site": "mpc",
+    "volgorde": 22
+  },
+  {
+    "vraag": "Wat kosten de MPC-diensten?",
+    "vraagEn": "Prices",
+    "antwoord": "Bekijk de prijzenpagina. Membership small group: €215 / 10 lessen. Boxing: €200 / 10 lessen. Corporate coaching op aanvraag.",
+    "antwoordEn": "See the prices page. Small group membership: €215 / 10 lessons. Boxing: €200 / 10 lessons. Corporate coaching on demand.",
+    "categorie": "prijzen",
+    "site": "mpc",
+    "volgorde": 23
+  },
+  {
+    "vraag": "Ik ben te laat (MPC)",
+    "vraagEn": "I'm late",
+    "antwoord": "Verwittig ons altijd telefonisch als je later bent: +32 480 68 94 36.",
+    "antwoordEn": "Always notify us by telephone if you will be late: +32 480 68 94 36.",
+    "categorie": "praktisch",
+    "site": "mpc",
+    "volgorde": 24
+  },
+  {
+    "vraag": "Annuleren bij MPC",
+    "vraagEn": "Cancel",
+    "antwoord": "Telefonisch of per mail. Minstens 24 uur op voorhand is geen probleem. Later of no-show: we rekenen de volledige behandeling aan.",
+    "antwoordEn": "Notify us by telephone or email. At least 24 hours in advance is no problem. Later cancellation or no-show: we charge the full treatment.",
+    "categorie": "afspraken",
+    "site": "mpc",
+    "volgorde": 25
+  },
+  {
+    "vraag": "Waar ligt MPC?",
+    "vraagEn": "Location",
+    "antwoord": "Movenda Performance Centre, Lammerweg 33, 3511 Kuringen.",
+    "antwoordEn": "Movenda Performance Centre, Lammerweg 33, 3511 Kuringen.",
+    "categorie": "praktisch",
+    "site": "mpc",
+    "volgorde": 26
   }
 ]

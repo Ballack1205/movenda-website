@@ -1,0 +1,14 @@
+[
+  { "les": "Corporate", "dag": "Maandag", "van": "07:30", "tot": "08:30", "coachSlug": "charlotte-vorstenbosch", "dienstSlug": "corporate-coaching", "dienstCategorie": "mpc-groep", "volgorde": 1 },
+  { "les": "PowerPlus", "dag": "Maandag", "van": "09:30", "tot": "11:30", "coachSlug": "charlotte-vorstenbosch", "dienstSlug": "powerplus", "dienstCategorie": "mpc-groep", "volgorde": 2 },
+  { "les": "HIIT", "dag": "Maandag", "van": "19:00", "tot": "20:00", "coachSlug": "charlotte-vorstenbosch", "dienstSlug": "hiit", "dienstCategorie": "mpc-groep", "volgorde": 3 },
+  { "les": "MX training", "dag": "Dinsdag", "van": "19:00", "tot": "20:00", "coachSlug": "jens-hendrickx", "volgorde": 4 },
+  { "les": "MX training", "dag": "Dinsdag", "van": "20:00", "tot": "21:00", "coachSlug": "jens-hendrickx", "volgorde": 5 },
+  { "les": "Corporate", "dag": "Woensdag", "van": "12:00", "tot": "13:00", "coachSlug": "charlotte-vorstenbosch", "dienstSlug": "corporate-coaching", "dienstCategorie": "mpc-groep", "volgorde": 6 },
+  { "les": "Boxing", "dag": "Woensdag", "van": "18:30", "tot": "19:30", "coachSlug": "dimitri-vanempten", "dienstSlug": "boxing", "dienstCategorie": "mpc-groep", "volgorde": 7 },
+  { "les": "Full Body", "dag": "Woensdag", "van": "20:00", "tot": "21:00", "coachSlug": "charlotte-vorstenbosch", "dienstSlug": "full-body", "dienstCategorie": "mpc-groep", "volgorde": 8 },
+  { "les": "SkiFit", "dag": "Woensdag", "van": "20:00", "tot": "21:00", "coachSlug": "charlotte-vorstenbosch", "dienstSlug": "skifit", "dienstCategorie": "mpc-groep", "volgorde": 9 },
+  { "les": "Pre- en postnataal", "dag": "Donderdag", "van": "19:00", "tot": "20:00", "coachSlug": "tanse-vanheusden", "dienstSlug": "pre-en-postnatale-training", "dienstCategorie": "training", "volgorde": 10 },
+  { "les": "Corporate", "dag": "Vrijdag", "van": "12:00", "tot": "13:00", "coachSlug": "charlotte-vorstenbosch", "dienstSlug": "corporate-coaching", "dienstCategorie": "mpc-groep", "volgorde": 11 },
+  { "les": "Core", "dag": "Zaterdag", "van": "10:00", "tot": "11:00", "coachSlug": "charlotte-vorstenbosch", "volgorde": 12 }
+]

@@ -1,8 +1,19 @@
 ---
-// GA4 with Consent Mode v2: nothing is sent until the visitor explicitly
-// accepts. `settings.analytics.enabled` is Julie's master switch in the
-// Studio (siteSettings -> Analytics) — leave it off entirely to disable
-// analytics site-wide regardless of consent.
+// Analytics + cookie consent.
+//
+// - GA4 runs in Consent Mode v2 "basic" (strict) mode: gtag.js is NOT loaded
+//   until the visitor clicks "Oké". Until then nothing is sent to Google and
+//   no cookie is set. The decision is remembered in localStorage.
+// - Umami is cookieless and anonymous; it does not need consent and loads
+//   straight away when enabled.
+// - `mode: "test"` (Julie's default in the Studio) keeps the whole flow
+//   working — banner, consent, events — but never loads gtag.js or Umami.
+//   Events are printed to the browser console as `[analytics:test]` instead,
+//   so the site can be QA'd without polluting the real GA4 property.
+// - `window.mvTrack(name, params)` is the single tracking helper the rest of
+//   the site calls (forms, CTA clicks). It fans out to GA4 + Umami.
+//
+// Settings live in siteSettings -> Analytics (see content.ts AnalyticsSettings).
 import { getSiteSettings } from "../lib/content";
 
 export interface Props {
@@ -11,111 +22,230 @@ export interface Props {
 
 const { lang = "nl" } = Astro.props;
 const settings = await getSiteSettings();
-const { enabled, ga4Id } = settings.analytics;
+const { enabled, mode, ga4Id, umami } = settings.analytics;
+
+const ga = enabled && !!ga4Id;
+const um = enabled && umami.enabled && !!umami.websiteId;
+const config = {
+  mode,
+  ga4Id: ga ? ga4Id : "",
+  umamiId: um ? umami.websiteId : "",
+  umamiSrc: um ? umami.scriptUrl : "",
+  storageKey: "movenda-consent",
+};
+
+const privacyHref = lang === "en" ? "/en/privacy" : "/privacy";
+const t =
+  lang === "en"
+    ? {
+        label: "Cookie preferences",
+        text: "We use a few analytics cookies to see how the site is used and improve it.",
+        privacy: "Privacy",
+        accept: "OK",
+        reject: "No thanks",
+      }
+    : {
+        label: "Cookievoorkeuren",
+        text: "We gebruiken een paar analytische cookies om te zien hoe de site gebruikt wordt en hem te verbeteren.",
+        privacy: "Privacy",
+        accept: "Oké",
+        reject: "Liever niet",
+      };
 ---
 
-{enabled && ga4Id && (
+{enabled && (
   <>
-    <script define:vars={{ ga4Id }} is:inline>
-      // Consent Mode v2: default to denied for anything non-essential,
-      // *before* gtag.js loads, so nothing is measured pre-consent.
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      window.gtag = gtag;
-      gtag("consent", "default", {
-        ad_storage: "denied",
-        ad_user_data: "denied",
-        ad_personalization: "denied",
-        analytics_storage: "denied",
-      });
-      gtag("js", new Date());
-      gtag("config", ga4Id, { anonymize_ip: true });
-
-      // Restore a previous decision instead of asking again every visit.
-      try {
-        const stored = localStorage.getItem("movenda-consent");
-        if (stored === "granted") {
-          gtag("consent", "update", { ad_storage: "denied", analytics_storage: "granted" });
-        }
-      } catch {}
-    </script>
-    <script async src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`} is:inline></script>
-
-    <div
-      data-consent-banner
-      class="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-2xl border border-brand-border bg-brand-bg p-5 shadow-lg"
-      hidden
-    >
-      <p class="text-sm text-brand-muted">
-        {lang === "en"
-          ? "We use cookies to understand how visitors use this site. No data is collected until you accept."
-          : "We gebruiken cookies om te begrijpen hoe bezoekers deze site gebruiken. Er wordt niets verzameld tot je akkoord gaat."}
-      </p>
-      <div class="mt-3 flex gap-2">
-        <button
-          type="button"
-          data-consent-accept
-          class="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white"
-        >
-          {lang === "en" ? "Accept" : "Accepteren"}
-        </button>
-        <button
-          type="button"
-          data-consent-reject
-          class="rounded-full border border-brand-border px-4 py-2 text-sm font-semibold text-brand-text"
-        >
-          {lang === "en" ? "Reject" : "Weigeren"}
-        </button>
-      </div>
-    </div>
-
-    <script is:inline>
+    <script define:vars={{ config }} is:inline>
       (function () {
-        var banner = document.querySelector("[data-consent-banner]");
-        if (!banner) return;
-        var stored;
-        try {
-          stored = localStorage.getItem("movenda-consent");
-        } catch {
-          stored = null;
-        }
-        if (!stored) banner.hidden = false;
+        var TEST = config.mode !== "live";
+        var KEY = config.storageKey;
 
-        banner.querySelector("[data-consent-accept]")?.addEventListener("click", function () {
+        function read() {
           try {
-            localStorage.setItem("movenda-consent", "granted");
+            return localStorage.getItem(KEY);
+          } catch {
+            return null;
+          }
+        }
+        function write(v) {
+          try {
+            localStorage.setItem(KEY, v);
           } catch {}
-          window.gtag?.("consent", "update", { analytics_storage: "granted" });
-          banner.hidden = true;
+        }
+
+        // --- GA4 (consent-gated) -------------------------------------------
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          window.dataLayer.push(arguments);
+          if (TEST) console.info("[analytics:test] gtag", Array.prototype.slice.call(arguments));
+        }
+        window.gtag = gtag;
+
+        var gaLoaded = false;
+        function loadGa() {
+          if (gaLoaded || !config.ga4Id) return;
+          gaLoaded = true;
+          gtag("consent", "default", {
+            ad_storage: "denied",
+            ad_user_data: "denied",
+            ad_personalization: "denied",
+            analytics_storage: "granted",
+          });
+          gtag("js", new Date());
+          gtag("config", config.ga4Id, { anonymize_ip: true });
+          if (TEST) return; // never contact Google in test mode
+          var s = document.createElement("script");
+          s.async = true;
+          s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(config.ga4Id);
+          document.head.appendChild(s);
+        }
+
+        // --- Umami (cookieless, no consent needed) -------------------------
+        if (config.umamiId) {
+          if (TEST) {
+            console.info("[analytics:test] umami would load", config.umamiId);
+          } else {
+            var u = document.createElement("script");
+            u.defer = true;
+            u.src = config.umamiSrc;
+            u.setAttribute("data-website-id", config.umamiId);
+            document.head.appendChild(u);
+          }
+        }
+
+        // --- Shared tracking helper ----------------------------------------
+        window.mvTrack = function (name, params) {
+          params = params || {};
+          if (TEST) console.info("[analytics:test] event", name, params);
+          if (config.ga4Id && read() === "granted") gtag("event", name, params);
+          if (window.umami && typeof window.umami.track === "function") window.umami.track(name, params);
+        };
+
+        // --- Consent state -------------------------------------------------
+        window.mvConsent = {
+          get: read,
+          grant: function () {
+            write("granted");
+            loadGa();
+            hide();
+          },
+          deny: function () {
+            write("denied");
+            hide();
+          },
+          open: show,
+        };
+
+        if (read() === "granted") loadGa();
+
+        var banner;
+        function el() {
+          return banner || (banner = document.querySelector("[data-consent-banner]"));
+        }
+        function show() {
+          var b = el();
+          if (!b) return;
+          b.hidden = false;
+          requestAnimationFrame(function () {
+            b.setAttribute("data-open", "");
+          });
+        }
+        function hide() {
+          var b = el();
+          if (!b) return;
+          b.removeAttribute("data-open");
+          setTimeout(function () {
+            b.hidden = true;
+          }, 250);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+          if (config.ga4Id && !read()) show();
+
+          var b = el();
+          b?.querySelector("[data-consent-accept]")?.addEventListener("click", window.mvConsent.grant);
+          b?.querySelector("[data-consent-reject]")?.addEventListener("click", window.mvConsent.deny);
+
+          // Footer "Cookievoorkeuren" link re-opens the banner so consent can be withdrawn.
+          document.addEventListener("click", function (e) {
+            var opener = e.target.closest && e.target.closest("[data-consent-open]");
+            if (!opener) return;
+            e.preventDefault();
+            show();
+          });
         });
-        banner.querySelector("[data-consent-reject]")?.addEventListener("click", function () {
-          try {
-            localStorage.setItem("movenda-consent", "denied");
-          } catch {}
-          banner.hidden = true;
+
+        // Conversion events: bel-klik, mail-klik, route-klik, boekknop-klik.
+        // Form-submit success fires its own mvTrack from the form scripts.
+        document.addEventListener("click", function (e) {
+          var target = e.target.closest && e.target.closest("a");
+          if (!target) return;
+          var href = target.getAttribute("href") || "";
+          if (href.startsWith("tel:")) {
+            window.mvTrack("contact_click", { method: "phone" });
+          } else if (href.startsWith("mailto:")) {
+            window.mvTrack("contact_click", { method: "email" });
+          } else if (href.includes("google.com/maps")) {
+            window.mvTrack("contact_click", { method: "route" });
+          } else if (target.getAttribute("data-cta") === "booking") {
+            window.mvTrack("booking_click");
+          }
         });
       })();
-
-      // Conversion events: bel-klik, mail-klik, route-klik, boekknop-klik.
-      // Form-submit success already fires its own event from contact.astro.
-      // Fires only if gtag exists (i.e. analytics enabled) — a no-op cost
-      // otherwise, so this is safe to always attach.
-      document.addEventListener("click", function (e) {
-        var target = e.target.closest && e.target.closest("a");
-        if (!target || !window.gtag) return;
-        var href = target.getAttribute("href") || "";
-        if (href.startsWith("tel:")) {
-          window.gtag("event", "contact_click", { method: "phone" });
-        } else if (href.startsWith("mailto:")) {
-          window.gtag("event", "contact_click", { method: "email" });
-        } else if (href.includes("google.com/maps")) {
-          window.gtag("event", "contact_click", { method: "route" });
-        } else if (target.getAttribute("data-cta") === "booking") {
-          window.gtag("event", "booking_click");
-        }
-      });
     </script>
+
+    {ga && (
+      <div
+        data-consent-banner
+        role="dialog"
+        aria-label={t.label}
+        class="consent fixed bottom-3 left-3 right-3 z-50 max-w-sm rounded-2xl border border-brand-border bg-brand-surface p-4 shadow-[0_8px_30px_rgba(20,36,51,0.12)] sm:left-4 sm:right-auto sm:bottom-4"
+        hidden
+      >
+        <p class="text-[13px] leading-snug text-brand-text">
+          {t.text}
+          {" "}
+          <a href={privacyHref} class="whitespace-nowrap text-brand-muted underline decoration-brand-border underline-offset-2 hover:text-brand-primary">
+            {t.privacy}
+          </a>
+        </p>
+        <div class="mt-3 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            data-consent-reject
+            class="rounded-full border border-brand-border px-3 py-1.5 text-[13px] font-semibold text-brand-text transition hover:bg-brand-bg"
+          >
+            {t.reject}
+          </button>
+          <button
+            type="button"
+            data-consent-accept
+            class="rounded-full bg-brand-primary px-3 py-1.5 text-[13px] font-semibold text-white transition hover:bg-brand-primary-dark"
+          >
+            {t.accept}
+          </button>
+        </div>
+      </div>
+    )}
   </>
 )}
+
+<style>
+  .consent {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease;
+  }
+  .consent[data-open] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .consent {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>

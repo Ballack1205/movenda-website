@@ -1,0 +1,56 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getLocatieBySlug, getSiteSettings } from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const settings = await getSiteSettings();
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Movenda Performance Centre", path: "/mpc" },
+    { name: "Visie", path: "/mpc/visie" },
+  ]),
+];
+---
+
+<Layout
+  title="Visie | Movenda Performance Centre"
+  description="De visie van het Movenda Performance Centre: objectieve data, één-op-één begeleiding en duurzame sportprestatie."
+  path="/mpc/visie"
+  altPath="/en/mpc"
+  brand="mpc"
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-3xl px-4 py-16">
+    <a href="/mpc" class="text-sm font-medium text-brand-primary">← Terug naar MPC</a>
+    <h1 class="mt-4 text-3xl font-bold">Onze visie</h1>
+    {settings.slogans.mpc && (
+      <p class="mt-3 text-lg font-medium text-brand-primary">{settings.slogans.mpc}</p>
+    )}
+    <div class="mt-6 space-y-4 leading-relaxed text-brand-muted">
+      <p>
+        Het Movenda Performance Centre in Kuringen is een multidisciplinair centrum voor
+        prestatiemaximalisatie van (semi-)professionele sporters en voor medische revalidatie op
+        basis van data-analyse.
+      </p>
+      <p>
+        We geloven dat vooruitgang meetbaar moet zijn. Objectieve data — kracht, conditie,
+        herstel — maakt keuzes helder en houdt je eerlijk. Geen giswerk, wel een plan dat we
+        samen bijsturen.
+      </p>
+      <p>
+        Begeleiding is één-op-één of in kleine groepen (maximaal 8). Zo blijft de aandacht bij
+        jouw lichaam, jouw sport en jouw doel — of je nu terugkomt van een blessure of mik op
+        een persoonlijk record.
+      </p>
+      <p>
+        {locatie.adres}. Enkel op afspraak.
+      </p>
+    </div>
+    <a href="/contact" class="mt-10 inline-block rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+      Contacteer je performance specialist
+    </a>
+  </article>
+</Layout>
