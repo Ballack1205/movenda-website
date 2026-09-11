@@ -3,9 +3,10 @@ import { getLocatieBySlug, getSiteSettings } from "../lib/content";
 
 interface Props {
   brand?: "movenda" | "mpc";
+  class?: string;
 }
 
-const { brand = "movenda" } = Astro.props;
+const { brand = "movenda", class: className = "" } = Astro.props;
 const settings = await getSiteSettings();
 const mpc = brand === "mpc" ? await getLocatieBySlug("mpc") : undefined;
 
@@ -22,16 +23,16 @@ const links = [
   { kind: "email" as const, href: email ? `mailto:${email}` : "", label: email || "E-mail" },
 ].filter((l) => l.href);
 
-const iconClass = "h-5 w-5";
+const iconClass = "h-6 w-6";
 ---
 
 {
   links.length > 0 && (
-    <nav class="flex items-center gap-1" aria-label="Sociale media">
+    <nav class:list={["flex items-center gap-2", className]} aria-label="Sociale media">
       {links.map((l) => (
         <a
           href={l.href}
-          class="inline-flex h-10 w-10 items-center justify-center rounded-full text-brand-muted transition hover:bg-white hover:text-brand-primary"
+          class="inline-flex h-11 w-11 items-center justify-center rounded-full text-brand-muted transition hover:bg-white hover:text-brand-primary"
           aria-label={l.label}
           {...(l.kind !== "email" ? { target: "_blank", rel: "noopener" } : {})}
         >

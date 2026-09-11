@@ -54,7 +54,8 @@ Defaults confirmed with the founder in the takeover plan:
 
 - Newsletter: block on the homepage; signups go through the existing Render contact API to a Resend audience (`RESEND_AUDIENCE_ID`). No Brevo (would be new SaaS).
 - Keuzehulp: 3-step filter on `/team#keuzehulp` using CMS tags (same routing data as the old Verwijskompas SVG).
-- Elfsight widgets (reviews/Instagram feeds) are not rebuilt; reviews stay a Google badge + getuigenissen, Instagram is a link.
+- Elfsight Google Reviews widget is not rebuilt; reviews stay a Google badge + getuigenissen.
+- Instagram feed on `/` (above the newsletter): same Elfsight widget as the old Squarespace home (`7108de0f-f7f4-4dfd-990f-443ab8e68566`, account `@sportpraktijk_movenda`). Julie can hide it or change the widget ID in Site-instellingen. Existing Elfsight plan, not new SaaS. Lazy-loaded when the block is in view.
 - Partner logos may be reused (already public on movenda.be).
 - SkiFit / Running: only the existing `/sgt` blurb + rooster + prijs — no invented copy.
 - Price conflicts flagged on the prijsitem `notitie` for Julie (Duo €70 vs €105; PowerPlus 9:30–10:30 vs rooster 9:30–11:30; MPC PT €74 vs Olympia €70).

@@ -1,11 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getTeamleden, getDiensten, matchSpecialisatieToDienst, dienstHref, formatEuro } from "../../lib/content";
+import { getTeamleden, getSiteSettings, getKeuzehulp, KEUZEHULP_CATEGORIEEN } from "../../lib/content";
+import TeamGroupPhoto from "../../components/TeamGroupPhoto.astro";
 import { teamPhotoSrc } from "../../lib/images";
 import { breadcrumbNode, teamListNode } from "../../lib/schema";
 
 const team = await getTeamleden();
-const diensten = await getDiensten();
+const settings = await getSiteSettings();
+const keuzehulp = await getKeuzehulp();
 
 const jsonLd = [
   teamListNode(team, "/team"),
@@ -15,20 +17,44 @@ const jsonLd = [
   ]),
 ];
 
-const klachten = [...new Set(team.flatMap((t) => t.klachten))].sort();
-const regio = [...new Set(team.flatMap((t) => t.regio))].sort();
-const sporten = [...new Set(team.flatMap((t) => t.sporten))].sort();
-const doelgroepen = [...new Set(team.flatMap((t) => t.doelgroepen))].sort();
+// Questions to render: only those with at least one active option.
+const vragen = KEUZEHULP_CATEGORIEEN.filter((cat) => keuzehulp.opties[cat].length > 0);
+const toonKeuzehulp = keuzehulp.actief && vragen.length > 0;
 
-const payload = team.map((lid) => ({
-  slug: lid.slug,
-  rol: lid.rol,
-  locaties: lid.locaties,
-  klachten: lid.klachten,
-  regio: lid.regio,
-  sporten: lid.sporten,
-  doelgroepen: lid.doelgroepen,
-}));
+const locatieLabel = (slugs: string[]) =>
+  slugs.map((s) => (s === "mpc" ? "Performance Centre" : "Olympia")).join(" · ");
+
+// Everything the in-dialog recommender needs; the team grid itself stays
+// static (all colleagues always visible), only the role filter touches it.
+const tagLabels: Record<string, string> = {};
+for (const cat of vragen) for (const t of keuzehulp.opties[cat]) tagLabels[t.id] = t.label;
+
+const payload = {
+  tagLabels,
+  geenMatchTekst: keuzehulp.geenMatchTekst,
+  team: team.map((lid, i) => ({
+    slug: lid.slug,
+    order: i,
+    naam: `${lid.voornaam} ${lid.naam}`,
+    rol: lid.rol,
+    locatie: locatieLabel(lid.locaties),
+    face: lid.foto ? teamPhotoSrc(lid.foto, "face") : null,
+    initialen: `${lid.voornaam[0]}${lid.naam[0]}`,
+    tags: lid.keuzehulpTags.map((t) => t.id),
+    kine: /kinesi|manueel|osteopath|vroed/i.test(lid.rol),
+    pt: /trainer|coach|performance/i.test(lid.rol),
+    olympia: lid.locaties.includes("olympia"),
+    mpc: lid.locaties.includes("mpc"),
+  })),
+};
+
+const filters = [
+  { key: "all", label: "Iedereen" },
+  { key: "kine", label: "Kinesisten" },
+  { key: "pt", label: "Trainers & coaches" },
+  { key: "olympia", label: "Olympia" },
+  { key: "mpc", label: "Performance Centre" },
+];
 ---
 
 <Layout
@@ -39,188 +65,316 @@ const payload = team.map((lid) => ({
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-6xl px-4 py-12">
-    <h1 class="text-3xl font-bold">Ons team, jouw gezondheid</h1>
-    <p class="mt-2 max-w-2xl text-brand-muted">
+    <h1 class="text-3xl font-semibold sm:text-4xl">Ons team, jouw gezondheid</h1>
+    <p class="mt-3 max-w-2xl text-lg text-brand-muted">
       {team.length} therapeuten en coaches, verdeeld over Movenda Olympia en het Movenda
       Performance Centre. Elk teamlid heeft een eigen specialisatie — kies zelf wie het best
       aansluit bij jouw klacht of doel.
     </p>
 
-    <div class="mt-6 flex flex-wrap gap-2" data-team-filters>
-      <button type="button" data-filter="all" class="rounded-full bg-brand-primary px-4 py-1.5 text-sm font-semibold text-white">Allen</button>
-      <button type="button" data-filter="kine" class="rounded-full border border-brand-border px-4 py-1.5 text-sm">Kine</button>
-      <button type="button" data-filter="pt" class="rounded-full border border-brand-border px-4 py-1.5 text-sm">PT</button>
-      <button type="button" data-filter="mpc" class="rounded-full border border-brand-border px-4 py-1.5 text-sm">MPC</button>
-      <button type="button" data-filter="olympia" class="rounded-full border border-brand-border px-4 py-1.5 text-sm">Olympia</button>
-    </div>
+    <TeamGroupPhoto foto={settings.teamfoto} class="mt-8" />
 
-    <div id="keuzehulp" class="mt-10 scroll-mt-24 rounded-2xl border border-brand-border bg-brand-surface p-6">
-      <h2 class="text-xl font-bold">Wie past bij mij?</h2>
-      <p class="mt-1 text-sm text-brand-muted">
-        Drie stappen — dezelfde routering als ons verwijskompas, zonder de kaart. Geen medisch advies.
-      </p>
-      <div class="mt-4 grid gap-4 md:grid-cols-3">
-        <label class="text-sm">
-          <span class="font-semibold">Klacht of context</span>
-          <select data-keuze="klachten" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2">
-            <option value="">Alle</option>
-            {klachten.map((k) => <option value={k}>{k}</option>)}
-          </select>
-        </label>
-        <label class="text-sm">
-          <span class="font-semibold">Regio of sport</span>
-          <select data-keuze="regio-sport" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2">
-            <option value="">Alle</option>
-            <optgroup label="Regio">
-              {regio.map((k) => <option value={`regio:${k}`}>{k}</option>)}
-            </optgroup>
-            <optgroup label="Sport">
-              {sporten.map((k) => <option value={`sport:${k}`}>{k}</option>)}
-            </optgroup>
-          </select>
-        </label>
-        <label class="text-sm">
-          <span class="font-semibold">Doelgroep / training</span>
-          <select data-keuze="doelgroepen" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2">
-            <option value="">Alle</option>
-            {doelgroepen.map((k) => <option value={k}>{k}</option>)}
-          </select>
-        </label>
-      </div>
-      <p class="mt-3 text-sm text-brand-muted" data-keuze-status></p>
-    </div>
-
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {team.map((lid) => {
-        const isKine = /kinesi|manueel|osteopath|vroed/i.test(lid.rol);
-        const isPt = /trainer|coach|performance/i.test(lid.rol);
-        return (
-          <article
-            class="group overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary"
-            data-card
-            data-slug={lid.slug}
-            data-kine={isKine ? "1" : "0"}
-            data-pt={isPt ? "1" : "0"}
-            data-mpc={lid.locaties.includes("mpc") ? "1" : "0"}
-            data-olympia={lid.locaties.includes("olympia") ? "1" : "0"}
+    <div id="keuzehulp" class="mt-8 flex flex-col gap-3 scroll-mt-24 sm:mt-10 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        class="flex flex-wrap gap-1.5 sm:inline-flex sm:max-w-full sm:gap-1 sm:rounded-full sm:border sm:border-brand-border sm:bg-brand-surface sm:p-1"
+        role="group"
+        aria-label="Filter op rol of vestiging"
+        data-team-filters
+      >
+        {filters.map((f, i) => (
+          <button
+            type="button"
+            data-filter={f.key}
+            aria-pressed={i === 0 ? "true" : "false"}
+            class="whitespace-nowrap rounded-full border border-brand-border bg-brand-surface px-3 py-1.5 text-[13px] font-medium sm:px-3.5 sm:text-sm text-brand-muted transition hover:text-brand-text aria-pressed:border-brand-header aria-pressed:bg-brand-header aria-pressed:text-white sm:border-0 sm:bg-transparent"
           >
-            <a href={`/team/${lid.slug}`}>
-              <div class="aspect-[2/3] w-full overflow-hidden bg-brand-header">
-                {lid.foto ? (
-                  <img
-                    src={teamPhotoSrc(lid.foto, "card")}
-                    alt={`${lid.voornaam} ${lid.naam}`}
-                    width="600"
-                    height="900"
-                    loading="lazy"
-                    class="h-full w-full object-cover object-top transition duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <div class="flex h-full w-full items-center justify-center text-3xl font-bold text-white/80">
-                    {lid.voornaam[0]}{lid.naam[0]}
-                  </div>
-                )}
-              </div>
-            </a>
-            <div class="p-6">
-              <h2 class="text-lg font-semibold">
-                <a href={`/team/${lid.slug}`}>{lid.voornaam} {lid.naam}</a>
-              </h2>
-              <p class="mt-1 text-sm font-medium text-brand-primary">{lid.rol}</p>
-              {(lid.tariefKine || lid.tariefPt || lid.tariefPerformance) && (
-                <p class="mt-1 text-xs text-brand-muted">
-                  {lid.tariefKine && <>Kine {formatEuro(lid.tariefKine)} </>}
-                  {lid.tariefPt && <>· PT {formatEuro(lid.tariefPt)} </>}
-                  {lid.tariefPerformance && <>· Perf. {formatEuro(lid.tariefPerformance)}</>}
-                </p>
+            {f.label}
+          </button>
+        ))}
+      </div>
+      {toonKeuzehulp && (
+        <button
+          type="button"
+          data-open-keuzehulp
+          class="order-first inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-primary-dark sm:order-none sm:w-auto sm:py-2.5"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
+          </svg>
+          {keuzehulp.titel}
+        </button>
+      )}
+    </div>
+
+    <p class="mt-3 text-sm text-brand-muted" data-count-line>
+      <span data-count>{team.length}</span> collega's
+    </p>
+
+    <div class="mt-4 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3" data-grid>
+      {team.map((lid) => (
+        <article
+          class="group overflow-hidden rounded-xl border border-brand-border bg-brand-surface transition hover:border-brand-primary sm:rounded-2xl"
+          data-card
+          data-slug={lid.slug}
+        >
+          <a href={`/team/${lid.slug}`} class="block">
+            <div class="aspect-[3/4] w-full overflow-hidden bg-brand-header">
+              {lid.foto ? (
+                <img
+                  src={teamPhotoSrc(lid.foto, "card")}
+                  alt={`${lid.voornaam} ${lid.naam}`}
+                  width="600"
+                  height="900"
+                  loading="lazy"
+                  class="h-full w-full object-cover object-top transition duration-300 group-hover:scale-[1.03]"
+                />
+              ) : (
+                <div class="flex h-full w-full items-center justify-center text-2xl font-semibold text-white/80 sm:text-3xl">
+                  {lid.voornaam[0]}{lid.naam[0]}
+                </div>
               )}
-              <p class="mt-2 text-sm text-brand-muted line-clamp-3">{lid.bio}</p>
+            </div>
+            <div class="p-3 sm:p-5">
+              <h2 class="text-[15px] font-semibold leading-snug sm:text-lg">{lid.voornaam} {lid.naam}</h2>
+              <p class="mt-0.5 line-clamp-2 text-xs font-medium text-brand-primary sm:text-sm">{lid.rol}</p>
+              <p class="mt-1 text-[11px] text-brand-muted sm:text-xs">{locatieLabel(lid.locaties)}</p>
               {lid.specialisaties.length > 0 && (
-                <ul class="mt-3 flex flex-wrap gap-1">
-                  {lid.specialisaties.map((s) => {
-                    const match = matchSpecialisatieToDienst(s, diensten);
-                    return match ? (
-                      <li>
-                        <a href={dienstHref(match)} class="rounded-full bg-white px-2 py-0.5 text-xs text-brand-primary hover:underline">{s}</a>
-                      </li>
-                    ) : (
-                      <li class="rounded-full bg-white px-2 py-0.5 text-xs">{s}</li>
-                    );
-                  })}
-                </ul>
-              )}
-              {lid.clubs.length > 0 && (
-                <p class="mt-2 text-xs text-brand-muted">
-                  {lid.clubs.map((c) =>
-                    c.url ? (
-                      <a href={c.url} class="hover:underline" target="_blank" rel="noopener">{c.naam}</a>
-                    ) : (
-                      c.naam
-                    )
-                  )}
+                <p class="mt-3 hidden line-clamp-2 text-sm text-brand-muted sm:block">
+                  {lid.specialisaties.slice(0, 4).join(" · ")}
                 </p>
               )}
             </div>
-          </article>
-        );
-      })}
+          </a>
+        </article>
+      ))}
     </div>
+
+    <p data-empty hidden class="mt-6 rounded-2xl border border-dashed border-brand-border p-6 text-center text-brand-muted">
+      Geen collega's in deze selectie.
+    </p>
   </section>
+
+  {toonKeuzehulp && (
+    <dialog
+      data-keuzehulp
+      aria-labelledby="keuzehulp-titel"
+      class="m-auto w-[min(100vw-2rem,64rem)] max-h-[min(100dvh-2rem,52rem)] rounded-2xl bg-brand-surface p-0 text-brand-text shadow-2xl backdrop:bg-brand-header/60 backdrop:backdrop-blur-sm max-sm:mb-0 max-sm:mt-auto max-sm:max-h-[92dvh] max-sm:w-screen max-sm:max-w-none max-sm:rounded-b-none"
+    >
+      <form method="dialog" class="flex max-h-[inherit] flex-col">
+        <header class="flex items-start justify-between gap-3 border-b border-brand-border px-4 py-4 sm:px-8 sm:py-5">
+          <div class="min-w-0">
+            <h2 id="keuzehulp-titel" class="text-xl font-semibold sm:text-2xl">{keuzehulp.titel}</h2>
+            <p class="mt-1 max-w-xl text-[13px] leading-snug text-brand-muted sm:text-sm">{keuzehulp.intro}</p>
+          </div>
+          <button
+            type="submit"
+            class="-mr-2 -mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-brand-muted transition hover:bg-brand-bg hover:text-brand-text"
+            aria-label="Sluiten"
+          >
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </header>
+
+        <div class="grid min-h-0 flex-1 overflow-y-auto lg:grid-cols-[1fr_22rem] lg:overflow-hidden">
+          <div class="px-4 py-4 sm:px-8 sm:py-5 lg:overflow-y-auto">
+          <div class="grid gap-5 sm:grid-cols-2">
+            {vragen.map((cat) => (
+              <fieldset class={cat === "klacht" ? "sm:col-span-2" : ""}>
+                <legend class="text-sm font-semibold">{keuzehulp.vragen[cat]}</legend>
+                <div class="mt-2 flex flex-wrap gap-1.5" role="group" data-vraag={cat}>
+                  {keuzehulp.opties[cat].map((tag) => (
+                    <button
+                      type="button"
+                      data-tag={tag.id}
+                      aria-pressed="false"
+                      class="rounded-full border border-brand-border bg-brand-bg px-3 py-1.5 text-left text-[13px] leading-tight text-brand-text transition hover:border-brand-primary hover:text-brand-primary aria-pressed:border-brand-primary aria-pressed:bg-brand-primary aria-pressed:text-white sm:py-1 sm:text-sm"
+                    >
+                      {tag.label}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            ))}
+          </div>
+
+          <div class="sticky -bottom-px -mx-4 mt-4 border-t border-brand-border bg-brand-surface/95 px-4 py-3 backdrop-blur sm:-mx-8 sm:px-8 lg:hidden" data-jump-wrap hidden>
+            <button type="button" data-jump class="w-full rounded-full bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white">
+              Toon mijn matches ↓
+            </button>
+          </div>
+          </div>
+          <section
+            class="border-t border-brand-border bg-brand-bg/60 px-4 py-5 sm:px-8 lg:overflow-y-auto lg:border-l lg:border-t-0 lg:px-6"
+            aria-live="polite"
+            data-results
+          >
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 class="text-base font-semibold" data-results-title>Jouw matches</h3>
+              <button type="button" data-reset hidden class="text-sm font-medium text-brand-primary underline decoration-brand-border underline-offset-4 hover:decoration-brand-primary">
+                Wis mijn keuzes
+              </button>
+            </div>
+            <p class="mt-1 text-sm text-brand-muted" data-keuze-status>
+              Maak hierboven één of meer keuzes — je matches verschijnen hier.
+            </p>
+            <ul class="mt-3 divide-y divide-brand-border" data-result-list></ul>
+          </section>
+        </div>
+      </form>
+    </dialog>
+  )}
 </Layout>
 
 <script define:vars={{ payload }} is:inline>
-  const buttons = document.querySelectorAll("[data-team-filters] [data-filter]");
+  // Team grid: always shows everyone; only the role/location filter narrows it.
   const cards = [...document.querySelectorAll("[data-card]")];
-  const status = document.querySelector("[data-keuze-status]");
+  const bySlug = new Map(payload.team.map((t) => [t.slug, t]));
+  const countEl = document.querySelector("[data-count]");
+  const emptyEl = document.querySelector("[data-empty]");
+  const filterBtns = [...document.querySelectorAll("[data-team-filters] [data-filter]")];
   let roleFilter = "all";
 
-  function applies(lid, key, value) {
-    if (!value) return true;
-    return (lid[key] || []).includes(value);
-  }
-
-  function matchesKeuze(lid) {
-    const klacht = document.querySelector("[data-keuze=klachten]")?.value;
-    const regioSport = document.querySelector("[data-keuze='regio-sport']")?.value;
-    const doel = document.querySelector("[data-keuze=doelgroepen]")?.value;
-    if (klacht && !applies(lid, "klachten", klacht)) return false;
-    if (doel && !applies(lid, "doelgroepen", doel)) return false;
-    if (regioSport) {
-      const [kind, val] = regioSport.split(":");
-      if (kind === "regio" && !applies(lid, "regio", val)) return false;
-      if (kind === "sport" && !applies(lid, "sporten", val)) return false;
-    }
-    return true;
-  }
-
-  function matchesRole(card) {
-    if (roleFilter === "all") return true;
-    return card.dataset[roleFilter] === "1";
-  }
-
-  function render() {
+  function renderGrid() {
     let visible = 0;
-    cards.forEach((card) => {
-      const lid = payload.find((p) => p.slug === card.dataset.slug);
-      const show = matchesRole(card) && matchesKeuze(lid);
+    for (const card of cards) {
+      const t = bySlug.get(card.dataset.slug);
+      const show = roleFilter === "all" || t[roleFilter];
       card.classList.toggle("hidden", !show);
       if (show) visible += 1;
-    });
-    if (status) status.textContent = `${visible} collega${visible === 1 ? "" : "'s"}`;
+    }
+    if (countEl) countEl.textContent = String(visible);
+    if (emptyEl) emptyEl.hidden = visible > 0;
+    filterBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.filter === roleFilter)));
   }
-
-  buttons.forEach((btn) => {
+  filterBtns.forEach((btn) =>
     btn.addEventListener("click", () => {
       roleFilter = btn.dataset.filter;
-      buttons.forEach((b) => {
-        b.classList.toggle("bg-brand-primary", b === btn);
-        b.classList.toggle("text-white", b === btn);
-        b.classList.toggle("border", b !== btn);
-      });
-      render();
-    });
-  });
+      renderGrid();
+    }),
+  );
+  renderGrid();
 
-  document.querySelectorAll("[data-keuze]").forEach((el) => el.addEventListener("change", render));
-  render();
+  // "Wie past bij mij?" — scoring recommender inside a <dialog>.
+  // One answer per question, 1 point per matching tag, ranked by score then
+  // editorial order. Nobody with 0 points is listed; if nobody matches every
+  // answer we still show the best partial matches (never an empty result).
+  const dialog = document.querySelector("[data-keuzehulp]");
+  if (dialog) {
+    const openBtns = document.querySelectorAll("[data-open-keuzehulp]");
+    const vraagGroups = [...dialog.querySelectorAll("[data-vraag]")];
+    const status = dialog.querySelector("[data-keuze-status]");
+    const list = dialog.querySelector("[data-result-list]");
+    const resetBtn = dialog.querySelector("[data-reset]");
+    const resultsTitle = dialog.querySelector("[data-results-title]");
+    const jumpWrap = dialog.querySelector("[data-jump-wrap]");
+    const jumpBtn = dialog.querySelector("[data-jump]");
+    const MAX_RESULTS = 6;
+    const selected = new Map(); // categorie -> tagId
+
+    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+    function syncUrl() {
+      const p = new URLSearchParams(location.search);
+      if (selected.size) p.set("k", [...selected.values()].join(","));
+      else p.delete("k");
+      const qs = p.toString();
+      history.replaceState(null, "", (qs ? `?${qs}` : location.pathname) + (dialog.open ? "#keuzehulp" : ""));
+    }
+
+    function renderResults() {
+      const chosen = [...selected.values()];
+      for (const group of vraagGroups) {
+        const active = selected.get(group.dataset.vraag);
+        group.querySelectorAll("[data-tag]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tag === active)));
+      }
+      resetBtn.hidden = chosen.length === 0;
+      jumpWrap.hidden = chosen.length === 0;
+
+      if (!chosen.length) {
+        resultsTitle.textContent = "Jouw matches";
+        status.textContent = "Maak hierboven één of meer keuzes — je matches verschijnen hier.";
+        list.innerHTML = "";
+        syncUrl();
+        return;
+      }
+
+      const ranked = payload.team
+        .map((t) => ({ t, matched: chosen.filter((id) => t.tags.includes(id)) }))
+        .filter((r) => r.matched.length > 0)
+        .sort((a, b) => b.matched.length - a.matched.length || a.t.order - b.t.order);
+      const full = ranked.some((r) => r.matched.length === chosen.length);
+      const shown = ranked.slice(0, MAX_RESULTS);
+
+      resultsTitle.textContent = `Jouw matches (${ranked.length})`;
+      jumpBtn.textContent = `Toon mijn matches (${ranked.length}) ↓`;
+      status.textContent = !ranked.length
+        ? "Niemand in het team is hierop getagd. Bel ons — we verwijzen je door naar de juiste persoon."
+        : full
+          ? "De sterkste matches staan bovenaan."
+          : payload.geenMatchTekst;
+
+      list.innerHTML = shown
+        .map(({ t, matched }) => {
+          const strong = matched.length === chosen.length;
+          const avatar = t.face
+            ? `<img src="${esc(t.face)}" alt="" width="56" height="56" loading="lazy" class="h-12 w-12 shrink-0 rounded-full object-cover" />`
+            : `<span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-header text-sm font-semibold text-white">${esc(t.initialen)}</span>`;
+          const tags = matched.map((id) => `<li class="rounded-full bg-brand-bg px-2 py-0.5 text-xs text-brand-primary">${esc(payload.tagLabels[id] || "")}</li>`).join("");
+          return `<li>
+            <a href="/team/${esc(t.slug)}" class="group flex items-center gap-3 py-3">
+              ${avatar}
+              <span class="min-w-0 flex-1">
+                <span class="flex flex-wrap items-center gap-x-2">
+                  <span class="font-semibold group-hover:underline">${esc(t.naam)}</span>
+                  <span class="rounded-full ${strong ? "bg-brand-primary text-white" : "bg-brand-bg text-brand-muted"} px-2 py-0.5 text-xs font-medium">${strong ? "Sterke match" : `${matched.length} van ${chosen.length}`}</span>
+                </span>
+                <span class="block text-sm text-brand-muted">${esc(t.rol)} · ${esc(t.locatie)}</span>
+                <ul class="mt-1.5 flex flex-wrap gap-1">${tags}</ul>
+              </span>
+              <svg class="h-5 w-5 shrink-0 text-brand-muted transition group-hover:text-brand-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            </a>
+          </li>`;
+        })
+        .join("");
+      syncUrl();
+    }
+
+    for (const group of vraagGroups) {
+      group.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-tag]");
+        if (!btn) return;
+        const cat = group.dataset.vraag;
+        if (selected.get(cat) === btn.dataset.tag) selected.delete(cat); // tap again = deselect
+        else selected.set(cat, btn.dataset.tag);
+        renderResults();
+      });
+    }
+    jumpBtn.addEventListener("click", () => dialog.querySelector("[data-results]").scrollIntoView({ behavior: "smooth", block: "start" }));
+    resetBtn.addEventListener("click", () => {
+      selected.clear();
+      renderResults();
+    });
+
+    function open() {
+      if (!dialog.open) dialog.showModal();
+      syncUrl();
+    }
+    openBtns.forEach((b) => b.addEventListener("click", open));
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog.close(); // backdrop click
+    });
+    dialog.addEventListener("close", syncUrl);
+
+    // Deep links: ?k=tag,tag prefills (a therapist can send a patient a link); #keuzehulp opens it.
+    const params = new URLSearchParams(location.search);
+    const initialTags = (params.get("k") || "").split(",").filter(Boolean);
+    for (const group of vraagGroups) {
+      const btn = [...group.querySelectorAll("[data-tag]")].find((b) => initialTags.includes(b.dataset.tag));
+      if (btn) selected.set(group.dataset.vraag, btn.dataset.tag);
+    }
+    renderResults();
+    if (initialTags.length || location.hash === "#keuzehulp") open();
+  }
 </script>

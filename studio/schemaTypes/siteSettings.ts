@@ -32,6 +32,34 @@ export default defineType({
       ],
     }),
     defineField({
+      name: "teamfoto",
+      title: "Groepsfoto team",
+      type: "object",
+      description:
+        "Brede foto van het hele team, getoond bovenaan de Team-pagina. Kies bij het uploaden een focuspunt (hotspot) op de gezichten, zodat de foto op smalle schermen goed wordt bijgesneden. Zonder foto gebruikt de site de groepsfoto van de oude website.",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: "afbeelding",
+          title: "Foto",
+          type: "image",
+          options: { hotspot: true },
+        }),
+        defineField({
+          name: "alt",
+          title: "Beschrijving voor schermlezers",
+          type: "string",
+          description: "Kort: wie staat erop en waar. Bv. 'Het team van Movenda in Sportcentrum Olympia'.",
+        }),
+        defineField({
+          name: "bijschrift",
+          title: "Bijschrift onder de foto (optioneel)",
+          type: "string",
+          description: "Bv. 'Team Movenda, zomer 2025'. Leeg laten = geen bijschrift.",
+        }),
+      ],
+    }),
+    defineField({
       name: "googleReviews",
       title: "Google reviews",
       type: "object",
@@ -168,6 +196,29 @@ export default defineType({
           type: "boolean",
           description: "Uit = alle logo's stilstaand naast elkaar.",
           initialValue: true,
+        }),
+      ],
+      options: { collapsible: true, collapsed: true },
+    }),
+    defineField({
+      name: "instagramFeed",
+      title: "Instagram-blok (homepage)",
+      description:
+        "De feed boven de nieuwsbrief, dezelfde Elfsight-widget als op de oude site. Uit = blok verborgen. Het widget-ID hoef je alleen te wijzigen als Elfsight een nieuwe code geeft.",
+      type: "object",
+      fields: [
+        defineField({ name: "enabled", title: "Tonen op de homepage", type: "boolean", initialValue: true }),
+        defineField({
+          name: "titel",
+          title: "Titel boven de feed",
+          type: "string",
+          initialValue: "Volg ons",
+        }),
+        defineField({
+          name: "widgetId",
+          title: "Elfsight widget-ID",
+          type: "string",
+          description: "Het ID uit de embed-code (elfsight-app-…). Leeg = standaard Movenda-feed.",
         }),
       ],
       options: { collapsible: true, collapsed: true },

@@ -11,11 +11,12 @@ const locaties = (await getLocaties()).sort((a, b) =>
   a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
 );
 const settings = await getSiteSettings();
-const { analytics } = settings;
+const { analytics, instagramFeed } = settings;
 const gaActive = analytics.enabled && !!analytics.ga4Id;
 const umamiActive = analytics.enabled && analytics.umami.enabled && !!analytics.umami.websiteId;
+const instagramActive = instagramFeed.enabled && !!instagramFeed.widgetId;
 
-const updated = "10 september 2026";
+const updated = "11 september 2026";
 
 const jsonLd = [
   breadcrumbSchema([
@@ -94,8 +95,10 @@ const jsonLd = [
 
     <h2 id="cookies" class="mt-10 scroll-mt-24 text-xl font-semibold">3. Cookies</h2>
     <p class="mt-2 text-brand-muted">
-      Deze site werkt zonder cookies tot je zelf een keuze maakt. Je keuze kan je altijd wijzigen
-      via <button type="button" data-consent-open class="font-semibold text-brand-primary hover:underline">Cookievoorkeuren</button>
+      Deze site werkt zonder cookies tot je zelf een keuze maakt. Uitzonderingen: de kaart op de
+      contactpagina (pas na je klik) en de Instagram-feed op de homepage (laadt als je naar dat
+      blok scrollt). Je cookiekeuze kan je altijd wijzigen via{" "}
+      <button type="button" data-consent-open class="font-semibold text-brand-primary hover:underline">Cookievoorkeuren</button>
       onderaan elke pagina.
     </p>
 
@@ -146,6 +149,17 @@ const jsonLd = [
             <td class="px-4 py-3">Volgens Google</td>
             <td class="px-4 py-3">Via je klik</td>
           </tr>
+          {instagramActive && (
+            <tr>
+              <td class="px-4 py-3 font-semibold text-brand-text">Elfsight / Instagram</td>
+              <td class="px-4 py-3">
+                Toont recente posts van Movenda op de homepage. Het script laadt als je naar dat
+                blok scrollt. Elfsight en Instagram kunnen dan cookies plaatsen.
+              </td>
+              <td class="px-4 py-3">Volgens Elfsight / Instagram</td>
+              <td class="px-4 py-3">Via het tonen van de feed</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
@@ -158,6 +172,7 @@ const jsonLd = [
       {gaActive && <li>Google Analytics (statistieken, enkel na toestemming)</li>}
       {umamiActive && <li>Umami (cookieloze statistieken)</li>}
       <li>Google Maps (kaart, enkel na je klik)</li>
+      {instagramActive && <li>Elfsight (Instagram-feed op de homepage)</li>}
     </ul>
 
     <h2 class="mt-10 text-xl font-semibold">5. Je rechten</h2>

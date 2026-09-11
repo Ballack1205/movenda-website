@@ -8,11 +8,12 @@ const locaties = (await getLocaties()).sort((a, b) =>
   a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
 );
 const settings = await getSiteSettings();
-const { analytics } = settings;
+const { analytics, instagramFeed } = settings;
 const gaActive = analytics.enabled && !!analytics.ga4Id;
 const umamiActive = analytics.enabled && analytics.umami.enabled && !!analytics.umami.websiteId;
+const instagramActive = instagramFeed.enabled && !!instagramFeed.widgetId;
 
-const updated = "10 September 2026";
+const updated = "11 September 2026";
 
 const jsonLd = [
   breadcrumbSchema([
@@ -91,7 +92,9 @@ const jsonLd = [
 
     <h2 id="cookies" class="mt-10 scroll-mt-24 text-xl font-semibold">3. Cookies</h2>
     <p class="mt-2 text-brand-muted">
-      This site sets no cookies until you make a choice. You can change that choice at any time via{" "}
+      This site sets no cookies until you make a choice. Exceptions: the map on the contact page
+      (only after you click) and the Instagram feed on the homepage (loads when you scroll to that
+      block). You can change your cookie choice at any time via{" "}
       <button type="button" data-consent-open class="font-semibold text-brand-primary hover:underline">Cookie preferences</button>
       at the bottom of every page.
     </p>
@@ -141,6 +144,17 @@ const jsonLd = [
             <td class="px-4 py-3">Per Google</td>
             <td class="px-4 py-3">By your click</td>
           </tr>
+          {instagramActive && (
+            <tr>
+              <td class="px-4 py-3 font-semibold text-brand-text">Elfsight / Instagram</td>
+              <td class="px-4 py-3">
+                Shows recent Movenda posts on the homepage. The script loads when you scroll to
+                that block. Elfsight and Instagram may then set cookies.
+              </td>
+              <td class="px-4 py-3">Per Elfsight / Instagram</td>
+              <td class="px-4 py-3">By showing the feed</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
@@ -153,6 +167,7 @@ const jsonLd = [
       {gaActive && <li>Google Analytics (statistics, only after consent)</li>}
       {umamiActive && <li>Umami (cookieless statistics)</li>}
       <li>Google Maps (map, only after your click)</li>
+      {instagramActive && <li>Elfsight (Instagram feed on the homepage)</li>}
     </ul>
 
     <h2 class="mt-10 text-xl font-semibold">5. Your rights</h2>

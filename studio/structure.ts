@@ -1,7 +1,7 @@
 import type { StructureResolver } from "sanity/structure";
 
-// Custom desk structure: siteSettings is a singleton (Julie should never
-// be able to create a second one or delete the only one).
+// Custom desk structure: siteSettings and keuzehulp are singletons (Julie
+// should never be able to create a second one or delete the only one).
 export const deskStructure: StructureResolver = (S) =>
   S.list()
     .title("Movenda")
@@ -12,6 +12,18 @@ export const deskStructure: StructureResolver = (S) =>
       S.documentTypeListItem("popup").title("Pop-ups"),
       S.divider(),
       S.documentTypeListItem("teamlid").title("Teamleden"),
+      S.listItem()
+        .title("Keuzehulp (Wie past bij mij?)")
+        .child(
+          S.list()
+            .title("Keuzehulp")
+            .items([
+              S.listItem()
+                .title("Teksten & vragen")
+                .child(S.document().schemaType("keuzehulp").documentId("keuzehulp")),
+              S.documentTypeListItem("keuzehulpTag").title("Keuze-opties (tags)"),
+            ]),
+        ),
       S.documentTypeListItem("locatie").title("Locaties"),
       S.documentTypeListItem("dienst").title("Diensten"),
       S.documentTypeListItem("prijsitem").title("Prijzen"),

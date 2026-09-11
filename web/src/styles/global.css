@@ -38,8 +38,16 @@
   --color-brand-text: var(--brand-text);
   --color-brand-muted: var(--brand-muted);
   --color-brand-border: var(--brand-border);
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Poppins", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Bricolage Grotesque Variable", "Instrument Sans Variable", ui-sans-serif,
+    system-ui, sans-serif;
+
+  /* Fluid display size for page heroes (Utopia-style clamp): 40px on a
+     phone → 68px on desktop, no breakpoint jumps. */
+  --text-display: clamp(2.375rem, 1.5rem + 2.8vw, 3.5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 600;
 }
 
 html {
@@ -54,4 +62,11 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
+  /* Bricolage's optical-size axis: let the browser pick the display cut. */
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }

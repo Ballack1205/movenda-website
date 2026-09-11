@@ -13,6 +13,8 @@ import partner from "./partner";
 import lesrooster from "./lesrooster";
 import getuigenis from "./getuigenis";
 import popup from "./popup";
+import keuzehulp from "./keuzehulp";
+import keuzehulpTag from "./keuzehulpTag";
 
 export const schemaTypes = [
   teamlid,
@@ -30,4 +32,6 @@ export const schemaTypes = [
   lesrooster,
   getuigenis,
   popup,
+  keuzehulp,
+  keuzehulpTag,
 ];

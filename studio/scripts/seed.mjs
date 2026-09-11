@@ -144,7 +144,7 @@ async function seedDiensten() {
 
 async function seedSiteSettings() {
   const settings = readJson("site-settings.json");
-  const { googleReviews, prijzenInfo, slogans, nieuwsbrief, partnerband, homePijlers, ...rest } =
+  const { googleReviews, prijzenInfo, slogans, nieuwsbrief, instagramFeed, partnerband, homePijlers, ...rest } =
     settings;
   await client.createOrReplace({
     _id: "siteSettings",
@@ -179,6 +179,7 @@ async function seedSiteSettings() {
     },
     slogans,
     nieuwsbrief,
+    instagramFeed,
     partnerband,
     homePijlers,
   });

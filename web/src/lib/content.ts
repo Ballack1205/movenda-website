@@ -35,12 +35,31 @@ export interface Teamlid {
   tariefPtMpc?: number;
   tariefPerformance?: number;
   clubs: Club[];
-  klachten: string[];
-  regio: string[];
-  sporten: string[];
-  doelgroepen: string[];
+  /** Keuzehulp ("Wie past bij mij?") tags this person matches on. */
+  keuzehulpTags: KeuzehulpTag[];
   /** Sanity _updatedAt (ISO) — sitemap lastmod. */
   updatedAt?: string;
+}
+
+export type KeuzehulpCategorie = "klacht" | "regio" | "sport" | "doelgroep";
+export const KEUZEHULP_CATEGORIEEN: KeuzehulpCategorie[] = ["klacht", "regio", "sport", "doelgroep"];
+
+export interface KeuzehulpTag {
+  id: string;
+  label: string;
+  categorie: KeuzehulpCategorie;
+  volgorde?: number;
+  actief: boolean;
+}
+
+export interface Keuzehulp {
+  actief: boolean;
+  titel: string;
+  intro: string;
+  vragen: Record<KeuzehulpCategorie, string>;
+  geenMatchTekst: string;
+  /** Active tags, grouped per question, in display order. */
+  opties: Record<KeuzehulpCategorie, KeuzehulpTag[]>;
 }
 
 export interface Openingsuur {
@@ -164,6 +183,16 @@ export interface HomePijler {
 export type HomePijlerKey = "kine" | "training" | "mpc";
 export type HomePijlers = Record<HomePijlerKey, HomePijler>;
 
+/** Wide group photo of the whole team (Site-instellingen → Groepsfoto team). `url` is a
+ * Sanity CDN URL when Julie uploaded one; undefined means "use the local fallback asset". */
+export interface Teamfoto {
+  url?: string;
+  alt: string;
+  bijschrift?: string;
+  /** Sanity hotspot (0–1), used as the crop focal point on narrow screens. */
+  hotspot?: { x: number; y: number };
+}
+
 export interface SiteSettings {
   siteNaam: string;
   tagline: string;
@@ -171,6 +200,7 @@ export interface SiteSettings {
   telefoonMpc: string;
   email: string;
   booking: { enabled: boolean; url: string; label: string };
+  teamfoto: Teamfoto;
   googleReviews: Record<LocatieSlug, GoogleReviews>;
   analytics: AnalyticsSettings;
   socials: { instagram: string; facebook: string; linkedin: string };
@@ -188,9 +218,17 @@ export interface SiteSettings {
     tekst?: string;
     socialProof?: string;
   };
+  instagramFeed: {
+    enabled: boolean;
+    titel?: string;
+    widgetId: string;
+  };
   partnerband: PartnerbandSettings;
   homePijlers: HomePijlers;
 }
+
+/** Existing Elfsight Instagram Feed on movenda.be ("Untitled Instagram Feed 2"). */
+export const DEFAULT_INSTAGRAM_WIDGET_ID = "7108de0f-f7f4-4dfd-990f-443ab8e68566";
 
 export interface Faq {
   vraag: string;
@@ -358,7 +396,8 @@ const teamlidProjection = `{
   volgorde, actief,
   "foto": foto.asset->url,
   tariefKine, tariefPt, tariefPtMpc, tariefPerformance,
-  clubs, klachten, regio, sporten, doelgroepen,
+  clubs,
+  "keuzehulpTags": keuzehulpTags[]->{ "id": _id, label, categorie, volgorde, actief },
   "updatedAt": _updatedAt
 }`;
 
@@ -404,14 +443,48 @@ export async function getTeamledenByLocatie(locatie: LocatieSlug): Promise<Teaml
   return team.filter((t) => t.locaties.includes(locatie));
 }
 
+const KEUZEHULP_DEFAULT_VRAGEN: Record<KeuzehulpCategorie, string> = {
+  klacht: "Waarmee kunnen we je helpen?",
+  regio: "Waar zit de klacht?",
+  sport: "Welke sport beoefen je?",
+  doelgroep: "Wat past bij jou?",
+};
+
+/** Copy + answer options for "Wie past bij mij?" on /team. Options are the
+ * active keuzehulpTag documents; which therapist matches which option comes
+ * from Teamlid.keuzehulpTags. Scoring/layout live in the page. */
+export async function getKeuzehulp(): Promise<Keuzehulp> {
+  const [doc, tags] = await Promise.all([
+    sanity.fetch(`*[_id == "keuzehulp"][0]{ actief, titel, intro, vragen, geenMatchTekst }`),
+    sanity.fetch(
+      `*[_type == "keuzehulpTag" && actief != false] | order(categorie asc, coalesce(volgorde, 9999) asc, label asc){ "id": _id, label, categorie, volgorde, actief }`,
+    ) as Promise<KeuzehulpTag[]>,
+  ]);
+  const opties = { klacht: [], regio: [], sport: [], doelgroep: [] } as Record<KeuzehulpCategorie, KeuzehulpTag[]>;
+  for (const tag of tags || []) {
+    if (tag.categorie in opties) opties[tag.categorie].push({ ...tag, actief: true });
+  }
+  return {
+    actief: doc?.actief !== false,
+    titel: doc?.titel || "Wie past bij mij?",
+    intro:
+      doc?.intro ||
+      "Kies wat op jou van toepassing is — één keuze per vraag is genoeg. Dit is een hulpmiddel, geen medisch advies.",
+    vragen: { ...KEUZEHULP_DEFAULT_VRAGEN, ...(doc?.vragen || {}) },
+    geenMatchTekst:
+      doc?.geenMatchTekst ||
+      "Geen exacte match, maar dit zijn de collega's die het dichtst bij je vraag zitten. Twijfel je? Bel ons.",
+    opties,
+  };
+}
+
 function normalizeTeamlid(row: Teamlid): Teamlid {
   return {
     ...row,
     clubs: row.clubs || [],
-    klachten: row.klachten || [],
-    regio: row.regio || [],
-    sporten: row.sporten || [],
-    doelgroepen: row.doelgroepen || [],
+    keuzehulpTags: (row.keuzehulpTags || [])
+      .filter((t): t is KeuzehulpTag => Boolean(t && t.id && t.label && t.categorie))
+      .map((t) => ({ ...t, actief: t.actief !== false })),
     specialisaties: row.specialisaties || [],
     locaties: row.locaties || [],
   };
@@ -480,7 +553,8 @@ function normalizeDienst(row: Dienst): Dienst {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
-    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, partnerband, homePijlers }`,
+    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, partnerband, homePijlers,
+      teamfoto{ "url": afbeelding.asset->url, alt, bijschrift, "hotspot": afbeelding.hotspot{ x, y } } }`,
   );
   const olympia = await getLocatieBySlug("olympia");
   const mpc = await getLocatieBySlug("mpc");
@@ -491,6 +565,19 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     telefoonMpc: mpc?.telefoon || "",
     email: settings?.email || "info@movenda.be",
     booking: settings?.booking || { enabled: false, url: "", label: "Maak een afspraak" },
+    // Own upload wins entirely (incl. an empty caption). Without an upload the
+    // seed texts + the local fallback photo (assets/marketing/team.jpg) are used.
+    teamfoto: settings?.teamfoto?.url
+      ? {
+          url: settings.teamfoto.url,
+          alt: settings.teamfoto.alt || seedSettings.teamfoto.alt,
+          bijschrift: settings.teamfoto.bijschrift || undefined,
+          hotspot: settings.teamfoto.hotspot || undefined,
+        }
+      : {
+          alt: settings?.teamfoto?.alt || seedSettings.teamfoto.alt,
+          bijschrift: settings?.teamfoto?.bijschrift || seedSettings.teamfoto.bijschrift,
+        },
     googleReviews: settings?.googleReviews || {
       olympia: { rating: 0, count: "", reviewUrl: "", writeReviewUrl: "" },
       mpc: { rating: 0, count: "", reviewUrl: "", writeReviewUrl: "" },
@@ -505,6 +592,14 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     prijzenInfo: settings?.prijzenInfo || {},
     slogans: settings?.slogans || {},
     nieuwsbrief: settings?.nieuwsbrief || { enabled: false },
+    instagramFeed: {
+      enabled: settings?.instagramFeed?.enabled !== false,
+      titel: settings?.instagramFeed?.titel || seedSettings.instagramFeed?.titel || "Volg ons",
+      widgetId:
+        settings?.instagramFeed?.widgetId ||
+        seedSettings.instagramFeed?.widgetId ||
+        DEFAULT_INSTAGRAM_WIDGET_ID,
+    },
     partnerband: {
       titel: settings?.partnerband?.titel || "Onze partners",
       titelMpc: settings?.partnerband?.titelMpc || "Corporate partners",

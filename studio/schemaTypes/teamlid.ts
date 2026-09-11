@@ -98,10 +98,21 @@ export default defineType({
         },
       ],
     }),
-    defineField({ name: "klachten", title: "Keuzehulp — klachten", type: "array", of: [{ type: "string" }] }),
-    defineField({ name: "regio", title: "Keuzehulp — lichaamsregio", type: "array", of: [{ type: "string" }] }),
-    defineField({ name: "sporten", title: "Keuzehulp — sporten", type: "array", of: [{ type: "string" }] }),
-    defineField({ name: "doelgroepen", title: "Keuzehulp — doelgroepen", type: "array", of: [{ type: "string" }] }),
+    defineField({
+      name: "keuzehulpTags",
+      title: "Keuzehulp — waarvoor kom je bij dit teamlid?",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "keuzehulpTag" }] }],
+      description:
+        "Kies de klachten, lichaamsregio's, sporten en doelgroepen waarvoor dit teamlid de juiste persoon is. Bezoekers filteren hierop in 'Wie past bij mij?' op de teampagina. Ontbreekt een optie? Maak ze aan onder Keuzehulp-tags.",
+    }),
+    // Old free-text keuzehulp fields — replaced by keuzehulpTags (references,
+    // controlled vocabulary). Hidden but kept so no data is lost; the
+    // migration script (scripts/migrate-keuzehulp.mjs) mapped them over.
+    defineField({ name: "klachten", title: "Keuzehulp — klachten (oud)", type: "array", of: [{ type: "string" }], hidden: true }),
+    defineField({ name: "regio", title: "Keuzehulp — lichaamsregio (oud)", type: "array", of: [{ type: "string" }], hidden: true }),
+    defineField({ name: "sporten", title: "Keuzehulp — sporten (oud)", type: "array", of: [{ type: "string" }], hidden: true }),
+    defineField({ name: "doelgroepen", title: "Keuzehulp — doelgroepen (oud)", type: "array", of: [{ type: "string" }], hidden: true }),
     defineField({
       name: "volgorde",
       title: "Volgorde",

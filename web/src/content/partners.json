@@ -10,8 +10,8 @@
   { "slug": "mymindworks", "naam": "MyMindWorks", "url": "https://mymindworks.be/home", "type": "club", "tonenOp": "movenda", "volgorde": 9 },
   { "slug": "stvv", "naam": "STVV", "url": "https://stvv.com/nl", "type": "club", "tonenOp": "movenda", "volgorde": 10 },
   { "slug": "krc-genk", "naam": "KRC Genk", "url": "https://www.krcgenk.be/nl", "type": "club", "tonenOp": "movenda", "volgorde": 11 },
-  { "slug": "tenkie", "naam": "Tennisclub Tenkie", "type": "club", "tonenOp": "movenda", "volgorde": 12 },
-  { "slug": "vkm-godsheide", "naam": "VKM Godsheide", "type": "club", "tonenOp": "movenda", "volgorde": 13 },
+  { "slug": "tenkie", "naam": "Tennisclub Tenkie", "url": "https://tenkie.be", "type": "club", "tonenOp": "movenda", "volgorde": 12 },
+  { "slug": "vkm-godsheide", "naam": "VKM Godsheide", "url": "https://www.facebook.com/vkmgodsheide", "type": "club", "tonenOp": "movenda", "volgorde": 13 },
   { "slug": "uhasselt", "naam": "UHasselt — stage kinesitherapie", "url": "https://www.uhasselt.be", "type": "onderwijs", "tonenOp": "movenda", "volgorde": 14 },
   { "slug": "drieskens-dubois", "naam": "Drieskens & Dubois Architecten", "url": "https://drieskensendubois.be/nl/", "type": "corporate", "tonenOp": "mpc", "volgorde": 15 },
   { "slug": "royal-crown", "naam": "Royal Crown", "url": "https://royalcrown.be", "type": "corporate", "tonenOp": "mpc", "volgorde": 16 }

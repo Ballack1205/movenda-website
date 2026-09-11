@@ -1,10 +1,12 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import { getTeamleden } from "../../../lib/content";
+import { getTeamleden, getSiteSettings } from "../../../lib/content";
+import TeamGroupPhoto from "../../../components/TeamGroupPhoto.astro";
 import { teamPhotoSrc } from "../../../lib/images";
 import { breadcrumbNode, teamListNode } from "../../../lib/schema";
 
 const team = await getTeamleden();
+const settings = await getSiteSettings();
 
 const jsonLd = [
   teamListNode(team, "/en/team", "en"),
@@ -34,6 +36,8 @@ const jsonLd = [
       Bios below are shown in Dutch where an English translation isn't available yet — job
       titles are translated.
     </p>
+
+    <TeamGroupPhoto foto={settings.teamfoto} class="mt-8" />
 
     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {team.map((lid) => (

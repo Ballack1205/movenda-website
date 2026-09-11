@@ -1,0 +1,61 @@
+---
+// Wide group photo of the whole team. Content comes from Site-instellingen →
+// Groepsfoto team (Julie uploads/swaps it there). Until she does, the group
+// photo from the old movenda.be is used from assets/marketing/team.jpg.
+//
+// Crop: the photo is 3:2 and shown uncropped below lg. On wide screens we
+// show a ~15:7 strip; the focal point (Sanity hotspot, or 53% from the top
+// for the fallback) keeps the heads and the person lying in front in frame.
+import { Image } from "astro:assets";
+import type { Teamfoto } from "../lib/content";
+import teamFallback from "../assets/marketing/team.jpg";
+
+export interface Props {
+  foto: Teamfoto;
+  class?: string;
+}
+
+const { foto, class: className = "" } = Astro.props;
+
+const fpX = foto.hotspot?.x ?? 0.5;
+const fpY = foto.hotspot?.y ?? 0.53;
+const objectPosition = `${Math.round(fpX * 100)}% ${Math.round(fpY * 100)}%`;
+
+// Sanity CDN: request a few widths, cropped to the wide strip with the
+// hotspot as focal point (1x/2x of the 1152px content width).
+const sanitySrc = (w: number, h: number) =>
+  `${foto.url}?w=${w}&h=${h}&fit=crop&crop=focalpoint&fp-x=${fpX}&fp-y=${fpY}&auto=format`;
+const imgClass = "h-full w-full object-cover";
+---
+
+<figure class={className}>
+  <div class="aspect-[3/2] w-full overflow-hidden bg-brand-header lg:aspect-[15/7]">
+    {foto.url ? (
+      <img
+        src={sanitySrc(1600, 747)}
+        srcset={`${sanitySrc(800, 373)} 800w, ${sanitySrc(1200, 560)} 1200w, ${sanitySrc(1600, 747)} 1600w, ${sanitySrc(2400, 1120)} 2400w`}
+        sizes="(min-width: 1280px) 1152px, 100vw"
+        width={1600}
+        height={747}
+        alt={foto.alt}
+        loading="eager"
+        decoding="async"
+        class={imgClass}
+        style={`object-position: ${objectPosition}`}
+      />
+    ) : (
+      <Image
+        src={teamFallback}
+        alt={foto.alt}
+        widths={[800, 1200, 1600, 1920]}
+        sizes="(min-width: 1280px) 1152px, 100vw"
+        class={imgClass}
+        style={`object-position: ${objectPosition}`}
+        priority
+      />
+    )}
+  </div>
+  {foto.bijschrift && (
+    <figcaption class="mt-2 text-sm text-brand-muted">{foto.bijschrift}</figcaption>
+  )}
+</figure>

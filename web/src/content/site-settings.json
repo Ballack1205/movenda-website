@@ -9,10 +9,14 @@
     "url": "",
     "label": "Maak een afspraak"
   },
+  "teamfoto": {
+    "alt": "Het team van Movenda, samen in de praktijk",
+    "bijschrift": "Team Movenda Hasselt"
+  },
   "googleReviews": {
     "olympia": {
       "rating": 5.0,
-      "count": "30+",
+      "count": "35+",
       "reviewUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Kuringersteenweg+242+Hasselt",
       "writeReviewUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Kuringersteenweg+242+Hasselt",
       "note": "TODO: vervang door het exacte Google Business Profile-linkje (incl. place_id) van Julie zodra beschikbaar."
@@ -141,6 +145,11 @@
     "titelMpc": "Corporate partners",
     "snelheid": "normaal",
     "animatie": true
+  },
+  "instagramFeed": {
+    "enabled": true,
+    "titel": "Volg ons",
+    "widgetId": "7108de0f-f7f4-4dfd-990f-443ab8e68566"
   },
   "nieuwsbrief": {
     "enabled": true,
