@@ -71,7 +71,7 @@ const existing = await client.getDocument("popup-social-run-2026-09-12").catch((
 await client.createOrReplace({
   _id: "popup-social-run-2026-09-12",
   _type: "popup",
-  actief: true,
+  actief: false,
   titel: "Together we Move - Let's run!",
   inhoud,
   knopTekst: "Schrijf je in!",
@@ -97,4 +97,4 @@ await client.createOrReplace({
   ...(existing?.afbeelding ? { afbeelding: existing.afbeelding } : {}),
 });
 
-console.log("Seeded Social Run pop-up. Open https://movenda.sanity.studio → Pop-ups to edit or turn off.");
+console.log("Seeded Social Run pop-up (actief=false). Open https://movenda.sanity.studio → Pop-ups to turn on.");

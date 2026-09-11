@@ -11,7 +11,8 @@ export default defineType({
       name: "actief",
       title: "Actief (tonen op de website)",
       type: "boolean",
-      description: "Zet uit na het event, of vul een einddatum in hieronder.",
+      description:
+        "Hoofdschakelaar. Uit = pop-up blijft in het CMS maar is nergens zichtbaar, ook niet binnen de datums hieronder.",
       initialValue: false,
     }),
     defineField({
@@ -142,12 +143,14 @@ export default defineType({
       name: "geldigVan",
       title: "Tonen vanaf (optioneel)",
       type: "datetime",
+      description: "Leeg = meteen, zolang Actief aan staat.",
     }),
     defineField({
       name: "geldigTot",
       title: "Tonen tot (optioneel)",
       type: "datetime",
-      description: "Daarna verdwijnt de pop-up vanzelf, ook zonder opnieuw te publiceren.",
+      description:
+        "Automatisch: na dit moment verdwijnt de pop-up vanzelf, ook zonder opnieuw te publiceren. Actief mag aan blijven staan.",
     }),
     defineField({
       name: "eenKeerPerBezoeker",

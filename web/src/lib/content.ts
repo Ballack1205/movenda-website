@@ -856,6 +856,12 @@ function popupMatchesPath(toonOp: PopupTonenOp, path: string): boolean {
   return true;
 }
 
+function popupIsInWindow(popup: Pick<Popup, "geldigVan" | "geldigTot">, now = Date.now()): boolean {
+  if (popup.geldigVan && now < Date.parse(popup.geldigVan)) return false;
+  if (popup.geldigTot && now > Date.parse(popup.geldigTot)) return false;
+  return true;
+}
+
 export async function getActivePopup(path: string): Promise<Popup | undefined> {
   const rows: Popup[] = await sanity.fetch(
     `*[_type == "popup" && actief == true] | order(_updatedAt desc) {
@@ -882,7 +888,7 @@ export async function getActivePopup(path: string): Promise<Popup | undefined> {
       toonOp: row.toonOp || "overal",
       eenKeerPerBezoeker: row.eenKeerPerBezoeker !== false,
     }))
-    .find((popup) => popupMatchesPath(popup.toonOp, path));
+    .find((popup) => popupMatchesPath(popup.toonOp, path) && popupIsInWindow(popup));
 }
 
 export function matchSpecialisatieToDienst(tag: string, diensten: Dienst[]): Dienst | undefined {
