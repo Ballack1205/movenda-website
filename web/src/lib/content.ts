@@ -4,7 +4,13 @@
 
 import { sanity } from "./sanity";
 import seedSettings from "../content/site-settings.json";
+import seedFaqs from "../content/faqs.json";
+import seedTeam from "../content/team.json";
+import seedGetuigenissen from "../content/getuigenissen.json";
+import seedBlog from "../content/blog.json";
+import seedSportaanbod from "../content/sportaanbod.json";
 import { resolveBlogMedia } from "./blog";
+import type { Lang } from "./i18n";
 
 export type LocatieSlug = "olympia" | "mpc";
 export type DienstCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep";
@@ -288,6 +294,7 @@ export interface LesroosterItem {
 export interface Getuigenis {
   slug: string;
   tekst: string;
+  tekstEn?: string;
   naam: string;
   rol?: string;
   locatie?: LocatieSlug | "beide";
@@ -301,6 +308,7 @@ export interface BlogPost {
   titel: string;
   titelEn?: string;
   excerpt?: string;
+  excerptEn?: string;
   cover?: string;
   /** Extra practice photos shown in the article when Sanity has no inline images yet. */
   photos?: string[];
@@ -328,7 +336,9 @@ export interface Vacature {
 
 export interface SportaanbodItem {
   naam: string;
+  naamEn?: string;
   tekst?: string;
+  tekstEn?: string;
   link?: string;
   volgorde: number;
 }
@@ -375,16 +385,29 @@ export function dienstHref(dienst: Pick<Dienst, "slug" | "categorie">, lang: "nl
   return `${prefix}/mpc/${dienst.slug}`;
 }
 
-export function formatPrijs(item: {
-  bedrag: number;
-  eenheid?: string;
-  vanaf: boolean;
-  opAanvraag: boolean;
-}): string {
-  if (item.opAanvraag) return "Op aanvraag";
-  const prefix = item.vanaf ? "Vanaf " : "";
-  const eenheid = item.eenheid ? ` / ${item.eenheid}` : "";
+export function formatPrijs(
+  item: {
+    bedrag: number;
+    eenheid?: string;
+    vanaf: boolean;
+    opAanvraag: boolean;
+  },
+  lang: Lang = "nl",
+): string {
+  if (item.opAanvraag) return lang === "en" ? "On request" : "Op aanvraag";
+  const prefix = item.vanaf ? (lang === "en" ? "From " : "Vanaf ") : "";
+  const unit =
+    lang === "en" && item.eenheid
+      ? item.eenheid.replace(/\blessen\b/gi, "classes")
+      : item.eenheid;
+  const eenheid = unit ? ` / ${unit}` : "";
   return `${prefix}€${item.bedrag}${eenheid}`;
+}
+
+/** Card intro: English pages prefer the opening of bodyEn, then the Dutch intro. */
+export function dienstIntro(dienst: Pick<Dienst, "intro" | "bodyEn" | "body">, lang: Lang = "nl"): string {
+  if (lang === "en" && dienst.bodyEn) return truncateAtSentence(dienst.bodyEn, 180);
+  return dienst.intro;
 }
 
 export function formatEuro(bedrag?: number): string | undefined {
@@ -481,9 +504,15 @@ export async function getKeuzehulp(): Promise<Keuzehulp> {
   };
 }
 
+const seedTeamBySlug = new Map(
+  (seedTeam as { slug: string; bioEn?: string }[]).map((lid) => [lid.slug, lid]),
+);
+
 function normalizeTeamlid(row: Teamlid): Teamlid {
+  const fromSeed = seedTeamBySlug.get(row.slug);
   return {
     ...row,
+    bioEn: row.bioEn || fromSeed?.bioEn,
     clubs: row.clubs || [],
     keuzehulpTags: (row.keuzehulpTags || [])
       .filter((t): t is KeuzehulpTag => Boolean(t && t.id && t.label && t.categorie))
@@ -677,8 +706,20 @@ export async function getFaqs(site?: Exclude<FaqSite, "beide">): Promise<Faq[]> 
   const rows: Faq[] = await sanity.fetch(
     `*[_type == "faq"] | order(volgorde asc) { vraag, vraagEn, antwoord, antwoordEn, categorie, site, volgorde }`,
   );
-  if (!site) return rows || [];
-  return (rows || []).filter((faq) => !faq.site || faq.site === site || faq.site === "beide");
+  const seed = seedFaqs as Faq[];
+  const byVolgorde = new Map(seed.map((f) => [`${f.site || "movenda"}-${f.volgorde}`, f]));
+  const byVraag = new Map(seed.map((f) => [f.vraag, f]));
+  const merged = (rows || []).map((faq) => {
+    const fromSeed =
+      byVolgorde.get(`${faq.site || "movenda"}-${faq.volgorde}`) || byVraag.get(faq.vraag);
+    return {
+      ...faq,
+      vraagEn: faq.vraagEn || fromSeed?.vraagEn,
+      antwoordEn: faq.antwoordEn || fromSeed?.antwoordEn,
+    };
+  });
+  if (!site) return merged;
+  return merged.filter((faq) => !faq.site || faq.site === site || faq.site === "beide");
 }
 
 export async function getPrijzen(): Promise<Prijsitem[]> {
@@ -736,15 +777,15 @@ export function truncateAtSentence(text: string | undefined, max = 155): string 
 }
 
 /**
- * English <title> for an MPC dienst page. Julie's seoTitleEn wins; otherwise
- * "<Title EN> in Hasselt | Movenda Performance Centre" ("in" keeps it distinct
- * from the Dutch "<Titel> Hasselt | …" for language-neutral names like Boxing),
- * dropping the city when that would push the title past 60 characters.
+ * English <title> for a dienst page. Julie's seoTitleEn wins; otherwise
+ * "<Title EN> in Hasselt | {brand}". "in" keeps it distinct from the Dutch
+ * "<Titel> Hasselt | …" for language-neutral names like Boxing. City is
+ * dropped when that would push the title past 60 characters.
  */
 export function dienstSeoTitleEn(dienst: Dienst): string {
   if (dienst.seoTitleEn) return dienst.seoTitleEn;
   const korte = dienstKorteTitel(dienst, "en");
-  const brand = "Movenda Performance Centre";
+  const brand = isMpcCategorie(dienst.categorie) ? "Movenda Performance Centre" : "Movenda";
   const withCity = `${korte} in Hasselt | ${brand}`;
   return withCity.length <= 60 ? withCity : `${korte} | ${brand}`;
 }
@@ -752,7 +793,10 @@ export function dienstSeoTitleEn(dienst: Dienst): string {
 export function dienstSeoDescriptionEn(dienst: Dienst): string {
   if (dienst.seoDescriptionEn) return dienst.seoDescriptionEn;
   if (dienst.bodyEn) return truncateAtSentence(dienst.bodyEn, 155);
-  return `${dienstKorteTitel(dienst, "en")} at the Movenda Performance Centre in Kuringen (Hasselt): data-driven, one-on-one coaching for recreational and professional athletes.`;
+  if (isMpcCategorie(dienst.categorie)) {
+    return `${dienstKorteTitel(dienst, "en")} at the Movenda Performance Centre in Kuringen (Hasselt): data-driven, one-on-one coaching for recreational and professional athletes.`;
+  }
+  return truncateAtSentence(dienst.body || dienst.intro, 155);
 }
 
 /** "Kinesitherapeut & kinesitherapeut KRC Genk" → "Kinesitherapeut" (for <title>s that must stay short). */
@@ -792,16 +836,33 @@ export async function getLesrooster(): Promise<LesroosterItem[]> {
   );
 }
 
-export async function getGetuigenissen(locatie?: LocatieSlug): Promise<Getuigenis[]> {
+const seedGetuigenisBySlug = new Map(
+  (seedGetuigenissen as { slug: string; tekstEn?: string }[]).map((g) => [g.slug, g]),
+);
+
+function isPlaceholderGetuigenis(item: Getuigenis): boolean {
+  return (
+    item.slug.startsWith("placeholder-") ||
+    /getuigenis volgt nog/i.test(item.tekst) ||
+    /this testimonial will follow/i.test(item.tekstEn || "")
+  );
+}
+
+export async function getGetuigenissen(locatie?: LocatieSlug, lang: Lang = "nl"): Promise<Getuigenis[]> {
   const rows: Getuigenis[] = await sanity.fetch(
     `*[_type == "getuigenis" && actief != false] | order(volgorde asc) {
       "slug": coalesce(slug.current, _id),
-      tekst, naam, rol, locatie, volgorde,
+      tekst, tekstEn, naam, rol, locatie, volgorde,
       "foto": foto.asset->url,
       "actief": actief != false
     }`,
   );
-  const items = rows || [];
+  const items = (rows || [])
+    .map((item) => ({
+      ...item,
+      tekstEn: item.tekstEn || seedGetuigenisBySlug.get(item.slug)?.tekstEn,
+    }))
+    .filter((item) => lang !== "en" || !isPlaceholderGetuigenis(item));
   if (!locatie) return items;
   return items.filter((g) => !g.locatie || g.locatie === "beide" || g.locatie === locatie);
 }
@@ -817,7 +878,7 @@ const blogImageBlock = `{
 
 const blogPostProjection = `{
   "slug": slug.current,
-  titel, titelEn, excerpt,
+  titel, titelEn, excerpt, excerptEn,
   "cover": cover.asset->url,
   coverFit,
   body[] ${blogImageBlock},
@@ -828,8 +889,54 @@ const blogPostProjection = `{
   "updatedAt": _updatedAt
 }`;
 
+type SeedBlogBlock = { type: "p" | "h3"; text: string } | { type: "ul"; items: string[] };
+
+const seedBlogBySlug = new Map(
+  (seedBlog as { slug: string; titelEn?: string; excerptEn?: string; bodyEn?: SeedBlogBlock[] }[]).map(
+    (post) => [post.slug, post],
+  ),
+);
+
+function isEmptyPortable(blocks?: unknown[]): boolean {
+  return !blocks || blocks.length === 0;
+}
+
+function seedToPortableText(sections?: SeedBlogBlock[]): unknown[] | undefined {
+  if (!sections?.length) return undefined;
+  return sections.flatMap((section, i) => {
+    if (section.type === "ul") {
+      return section.items.map((item, j) => ({
+        _type: "block",
+        _key: `seed-l${i}-${j}`,
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        markDefs: [],
+        children: [{ _type: "span", _key: `seed-l${i}-${j}-s`, text: item, marks: [] }],
+      }));
+    }
+    return [
+      {
+        _type: "block",
+        _key: `seed-b${i}`,
+        style: section.type === "h3" ? "h3" : "normal",
+        markDefs: [],
+        children: [{ _type: "span", _key: `seed-b${i}-s`, text: section.text, marks: [] }],
+      },
+    ];
+  });
+}
+
 function normalizeBlogPost(row: BlogPost): BlogPost {
-  return { ...row, ...resolveBlogMedia(row.slug, row) };
+  const fromSeed = seedBlogBySlug.get(row.slug);
+  const bodyEn = isEmptyPortable(row.bodyEn) ? seedToPortableText(fromSeed?.bodyEn) : row.bodyEn;
+  return {
+    ...row,
+    titelEn: row.titelEn || fromSeed?.titelEn,
+    excerptEn: row.excerptEn || fromSeed?.excerptEn,
+    bodyEn,
+    ...resolveBlogMedia(row.slug, row),
+  };
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
@@ -863,8 +970,22 @@ export async function getVacatures(): Promise<Vacature[]> {
   );
 }
 
+const seedSportaanbodByNaam = new Map(
+  (seedSportaanbod as { naam: string; naamEn?: string; tekstEn?: string }[]).map((item) => [item.naam, item]),
+);
+
 export async function getSportaanbod(): Promise<SportaanbodItem[]> {
-  return sanity.fetch(`*[_type == "sportaanbodItem"] | order(volgorde asc) { naam, tekst, link, volgorde }`);
+  const rows: SportaanbodItem[] = await sanity.fetch(
+    `*[_type == "sportaanbodItem"] | order(volgorde asc) { naam, naamEn, tekst, tekstEn, link, volgorde }`,
+  );
+  return (rows || []).map((item) => {
+    const fromSeed = seedSportaanbodByNaam.get(item.naam);
+    return {
+      ...item,
+      naamEn: item.naamEn || fromSeed?.naamEn,
+      tekstEn: item.tekstEn || fromSeed?.tekstEn,
+    };
+  });
 }
 
 function popupMatchesPath(toonOp: PopupTonenOp, path: string): boolean {

@@ -2,25 +2,29 @@
 import type { BlogPost } from "../lib/content";
 import { blogPhotoSrc } from "../lib/images";
 import { blogTagLabel, formatBlogDate } from "../lib/blog";
+import { withLang, type Lang } from "../lib/i18n";
 
 interface Props {
   post: BlogPost;
+  lang?: Lang;
 }
 
-const { post } = Astro.props;
+const { post, lang = "nl" } = Astro.props;
 const contain = post.coverFit === "contain";
 const tag = post.tags?.[0];
+const titel = lang === "en" ? post.titelEn || post.titel : post.titel;
+const excerpt = lang === "en" ? post.excerptEn || post.excerpt : post.excerpt;
 ---
 
 <a
-  href={`/blog/${post.slug}`}
+  href={withLang(`/blog/${post.slug}`, lang)}
   class="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary"
 >
   {post.cover && (
     <div class:list={["overflow-hidden", contain ? "bg-white" : "bg-brand-header/10"]}>
       <img
         src={blogPhotoSrc(post.cover, "card")}
-        alt={post.titel}
+        alt={titel}
         width="900"
         height="560"
         loading="lazy"
@@ -34,11 +38,13 @@ const tag = post.tags?.[0];
   )}
   <div class="flex flex-1 flex-col p-5">
     <p class="text-xs font-semibold uppercase tracking-wide text-brand-muted">
-      {tag ? `${blogTagLabel(tag)} · ` : ""}
-      {formatBlogDate(post.publicatiedatum)}
+      {tag ? `${blogTagLabel(tag, lang)} · ` : ""}
+      {formatBlogDate(post.publicatiedatum, lang)}
     </p>
-    <h2 class="mt-2 text-pretty text-lg font-semibold">{post.titel}</h2>
-    {post.excerpt && <p class="mt-2 line-clamp-3 text-sm text-brand-muted">{post.excerpt}</p>}
-    <span class="mt-4 inline-block text-sm font-semibold text-brand-primary">Meer lezen →</span>
+    <h2 class="mt-2 text-pretty text-lg font-semibold">{titel}</h2>
+    {excerpt && <p class="mt-2 line-clamp-3 text-sm text-brand-muted">{excerpt}</p>}
+    <span class="mt-4 inline-block text-sm font-semibold text-brand-primary">
+      {lang === "en" ? "Read more →" : "Meer lezen →"}
+    </span>
   </div>
 </a>

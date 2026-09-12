@@ -7,7 +7,7 @@ Answers to `HANDOFF.md` §8, confirmed by the founder on 2026-09-10. This file i
 | # | Question | Decision |
 |---|---|---|
 | 1 | One site or two domains? | **One site** on `movenda.be`. MPC becomes a section (`/mpc`) with its own dark sub-brand, not a separate domain. `mpc.movenda.be` will 301 to `/mpc/*` after go-live. |
-| 2 | Language | **Dutch default** at `/`, **English** at `/en/` with `hreflang`. MPC content (currently English-only) gets translated to Dutch as the primary version. A Studio action ("Vertaal naar Engels") assists Julie in generating the `/en/` copy; missing English fields fall back to Dutch rather than 404. |
+| 2 | Language | **Dutch default** at `/`, **English** at `/en/` with `hreflang`. Every public NL page has an English counterpart (same path under `/en/`). Missing English CMS fields still fall back to Dutch rather than 404. |
 | 3 | CMS editor | **Sanity**, confirmed by founder. Hosted Studio, Dutch UI. Fallback if Julie rejects it after the demo: one cleaned-up Squarespace site. |
 | 4 | Booking | **Phone + contact form** for now (`info@movenda.be`). A booking button is *built and wired but shipped OFF by default* (`siteSettings.booking.enabled = false`). Movenda turns it on later once they pick a scheduler (Progenda / Doctena / Introlution / other). |
 | 5 | `/join` jobs page | **Keep**, rebuilt as `/jobs`. |

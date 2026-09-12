@@ -1,0 +1,102 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
+import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
+import DienstCard from "../../components/DienstCard.astro";
+import { getDienstenByCategorie, getLocatieBySlug, getSiteSettings } from "../../lib/content";
+import { breadcrumbSchema, localBusinessSchema } from "../../lib/schema";
+import kineHero from "../../assets/marketing/kine-hero.jpg";
+import kineSecondary from "../../assets/marketing/kine-secondary.jpg";
+
+const locatie = (await getLocatieBySlug("olympia"))!;
+const diensten = await getDienstenByCategorie("kine");
+const settings = await getSiteSettings();
+const klachten = settings.homePijlers.kine.lijstEn?.length
+  ? settings.homePijlers.kine.lijstEn
+  : settings.homePijlers.kine.lijst;
+
+const jsonLd = [
+  localBusinessSchema(locatie),
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Physiotherapy", path: "/en/kinesitherapie" },
+  ]),
+];
+---
+
+<Layout
+  title="Physiotherapy Hasselt | Movenda"
+  description="A team of experienced physiotherapists in Hasselt: manual therapy, dry needling, acupuncture, pre- and postnatal physiotherapy and more."
+  path="/en/kinesitherapie"
+  altPath="/kinesitherapie"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+      <div>
+        <h1 class="text-3xl font-bold">Physiotherapy Hasselt</h1>
+        {settings.slogans.kine && (
+          <p class="mt-2 text-lg font-medium text-brand-primary">{settings.slogans.kine}</p>
+        )}
+        <p class="mt-3 max-w-xl text-brand-muted">
+          At Movenda in Hasselt you'll find a team of experienced physiotherapists who treat a wide
+          range of muscle and joint complaints. Whether you have back pain, are recovering from an
+          injury or surgery, or simply want to move without pain — we build a treatment plan around
+          you.
+        </p>
+        <p class="mt-3 max-w-xl text-brand-muted">
+          We combine classic physiotherapy with current techniques and insights. Every session is 30
+          minutes one-on-one, after which you have extra time to continue your exercises independently.
+          You take an active part in your own recovery.
+        </p>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <a
+            href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`}
+            class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+          >
+            Call {locatie.telefoon}
+          </a>
+          <GoogleReviewBadge locatie="olympia" lang="en" />
+        </div>
+      </div>
+      <Image
+        src={kineHero}
+        alt="Manual therapy treatment at Movenda"
+        width={640}
+        height={720}
+        class="aspect-[4/4.5] w-full rounded-3xl object-cover shadow-xl"
+        priority
+      />
+    </div>
+
+    <h2 class="mt-12 text-xl font-bold">Complaints we treat</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {klachten.map((k) => (
+        <span class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text">
+          {k}
+        </span>
+      ))}
+    </div>
+
+    <h2 class="mt-10 text-xl font-bold">Our treatment techniques</h2>
+    <div class="mt-4 grid gap-6 lg:grid-cols-3">
+      <div class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
+        {diensten.map((dienst) => (
+          <DienstCard dienst={dienst} lang="en" />
+        ))}
+      </div>
+      <Image
+        src={kineSecondary}
+        alt="Taping and care at Movenda"
+        width={480}
+        height={640}
+        class="aspect-[16/10] w-full rounded-2xl object-cover lg:aspect-[3/4]"
+      />
+    </div>
+
+    <p class="mt-8 text-sm text-brand-muted">
+      We work by appointment only from our practice at Sportcentrum Olympia, {locatie.adres}.
+    </p>
+  </section>
+</Layout>

@@ -17,6 +17,7 @@ import {
   type Teamlid,
 } from "./content";
 import { SITE_URL, absoluteUrl } from "./site";
+import { withLang, type Lang } from "./i18n";
 
 export type JsonLdNode = Record<string, unknown>;
 
@@ -183,7 +184,7 @@ export function personNode(teamlid: Teamlid, lang: "nl" | "en" = "nl"): JsonLdNo
     jobTitle: lang === "en" ? teamlid.rolEn || teamlid.rol : teamlid.rol,
     description: lang === "en" ? teamlid.bioEn || teamlid.bio : teamlid.bio,
     email: teamlid.email,
-    url: `${SITE_URL}/team/${teamlid.slug}`,
+    url: `${SITE_URL}${withLang(`/team/${teamlid.slug}`, lang)}`,
     image: imageObject(teamlid.foto ? `${teamlid.foto}?w=900&h=1350&fit=max&auto=format` : undefined),
     knowsAbout: teamlid.specialisaties,
     worksFor: { "@id": ids.organization() },
@@ -202,13 +203,13 @@ export function teamListNode(team: Teamlid[], path: string, lang: "nl" | "en" = 
     itemListElement: team.map((lid, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: `${SITE_URL}/team/${lid.slug}`,
+      url: `${SITE_URL}${withLang(`/team/${lid.slug}`, lang)}`,
       item: compact({
         "@type": "Person",
         "@id": ids.person(lid.slug),
         name: `${lid.voornaam} ${lid.naam}`,
         jobTitle: lang === "en" ? lid.rolEn || lid.rol : lid.rol,
-        url: `${SITE_URL}/team/${lid.slug}`,
+        url: `${SITE_URL}${withLang(`/team/${lid.slug}`, lang)}`,
         image: absoluteUrl(lid.foto ? `${lid.foto}?w=600&h=900&fit=max&auto=format` : undefined),
       }),
     })),
@@ -267,7 +268,7 @@ export function serviceNode(dienst: Dienst, locatie: Locatie, opts: ServiceNodeO
         "@id": ids.person(lid.slug),
         name: `${lid.voornaam} ${lid.naam}`,
         jobTitle: lang === "en" ? lid.rolEn || lid.rol : lid.rol,
-        url: `${SITE_URL}/team/${lid.slug}`,
+        url: `${SITE_URL}${withLang(`/team/${lid.slug}`, lang)}`,
       }),
     ),
   });
@@ -291,14 +292,16 @@ function blogImage(src?: string) {
   return absoluteUrl(src.startsWith("http") ? `${src}?w=1200&h=630&fit=crop&auto=format` : src);
 }
 
-export function blogPostingNode(post: BlogPost): JsonLdNode {
-  const url = `${SITE_URL}/blog/${post.slug}`;
+export function blogPostingNode(post: BlogPost, lang: Lang = "nl"): JsonLdNode {
+  const url = `${SITE_URL}${withLang(`/blog/${post.slug}`, lang)}`;
+  const headline = lang === "en" ? post.titelEn || post.titel : post.titel;
+  const description = lang === "en" ? post.excerptEn || post.excerpt : post.excerpt;
   return compact({
     "@type": "BlogPosting",
-    "@id": ids.blogPosting(post.slug),
-    headline: post.titel,
-    description: post.excerpt,
-    inLanguage: "nl-BE",
+    "@id": `${url}#article`,
+    headline,
+    description,
+    inLanguage: lang === "en" ? "en" : "nl-BE",
     datePublished: post.publicatiedatum,
     dateModified: post.updatedAt || post.publicatiedatum,
     image: blogImage(post.cover),
@@ -308,39 +311,43 @@ export function blogPostingNode(post: BlogPost): JsonLdNode {
           "@type": "Person",
           "@id": post.auteurSlug ? ids.person(post.auteurSlug) : undefined,
           name: post.auteurNaam,
-          url: post.auteurSlug ? `${SITE_URL}/team/${post.auteurSlug}` : undefined,
+          url: post.auteurSlug ? `${SITE_URL}${withLang(`/team/${post.auteurSlug}`, lang)}` : undefined,
         })
       : { "@id": ids.organization() },
     publisher: { "@id": ids.organization() },
     url,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    isPartOf: { "@type": "Blog", "@id": `${SITE_URL}/blog#blog` },
+    isPartOf: { "@type": "Blog", "@id": `${SITE_URL}${withLang("/blog", lang)}#blog` },
     encoding: {
       "@type": "MediaObject",
       encodingFormat: "text/markdown",
-      contentUrl: `${url}.md`,
+      contentUrl: `${SITE_URL}/blog/${post.slug}.md`,
     },
   });
 }
 
-export function blogListNode(posts: BlogPost[]): JsonLdNode {
+export function blogListNode(posts: BlogPost[], lang: Lang = "nl"): JsonLdNode {
+  const url = `${SITE_URL}${withLang("/blog", lang)}`;
   return {
     "@type": "Blog",
-    "@id": `${SITE_URL}/blog#blog`,
+    "@id": `${url}#blog`,
     name: "Movenda blog",
-    description: "Praktische tips over kinesitherapie, training en herstel.",
-    url: `${SITE_URL}/blog`,
-    inLanguage: "nl-BE",
+    description:
+      lang === "en"
+        ? "Practical tips on physiotherapy, training and recovery."
+        : "Praktische tips over kinesitherapie, training en herstel.",
+    url,
+    inLanguage: lang === "en" ? "en" : "nl-BE",
     publisher: { "@id": ids.organization() },
     blogPost: posts.map((post) =>
       compact({
         "@type": "BlogPosting",
-        "@id": ids.blogPosting(post.slug),
-        headline: post.titel,
-        description: post.excerpt,
+        "@id": `${SITE_URL}${withLang(`/blog/${post.slug}`, lang)}#article`,
+        headline: lang === "en" ? post.titelEn || post.titel : post.titel,
+        description: lang === "en" ? post.excerptEn || post.excerpt : post.excerpt,
         datePublished: post.publicatiedatum,
         dateModified: post.updatedAt || post.publicatiedatum,
-        url: `${SITE_URL}/blog/${post.slug}`,
+        url: `${SITE_URL}${withLang(`/blog/${post.slug}`, lang)}`,
         image: blogImage(post.cover),
       }),
     ),

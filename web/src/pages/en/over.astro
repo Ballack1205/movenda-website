@@ -1,0 +1,190 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
+import PartnerBand from "../../components/PartnerBand.astro";
+import { getLocaties, getPartners, getFaqs, getSiteSettings } from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+import { faqCopy, partnerBandTitle } from "../../lib/i18n";
+import overHero from "../../assets/marketing/over-hero.jpg";
+
+const locatie = (await getLocaties()).find((l) => l.slug === "olympia")!;
+const partners = await getPartners("movenda");
+const faqs = (await getFaqs("movenda")).slice(0, 5);
+const settings = await getSiteSettings();
+
+const accordion = [
+  {
+    titel: "Movenda Rehabilitation",
+    tekst: "Every patient is treated individually, as a whole. We always combine hands-on manual treatment with active exercise therapy. Sessions last half an hour one-on-one, after which you have extra time to continue the exercises independently. We want to be a progressive practice: quality and constant innovation. A healthy life is pain-free sport and movement, with attention to eating habits, sleep and limited alcohol and tobacco. Our therapists take further training in manual therapy, myofascial therapy, osteopathy, acupuncture and dry needling.",
+  },
+  {
+    titel: "Movenda Training",
+    tekst: "Personal-training coaching focuses on a healthy lifestyle — eating habits, sleep, sport and movement — and on aesthetic goals. Every athlete gets an individual programme tailored to time and body, under the eye of a physiotherapist.",
+  },
+  {
+    titel: "Movenda Performance Centre",
+    tekst: "Our second location in Kuringen focuses on performance training and sports rehabilitation for recreational and professional athletes, plus corporate coaching, group classes and boxing.",
+  },
+  {
+    titel: "Partnerships",
+    tekst: "We are a dynamic, sporty and motivated team that likes to support sports clubs in and around Hasselt. We work with Hubo Limburg United, AF Corse, tennis club Tenkie, motocross riders on the MXGP circuit, tennis club Excelsior and indoor football club VKM Godsheide, among others.",
+  },
+];
+
+const features = [
+  { titel: "Individual treatments", tekst: "Every patient is treated individually and gets their own programme." },
+  { titel: "Spacious location", tekst: "Based at Sportcentrum Olympia in Hasselt." },
+  { titel: "Atmosphere", tekst: "A young, dynamic team provides motivating coaching." },
+  { titel: "Forward-looking", tekst: "High quality and constantly innovating." },
+  { titel: "Professional team", tekst: "Our licensed physiotherapists take regular further training." },
+  { titel: "Network", tekst: "Collaboration with several sports clubs." },
+];
+
+const stappen = [
+  { titel: "Make an appointment", tekst: "Get in touch by phone, email or our contact form. We match you with the therapist or coach who best fits your complaint or goal. You receive a confirmation with practical info about the location and what to bring." },
+  { titel: "Intake & screening", tekst: "At your first session we take time for a thorough intake. We discuss your complaints, medical history and goals. Then comes a functional screening: how you move, where limitations sit, and what causes the problem — not only the symptom." },
+  { titel: "Tailored treatment or training plan", tekst: "Based on the screening we draw up a personalised trajectory. For physiotherapy we combine hands-on treatments such as manual therapy and dry needling with active exercise therapy. For personal training you work with a programme that fits your level, schedule and body." },
+  { titel: "Follow-up & adjustment", tekst: "Every session is individually coached. We regularly evaluate your progress and adjust the plan where needed. You are never left to it on your own." },
+  { titel: "Long-term approach", tekst: "Our goal is not only that you are complaint-free, but that you live more consciously and actively. We also coach you after rehabilitation so you avoid relapse and keep healthy habits." },
+];
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "About us", path: "/en/over" },
+  ]),
+];
+---
+
+<Layout
+  title="About Movenda | Group physiotherapy practice Hasselt"
+  description="Movenda's vision: individual coaching, an active approach and collaboration with sports clubs in and around Hasselt."
+  path="/en/over"
+  altPath="/over"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 lg:grid-cols-2">
+    <div>
+      <h1 class="text-3xl font-bold">The Movenda vision</h1>
+      <p class="mt-4 text-brand-muted">
+        Movenda in Hasselt is the group physiotherapy and personal training practice that wants
+        everyone to move in a healthy, medically sound way. We work with each person individually,
+        both for physiotherapy and for personal training.
+      </p>
+      <p class="mt-4 text-brand-muted">
+        Every patient is treated individually, so we can address specific complaints in a broader
+        frame. For optimal recovery we approach the person as a whole, so underlying issues are
+        part of the process. That is why we always combine hands-on manual treatment with active
+        exercise therapy — we motivate patients to take part in their rehabilitation, not to
+        become fully dependent on the therapist.
+      </p>
+      <p class="mt-4 text-brand-muted">
+        Our therapists take internal and external further training every year — manual therapy,
+        myofascial therapy, osteopathy, acupuncture, dry needling — so we can keep treating you as
+        well as possible. We invest in new technology with a scientific basis, such as BEST &amp;
+        Medical Lasering for faster tissue recovery. We also work with the physiotherapy programme
+        at UHasselt and offer several internships each year.
+      </p>
+    </div>
+    <Image
+      src={overHero}
+      alt="Coach and client at Movenda"
+      width={640}
+      height={480}
+      class="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl"
+      priority
+    />
+  </section>
+
+  {settings.slogans.home && (
+    <p class="mx-auto max-w-3xl px-4 pb-8 text-center text-xl font-semibold text-brand-primary">
+      Your health is our priority.
+    </p>
+  )}
+
+  <section class="mx-auto max-w-3xl px-4 pb-12">
+    <div class="divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
+      {accordion.map((item) => (
+        <details class="group px-6 py-4">
+          <summary class="cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden">
+            <span class="flex items-center justify-between gap-4">
+              {item.titel}
+              <span class="text-brand-primary transition group-open:rotate-45">+</span>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-brand-muted">{item.tekst}</p>
+          {item.titel.includes("Performance") && (
+            <a href="/en/mpc" class="mt-3 inline-block text-sm font-semibold text-brand-primary hover:underline">
+              More about MPC →
+            </a>
+          )}
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-4 pb-12">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {features.map((f) => (
+        <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+          <h3 class="font-semibold text-brand-primary">{f.titel}</h3>
+          <p class="mt-1 text-sm text-brand-muted">{f.tekst}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-4 pb-12">
+    <h2 class="text-2xl font-bold">How a first visit at Movenda works</h2>
+    <p class="mt-2 text-brand-muted">
+      Whether you come for physiotherapy or personal training — at Movenda you always know in
+      advance what to expect. No surprises, just an approach fully tailored to your body and goals.
+    </p>
+    <ol class="mt-6 grid gap-4">
+      {stappen.map((s, i) => (
+        <li class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+          <p class="text-sm font-semibold text-brand-primary">Step {i + 1} — {s.titel}</p>
+          <p class="mt-1 text-sm text-brand-muted">{s.tekst}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  {faqs.length > 0 && (
+    <section class="mx-auto max-w-3xl px-4 pb-12">
+      <h2 class="text-2xl font-bold">Frequently asked questions</h2>
+      <div class="mt-4 divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
+        {faqs.map((faq) => {
+          const copy = faqCopy(faq, "en");
+          return (
+            <details class="group px-6 py-4">
+              <summary class="cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden">
+                {copy.vraag}
+              </summary>
+              <p class="mt-3 text-sm text-brand-muted">{copy.antwoord}</p>
+            </details>
+          );
+        })}
+      </div>
+      <a href="/en/faq" class="mt-4 inline-block text-sm font-semibold text-brand-primary hover:underline">
+        All questions →
+      </a>
+    </section>
+  )}
+
+  <PartnerBand
+    partners={partners}
+    title={partnerBandTitle(settings.partnerband.titel, "en")}
+    snelheid={settings.partnerband.snelheid}
+    animatie={settings.partnerband.animatie}
+  />
+
+  <section class="mx-auto max-w-3xl px-4 py-12">
+    <p class="text-sm text-brand-muted">
+      Questions about our approach?{" "}
+      <a href="/en/contact" class="font-semibold text-brand-primary hover:underline">Get in touch</a>{" "}
+      or call <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="font-semibold text-brand-primary hover:underline">{locatie.telefoon}</a>.
+    </p>
+  </section>
+</Layout>

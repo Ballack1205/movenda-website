@@ -74,7 +74,7 @@ export default defineType({
       name: "seoTitleEn",
       title: "SEO-titel (EN)",
       type: "string",
-      description: "Enkel voor MPC-diensten (die hebben een Engelse pagina). Leeg = automatisch 'Titel (EN) Hasselt | Movenda Performance Centre'.",
+      description: "Leeg = automatisch 'Titel (EN) in Hasselt | Movenda' (of Performance Centre voor MPC).",
       validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
     }),
     defineField({

@@ -16,7 +16,7 @@ const { settings, lang = "nl" } = Astro.props;
 const feed = settings.instagramFeed;
 const widgetId = feed.widgetId?.trim();
 const show = feed.enabled && !!widgetId;
-const heading = feed.titel || (lang === "en" ? "Follow us" : "Volg ons");
+const heading = lang === "en" ? "Follow us" : feed.titel || "Volg ons";
 const fallbackLabel = lang === "en" ? "Open our Instagram" : "Open onze Instagram";
 ---
 
@@ -28,7 +28,7 @@ const fallbackLabel = lang === "en" ? "Open our Instagram" : "Open onze Instagra
           <h2 id="instagram-heading" class="text-2xl font-bold sm:text-3xl">
             {heading}
           </h2>
-          <SocialLinks class="mt-3 justify-center" />
+          <SocialLinks lang={lang} class="mt-3 justify-center" />
         </div>
 
         <div class="instagram-feed-widget mt-6 min-h-[22rem] sm:mt-8 sm:min-h-[28rem]">

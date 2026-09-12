@@ -27,7 +27,8 @@ export default defineType({
       options: { source: "titel" },
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: "excerpt", title: "Korte samenvatting (voor overzicht en SEO)", type: "text", rows: 2 }),
+    defineField({ name: "excerpt", title: "Korte samenvatting (NL)", type: "text", rows: 2 }),
+    defineField({ name: "excerptEn", title: "Korte samenvatting (EN)", type: "text", rows: 2 }),
     defineField({
       name: "cover",
       title: "Coverfoto",

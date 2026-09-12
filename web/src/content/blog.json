@@ -2,7 +2,9 @@
   {
     "slug": "sporten-in-de-hitte-tips",
     "titel": "Sporten in de hitte? Zo doe je het veilig",
+    "titelEn": "Exercising in the heat? How to stay safe",
     "excerpt": "Sporten bij hoge temperaturen brengt extra uitdagingen met zich mee. Met deze tips blijf je ook tijdens warme dagen veilig sporten.",
+    "excerptEn": "Exercising in high temperatures brings extra challenges. These tips help you keep training safely on hot days.",
     "publicatiedatum": "2026-07-02",
     "auteurSlug": "julie-spaas",
     "tags": ["hitte", "training", "preventie"],
@@ -39,12 +41,47 @@
         "Bouw je inspanning geleidelijk op",
         "Luister naar de signalen van je lichaam"
       ] }
+    ],
+    "bodyEn": [
+      { "type": "p", "text": "Summer is the ideal season to train outdoors. Whether you run, cycle, walk, play padel or finish an intense session: longer days and pleasant evenings make it tempting to move more." },
+      { "type": "p", "text": "Exercising in high temperatures still brings extra challenges. Your body has to work harder to cool itself, so you tire faster and the risk of dehydration, lost performance and overheating rises. A few simple adjustments keep you training safely on hot days." },
+      { "type": "h3", "text": "Why is exercising in the heat harder?" },
+      { "type": "p", "text": "During effort your body produces heat. To keep temperature under control it sheds that heat through sweating and increased blood flow to the skin." },
+      { "type": "p", "text": "In hot weather this cooling system is extra loaded. Your heart works harder, you lose more fluid and electrolytes in sweat, and less blood remains available for your muscles. Heart rate rises faster, a session feels heavier and performance drops." },
+      { "type": "p", "text": "From about 25°C you often already notice that your body has to work harder. Above 30°C the load increases further and extra caution is advised." },
+      { "type": "h3", "text": "The most common heat-related complaints" },
+      { "type": "p", "text": "Heat cramps are painful muscle cramps, usually in the calves, hamstrings or abdominal muscles. They come from fluid loss plus a lack of electrolytes. Stop exercising for a while, drink water or a sports drink, and gently stretch the muscle." },
+      { "type": "p", "text": "In heat exhaustion the body is depleted by excessive fluid and salt loss. Typical symptoms are dizziness, nausea, headache, extreme fatigue, paleness, a rapid heart rate and heavy sweating. Stop immediately, find a cool place and drink. If symptoms persist, contact a doctor." },
+      { "type": "p", "text": "Heat stroke is a medical emergency: body temperature rises above 40°C, with confusion, disorientation, a hot dry skin and loss of consciousness. Call 112 immediately and try to cool the person down." },
+      { "type": "h3", "text": "7 tips for training safely in the heat" },
+      { "type": "ul", "items": [
+        "Pick the right moment: train early morning or later in the evening, avoid 11:00–16:00.",
+        "Drink before, during and after (400–600 ml of water 1–2 hours before, then a few sips every 15–20 minutes).",
+        "Adjust intensity: deliberately lower your pace or training load.",
+        "Wear light, breathable kit, a cap, sunglasses and sunscreen.",
+        "Give your body time to adapt: acclimatisation takes about 10 to 14 days.",
+        "Listen to your body and never ignore warning signs.",
+        "Choose your environment wisely: shade, water, woodland rather than large stretches of asphalt."
+      ] },
+      { "type": "p", "text": "Extra caution is needed for children, older people, people with cardiovascular disease, people on certain medication (diuretics, beta blockers) and athletes who are ill or not fully recovered." },
+      { "type": "p", "text": "At Movenda we coach recreational and competitive athletes on injury prevention, rehab and performance. Unsure whether your programme fits the heat? Our physiotherapists and performance coaches are happy to help." },
+      { "type": "h3", "text": "In short" },
+      { "type": "ul", "items": [
+        "Pick the right time of day",
+        "Drink enough",
+        "Wear light, breathable clothing",
+        "Adjust training intensity",
+        "Build effort gradually",
+        "Listen to your body's signals"
+      ] }
     ]
   },
   {
     "slug": "nekpijn-achter-je-bureau-3-oefeningen-die-je-kan-doen-om-het-te-voorkomen",
     "titel": "Nekpijn achter je bureau: 3 oefeningen die je kan doen om het te voorkomen",
+    "titelEn": "Neck pain at your desk: 3 exercises to help prevent it",
     "excerpt": "Nekpijn door beeldschermwerk is een van de meest voorkomende klachten bij kantoorwerkers. Met drie gerichte oefeningen aan je bureau voorkom je dit grotendeels.",
+    "excerptEn": "Neck pain from screen work is one of the most common complaints among office workers. Three targeted desk exercises can largely prevent it.",
     "publicatiedatum": "2026-06-01",
     "auteurSlug": "julie-spaas",
     "tags": ["nekpijn", "preventie"],
@@ -74,12 +111,40 @@
       { "type": "h3", "text": "Wanneer ga je best naar de kinesitherapeut?" },
       { "type": "p", "text": "Raadpleeg een kinesitherapeut en/of dokter als de nekpijn langer dan twee weken continu aanhoudt, uitstraalt naar je arm, hand of vingers, gepaard gaat met tintelingen of gevoelloosheid, of als de pijn 's nachts erger wordt." },
       { "type": "p", "text": "Bij Movenda in Hasselt beginnen we altijd met een grondige screening van je houding, nekbeweeglijkheid en spierkracht. Op basis daarvan stellen we een behandelplan op dat verder gaat dan symptoombestrijding." }
+    ],
+    "bodyEn": [
+      { "type": "p", "text": "You have been at your screen for a few hours. The meeting ran over, emails pile up, and suddenly you notice it: a stiff, nagging pain in your neck that spreads to your shoulders and sometimes your head. Neck pain from screen work is one of the most common complaints among office workers, and among people who work a lot on a laptop at home." },
+      { "type": "p", "text": "The good news: three targeted exercises you can do at your desk can largely prevent neck pain. They take less than five minutes and need no equipment." },
+      { "type": "h3", "text": "Why do you get neck pain at your desk?" },
+      { "type": "p", "text": "Neck pain from screen work rarely has a single cause. It is usually a mix: a forward head posture, sitting still for long periods, a poorly set screen or chair, and stress that often shows first in the neck and shoulders." },
+      { "type": "p", "text": "In a neutral position your head weighs about 5 kg. Tilt it 5 cm forward and the load can rise to 20 kilograms. Your neck muscles then work overtime all day without you noticing." },
+      { "type": "h3", "text": "Exercise 1 — Chin tuck" },
+      { "type": "p", "text": "What it does: corrects a forward-head posture, strengthens the deep neck muscles and eases pressure on the joints and discs in your neck." },
+      { "type": "p", "text": "How: sit upright, look straight ahead. Draw your chin slowly backward as if making a double chin, without looking down. Hold 3 to 5 seconds and relax. 10 repetitions, two to three times a day." },
+      { "type": "h3", "text": "Exercise 2 — Neck muscle stretch" },
+      { "type": "p", "text": "What it does: stretches the side-neck muscles that are often tight after a day at a screen." },
+      { "type": "p", "text": "How: sit upright. Bring your right ear toward your right shoulder and gently press the left shoulder down. Switch sides. 2 to 3 repetitions per side, twice a day." },
+      { "type": "h3", "text": "Exercise 3 — Scapular retraction" },
+      { "type": "p", "text": "What it does: activates the mid-back muscles and draws the shoulder blades back and down, so the neck is loaded less." },
+      { "type": "p", "text": "How: sit upright with your arms relaxed by your sides. Move your shoulder blades toward each other and down, as if holding a pencil between them. Hold 5 seconds. 3 sets of 10, twice a day." },
+      { "type": "h3", "text": "Extra tips at your desk" },
+      { "type": "ul", "items": [
+        "Set your screen at eye height.",
+        "Move every 30 to 45 minutes.",
+        "Watch phone use — hold your phone at eye height.",
+        "Check your breathing: breathe deeply into your belly."
+      ] },
+      { "type": "h3", "text": "When should you see a physiotherapist?" },
+      { "type": "p", "text": "See a physiotherapist and/or doctor if the neck pain lasts more than two weeks continuously, radiates to your arm, hand or fingers, comes with tingling or numbness, or gets worse at night." },
+      { "type": "p", "text": "At Movenda in Hasselt we always start with a thorough screening of posture, neck mobility and muscle strength. From that we build a plan that goes beyond treating the symptom." }
     ]
   },
   {
     "slug": "je-hoofd-trainen-zoals-je-spieren-traint",
     "titel": "Je hoofd trainen zoals je spieren traint?",
+    "titelEn": "Train your mind the way you train your muscles?",
     "excerpt": "Movenda & MPC kondigen de samenwerking met MyMindWorks aan: een digitale trainingsapplicatie die de mentale, cognitieve, visuele en neurologische kant van presteren actief traint.",
+    "excerptEn": "Movenda & MPC announce a partnership with MyMindWorks: a digital training app that actively trains the mental, cognitive, visual and neurological side of performance.",
     "publicatiedatum": "2026-05-18",
     "auteurSlug": "julie-spaas",
     "tags": ["training", "mentale-training"],
@@ -104,12 +169,35 @@
       { "type": "h3", "text": "Wat betekent dit voor jou als patiënt of sporter bij Movenda & MPC?" },
       { "type": "p", "text": "Dankzij onze samenwerking kunnen wij je voortaan begeleiden op zowel fysiek als mentaal vlak. Of je nu bij ons komt voor revalidatie, sportbegeleiding of personal training, je hoofd is voortaan even belangrijk als je lichaam." },
       { "type": "p", "text": "Geïnteresseerd? Neem vandaag nog contact met ons op en vraag naar de MyMindWorks-screening." }
+    ],
+    "bodyEn": [
+      { "type": "p", "text": "You train your strength, endurance and mobility. But do you also train your mind?" },
+      { "type": "p", "text": "At Movenda & MPC we have long believed that top performance starts with body and mind. That is why we are proud to announce our official partnership with MyMindWorks, a digital training app that maps — and actively trains — the mental, cognitive, visual and neurological side of performance." },
+      { "type": "h3", "text": "What does MyMindWorks train?" },
+      { "type": "p", "text": "MyMindWorks works on five key domains that shape performance at every level:" },
+      { "type": "ul", "items": [
+        "Mental — confidence, mental preparation, focus",
+        "Emotional — motivation, resilience, stress management",
+        "Cognitive — concentration, memory, information processing",
+        "Neurological — reaction time, coordination, decision speed",
+        "Visual — visual acuity, peripheral awareness, depth perception"
+      ] },
+      { "type": "h3", "text": "How does the programme work?" },
+      { "type": "p", "text": "The trajectory starts with a thorough personal screening. From those results a personalised schedule is built around your profile and goals. You train 3 to 4 times a week, 15 minutes at a time, on PC, tablet or smartphone." },
+      { "type": "p", "text": "MyMindWorks suits everyone: from recreational athletes to elite athletes, from young people to adults." },
+      { "type": "h3", "text": "Proven results with the best in the world" },
+      { "type": "p", "text": "Teams: AC Milan, McLaren F1, KRC Genk, PSV Eindhoven, Limburg United, Red Dragon, KBVB. Individual athletes: Tadej Pogačar, Wout van Aert, Kim Clijsters, Sebastian Vettel." },
+      { "type": "h3", "text": "What does this mean for you as a patient or athlete at Movenda & MPC?" },
+      { "type": "p", "text": "Thanks to this partnership we can now coach you physically and mentally. Whether you come for rehab, sports coaching or personal training, your mind is as important as your body." },
+      { "type": "p", "text": "Interested? Get in touch today and ask about the MyMindWorks screening." }
     ]
   },
   {
     "slug": "sportblessures-voorkomen-en-behandelen-kinesitherapie-hasselt-movenda",
     "titel": "Sportblessures voorkomen en behandelen | Kinesitherapie Hasselt bij Movenda",
+    "titelEn": "Preventing and treating sports injuries | Physiotherapy Hasselt at Movenda",
     "excerpt": "Hoe voorkom je sportblessures en wat doe je als het toch misloopt? Praktische tips en uitleg over behandeling van de kinesitherapeuten van Movenda Hasselt.",
+    "excerptEn": "How do you prevent sports injuries, and what do you do when something goes wrong? Practical tips and treatment notes from the physiotherapists at Movenda Hasselt.",
     "publicatiedatum": "2026-03-30",
     "auteurSlug": "julie-spaas",
     "tags": ["sportblessures", "preventie", "herstel"],
@@ -140,12 +228,41 @@
       { "type": "p", "text": "Bij Movenda geloven we niet in een standaardaanpak. We starten met een grondige screening (bewegingspatronen, spierbalans, stabiliteit, mobiliteit, zwakke schakels), gaan oorzaakgericht te werk, bouwen een actieve revalidatie op en begeleiden je progressief terug naar je sport, sterker dan voordien." },
       { "type": "h3", "text": "Wanneer moet je een kinesist raadplegen?" },
       { "type": "p", "text": "Pijn die langer dan enkele dagen aanhoudt, terugkerende blessures, beperkte bewegingsvrijheid of verminderde sportprestaties zijn signalen om niet te lang te wachten. Hoe sneller je ingrijpt, hoe sneller je herstelt." }
+    ],
+    "bodyEn": [
+      { "type": "p", "text": "Sport is healthy, but recreational and professional athletes alike will face an injury sooner or later — knee complaints, muscle injuries or overload." },
+      { "type": "p", "text": "At Movenda in Hasselt and MPC in Kuringen we see athletes every day who have to pause their favourite activity. The good news: with the right approach you recover faster and avoid future injuries." },
+      { "type": "h3", "text": "What is a sports injury?" },
+      { "type": "p", "text": "A sports injury happens when the body is overloaded or makes a sudden wrong movement. We distinguish acute injuries (muscle strain, ankle sprain, knee injury) and chronic overload injuries (tendinopathy, shin splints, runner's knee)." },
+      { "type": "h3", "text": "Why do sports injuries happen?" },
+      { "type": "ul", "items": [
+        "Training built up too quickly",
+        "Insufficient strength or stability",
+        "Poor technique or posture",
+        "Reduced mobility",
+        "No or poor coaching"
+      ] },
+      { "type": "p", "text": "Important: the place of the pain is not always the cause. Knee pain can come from a problem in the hip or ankle. That is exactly where a thorough analysis at Movenda makes the difference." },
+      { "type": "h3", "text": "How can you prevent sports injuries?" },
+      { "type": "ul", "items": [
+        "Build training up gradually",
+        "Work on strength and stability",
+        "Pay attention to technique",
+        "Listen to your body",
+        "Get coached by a professional"
+      ] },
+      { "type": "h3", "text": "How do we treat sports injuries at Movenda?" },
+      { "type": "p", "text": "We do not believe in a one-size-fits-all plan. We start with a thorough screening (movement patterns, muscle balance, stability, mobility, weak links), work on the cause, build active rehab and guide you back to your sport stronger than before." },
+      { "type": "h3", "text": "When should you see a physiotherapist?" },
+      { "type": "p", "text": "Pain that lasts more than a few days, recurring injuries, limited movement or dropping sports performance are signs not to wait. The sooner you act, the faster you recover." }
     ]
   },
   {
     "slug": "rugpijn",
     "titel": "Rugpijn: oorzaken, behandeling en tips van de kinesitherapeut",
+    "titelEn": "Back pain: causes, treatment and tips from the physiotherapist",
     "excerpt": "Rugpijn is één van de meest voorkomende klachten in de kinesitherapiepraktijk. Wat veroorzaakt het en wat kan je er zelf aan doen?",
+    "excerptEn": "Back pain is one of the most common complaints in physiotherapy practice. What causes it, and what can you do yourself?",
     "publicatiedatum": "2026-03-09",
     "auteurSlug": "julie-spaas",
     "tags": ["rugpijn", "herstel"],
@@ -166,6 +283,23 @@
       { "type": "h3", "text": "Hoe helpt kinesitherapie bij rugpijn?" },
       { "type": "p", "text": "Bij Movenda in Hasselt kijken we niet alleen naar de plaats van de pijn, maar naar het volledige lichaam. We combineren manuele therapie met oefentherapie (mobiliteitstraining en spierversterking), en werken met actieve revalidatie: patiënten worden aangemoedigd om actief deel te nemen aan hun herstelproces." },
       { "type": "p", "text": "Blijf niet te lang rondlopen met rugklachten. Een tijdige behandeling kan helpen om sneller te herstellen en terug pijnvrij te bewegen." }
+    ],
+    "bodyEn": [
+      { "type": "p", "text": "Back pain is one of the most common complaints in physiotherapy practice. At Movenda in Hasselt we see people with low-back pain every day — young athletes, people with sitting jobs and active older adults." },
+      { "type": "h3", "text": "Why is back pain so common?" },
+      { "type": "p", "text": "The back is a complex of vertebrae, discs, muscles, ligaments and nerves. When one of these parts is overloaded, back complaints can start. The most common causes are sitting for long periods, one-sided load, too little movement, overload from sport, stress and reduced muscle strength or stability." },
+      { "type": "h3", "text": "What can you do yourself?" },
+      { "type": "ul", "items": [
+        "Keep moving — full rest is rarely the answer.",
+        "Change posture regularly, every 30 to 60 minutes.",
+        "Work on core stability with targeted exercises.",
+        "Build load gradually, in sport and in daily life."
+      ] },
+      { "type": "h3", "text": "When should you see a physiotherapist?" },
+      { "type": "p", "text": "See a physiotherapist when the pain lasts more than a few weeks, keeps coming back, movement is difficult or painful, the pain radiates into the leg, or daily activities are limited." },
+      { "type": "h3", "text": "How does physiotherapy help with back pain?" },
+      { "type": "p", "text": "At Movenda in Hasselt we look at the whole body, not only the place of the pain. We combine manual therapy with exercise therapy (mobility and strengthening) and active rehab: you take part in your own recovery." },
+      { "type": "p", "text": "Do not walk around with back complaints for too long. Timely treatment can help you recover faster and move without pain again." }
     ]
   }
 ]

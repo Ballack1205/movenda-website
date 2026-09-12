@@ -1,0 +1,99 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import GoogleReviewBadge from "../../../components/GoogleReviewBadge.astro";
+import Routebeschrijving from "../../../components/Routebeschrijving.astro";
+import { getLocaties, getLocatieBySlug, getTeamledenByLocatie } from "../../../lib/content";
+import { breadcrumbNode } from "../../../lib/schema";
+import { byAppointment, floorNote, legalCourt, locatieType, weekday } from "../../../lib/i18n";
+
+export async function getStaticPaths() {
+  const locaties = await getLocaties();
+  return locaties.map((locatie) => ({ params: { slug: locatie.slug } }));
+}
+
+const { slug } = Astro.params as { slug: "olympia" | "mpc" };
+const locatie = (await getLocatieBySlug(slug))!;
+const team = await getTeamledenByLocatie(slug);
+const brand = locatie.brand === "mpc" ? "mpc" : "movenda";
+
+const jsonLd = [
+  breadcrumbNode([
+    { name: "Home", path: "/en" },
+    { name: locatie.naam, path: `/en/locaties/${locatie.slug}` },
+  ]),
+];
+---
+
+<Layout
+  title={`${locatie.naam} | Address & opening hours`}
+  description={`${locatie.naam} — ${locatieType(locatie.type, "en")}, ${locatie.adres}. Opening hours, phone, directions and the team at this location.`}
+  path={`/en/locaties/${locatie.slug}`}
+  altPath={`/locaties/${locatie.slug}`}
+  brand={brand}
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-3xl font-bold">{locatie.naam}</h1>
+    <p class="mt-1 text-brand-muted">{locatieType(locatie.type, "en")}</p>
+
+    <div class="mt-6">
+      <GoogleReviewBadge locatie={locatie.slug} lang="en" />
+    </div>
+
+    <div class="mt-8 grid gap-8 sm:grid-cols-2">
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Address</h2>
+        <p class="mt-2">{locatie.adres}</p>
+        <a href={locatie.mapsUrl} target="_blank" rel="noopener noreferrer" class="mt-1 inline-block text-sm font-semibold text-brand-primary hover:underline">
+          View on Google Maps →
+        </a>
+
+        <h2 class="mt-6 text-sm font-semibold uppercase tracking-wide text-brand-muted">Contact</h2>
+        <p class="mt-2">
+          <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="text-brand-primary hover:underline">{locatie.telefoon}</a>
+        </p>
+        <p>
+          <a href={`mailto:${locatie.email}`} class="text-brand-primary hover:underline">{locatie.email}</a>
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Opening hours</h2>
+        {locatie.urenNote && <p class="mt-2 text-sm text-brand-muted">{byAppointment(locatie.urenNote, "en")}</p>}
+        <ul class="mt-2 space-y-1 text-sm">
+          {locatie.uren.map((u) => (
+            <li class="flex justify-between gap-4">
+              <span>{weekday(u.dag, "en")}</span>
+              <span>{u.van} – {u.tot}</span>
+            </li>
+          ))}
+        </ul>
+        {locatie.verdiepingNote && <p class="mt-2 text-xs text-brand-muted">{floorNote(locatie.verdiepingNote, "en")}</p>}
+      </div>
+    </div>
+
+    <Routebeschrijving locatie={locatie} lang="en" title="Directions" class="mt-8" />
+
+    <p class="mt-8 text-xs text-brand-muted">
+      VAT {locatie.btw}
+      {locatie.iban && <> · IBAN {locatie.iban}</>}
+      {locatie.bic && <> · BIC {locatie.bic}</>}
+      {legalCourt(locatie.rpr, "en") && <> · {legalCourt(locatie.rpr, "en")}</>}
+    </p>
+
+    {team.length > 0 && (
+      <div class="mt-12">
+        <h2 class="text-xl font-bold">Team at this location</h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          {team.map((lid) => (
+            <a href={`/en/team/${lid.slug}`} class="rounded-xl border border-brand-border p-4 transition hover:border-brand-primary">
+              <p class="font-semibold">{lid.voornaam} {lid.naam}</p>
+              <p class="text-sm text-brand-muted">{lid.rolEn || lid.rol}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </section>
+</Layout>

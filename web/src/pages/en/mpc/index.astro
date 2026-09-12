@@ -4,16 +4,50 @@ import Layout from "../../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../../components/GoogleReviewBadge.astro";
 import SocialLinks from "../../../components/SocialLinks.astro";
 import DienstCard from "../../../components/DienstCard.astro";
-import { getDienstenByCategorie, getLocatieBySlug, getFaqs, getSiteSettings } from "../../../lib/content";
+import PartnerBand from "../../../components/PartnerBand.astro";
+import GetuigenisCarousel from "../../../components/GetuigenisCarousel.astro";
+import {
+  getDienstenByCategorie,
+  getLocatieBySlug,
+  getPartners,
+  getFaqs,
+  getSiteSettings,
+  getGetuigenissen,
+} from "../../../lib/content";
 import { localBusinessSchema, breadcrumbSchema, faqPageSchema } from "../../../lib/schema";
+import { faqCopy, partnerBandTitle } from "../../../lib/i18n";
 import mpcHero from "../../../assets/marketing/mpc-hero.jpg";
+import mpcSecondary from "../../../assets/marketing/mpc-secondary.jpg";
 
 const training = await getDienstenByCategorie("mpc-training");
 const rehab = await getDienstenByCategorie("mpc-rehab");
 const groep = await getDienstenByCategorie("mpc-groep");
 const locatie = (await getLocatieBySlug("mpc"))!;
+const partners = await getPartners("mpc");
 const faqs = await getFaqs("mpc");
 const settings = await getSiteSettings();
+const getuigenissen = await getGetuigenissen("mpc", "en");
+
+const pillars = [
+  {
+    href: "#training",
+    titel: "Training",
+    tekst: "Performance, personal training, duo sessions and data analysis.",
+    foto: training.find((d) => d.afbeelding)?.afbeelding,
+  },
+  {
+    href: "#sportrevalidatie",
+    titel: "Sports rehabilitation",
+    tekst: "Recovery after injury, dry needling, cupping and taping.",
+    foto: rehab.find((d) => d.afbeelding)?.afbeelding,
+  },
+  {
+    href: "/en/mpc/groepslessen",
+    titel: "Group classes",
+    tekst: "HIIT, Full Body, PowerPlus, boxing, running and more. Max. 8 people.",
+    foto: groep.find((d) => d.afbeelding)?.afbeelding,
+  },
+];
 
 const jsonLd = [
   localBusinessSchema(locatie),
@@ -22,7 +56,7 @@ const jsonLd = [
     { name: "Movenda Performance Centre", path: "/en/mpc" },
   ]),
   ...(faqs.length > 0
-    ? [faqPageSchema(faqs.map((f) => ({ ...f, vraag: f.vraagEn || f.vraag, antwoord: f.antwoordEn || f.antwoord })), "/en/mpc")]
+    ? [faqPageSchema(faqs.map((f) => ({ ...f, ...faqCopy(f, "en") })), "/en/mpc")]
     : []),
 ];
 ---
@@ -62,7 +96,7 @@ const jsonLd = [
       </div>
       <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
         <GoogleReviewBadge locatie="mpc" lang="en" />
-        <SocialLinks brand="mpc" class="w-full justify-center sm:w-auto sm:justify-start" />
+        <SocialLinks brand="mpc" lang="en" class="w-full justify-center sm:w-auto sm:justify-start" />
       </div>
     </div>
     <Image
@@ -75,37 +109,99 @@ const jsonLd = [
     />
   </section>
 
-  <section class="mx-auto max-w-6xl px-4 pb-16">
+  <section class="mx-auto max-w-6xl px-4 pb-8">
+    <h2 class="text-2xl font-bold">Three pillars</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {pillars.map((p) => (
+        <a href={p.href} class="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary">
+          {p.foto && (
+            <img
+              src={`${p.foto}?w=800&h=500&fit=crop&auto=format`}
+              alt=""
+              width="800"
+              height="500"
+              class="aspect-[16/10] w-full object-cover"
+            />
+          )}
+          <div class="p-5">
+            <h3 class="text-lg font-semibold">{p.titel}</h3>
+            <p class="mt-1 text-sm text-brand-muted">{p.tekst}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section id="training" class="mx-auto max-w-6xl px-4 py-10">
     <h2 class="text-2xl font-bold">Training</h2>
     <div class="mt-6 grid gap-4 sm:grid-cols-2">
       {training.map((dienst) => (
         <DienstCard dienst={dienst} lang="en" />
       ))}
     </div>
-    <h2 class="mt-12 text-2xl font-bold">Sports rehabilitation</h2>
-    <div class="mt-6 grid gap-4 sm:grid-cols-2">
-      {rehab.map((dienst) => (
-        <DienstCard dienst={dienst} lang="en" />
-      ))}
+  </section>
+
+  <section id="sportrevalidatie" class="mx-auto max-w-6xl px-4 py-10">
+    <div class="grid items-start gap-6 xl:grid-cols-3">
+      <div class="min-w-0 xl:col-span-2">
+        <h2 class="text-2xl font-bold">Sports rehabilitation</h2>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          {rehab.map((dienst) => (
+            <DienstCard dienst={dienst} lang="en" />
+          ))}
+        </div>
+      </div>
+      <Image
+        src={mpcSecondary}
+        alt="Training space at the Movenda Performance Centre"
+        width={640}
+        height={480}
+        class="aspect-[16/10] w-full rounded-2xl object-cover xl:aspect-[3/4] xl:mt-14"
+      />
     </div>
-    <h2 class="mt-12 text-2xl font-bold">Group classes</h2>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 py-10">
+    <h2 class="text-2xl font-bold">Group classes</h2>
     <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {groep.map((dienst) => (
         <DienstCard dienst={dienst} lang="en" />
       ))}
     </div>
+    <a href="/en/mpc/groepslessen" class="mt-6 inline-block font-semibold text-brand-primary hover:underline">
+      See the timetable →
+    </a>
   </section>
 
+  <GetuigenisCarousel items={getuigenissen} title="What our athletes say" lang="en" />
+
+  {partners.length > 0 && (
+    <PartnerBand
+      partners={partners}
+      title={partnerBandTitle(settings.partnerband.titelMpc, "en")}
+      snelheid={settings.partnerband.snelheid}
+      animatie={settings.partnerband.animatie}
+    />
+  )}
+
   {faqs.length > 0 && (
-    <section class="mx-auto max-w-3xl px-4 pb-16">
+    <section id="faq" class="mx-auto max-w-3xl px-4 py-16">
       <h2 class="text-2xl font-bold">FAQ</h2>
       <div class="mt-6 divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
-        {faqs.map((faq) => (
-          <details class="group px-6 py-4">
-            <summary class="cursor-pointer list-none font-semibold">{faq.vraagEn || faq.vraag}</summary>
-            <p class="mt-3 text-sm text-brand-muted">{faq.antwoordEn || faq.antwoord}</p>
-          </details>
-        ))}
+        {faqs.map((faq) => {
+          const copy = faqCopy(faq, "en");
+          return (
+            <details class="group px-6 py-4">
+              <summary class="cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden">
+                <span class="flex items-center justify-between gap-4">
+                  {copy.vraag}
+                  <span class="text-brand-primary transition group-open:rotate-45">+</span>
+                </span>
+              </summary>
+              <p class="mt-3 text-sm text-brand-muted">{copy.antwoord}</p>
+            </details>
+          );
+        })}
       </div>
     </section>
   )}

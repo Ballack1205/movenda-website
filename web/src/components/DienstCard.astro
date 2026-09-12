@@ -1,5 +1,5 @@
 ---
-import { dienstHref, type Dienst } from "../lib/content";
+import { dienstHref, dienstIntro, type Dienst } from "../lib/content";
 import { dienstPhotoSrc } from "../lib/images";
 
 interface Props {
@@ -29,7 +29,7 @@ const foto = dienst.afbeelding || dienst.galerij[0];
   )}
   <div class="flex flex-1 flex-col p-5">
     <h2 class="font-semibold text-pretty">{titel}</h2>
-    <p class="mt-1 line-clamp-3 text-sm text-brand-muted">{dienst.intro}</p>
+    <p class="mt-1 line-clamp-3 text-sm text-brand-muted">{dienstIntro(dienst, lang)}</p>
     <span class="mt-3 inline-block text-sm font-semibold text-brand-primary">
       {lang === "en" ? "More info →" : "Meer info →"}
     </span>

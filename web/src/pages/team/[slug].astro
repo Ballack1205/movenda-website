@@ -44,6 +44,7 @@ const title = `${lid.voornaam} ${lid.naam} | ${rolKort(lid.rol)} Hasselt | Moven
   title={title.length <= 60 ? title : `${lid.voornaam} ${lid.naam} | ${rolKort(lid.rol)} | Movenda`}
   description={truncateAtSentence(lid.bio, 155)}
   path={`/team/${lid.slug}`}
+  altPath={`/en/team/${lid.slug}`}
   jsonLd={jsonLd}
   ogImage={lid.foto}
   ogImageShape="square"

@@ -31,12 +31,24 @@ export const BLOG_TAGS = [
 
 export type BlogTag = (typeof BLOG_TAGS)[number]["value"];
 
-export function blogTagLabel(tag: string): string {
+const BLOG_TAGS_EN: Record<string, string> = {
+  rugpijn: "Back pain",
+  nekpijn: "Neck pain",
+  sportblessures: "Sports injuries",
+  training: "Training",
+  herstel: "Recovery",
+  preventie: "Prevention",
+  hitte: "Heat",
+  "mentale-training": "Mental training",
+};
+
+export function blogTagLabel(tag: string, lang: "nl" | "en" = "nl"): string {
+  if (lang === "en") return BLOG_TAGS_EN[tag] ?? BLOG_TAGS.find((item) => item.value === tag)?.label ?? tag;
   return BLOG_TAGS.find((item) => item.value === tag)?.label ?? tag;
 }
 
-export function formatBlogDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("nl-BE", {
+export function formatBlogDate(iso: string, lang: "nl" | "en" = "nl"): string {
+  return new Date(iso).toLocaleDateString(lang === "en" ? "en-GB" : "nl-BE", {
     day: "numeric",
     month: "long",
     year: "numeric",

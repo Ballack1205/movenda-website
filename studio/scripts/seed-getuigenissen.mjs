@@ -35,6 +35,7 @@ for (const g of items) {
     _id: id,
     _type: "getuigenis",
     tekst: g.tekst,
+    tekstEn: g.tekstEn,
     naam: g.naam,
     rol: g.rol,
     locatie: g.locatie,

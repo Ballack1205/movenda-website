@@ -1,5 +1,6 @@
 ---
 import { getLocaties, getSiteSettings } from "../lib/content";
+import { byAppointment, locatieType, weekday } from "../lib/i18n";
 
 export interface Props {
   brand?: "movenda" | "mpc";
@@ -42,7 +43,12 @@ const showCookieLink = settings.analytics.enabled && !!settings.analytics.ga4Id;
 const navLinks =
   lang === "en"
     ? [
+        { href: "/en/over", label: "About us" },
         { href: "/en/team", label: "Team" },
+        { href: brand === "mpc" ? "/en/mpc/prijzen" : "/en/prijzen", label: "Prices" },
+        { href: "/en/blog", label: "Blog" },
+        { href: "/en/faq", label: "FAQ" },
+        { href: "/en/jobs", label: "Jobs" },
         { href: "/en/mpc", label: "MPC" },
         { href: "/en/contact", label: "Contact" },
       ]
@@ -92,7 +98,9 @@ const socialClass =
       </a>
       <p class="mt-4 max-w-xs">
         {lang === "en"
-          ? "Physiotherapy, personal training & performance in Hasselt, Belgium."
+          ? brand === "mpc"
+            ? "Part of Movenda — physiotherapy & personal training in Hasselt, Belgium."
+            : "Physiotherapy, personal training & performance in Hasselt, Belgium."
           : brand === "mpc"
             ? "Onderdeel van Movenda, kinesitherapie & personal training in Hasselt."
             : "Kinesitherapie, personal training & performance in Hasselt."}
@@ -115,7 +123,7 @@ const socialClass =
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 7v5l3 2" />
               </svg>
-              <span>{sharedNote}</span>
+              <span>{sharedNote ? byAppointment(sharedNote, lang) : sharedNote}</span>
             </li>
           )}
         </ul>
@@ -132,7 +140,7 @@ const socialClass =
           <p class={labelClass}>{t.follow}</p>
           <div class="mt-2 flex gap-2">
             {socials.map((s) => (
-              <a href={s.href} target="_blank" rel="noopener" class={socialClass} aria-label={`${brand === "mpc" ? "Movenda Performance Centre" : "Movenda"} op ${s.label}`}>
+              <a href={s.href} target="_blank" rel="noopener" class={socialClass} aria-label={`${brand === "mpc" ? "Movenda Performance Centre" : "Movenda"} ${lang === "en" ? "on" : "op"} ${s.label}`}>
                 {s.kind === "instagram" && (
                   <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="5" />
@@ -165,7 +173,7 @@ const socialClass =
             <h3 id={`footer-${locatie.slug}`} class="font-heading text-base font-semibold leading-tight text-white">
               {locatie.naam}
             </h3>
-            <p class="mt-0.5 text-xs uppercase tracking-wide text-white/70">{locatie.type}</p>
+            <p class="mt-0.5 text-xs uppercase tracking-wide text-white/70">{locatieType(locatie.type, lang)}</p>
           </div>
         </div>
 
@@ -208,7 +216,7 @@ const socialClass =
               <span class={labelClass}>
                 {t.hours}
                 {!sharedNote && locatie.urenNote && (
-                  <span class="font-normal normal-case tracking-normal"> · {locatie.urenNote}</span>
+                  <span class="font-normal normal-case tracking-normal"> · {byAppointment(locatie.urenNote, lang)}</span>
                 )}
               </span>
               <svg class="h-4 w-4 shrink-0 text-white/70 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -218,7 +226,7 @@ const socialClass =
             <dl class="mt-1 grid max-w-xs grid-cols-[auto_1fr] gap-x-6 gap-y-1 pb-2 tabular-nums">
               {locatie.uren.map((u) => (
                 <>
-                  <dt>{u.dag}</dt>
+                  <dt>{weekday(u.dag, lang)}</dt>
                   <dd class="text-right text-white">{u.van}–{u.tot}</dd>
                 </>
               ))}
@@ -229,13 +237,13 @@ const socialClass =
             <p class={labelClass}>
               {t.hours}
               {!sharedNote && locatie.urenNote && (
-                <span class="font-normal normal-case tracking-normal"> · {locatie.urenNote}</span>
+                <span class="font-normal normal-case tracking-normal"> · {byAppointment(locatie.urenNote, lang)}</span>
               )}
             </p>
             <dl class="mt-2 grid max-w-xs grid-cols-[auto_1fr] gap-x-6 gap-y-1 tabular-nums">
               {locatie.uren.map((u) => (
                 <>
-                  <dt>{u.dag}</dt>
+                  <dt>{weekday(u.dag, lang)}</dt>
                   <dd class="text-right text-white">{u.van}–{u.tot}</dd>
                 </>
               ))}
@@ -259,7 +267,11 @@ const socialClass =
         {showCookieLink && (
           <a href={privacyHref + "#cookies"} data-consent-open class="hover:text-white">{t.cookies}</a>
         )}
-        <span class="text-white/70">Preview in ontwikkeling — niet de live site van movenda.be</span>
+        <span class="text-white/70">
+          {lang === "en"
+            ? "Preview in development — not the live movenda.be site"
+            : "Preview in ontwikkeling — niet de live site van movenda.be"}
+        </span>
       </p>
     </div>
   </div>

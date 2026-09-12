@@ -13,7 +13,7 @@ const SANITY_DATASET = process.env.PUBLIC_SANITY_DATASET || "production";
 
 // Pages that must never be in the sitemap (they are also noindex):
 // post-contact / QR landing pages.
-const SITEMAP_EXCLUDE = new Set(["/welkom"]);
+const SITEMAP_EXCLUDE = new Set(["/welkom", "/en/welkom"]);
 
 /**
  * path → last Sanity update (ISO) for CMS-backed routes, so the sitemap
@@ -42,11 +42,20 @@ async function getLastmodMap() {
       for (const d of result.diensten || []) {
         const base = d.categorie === "kine" ? "/kinesitherapie" : d.categorie === "training" ? "/training" : "/mpc";
         map.set(`${base}/${d.slug}`, d.u);
-        if (base === "/mpc") map.set(`/en/mpc/${d.slug}`, d.u);
+        map.set(`/en${base}/${d.slug}`, d.u);
       }
-      for (const t of result.team || []) map.set(`/team/${t.slug}`, t.u);
-      for (const b of result.blog || []) map.set(`/blog/${b.slug}`, b.u);
-      for (const l of result.locaties || []) map.set(`/locaties/${l.slug}`, l.u);
+      for (const t of result.team || []) {
+        map.set(`/team/${t.slug}`, t.u);
+        map.set(`/en/team/${t.slug}`, t.u);
+      }
+      for (const b of result.blog || []) {
+        map.set(`/blog/${b.slug}`, b.u);
+        map.set(`/en/blog/${b.slug}`, b.u);
+      }
+      for (const l of result.locaties || []) {
+        map.set(`/locaties/${l.slug}`, l.u);
+        map.set(`/en/locaties/${l.slug}`, l.u);
+      }
       /** @param {{ u: string }[]} rows */
       const newest = (rows) => rows.map((r) => r.u).sort().at(-1) || "";
       if (result.blog?.length) map.set("/blog", newest(result.blog));

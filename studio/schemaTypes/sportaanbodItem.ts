@@ -9,8 +9,10 @@ export default defineType({
   title: "Olympia sportaanbod",
   type: "document",
   fields: [
-    defineField({ name: "naam", title: "Naam", type: "string", validation: (Rule) => Rule.required() }),
-    defineField({ name: "tekst", title: "Korte omschrijving", type: "text", rows: 2 }),
+    defineField({ name: "naam", title: "Naam (NL)", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "naamEn", title: "Naam (EN)", type: "string" }),
+    defineField({ name: "tekst", title: "Korte omschrijving (NL)", type: "text", rows: 2 }),
+    defineField({ name: "tekstEn", title: "Korte omschrijving (EN)", type: "text", rows: 2 }),
     defineField({ name: "link", title: "Link (optioneel)", type: "url" }),
     defineField({ name: "volgorde", title: "Volgorde", type: "number", initialValue: 0 }),
   ],

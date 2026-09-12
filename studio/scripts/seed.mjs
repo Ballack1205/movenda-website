@@ -54,6 +54,7 @@ async function seedTeam() {
       locaties: lid.locaties,
       specialisaties: lid.specialisaties,
       bio: lid.bio,
+      bioEn: lid.bioEn,
       email: lid.email,
       volgorde: lid.volgorde,
       actief: lid.actief,
@@ -282,6 +283,7 @@ async function seedGetuigenissen() {
       _id: id,
       _type: "getuigenis",
       tekst: g.tekst,
+      tekstEn: g.tekstEn,
       naam: g.naam,
       rol: g.rol,
       locatie: g.locatie,
@@ -301,7 +303,9 @@ async function seedSportaanbod() {
       _id: `sportaanbod-${slugify(item.naam)}`,
       _type: "sportaanbodItem",
       naam: item.naam,
+      naamEn: item.naamEn,
       tekst: item.tekst,
+      tekstEn: item.tekstEn,
       link: item.link,
       volgorde: item.volgorde,
     });
@@ -337,6 +341,11 @@ async function seedBlogPosts() {
   const posts = readJson("blog.json");
   for (const post of posts) {
     const id = `blogPost-${post.slug}`;
+    const enFields = {
+      ...(post.titelEn ? { titelEn: post.titelEn } : {}),
+      ...(post.excerptEn ? { excerptEn: post.excerptEn } : {}),
+      ...(post.bodyEn ? { bodyEn: toPortableText(post.bodyEn) } : {}),
+    };
     await client.createIfNotExists({
       _id: id,
       _type: "blogPost",
@@ -350,9 +359,13 @@ async function seedBlogPosts() {
       publicatiedatum: post.publicatiedatum,
       tags: post.tags,
       seoTitle: post.seoTitle,
+      ...enFields,
     });
+    if (Object.keys(enFields).length) {
+      await client.patch(id).setIfMissing(enFields).commit();
+    }
   }
-  console.log(`Ensured ${posts.length} seed blogposts exist (existing CMS records were left untouched).`);
+  console.log(`Ensured ${posts.length} seed blogposts exist; filled missing EN fields.`);
 }
 
 await seedTeam();

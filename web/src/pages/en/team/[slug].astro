@@ -1,0 +1,144 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import {
+  getTeamleden,
+  getTeamlidBySlug,
+  getDiensten,
+  matchSpecialisatieToDienst,
+  dienstHref,
+  formatEuro,
+  rolKort,
+  truncateAtSentence,
+} from "../../../lib/content";
+import { personNode, breadcrumbNode } from "../../../lib/schema";
+import { teamPhotoSrc } from "../../../lib/images";
+import { tagLabel } from "../../../lib/i18n";
+
+export async function getStaticPaths() {
+  const team = await getTeamleden();
+  return team.map((lid) => ({ params: { slug: lid.slug } }));
+}
+
+const { slug } = Astro.params;
+const lid = await getTeamlidBySlug(slug!);
+
+if (!lid) {
+  return Astro.redirect("/en/team");
+}
+
+const diensten = await getDiensten();
+const rol = lid.rolEn || lid.rol;
+const bio = lid.bioEn || lid.bio;
+
+const jsonLd = [
+  personNode(lid, "en"),
+  breadcrumbNode([
+    { name: "Home", path: "/en" },
+    { name: "Team", path: "/en/team" },
+    { name: `${lid.voornaam} ${lid.naam}`, path: `/en/team/${lid.slug}` },
+  ]),
+];
+
+const title = `${lid.voornaam} ${lid.naam} | ${rolKort(rol)} Hasselt | Movenda`;
+---
+
+<Layout
+  title={title.length <= 60 ? title : `${lid.voornaam} ${lid.naam} | ${rolKort(rol)} | Movenda`}
+  description={truncateAtSentence(bio, 155)}
+  path={`/en/team/${lid.slug}`}
+  altPath={`/team/${lid.slug}`}
+  lang="en"
+  jsonLd={jsonLd}
+  ogImage={lid.foto}
+  ogImageShape="square"
+  ogImageAlt={`${lid.voornaam} ${lid.naam}, ${rol} at Movenda`}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12">
+    <a href="/en/team" class="text-sm font-medium text-brand-primary hover:underline">← Back to the team</a>
+
+    <div class="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start">
+      <div class="aspect-[2/3] w-40 shrink-0 overflow-hidden rounded-2xl bg-brand-header">
+        {lid.foto ? (
+          <img
+            src={teamPhotoSrc(lid.foto, "detail")}
+            alt={`${lid.voornaam} ${lid.naam}`}
+            width="160"
+            height="240"
+            class="h-full w-full object-cover object-top"
+          />
+        ) : (
+          <div class="flex h-full w-full items-center justify-center text-3xl font-bold text-white/80">
+            {lid.voornaam[0]}{lid.naam[0]}
+          </div>
+        )}
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
+        <p class="mt-1 text-lg font-medium text-brand-primary">{rol}</p>
+        <p class="mt-2 text-sm text-brand-muted">
+          {lid.locaties.includes("olympia") && "Olympia"}
+          {lid.locaties.includes("olympia") && lid.locaties.includes("mpc") && " · "}
+          {lid.locaties.includes("mpc") && "MPC"}
+        </p>
+        {(lid.tariefKine || lid.tariefPt || lid.tariefPtMpc || lid.tariefPerformance) && (
+          <p class="mt-2 text-sm">
+            {lid.tariefKine && <span>Physio {formatEuro(lid.tariefKine)}</span>}
+            {lid.tariefPt && <span> · PT Olympia {formatEuro(lid.tariefPt)}</span>}
+            {lid.tariefPtMpc && <span> · PT MPC {formatEuro(lid.tariefPtMpc)}</span>}
+            {lid.tariefPerformance && <span> · Performance {formatEuro(lid.tariefPerformance)}</span>}
+          </p>
+        )}
+      </div>
+    </div>
+
+    {!lid.bioEn && (
+      <p class="mt-6 rounded-xl bg-brand-surface px-3 py-2 text-xs text-brand-muted">
+        This bio is currently in Dutch. The English translation will follow.
+      </p>
+    )}
+    <p class="mt-6 text-brand-muted">{bio}</p>
+
+    {lid.specialisaties.length > 0 && (
+      <div class="mt-8">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Specialisations</h2>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {lid.specialisaties.map((s) => {
+            const match = matchSpecialisatieToDienst(s, diensten);
+            return (
+              <li>
+                {match ? (
+                  <a href={dienstHref(match, "en")} class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-primary hover:underline">{tagLabel(s, "en")}</a>
+                ) : (
+                  <span class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-text">{tagLabel(s, "en")}</span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )}
+
+    {lid.clubs.length > 0 && (
+      <div class="mt-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Clubs</h2>
+        <ul class="mt-2 flex flex-wrap gap-2 text-sm">
+          {lid.clubs.map((c) => (
+            <li>
+              {c.url ? (
+                <a href={c.url} target="_blank" rel="noopener" class="text-brand-primary hover:underline">{c.naam}</a>
+              ) : (
+                c.naam
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <p class="mt-8">
+      <a href={`mailto:${lid.email}`} class="font-semibold text-brand-primary hover:underline">
+        {lid.email}
+      </a>
+    </p>
+  </article>
+</Layout>

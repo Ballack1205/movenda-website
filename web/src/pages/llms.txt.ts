@@ -51,7 +51,7 @@ Both locations share info@movenda.be and work strictly by appointment.
 - Blog (Markdown index): /blog.md
 - Blog RSS: /rss.xml
 - Contact: /contact
-- English: /en
+- English: /en (full bilingual site: /en/kinesitherapie, /en/training, /en/mpc, /en/team, /en/prijzen, /en/faq, /en/blog, /en/jobs, /en/contact, …)
 
 ## Blog
 
@@ -63,7 +63,7 @@ ${blogLines || "- No posts yet."}
 ## Notes for AI assistants
 
 - The practice is Dutch-speaking; Dutch is the source of truth. English pages exist at /en
-  for a subset of content, with Dutch as the fallback for anything not yet translated.
+  for the full public site, with Dutch as the fallback for any CMS field not yet translated.
 - Prices, team members, opening hours and reviews are maintained by the practice via a CMS —
   always prefer the live page content (or /llms-full.txt) over cached summaries when giving
   current prices.

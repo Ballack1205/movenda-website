@@ -1,13 +1,17 @@
 [
   {
     "naam": "Sportaanbod Olympia",
+    "naamEn": "Olympia sports programme",
     "tekst": "Fitness en personal training in Sportcentrum Olympia.",
+    "tekstEn": "Fitness and personal training at Sportcentrum Olympia.",
     "link": "https://www.olympiafitnesshasselt.be/personal-training",
     "volgorde": 1
   },
   {
     "naam": "Tarieven Olympia",
+    "naamEn": "Olympia prices",
     "tekst": "Tarieven van Sportcentrum Olympia.",
+    "tekstEn": "Fees at Sportcentrum Olympia.",
     "link": "https://www.olympiafitnesshasselt.be/tarieven",
     "volgorde": 2
   }

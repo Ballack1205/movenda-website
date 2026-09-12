@@ -3,12 +3,33 @@ import Layout from "../../layouts/Layout.astro";
 import Routebeschrijving from "../../components/Routebeschrijving.astro";
 import { getLocaties } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
+import { byAppointment, legalCourt, locatieType, weekday } from "../../lib/i18n";
 
 const locaties = (await getLocaties()).sort((a, b) =>
   a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
 );
-const olympia = locaties.find((l) => l.slug === "olympia");
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
+const olympia = locaties.find((l) => l.slug === "olympia");
+const mapEmbedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(olympia?.adres || "Kuringersteenweg 242 Hasselt")}&z=15&output=embed`;
+
+const hoeGevonden = [
+  { value: "Huisarts", label: "GP" },
+  { value: "Specialist", label: "Specialist" },
+  { value: "Gynaecoloog", label: "Gynaecologist" },
+  { value: "Vroedvrouw", label: "Midwife" },
+  { value: "Familie", label: "Family" },
+  { value: "Vrienden", label: "Friends" },
+  { value: "Sportclub trainer of coach", label: "Sports club trainer or coach" },
+  { value: "Google / Google Maps", label: "Google / Google Maps" },
+  { value: "Instagram", label: "Instagram" },
+  { value: "Facebook", label: "Facebook" },
+  { value: "Een evenement of activiteit van Movenda", label: "A Movenda event or activity" },
+  { value: "Via een andere zorgverlener", label: "Another healthcare provider" },
+  { value: "Bedrijf / werkgever", label: "Company / employer" },
+  { value: "Andere", label: "Other" },
+];
+
+const followUpNaam = ["Huisarts", "Specialist", "Gynaecoloog", "Vroedvrouw", "Via een andere zorgverlener"];
 
 const jsonLd = [
   breadcrumbSchema([
@@ -33,30 +54,84 @@ const jsonLd = [
       as soon as possible. You can also call or email us directly.
     </p>
 
-    <div class="mt-10 grid gap-8 sm:grid-cols-2">
+    <div class="mt-10 grid items-stretch gap-8 sm:grid-cols-2">
       {locaties.map((locatie) => (
-        <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+        <div class="flex flex-col rounded-2xl border border-brand-border bg-brand-surface p-6">
           <h2 class="text-lg font-semibold text-brand-primary">{locatie.naam}</h2>
+          <p class="mt-1 text-xs uppercase tracking-wide text-brand-muted">{locatieType(locatie.type, "en")}</p>
           <p class="mt-2 text-sm text-brand-muted">{locatie.adres}</p>
-          <p class="mt-3 text-sm">
-            <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="font-semibold text-brand-primary hover:underline">
-              {locatie.telefoon}
-            </a>
-          </p>
-          <p class="text-sm">
-            <a href={`mailto:${locatie.email}`} class="font-semibold text-brand-primary hover:underline">
-              {locatie.email}
-            </a>
-          </p>
+          {locatie.urenNote && <p class="mt-1 text-xs text-brand-muted">{byAppointment(locatie.urenNote, "en")}</p>}
+          <ul class="mt-3 space-y-1 text-sm text-brand-muted">
+            {locatie.uren.map((u) => (
+              <li class="flex justify-between gap-4">
+                <span>{weekday(u.dag, "en")}</span>
+                <span>{u.van}–{u.tot}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="mt-auto pt-4">
+            <p class="text-sm">
+              <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="font-semibold text-brand-primary hover:underline">
+                {locatie.telefoon}
+              </a>
+            </p>
+            <p class="text-sm">
+              <a href={`mailto:${locatie.email}`} class="font-semibold text-brand-primary hover:underline">
+                {locatie.email}
+              </a>
+            </p>
+            <p class="mt-3 min-h-[2.5rem] text-xs text-brand-muted">
+              VAT {locatie.btw}
+              {locatie.iban && <> · IBAN {locatie.iban}</>}
+              {locatie.bic && <> · BIC {locatie.bic}</>}
+              {legalCourt(locatie.rpr, "en") && <> · {legalCourt(locatie.rpr, "en")}</>}
+            </p>
+            {locatie.instagram && (
+              <a href={locatie.instagram} class="mt-2 inline-block text-xs font-semibold text-brand-primary hover:underline" target="_blank" rel="noopener">Instagram</a>
+            )}
+          </div>
         </div>
       ))}
     </div>
 
+    {olympia?.mapsUrl && (
+      <div
+        class="mt-8 flex h-72 flex-col items-center justify-center gap-3 rounded-2xl border border-brand-border bg-brand-surface p-6 text-center"
+        data-map
+        data-map-src={mapEmbedSrc}
+      >
+        <svg class="h-8 w-8 text-brand-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 21s-6-5.4-6-11a6 6 0 1 1 12 0c0 5.6-6 11-6 11z" />
+          <circle cx="12" cy="10" r="2.5" />
+        </svg>
+        <p class="text-sm font-semibold">{olympia.naam}</p>
+        <p class="-mt-2 text-sm text-brand-muted">{olympia.adres}</p>
+        <div class="mt-1 flex flex-wrap justify-center gap-2">
+          <button
+            type="button"
+            data-map-load
+            class="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-primary-dark"
+          >
+            Show map
+          </button>
+          <a
+            href={olympia.mapsUrl}
+            target="_blank"
+            rel="noopener"
+            class="rounded-full border border-brand-border px-4 py-2 text-sm font-semibold text-brand-text transition hover:bg-brand-bg"
+          >
+            Directions in Google Maps
+          </a>
+        </div>
+        <p class="text-xs text-brand-muted">The Google map loads after you click.</p>
+      </div>
+    )}
+
     {olympia && (
       <Routebeschrijving
         locatie={olympia}
-        lang="en"
         title="First visit to Movenda — Olympia?"
+        lang="en"
         class="mt-8"
       />
     )}
@@ -67,30 +142,86 @@ const jsonLd = [
         <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="Email" required />
       </div>
       <div class="grid gap-4 sm:grid-cols-2">
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Phone (optional)" />
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Phone" required />
         <select class="rounded-lg border border-brand-border px-4 py-3" name="locatie">
           <option value="">Which location?</option>
           <option value="Movenda Olympia">Movenda — Olympia</option>
           <option value="Movenda Performance Centre">Movenda Performance Centre</option>
         </select>
       </div>
-      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Your message" required minlength="5"></textarea>
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">What would you like to come in for?</legend>
+        <div class="mt-2 flex flex-wrap gap-4 text-sm">
+          <label><input type="checkbox" name="waarvoor" value="Kinesitherapie" /> Physiotherapy</label>
+          <label><input type="checkbox" name="waarvoor" value="Personal Training" /> Personal training</label>
+          <label><input type="checkbox" name="waarvoor" value="Andere" /> Other</label>
+        </div>
+      </fieldset>
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">Do you have a doctor's prescription?</legend>
+        <p class="text-xs text-brand-muted">Only needed for physiotherapy</p>
+        <div class="mt-2 flex flex-wrap gap-4 text-sm">
+          <label><input type="radio" name="voorschrift" value="Ja" /> Yes</label>
+          <label><input type="radio" name="voorschrift" value="Nee" /> No</label>
+          <label><input type="radio" name="voorschrift" value="Niet van toepassing" /> Not applicable</label>
+        </div>
+      </fieldset>
+      <label class="text-sm">
+        <span class="font-semibold">How did you find us?</span>
+        <select class="mt-1 w-full rounded-lg border border-brand-border px-4 py-3" name="hoeGevonden" data-hoe>
+          <option value="">Choose what fits best</option>
+          {hoeGevonden.map((opt) => (
+            <option value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+      </label>
+      <input class="hidden rounded-lg border border-brand-border px-4 py-3" type="text" name="hoeGevondenDetail" data-hoe-detail placeholder="Name / extra info" />
+      <textarea class="hidden rounded-lg border border-brand-border px-4 py-3" name="clubNaam" rows="2" data-club placeholder="Name of the club"></textarea>
+      <input class="hidden rounded-lg border border-brand-border px-4 py-3" type="text" name="eventNaam" data-event placeholder="Which event?" />
+      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Your question or message" required minlength="5"></textarea>
       <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
       <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
-        Send
+        Send my question
       </button>
       <p class="text-sm" data-contact-status role="status" aria-live="polite"></p>
     </form>
   </section>
 </Layout>
 
-<script define:vars={{ apiUrl: contactApiUrl }} is:inline>
+<script define:vars={{ apiUrl: contactApiUrl, followUpNaam }} is:inline>
   const form = document.querySelector("[data-contact-form]");
   const status = document.querySelector("[data-contact-status]");
+  const hoe = document.querySelector("[data-hoe]");
+  const detail = document.querySelector("[data-hoe-detail]");
+  const club = document.querySelector("[data-club]");
+  const eventField = document.querySelector("[data-event]");
+
+  const mapBox = document.querySelector("[data-map]");
+  mapBox?.querySelector("[data-map-load]")?.addEventListener("click", () => {
+    const iframe = document.createElement("iframe");
+    iframe.title = "Map of Movenda Olympia";
+    iframe.src = mapBox.dataset.mapSrc;
+    iframe.className = "h-72 w-full";
+    iframe.setAttribute("loading", "lazy");
+    iframe.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
+    mapBox.replaceChildren(iframe);
+    mapBox.className = "mt-8 h-72 overflow-hidden rounded-2xl border border-brand-border";
+    window.mvTrack?.("map_load");
+  });
+
+  hoe?.addEventListener("change", () => {
+    const v = hoe.value;
+    detail.classList.toggle("hidden", !followUpNaam.includes(v) && v !== "Andere");
+    club.classList.toggle("hidden", v !== "Sportclub trainer of coach");
+    eventField.classList.toggle("hidden", v !== "Een evenement of activiteit van Movenda");
+  });
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
+    const fd = new FormData(form);
+    const waarvoor = fd.getAll("waarvoor");
+    const data = Object.fromEntries(fd.entries());
+    data.waarvoor = waarvoor.join(", ");
     const button = form.querySelector("button[type=submit]");
     button.disabled = true;
     status.textContent = "Sending…";
@@ -103,12 +234,13 @@ const jsonLd = [
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("send_failed");
-      status.textContent = "Thanks! We'll get back to you as soon as possible.";
+      status.textContent = "Thanks for your message! We received your request and will get back to you as soon as possible.";
       status.className = "text-sm font-semibold text-brand-primary";
       window.mvTrack?.("form_submit", { form: "contact" });
       form.reset();
     } catch {
-      status.textContent = "Something went wrong sending this. Please call or email us directly — see above.";
+      status.textContent =
+        "Something went wrong sending this. Please call or email us directly — see the details above.";
       status.className = "text-sm font-semibold text-red-600";
     } finally {
       button.disabled = false;

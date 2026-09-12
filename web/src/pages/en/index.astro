@@ -1,9 +1,13 @@
 ---
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import SocialLinks from "../../components/SocialLinks.astro";
 import BookingButton from "../../components/BookingButton.astro";
+import PartnerBand from "../../components/PartnerBand.astro";
+import NewsletterBlock from "../../components/NewsletterBlock.astro";
+import InstagramFeed from "../../components/InstagramFeed.astro";
+import GetuigenisCarousel from "../../components/GetuigenisCarousel.astro";
 import TeamCarousel from "../../components/TeamCarousel.astro";
 import SloganBanner from "../../components/SloganBanner.astro";
 import HomePijler from "../../components/HomePijler.astro";
@@ -11,8 +15,11 @@ import {
   getTeamleden,
   getSiteSettings,
   getDienstenByCategorie,
+  getPartners,
+  getGetuigenissen,
   homePijlerDiensten,
 } from "../../lib/content";
+import { partnerBandTitle } from "../../lib/i18n";
 import homeHero from "../../assets/marketing/home-hero.jpg";
 import mpcHero from "../../assets/marketing/mpc-hero.jpg";
 import homeSquats from "../../assets/marketing/home-squats.jpg";
@@ -28,7 +35,27 @@ const alleDiensten = {
 };
 const afspraakHref =
   settings.booking.enabled && settings.booking.url ? settings.booking.url : "/en/contact";
+const partners = await getPartners("movenda");
+const getuigenissen = await getGetuigenissen("olympia", "en");
 
+const heroSizes = "(min-width: 1024px) 60vw, 100vw";
+const heroWidths = [640, 960, 1280];
+const heroPreload = await getImage({ src: homeHero, widths: heroWidths, sizes: heroSizes });
+const heroLinks = [
+  {
+    rel: "preload",
+    as: "image",
+    href: heroPreload.src,
+    imagesrcset: heroPreload.srcSet.attribute,
+    imagesizes: heroSizes,
+    fetchpriority: "high" as const,
+  },
+];
+
+const kinesistenCount = team.filter((t) => t.rol.toLowerCase().includes("kinesitherapeut")).length;
+const trainerCount = team.filter(
+  (t) => t.rol.toLowerCase().includes("trainer") || t.rol.toLowerCase().includes("coach"),
+).length;
 ---
 
 <Layout
@@ -37,48 +64,98 @@ const afspraakHref =
   path="/en"
   altPath="/"
   lang="en"
+  extraLinks={heroLinks}
 >
-  <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 lg:grid-cols-2 lg:py-16">
-    <div>
-      <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">
-        Physiotherapy · Personal training · Performance
-      </p>
-      <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
-        Move, recover and perform in Hasselt
-      </h1>
-      <p class="mt-4 max-w-xl text-lg text-brand-muted">
-        With a team of {team.length}+ physiotherapists and trainers, we guide you through recovery,
-        injury prevention and a healthy, active lifestyle — medically sound and fully tailored to you.
-      </p>
-      <div class="mt-6 flex flex-wrap items-center gap-3">
-        <a
-          href={`tel:${settings.telefoonOlympia.replace(/\s+/g, "")}`}
-          class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
-        >
-          Call {settings.telefoonOlympia}
-        </a>
-        <a
-          href="/en/contact"
-          class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary"
-        >
-          Contact us
-        </a>
-        <BookingButton />
+  <section class="hero relative overflow-hidden">
+    <div
+      class="mx-auto grid max-w-6xl gap-8 px-4 pt-8 pb-6 sm:pb-10 lg:max-w-none lg:grid-cols-[1fr_minmax(0,36rem)_minmax(0,36rem)_1fr] lg:gap-0 lg:px-0 lg:pt-0 lg:pb-0"
+    >
+      <div class="hero-copy order-last flex flex-col justify-center lg:order-none lg:col-start-2 lg:col-end-3 lg:py-10 lg:pr-10 lg:pl-4 xl:pr-12">
+        <p class="hero-in text-base font-medium text-brand-primary">
+          Group practice in Hasselt and Kuringen
+        </p>
+        <h1 class="hero-in mt-3 text-display">
+          Move, recover and perform in Hasselt
+        </h1>
+        <p class="hero-in mt-5 max-w-md text-[1.0625rem] leading-relaxed text-brand-muted">
+          Physiotherapy and personal training under one roof, at Sportcentrum Olympia and the
+          Performance Centre in Kuringen. You are always coached one-on-one by one of our {kinesistenCount} physiotherapists or {trainerCount} trainers — with a plan that fits your complaint and your goal.
+        </p>
+        <div class="hero-in mt-6 flex flex-wrap items-center gap-3">
+          <a
+            href={`tel:${settings.telefoonOlympia.replace(/\s+/g, "")}`}
+            class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+          >
+            Call {settings.telefoonOlympia}
+          </a>
+          <a
+            href="/en/contact"
+            class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary"
+          >
+            Contact us
+          </a>
+          <BookingButton lang="en" />
+        </div>
+        <div class="hero-in mt-7 flex flex-col items-center gap-y-1 border-t border-brand-border pt-5 sm:flex-row sm:flex-wrap sm:gap-x-8 sm:gap-y-3">
+          <GoogleReviewBadge locatie="olympia" lang="en" />
+          <SocialLinks lang="en" class="-mx-2" />
+        </div>
       </div>
-      <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
-        <GoogleReviewBadge locatie="olympia" lang="en" />
-        <SocialLinks class="w-full justify-center sm:w-auto sm:justify-start" />
+
+      <div class="hero-media relative -mx-4 -mt-8 sm:mx-0 sm:mt-0 lg:col-start-3 lg:col-end-5 lg:min-h-[32rem]">
+        <Image
+          src={homeHero}
+          alt="A Movenda trainer coaching a client during a session"
+          widths={heroWidths}
+          sizes={heroSizes}
+          class="aspect-[4/3] w-full object-cover sm:aspect-[3/2] lg:absolute lg:inset-0 lg:aspect-auto lg:h-full"
+          priority
+        />
+        <figure class="hero-inset absolute bottom-6 -left-10 hidden w-40 xl:block">
+          <Image
+            src={kineHero}
+            alt="A Movenda physiotherapist treating a patient"
+            width={352}
+            height={440}
+            class="aspect-[4/5] w-full object-cover ring-8 ring-brand-bg"
+          />
+        </figure>
       </div>
     </div>
-    <Image
-      src={homeHero}
-      alt="Personal trainer and client during a training session at Movenda"
-      width={640}
-      height={800}
-      class="aspect-[4/5] w-full rounded-3xl object-cover shadow-xl"
-      priority
-    />
   </section>
+
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-in {
+        animation: hero-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      }
+      .hero-in:nth-child(2) { animation-delay: 0.06s; }
+      .hero-in:nth-child(3) { animation-delay: 0.12s; }
+      .hero-in:nth-child(4) { animation-delay: 0.18s; }
+      .hero-in:nth-child(5) { animation-delay: 0.24s; }
+      .hero-media {
+        animation: hero-settle 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      }
+      .hero-inset {
+        animation: hero-rise 0.7s 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      }
+    }
+    @keyframes hero-rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes hero-settle {
+      from { transform: scale(1.02); }
+      to { transform: none; }
+    }
+  </style>
+
+  <PartnerBand
+    partners={partners}
+    title={partnerBandTitle(settings.partnerband.titel, "en")}
+    snelheid={settings.partnerband.snelheid}
+    animatie={settings.partnerband.animatie}
+  />
 
   {settings.slogans.home && (
     <SloganBanner quote={settings.slogans.home} image={homeSquats} />
@@ -90,22 +167,20 @@ const afspraakHref =
       diensten={homePijlerDiensten("kine", alleDiensten)}
       image={kineHero}
       imageAlt="Physiotherapist treating a patient at Movenda in Hasselt"
-      aanbodHref="/kinesitherapie"
+      aanbodHref="/en/kinesitherapie"
       aanbodLabel="See our physiotherapy services"
       afspraakHref={afspraakHref}
       lang="en"
-      hrefLang="nl"
     />
     <HomePijler
       pijler={settings.homePijlers.training}
       diensten={homePijlerDiensten("training", alleDiensten)}
       image={trainingSecondary}
       imageAlt="Personal trainer coaching a client through an exercise at Movenda"
-      aanbodHref="/training"
+      aanbodHref="/en/training"
       aanbodLabel="See our training services"
       afspraakHref={afspraakHref}
       lang="en"
-      hrefLang="nl"
       reverse
     />
     <HomePijler
@@ -121,13 +196,19 @@ const afspraakHref =
   </section>
 
   <section class="mx-auto grid max-w-6xl gap-4 px-4 pt-2 pb-10 sm:grid-cols-2 sm:gap-6 sm:py-16">
-    <div class="rounded-2xl border border-brand-border bg-brand-surface p-6 sm:p-8">
+    <a
+      href="/en/locaties/olympia"
+      class="group rounded-2xl border border-brand-border bg-brand-surface p-6 transition hover:border-brand-primary sm:p-8"
+    >
       <h2 class="text-2xl font-bold text-brand-primary">Movenda — Olympia</h2>
       <p class="mt-2 text-brand-muted">
-        Physiotherapy and personal training at Sportcentrum Olympia, Hasselt. Manual therapy, dry
-        needling, acupuncture, sport-specific training and more.
+        Physiotherapy and personal training at Sportcentrum Olympia, Hasselt. Manual therapy,
+        dry needling, acupuncture, sport-specific training and more.
       </p>
-    </div>
+      <span class="mt-4 inline-block font-semibold text-brand-primary group-hover:underline">
+        See the location →
+      </span>
+    </a>
     <a
       href="/en/mpc"
       class="group relative overflow-hidden rounded-2xl p-6 text-white transition hover:opacity-95 sm:p-8"
@@ -163,8 +244,9 @@ const afspraakHref =
     </div>
   </section>
 
-  <p class="mx-auto max-w-6xl px-4 pb-16 text-xs text-brand-muted">
-    This page is available in English. Some deeper pages are currently Dutch-only —{" "}
-    <a href="/" class="font-semibold text-brand-primary hover:underline">bekijk de Nederlandse site</a>.
-  </p>
+  <GetuigenisCarousel items={getuigenissen} lang="en" />
+
+  <InstagramFeed settings={settings} lang="en" />
+
+  <NewsletterBlock settings={settings} lang="en" />
 </Layout>

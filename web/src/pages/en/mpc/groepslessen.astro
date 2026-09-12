@@ -1,0 +1,108 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import DienstCard from "../../../components/DienstCard.astro";
+import {
+  getDienstenByCategorie,
+  getLesrooster,
+  getLocatieBySlug,
+  getPrijzenByCategorie,
+  formatPrijs,
+  dienstHref,
+} from "../../../lib/content";
+import { breadcrumbSchema } from "../../../lib/schema";
+import { WEEKDAYS_NL, floorNote, prijsNaam, weekday } from "../../../lib/i18n";
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const rooster = await getLesrooster();
+const groep = await getDienstenByCategorie("mpc-groep");
+const memberships = (await getPrijzenByCategorie("mpc")).filter((p) =>
+  /10 lessen|small group|boxing/i.test(p.naam),
+);
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Movenda Performance Centre", path: "/en/mpc" },
+    { name: "Group classes", path: "/en/mpc/groepslessen" },
+  ]),
+];
+---
+
+<Layout
+  title="Group classes & timetable | Movenda Performance Centre"
+  description="Timetable of the Movenda Performance Centre in Kuringen: HIIT, Full Body, PowerPlus, boxing, corporate and more. Maximum 8 people."
+  path="/en/mpc/groepslessen"
+  altPath="/mpc/groepslessen"
+  brand="mpc"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">MPC</p>
+    <h1 class="mt-2 text-3xl font-bold">Group classes</h1>
+    <p class="mt-3 max-w-2xl text-brand-muted">
+      Small groups, maximum 8 people, coached. First running class is free; PowerPlus has a free
+      trial lesson. {floorNote(locatie.verdiepingNote, "en")}
+    </p>
+
+    <h2 class="mt-10 text-xl font-bold">Timetable</h2>
+    <div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {WEEKDAYS_NL.map((dag) => {
+        const lessen = rooster.filter((r) => r.dag === dag);
+        return (
+          <div class="rounded-2xl border border-brand-border bg-brand-surface p-5">
+            <h3 class="font-semibold text-brand-primary">{weekday(dag, "en")}</h3>
+            {lessen.length === 0 ? (
+              <p class="mt-2 text-sm text-brand-muted">No class</p>
+            ) : (
+              <ul class="mt-3 space-y-2 text-sm">
+                {lessen.map((les) => (
+                  <li>
+                    <span class="font-medium">{les.van}–{les.tot}</span>
+                    {" · "}
+                    {les.dienstSlug && les.dienstCategorie ? (
+                      <a href={dienstHref({ slug: les.dienstSlug, categorie: les.dienstCategorie }, "en")} class="text-brand-primary hover:underline">{les.les}</a>
+                    ) : (
+                      les.les
+                    )}
+                    {les.coachNaam && <span class="text-brand-muted"> — {les.coachNaam}</span>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
+    </div>
+
+    {memberships.length > 0 && (
+      <div class="mt-12">
+        <h2 class="text-xl font-bold">Memberships</h2>
+        <p class="mt-2 text-sm text-brand-muted">
+          Prices exclusive of VAT. Cancel up to 24 hours in advance.
+          {" "}
+          <a href="/en/mpc/prijzen" class="font-medium text-brand-primary hover:underline">All fees</a>
+        </p>
+        <div class="mt-4 overflow-x-auto rounded-2xl border border-brand-border">
+          <table class="w-full min-w-[28rem] text-left text-sm">
+            <tbody>
+              {memberships.map((item, i) => (
+                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                  <td class="px-4 py-3">{prijsNaam(item.naam, "en")}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item, "en")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    <h2 class="mt-12 text-xl font-bold">Programmes</h2>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {groep.map((dienst) => (
+        <DienstCard dienst={dienst} lang="en" />
+      ))}
+    </div>
+  </section>
+</Layout>

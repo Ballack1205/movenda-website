@@ -1,0 +1,59 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getVacatures, getSiteSettings } from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const vacatures = await getVacatures();
+const settings = await getSiteSettings();
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Jobs", path: "/en/jobs" },
+  ]),
+];
+---
+
+<Layout
+  title="Jobs | Work at Movenda Hasselt"
+  description="See open vacancies at Movenda in Hasselt and the Movenda Performance Centre in Kuringen."
+  path="/en/jobs"
+  altPath="/jobs"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-3xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Work at Movenda</h1>
+    <p class="mt-2 text-brand-muted">
+      Would you like to join our team of physiotherapists, personal trainers and performance coaches?
+    </p>
+
+    {vacatures.length === 0 ? (
+      <div class="mt-10 rounded-2xl border border-brand-border bg-brand-surface p-8 text-center">
+        <p class="font-semibold">No open vacancies at the moment.</p>
+        <p class="mt-2 text-sm text-brand-muted">
+          Still interested in sending a speculative application? Email{" "}
+          <a href={`mailto:${settings.email}`} class="font-semibold text-brand-primary hover:underline">
+            {settings.email}
+          </a>.
+        </p>
+      </div>
+    ) : (
+      <div class="mt-10 grid gap-6">
+        {vacatures.map((vacature) => (
+          <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
+            <h2 class="text-lg font-semibold">{vacature.titel}</h2>
+            {vacature.locatieNaam && <p class="text-sm font-medium text-brand-primary">{vacature.locatieNaam}</p>}
+            <p class="mt-2 whitespace-pre-line text-sm text-brand-muted">{vacature.omschrijving}</p>
+            <a
+              href={`mailto:${vacature.contactEmail}`}
+              class="mt-4 inline-block font-semibold text-brand-primary hover:underline"
+            >
+              Apply via {vacature.contactEmail} →
+            </a>
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+</Layout>

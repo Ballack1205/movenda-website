@@ -2,6 +2,7 @@
   {
     "slug": "vanhees-g",
     "tekst": "Nooit gedacht dat ik ging sporten. Ondertussen ben ik 2 jaar aan het trainen bij Movenda, heb ik 3 marathons gelopen (Parijs, Berlijn en Rotterdam). Mijn lichaam is steviger en ik zit vol energie.",
+    "tekstEn": "I never thought I would take up sport. I have now been training at Movenda for two years and have run three marathons (Paris, Berlin and Rotterdam). My body is stronger and I am full of energy.",
     "naam": "Vanhees G.",
     "rol": "Personal training",
     "locatie": "olympia",
@@ -11,6 +12,7 @@
   {
     "slug": "placeholder-1",
     "tekst": "Deze getuigenis volgt nog. Vervang in Sanity → Getuigenissen deze tekst door een echte quote, voeg een foto toe en publiceer.",
+    "tekstEn": "This testimonial will follow.",
     "naam": "Naam volgt",
     "rol": "Kinesitherapie",
     "locatie": "olympia",
@@ -20,6 +22,7 @@
   {
     "slug": "placeholder-2",
     "tekst": "Deze getuigenis volgt nog. Vervang in Sanity → Getuigenissen deze tekst door een echte quote, voeg een foto toe en publiceer.",
+    "tekstEn": "This testimonial will follow.",
     "naam": "Naam volgt",
     "rol": "Kinesitherapie",
     "locatie": "olympia",
@@ -29,6 +32,7 @@
   {
     "slug": "placeholder-3",
     "tekst": "Deze getuigenis volgt nog. Vervang in Sanity → Getuigenissen deze tekst door een echte quote, voeg een foto toe en publiceer.",
+    "tekstEn": "This testimonial will follow.",
     "naam": "Naam volgt",
     "rol": "Personal training",
     "locatie": "olympia",
@@ -38,6 +42,7 @@
   {
     "slug": "placeholder-4",
     "tekst": "Deze getuigenis volgt nog. Vervang in Sanity → Getuigenissen deze tekst door een echte quote, voeg een foto toe en publiceer.",
+    "tekstEn": "This testimonial will follow.",
     "naam": "Naam volgt",
     "rol": "Personal training",
     "locatie": "olympia",
@@ -47,6 +52,7 @@
   {
     "slug": "mpc-data-quote",
     "tekst": "With the support from our objective data we have been able to serve our athletes better than ever.",
+    "tekstEn": "With the support from our objective data we have been able to serve our athletes better than ever.",
     "naam": "Movenda Performance Centre",
     "rol": "Performance",
     "locatie": "mpc",

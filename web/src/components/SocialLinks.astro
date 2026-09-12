@@ -3,10 +3,11 @@ import { getLocatieBySlug, getSiteSettings } from "../lib/content";
 
 interface Props {
   brand?: "movenda" | "mpc";
+  lang?: "nl" | "en";
   class?: string;
 }
 
-const { brand = "movenda", class: className = "" } = Astro.props;
+const { brand = "movenda", lang = "nl", class: className = "" } = Astro.props;
 const settings = await getSiteSettings();
 const mpc = brand === "mpc" ? await getLocatieBySlug("mpc") : undefined;
 
@@ -16,11 +17,12 @@ const linkedin = settings.socials.linkedin;
 const email = settings.email;
 
 const who = brand === "mpc" ? "Movenda Performance Centre" : "Movenda";
+const on = lang === "en" ? "on" : "op";
 const links = [
-  { kind: "instagram" as const, href: instagram, label: `${who} op Instagram` },
-  { kind: "linkedin" as const, href: linkedin, label: `${who} op LinkedIn` },
-  { kind: "facebook" as const, href: facebook, label: `${who} op Facebook` },
-  { kind: "email" as const, href: email ? `mailto:${email}` : "", label: email || "E-mail" },
+  { kind: "instagram" as const, href: instagram, label: `${who} ${on} Instagram` },
+  { kind: "linkedin" as const, href: linkedin, label: `${who} ${on} LinkedIn` },
+  { kind: "facebook" as const, href: facebook, label: `${who} ${on} Facebook` },
+  { kind: "email" as const, href: email ? `mailto:${email}` : "", label: email || (lang === "en" ? "Email" : "E-mail") },
 ].filter((l) => l.href);
 
 const iconClass = "h-6 w-6";
@@ -28,7 +30,7 @@ const iconClass = "h-6 w-6";
 
 {
   links.length > 0 && (
-    <nav class:list={["flex items-center gap-2", className]} aria-label="Sociale media">
+    <nav class:list={["flex items-center gap-2", className]} aria-label={lang === "en" ? "Social media" : "Sociale media"}>
       {links.map((l) => (
         <a
           href={l.href}

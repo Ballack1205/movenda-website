@@ -78,10 +78,14 @@ function dienstLinks(diensten: Dienst[], categorie: DienstCategorie | DienstCate
     .map((d) => ({ href: dienstHref(d, lang), label: dienstKorteTitel(d, lang) }));
 }
 
-function sportaanbodLinks(items: SportaanbodItem[]): NavLink[] {
+function sportaanbodLinks(items: SportaanbodItem[], lang: Lang = "nl"): NavLink[] {
   return items
     .filter((item): item is SportaanbodItem & { link: string } => !!item.link)
-    .map((item) => ({ href: item.link, label: item.naam, external: true }));
+    .map((item) => ({
+      href: item.link,
+      label: lang === "en" ? item.naamEn || item.naam : item.naam,
+      external: true,
+    }));
 }
 
 export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
@@ -94,7 +98,9 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
 
   const { booking } = settings;
   const cta: NavCta =
-    booking.enabled && booking.url ? { href: booking.url, label: booking.label, external: true } : contact;
+    booking.enabled && booking.url
+      ? { href: booking.url, label: lang === "en" ? "Book an appointment" : booking.label, external: true }
+      : contact;
   // When booking is the CTA, Contact goes back into the list as a plain link.
   const contactItem: NavItem[] = cta === contact ? [] : [contact];
 
@@ -103,14 +109,39 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
       return {
         items: [
           {
-            href: "/en/mpc",
-            label: "Services",
+            href: "/en/mpc#training",
+            label: "Training",
             children: [
-              { href: "/en/mpc", label: "Movenda Performance Centre" },
-              ...dienstLinks(diensten, ["mpc-training", "mpc-rehab", "mpc-groep"], "en"),
+              { href: "/en/mpc#training", label: "All training" },
+              ...dienstLinks(diensten, "mpc-training", "en"),
             ],
           },
+          {
+            href: "/en/mpc#sportrevalidatie",
+            label: "Sports rehabilitation",
+            children: [
+              { href: "/en/mpc#sportrevalidatie", label: "All sports rehabilitation" },
+              ...dienstLinks(diensten, "mpc-rehab", "en"),
+            ],
+          },
+          {
+            href: "/en/mpc/groepslessen",
+            label: "Group classes",
+            children: [
+              { href: "/en/mpc/groepslessen", label: "Timetable & all classes" },
+              ...dienstLinks(diensten, "mpc-groep", "en"),
+            ],
+          },
+          { href: "/en/mpc/prijzen", label: "Prices" },
           { href: "/en/team", label: "Team" },
+          {
+            href: "/en/mpc/visie",
+            label: "About MPC",
+            children: [
+              { href: "/en/mpc/visie", label: "Vision" },
+              { href: "/en/mpc#faq", label: "FAQ" },
+            ],
+          },
           { href: "/en", label: "Movenda", emphasize: true },
           ...contactItem,
         ],
@@ -167,7 +198,32 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
   if (lang === "en") {
     return {
       items: [
+        {
+          href: "/en/kinesitherapie",
+          label: "Physiotherapy",
+          children: [
+            { href: "/en/kinesitherapie", label: "All treatments" },
+            ...dienstLinks(diensten, "kine", "en"),
+          ],
+        },
+        {
+          href: "/en/training",
+          label: "Training",
+          children: [{ href: "/en/training", label: "All training" }, ...dienstLinks(diensten, "training", "en")],
+        },
         { href: "/en/team", label: "Team" },
+        { href: "/en/prijzen", label: "Prices" },
+        {
+          href: "/en/over",
+          label: "About us",
+          children: [
+            { href: "/en/over", label: "About Movenda" },
+            { href: "/en/faq", label: "FAQ" },
+            { href: "/en/blog", label: "Blog" },
+            { href: "/en/jobs", label: "Jobs" },
+            ...sportaanbodLinks(sportaanbod, "en"),
+          ],
+        },
         { href: "/en/mpc", label: "MPC", emphasize: true },
         ...contactItem,
       ],
@@ -202,7 +258,7 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
           { href: "/faq", label: "Veelgestelde vragen" },
           { href: "/blog", label: "Blog" },
           { href: "/jobs", label: "Vacatures" },
-          ...sportaanbodLinks(sportaanbod),
+          ...sportaanbodLinks(sportaanbod, "nl"),
         ],
       },
       { href: "/mpc", label: "MPC", emphasize: true },

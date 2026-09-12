@@ -1,0 +1,62 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import BlogPostFeature from "../../../components/BlogPostFeature.astro";
+import BlogPostCard from "../../../components/BlogPostCard.astro";
+import { getBlogPosts } from "../../../lib/content";
+import { blogListSchema, breadcrumbSchema } from "../../../lib/schema";
+
+const posts = await getBlogPosts();
+const featured = posts[0];
+const rest = posts.slice(1);
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Blog", path: "/en/blog" },
+  ]),
+  blogListSchema(posts, "en"),
+];
+---
+
+<Layout
+  title="Blog | Tips on physiotherapy, training and recovery | Movenda"
+  description="Practical tips on injury prevention, training and recovery, written by the Movenda team."
+  path="/en/blog"
+  altPath="/blog"
+  lang="en"
+  jsonLd={jsonLd}
+  extraLinks={[
+    { rel: "alternate", type: "application/rss+xml", href: "/rss.xml", title: "Movenda blog" },
+    { rel: "alternate", type: "text/markdown", href: "/blog.md", title: "Blog (Markdown)" },
+  ]}
+>
+  <section class="mx-auto max-w-6xl px-4 py-12 lg:py-16">
+    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">Blog</p>
+    <h1 class="mt-2 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
+      Tips from our physiotherapists and trainers
+    </h1>
+    <p class="mt-4 max-w-2xl text-lg text-brand-muted">
+      Practical insights on injury prevention, recovery and training — straight from the practice
+      in Hasselt.
+    </p>
+
+    {posts.length === 0 ? (
+      <p class="mt-10 text-brand-muted">Our first blog posts will appear here soon.</p>
+    ) : (
+      <>
+        {featured && (
+          <div class="mt-10">
+            <BlogPostFeature post={featured} lang="en" />
+          </div>
+        )}
+        {rest.length > 0 && (
+          <div class="mt-10 grid gap-6 sm:grid-cols-2">
+            {rest.map((post) => (
+              <BlogPostCard post={post} lang="en" />
+            ))}
+          </div>
+        )}
+      </>
+    )}
+  </section>
+</Layout>

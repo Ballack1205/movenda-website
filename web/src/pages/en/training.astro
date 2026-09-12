@@ -1,0 +1,97 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
+import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
+import DienstCard from "../../components/DienstCard.astro";
+import { getDienstenByCategorie, getLocatieBySlug, getSiteSettings } from "../../lib/content";
+import { breadcrumbSchema, localBusinessSchema } from "../../lib/schema";
+import trainingHero from "../../assets/marketing/training-hero.jpg";
+import trainingSecondary from "../../assets/marketing/training-secondary.jpg";
+
+const locatie = (await getLocatieBySlug("olympia"))!;
+const diensten = await getDienstenByCategorie("training");
+const settings = await getSiteSettings();
+const doelgroepen = settings.homePijlers.training.lijstEn?.length
+  ? settings.homePijlers.training.lijstEn
+  : settings.homePijlers.training.lijst;
+
+const jsonLd = [
+  localBusinessSchema(locatie),
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Training", path: "/en/training" },
+  ]),
+];
+---
+
+<Layout
+  title="Training Hasselt: personal, duo & sport-specific | Movenda"
+  description="Personal training, duo training and sport-specific coaching in Hasselt, delivered by physiotherapists with sport-specific expertise."
+  path="/en/training"
+  altPath="/training"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 py-12">
+    <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+      <div>
+        <h1 class="text-3xl font-bold">Personal training Hasselt</h1>
+        <p class="mt-3 max-w-xl text-brand-muted">
+          We offer several types of training so we can take on the challenge of your personal goals
+          together — muscle development, fat loss or conditioning. A PT session lasts at least an
+          hour and can run longer: everything is tailored to what you want.
+        </p>
+        <p class="mt-3 max-w-xl text-brand-muted">
+          At Movenda you train with a personal trainer who is also a physiotherapist. Your programme
+          is built around your goals and around your body, limitations and medical history.
+        </p>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <a
+            href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`}
+            class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+          >
+            Call {locatie.telefoon}
+          </a>
+          <GoogleReviewBadge locatie="olympia" lang="en" />
+        </div>
+      </div>
+      <Image
+        src={trainingHero}
+        alt="Personal training session at Movenda"
+        width={640}
+        height={480}
+        class="aspect-[4/3] w-full rounded-3xl object-cover shadow-xl"
+        priority
+      />
+    </div>
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-3">
+      <div class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
+        {diensten.map((dienst) => (
+          <DienstCard dienst={dienst} lang="en" />
+        ))}
+      </div>
+      <Image
+        src={trainingSecondary}
+        alt="Strength training at Movenda"
+        width={480}
+        height={640}
+        class="aspect-[16/10] w-full rounded-2xl object-cover lg:aspect-[3/4]"
+      />
+    </div>
+
+    <h2 class="mt-12 text-xl font-bold">Who it's for</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {doelgroepen.map((d) => (
+        <span class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text">
+          {d}
+        </span>
+      ))}
+    </div>
+
+    <p class="mt-10 text-sm text-brand-muted">
+      For performance training and elite-sport coaching, see the{" "}
+      <a href="/en/mpc" class="font-semibold text-brand-primary hover:underline">Movenda Performance Centre</a>.
+    </p>
+  </section>
+</Layout>

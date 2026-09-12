@@ -79,6 +79,7 @@ const jsonLd = [
   title={post.seoTitle || `${post.titel} | Movenda blog`}
   description={post.seoDescription || post.excerpt || ""}
   path={`/blog/${post.slug}`}
+  altPath={`/en/blog/${post.slug}`}
   jsonLd={jsonLd}
   ogImage={post.cover}
   article={{

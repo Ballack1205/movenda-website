@@ -9,11 +9,18 @@ export default defineType({
   fields: [
     defineField({
       name: "tekst",
-      title: "Quote",
+      title: "Quote (NL)",
       type: "text",
       rows: 4,
       description: "De woorden van de cliënt, zonder aanhalingstekens — die zet de site er zelf bij.",
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "tekstEn",
+      title: "Quote (EN)",
+      type: "text",
+      rows: 4,
+      description: "Engelse vertaling. Leeg = de Nederlandse quote op /en.",
     }),
     defineField({
       name: "naam",

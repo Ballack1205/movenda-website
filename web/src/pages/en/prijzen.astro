@@ -1,0 +1,207 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import GetuigenisCarousel from "../../components/GetuigenisCarousel.astro";
+import {
+  getPrijzenByCategorie,
+  getSiteSettings,
+  getTeamleden,
+  getGetuigenissen,
+  formatPrijs,
+  formatEuro,
+} from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+import { PRIJZEN_INFO_EN, nomenCategorie, nomenOmschrijving, prijsNaam, prijsNotitie } from "../../lib/i18n";
+
+const kine = await getPrijzenByCategorie("kine");
+const training = await getPrijzenByCategorie("training");
+const settings = await getSiteSettings();
+const info = settings.prijzenInfo;
+const team = await getTeamleden();
+const getuigenissen = await getGetuigenissen("olympia", "en");
+
+const kineTarieven = team.filter((t) => t.tariefKine);
+const ptTarieven = team.filter((t) => t.tariefPt || t.tariefPtMpc || t.tariefPerformance);
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Prices", path: "/en/prijzen" },
+  ]),
+];
+---
+
+<Layout
+  title="Fees for physiotherapy & personal training | Movenda"
+  description="Overview of physiotherapy and personal training fees at Movenda Hasselt, and how much you get back from your health insurance fund."
+  path="/en/prijzen"
+  altPath="/prijzen"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Fees &amp; reimbursement</h1>
+    <p class="mt-3 max-w-2xl text-brand-muted">{PRIJZEN_INFO_EN.intro}</p>
+    {info.basishonorarium && (
+      <p class="mt-2 max-w-2xl text-brand-muted">
+        Our base fee is <strong>€{info.basishonorarium}</strong>. The exact rate depends on the
+        treating therapist, specialisation and experience.
+      </p>
+    )}
+    {settings.slogans.prijzenKine && (
+      <p class="mt-4 text-lg font-semibold text-brand-primary">{settings.slogans.prijzenKine}</p>
+    )}
+
+    {kineTarieven.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Fees per therapist — physiotherapy</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <tbody>
+              {kineTarieven.map((lid, i) => (
+                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                  <td class="px-4 py-3">
+                    <a href={`/en/team/${lid.slug}`} class="font-medium hover:text-brand-primary">{lid.voornaam} {lid.naam}</a>
+                    <span class="text-brand-muted"> — {lid.rolEn || lid.rol}</span>
+                  </td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatEuro(lid.tariefKine)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {kine.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Physiotherapy — treatments</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <tbody>
+              {kine.map((item, i) => (
+                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                  <td class="px-4 py-3">{prijsNaam(item.naam, "en")}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item, "en")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {info.nomenclatuur && info.nomenclatuur.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">{PRIJZEN_INFO_EN.nomenclatuur}</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-brand-surface text-brand-muted">
+              <tr>
+                <th class="px-4 py-2 font-medium">{PRIJZEN_INFO_EN.categorie}</th>
+                <th class="px-4 py-2 font-medium">{PRIJZEN_INFO_EN.omschrijving}</th>
+                <th class="px-4 py-2 text-right font-medium">{PRIJZEN_INFO_EN.ereloon}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {info.nomenclatuur.map((n) => (
+                <tr class="border-t border-brand-border">
+                  <td class="px-4 py-2">{nomenCategorie(n.categorie, "en")}</td>
+                  <td class="px-4 py-2">{nomenOmschrijving(n.omschrijving, "en")}</td>
+                  <td class="px-4 py-2 text-right font-semibold">{n.bedrag}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {settings.slogans.prijzenPt && (
+      <p class="mt-12 text-lg font-semibold text-brand-primary">{settings.slogans.prijzenPt}</p>
+    )}
+
+    {ptTarieven.length > 0 && (
+      <div class="mt-6">
+        <h2 class="text-xl font-semibold">Fees per therapist — training</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-brand-surface text-brand-muted">
+              <tr>
+                <th class="px-4 py-2 font-medium">Therapist</th>
+                <th class="px-4 py-2 text-right font-medium">Olympia</th>
+                <th class="px-4 py-2 text-right font-medium">MPC</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ptTarieven.map((lid) => (
+                <tr class="border-t border-brand-border">
+                  <td class="px-4 py-3">
+                    <a href={`/en/team/${lid.slug}`} class="font-medium hover:text-brand-primary">{lid.voornaam} {lid.naam}</a>
+                  </td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatEuro(lid.tariefPt) || "—"}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">
+                    {formatEuro(lid.tariefPerformance || lid.tariefPtMpc) || "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {training.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Personal training — Olympia</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-brand-border">
+          <table class="w-full text-left text-sm">
+            <tbody>
+              {training.map((item, i) => (
+                <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
+                  <td class="px-4 py-3">
+                    {prijsNaam(item.naam, "en")}
+                    {prijsNotitie(item.notitie, "en") && <span class="block text-xs text-brand-muted">{prijsNotitie(item.notitie, "en")}</span>}
+                  </td>
+                  <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item, "en")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    <div id="mpc" class="mt-12 scroll-mt-24 rounded-2xl border border-brand-border bg-brand-surface p-6">
+      <h2 class="text-xl font-semibold">Movenda Performance Centre</h2>
+      <p class="mt-2 text-sm text-brand-muted">{PRIJZEN_INFO_EN.mpcIntro}</p>
+      <a href="/en/mpc/prijzen" class="mt-4 inline-block font-semibold text-brand-primary hover:underline">
+        {PRIJZEN_INFO_EN.mpcCta}
+      </a>
+    </div>
+
+    <div class="mt-12 rounded-2xl border border-brand-border bg-brand-surface p-6">
+      <h2 class="text-xl font-semibold">{PRIJZEN_INFO_EN.terugbetaling}</h2>
+      <p class="mt-2 text-sm text-brand-muted">{PRIJZEN_INFO_EN.terugbetalingBody}</p>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        {info.terugbetalingStandaard && (
+          <div>
+            <p class="text-sm font-semibold">{PRIJZEN_INFO_EN.standaard}</p>
+            <p class="text-sm text-brand-muted">{PRIJZEN_INFO_EN.terugbetalingStandaard}</p>
+          </div>
+        )}
+        {info.terugbetalingVt && (
+          <div>
+            <p class="text-sm font-semibold">{PRIJZEN_INFO_EN.vt}</p>
+            <p class="text-sm text-brand-muted">{PRIJZEN_INFO_EN.terugbetalingVt}</p>
+          </div>
+        )}
+      </div>
+      {info.voorwaarden && <p class="mt-4 text-xs text-brand-muted">{PRIJZEN_INFO_EN.voorwaarden}</p>}
+      {info.annulatiebeleid && (
+        <p class="mt-4 text-sm text-brand-muted"><strong>{PRIJZEN_INFO_EN.annulatie}</strong> {PRIJZEN_INFO_EN.annulatiebeleid}</p>
+      )}
+    </div>
+  </section>
+
+  <GetuigenisCarousel items={getuigenissen} lang="en" />
+</Layout>

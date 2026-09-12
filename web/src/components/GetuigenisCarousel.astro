@@ -5,6 +5,7 @@
  */
 import type { Getuigenis, LocatieSlug } from "../lib/content";
 import { getuigenisPhotoSrc } from "../lib/images";
+import { tagLabel } from "../lib/i18n";
 
 export interface Props {
   items: Getuigenis[];
@@ -84,7 +85,9 @@ function locatieTekst(locatie?: LocatieSlug | "beide"): string | undefined {
     >
       {items.map((item, index) => {
         const plaats = locatieTekst(item.locatie);
-        const meta = [item.rol, plaats].filter(Boolean).join(" · ");
+        const rol = item.rol ? tagLabel(item.rol, lang) : undefined;
+        const meta = [rol, plaats].filter(Boolean).join(" · ");
+        const quote = lang === "en" ? item.tekstEn || item.tekst : item.tekst;
         return (
           <article
             class="flex w-full min-w-full shrink-0 snap-start flex-col items-center gap-4 rounded-2xl bg-brand-surface p-4 shadow-sm ring-1 ring-brand-border sm:flex-row sm:items-center sm:gap-6 sm:p-5"
@@ -123,7 +126,7 @@ function locatieTekst(locatie?: LocatieSlug | "beide"): string | undefined {
                 <path d="M18.5 38H6.8L16 10h12.2L18.5 38Zm22.7 0H29.5L38.7 10H51l-9.8 28Z" transform="translate(-6 -8)" />
               </svg>
               <blockquote class="mt-1 text-base font-medium leading-snug text-brand-text sm:text-lg">
-                <p>“{item.tekst}”</p>
+                <p>“{quote}”</p>
               </blockquote>
               <footer class="mt-3">
                 <p class="font-heading text-sm font-semibold text-brand-text">{item.naam}</p>

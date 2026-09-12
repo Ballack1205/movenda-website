@@ -6,6 +6,7 @@
  */
 import type { Teamlid } from "../lib/content";
 import { teamPhotoSrc } from "../lib/images";
+import { withLang } from "../lib/i18n";
 
 export interface Props {
   team: Teamlid[];
@@ -51,7 +52,7 @@ const t = {
   >
     {team.map((lid) => (
       <li class="w-36 shrink-0 snap-start sm:w-40 lg:w-44">
-        <a href={`/team/${lid.slug}`} class="group block">
+        <a href={withLang(`/team/${lid.slug}`, lang)} class="group block">
           <div class="aspect-[2/3] w-full overflow-hidden rounded-xl bg-brand-header">
             {lid.foto ? (
               <img

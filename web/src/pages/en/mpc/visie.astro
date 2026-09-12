@@ -1,0 +1,56 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getLocatieBySlug, getSiteSettings } from "../../../lib/content";
+import { breadcrumbSchema } from "../../../lib/schema";
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const settings = await getSiteSettings();
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Movenda Performance Centre", path: "/en/mpc" },
+    { name: "Vision", path: "/en/mpc/visie" },
+  ]),
+];
+---
+
+<Layout
+  title="Vision | Movenda Performance Centre"
+  description="The vision of the Movenda Performance Centre: objective data, one-on-one coaching and sustainable sporting performance."
+  path="/en/mpc/visie"
+  altPath="/mpc/visie"
+  brand="mpc"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-3xl px-4 py-16">
+    <a href="/en/mpc" class="text-sm font-medium text-brand-primary">← Back to MPC</a>
+    <h1 class="mt-4 text-3xl font-bold">Our vision</h1>
+    {settings.slogans.mpc && (
+      <p class="mt-3 text-lg font-medium text-brand-primary">{settings.slogans.mpc}</p>
+    )}
+    <div class="mt-6 space-y-4 leading-relaxed text-brand-muted">
+      <p>
+        The Movenda Performance Centre in Kuringen is a multidisciplinary centre for maximising
+        performance of (semi-)professional athletes and for medical rehabilitation based on data
+        analysis.
+      </p>
+      <p>
+        We believe progress should be measurable. Objective data — strength, fitness, recovery —
+        makes choices clear and keeps you honest. No guesswork, but a plan we adjust together.
+      </p>
+      <p>
+        Coaching is one-on-one or in small groups (maximum 8). Attention stays on your body, your
+        sport and your goal — whether you are coming back from injury or aiming for a personal
+        best.
+      </p>
+      <p>
+        {locatie.adres}. By appointment only.
+      </p>
+    </div>
+    <a href="/en/contact" class="mt-10 inline-block rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+      Contact your performance specialist
+    </a>
+  </article>
+</Layout>

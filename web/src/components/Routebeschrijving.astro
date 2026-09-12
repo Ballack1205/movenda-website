@@ -1,6 +1,7 @@
 ---
 import type { Locatie } from "../lib/content";
 import { locatiePhotoSrc } from "../lib/images";
+import { locatieRoute } from "../lib/i18n";
 
 interface Props {
   locatie: Locatie;
@@ -10,14 +11,13 @@ interface Props {
 }
 
 const { locatie, lang = "nl", title, class: className = "" } = Astro.props;
-const tekst =
-  lang === "en" && locatie.slug === "olympia" && locatie.routebeschrijving
-    ? "First visit? Take the sports entrance on the left of the building, where Movenda is on the window. Check in at the info desk and say you are here for physiotherapy. You will get an access card and a staff member will show you upstairs. Upstairs, open the gate with the access card and walk around the corner to the second desk. You can wait in the waiting room there."
-    : locatie.routebeschrijving;
+const tekst = locatieRoute(locatie.slug, locatie.routebeschrijving, lang);
 const fotoAlt =
-  lang === "en"
-    ? `${locatie.naam} — take the sports entrance on the left of the building, where Movenda is on the window.`
-    : `${locatie.naam} — neem de sportieve ingang, links aan het gebouw waar Movenda op het venster staat.`;
+  locatie.slug === "olympia"
+    ? lang === "en"
+      ? `${locatie.naam} — take the sports entrance on the left of the building, where Movenda is on the window.`
+      : `${locatie.naam} — neem de sportieve ingang, links aan het gebouw waar Movenda op het venster staat.`
+    : locatie.naam;
 ---
 
 {(tekst || locatie.foto) && (

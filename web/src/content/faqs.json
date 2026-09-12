@@ -1,105 +1,135 @@
 [
   {
     "vraag": "Wat kan ik bij jullie laten behandelen?",
+    "vraagEn": "What can you treat?",
     "antwoord": "Bij Movenda in Hasselt bieden we kinesitherapie en personal training aan. In het Movenda Performance Centre in Kuringen focussen we op performance training en sportrevalidatie. Bekijk /kinesitherapie, /training of /mpc voor het volledige aanbod.",
+    "antwoordEn": "At Movenda in Hasselt we offer physiotherapy and personal training. At the Movenda Performance Centre in Kuringen we focus on performance training and sports rehabilitation. See /en/kinesitherapie, /en/training or /en/mpc for the full offer.",
     "categorie": "behandelingen",
     "site": "movenda",
     "volgorde": 1
   },
   {
     "vraag": "Wat zijn jullie openingsuren?",
+    "vraagEn": "What are your opening hours?",
     "antwoord": "Wij werken enkel op afspraak. Maandag t.e.m. donderdag van 08u00 tot 21u00, vrijdag van 08u00 tot 19u00 en zaterdag van 08u30 tot 13u00.",
+    "antwoordEn": "We work by appointment only. Monday–Thursday 08:00–21:00, Friday 08:00–19:00 and Saturday 08:30–13:00.",
     "categorie": "praktisch",
     "site": "movenda",
     "volgorde": 2
   },
   {
     "vraag": "Hoe maak ik een afspraak?",
+    "vraagEn": "How do I make an appointment?",
     "antwoord": "Telefonisch op +32 483 65 44 89, via mail naar info@movenda.be, of rechtstreeks bij je therapeut.",
+    "antwoordEn": "By phone on +32 483 65 44 89, by email to info@movenda.be, or directly with your therapist.",
     "categorie": "afspraken",
     "site": "movenda",
     "volgorde": 3
   },
   {
     "vraag": "Hoe kan ik betalen?",
+    "vraagEn": "How can I pay?",
     "antwoord": "Je kan betalen via overschrijving.",
+    "antwoordEn": "You can pay by bank transfer.",
     "categorie": "prijzen",
     "site": "movenda",
     "volgorde": 4
   },
   {
     "vraag": "Ik ben te laat, wat nu?",
+    "vraagEn": "I'm running late — what now?",
     "antwoord": "We vragen je om altijd telefonisch te verwittigen indien je later bent, via +32 483 65 44 89.",
+    "antwoordEn": "Please always let us know by phone if you will be late: +32 483 65 44 89.",
     "categorie": "praktisch",
     "site": "movenda",
     "volgorde": 5
   },
   {
     "vraag": "Hoe annuleer ik een afspraak?",
+    "vraagEn": "How do I cancel an appointment?",
     "antwoord": "Je kan ons telefonisch (+32 483 65 44 89) of via mail (info@movenda.be) verwittigen. Verwittig je minstens 24u op voorhand, dan is dat geen probleem. Annuleer je later of kom je niet opdagen, dan zijn we genoodzaakt de volledige behandeling aan te rekenen.",
+    "antwoordEn": "Let us know by phone (+32 483 65 44 89) or email (info@movenda.be). At least 24 hours in advance is no problem. Later cancellation or a no-show: we charge the full treatment.",
     "categorie": "afspraken",
     "site": "movenda",
     "volgorde": 6
   },
   {
     "vraag": "Heb ik een doktersvoorschrift nodig?",
+    "vraagEn": "Do I need a doctor's prescription?",
     "antwoord": "Ja, wij vragen al onze patiënten eerst een arts te raadplegen. Breng je voorschrift steeds mee naar je eerste afspraak. Zonder voorschrift kan je komen, maar dan is er geen terugbetaling via de mutualiteit.",
+    "antwoordEn": "Yes — we ask all patients to see a doctor first. Always bring your prescription to the first appointment. You can come without one, but then there is no reimbursement via the health insurance fund.",
     "categorie": "afspraken",
     "site": "movenda",
     "volgorde": 7
   },
   {
     "vraag": "Wat moet ik meebrengen naar mijn eerste afspraak?",
+    "vraagEn": "What should I bring to my first appointment?",
     "antwoord": "Een doktersvoorschrift, je identiteitskaart, sportkleding en schoenen, een handdoek, en eventuele relevante medische info (beeldvorming, verslagen) indien beschikbaar.",
+    "antwoordEn": "A doctor's prescription, your ID card, sportswear and shoes, a towel, and any relevant medical information (imaging, reports) if you have it.",
     "categorie": "praktisch",
     "site": "movenda",
     "volgorde": 8
   },
   {
     "vraag": "Wat trek ik best aan?",
+    "vraagEn": "What should I wear?",
     "antwoord": "Draag sportieve of gemakkelijke kledij voor je afspraken. We doen veel oefentherapie waarbij sportieve oefeningen aan bod komen.",
+    "antwoordEn": "Wear sporty or comfortable clothing to your appointments. We do a lot of exercise therapy with athletic movements.",
     "categorie": "praktisch",
     "site": "movenda",
     "volgorde": 9
   },
   {
     "vraag": "Kan ik mijn eigen therapeut kiezen?",
+    "vraagEn": "Can I choose my own therapist?",
     "antwoord": "Ja, uiteraard! Let wel: niet elke therapeut heeft dezelfde specialisaties, dus kunnen we je mogelijks iemand van ons team adviseren voor een specifieke behandeling.",
+    "antwoordEn": "Yes, of course. Note that not every therapist has the same specialisations, so we may recommend someone on the team for a specific treatment.",
     "categorie": "afspraken",
     "site": "movenda",
     "volgorde": 10
   },
   {
     "vraag": "Doen jullie huisbezoeken?",
+    "vraagEn": "Do you do home visits?",
     "antwoord": "Wij doen geen vaste huisbezoeken. We kunnen een uitzondering maken voor patiënten in de eerste weken na een operatie.",
+    "antwoordEn": "We don't do regular home visits. We can make an exception for patients in the first weeks after surgery.",
     "categorie": "behandelingen",
     "site": "movenda",
     "volgorde": 11
   },
   {
     "vraag": "Waar vind ik jullie precies?",
+    "vraagEn": "Where exactly are you?",
     "antwoord": "Sportcentrum Olympia, Kuringersteenweg 242, 3500 Hasselt. Neem de sportieve ingang links aan het gebouw waar Movenda op het venster staat, meld je aan bij de infobalie en zeg dat je voor de kiné komt. Je krijgt een toegangskaart en een begeleider wijst je de weg tot boven. Weet je al bij wie je terecht wil? Bekijk het team.",
+    "antwoordEn": "Sportcentrum Olympia, Kuringersteenweg 242, 3500 Hasselt. Take the sports entrance on the left of the building, where Movenda is on the window. Check in at the info desk and say you are here for physiotherapy. You get an access card and a staff member shows you upstairs. Already know who you want to see? Check the team page.",
     "categorie": "praktisch",
     "site": "movenda",
     "volgorde": 12
   },
   {
     "vraag": "Wordt de behandeling terugbetaald?",
+    "vraagEn": "Is the treatment reimbursed?",
     "antwoord": "Al onze therapeuten zijn gedeconventioneerd. Je ontvangt na elke sessie een getuigschrift voor verstrekte hulp. Daarmee vraag je zelf terugbetaling aan bij je ziekenfonds. Standaard ±€18 à €20 per sessie; bij verhoogde tegemoetkoming gunstigere tarieven.",
+    "antwoordEn": "All our therapists are deconventioned. After each session you receive a certificate of provided care, which you use to claim reimbursement from your health insurance fund. Standard ±€18–€20 per session; increased reimbursement (VT/BIM) has more favourable rates.",
     "categorie": "prijzen",
     "site": "movenda",
     "volgorde": 13
   },
   {
     "vraag": "Hoe lang duurt een sessie?",
+    "vraagEn": "How long does a session last?",
     "antwoord": "Kinesitherapie: 30 minuten één-op-één, plus extra tijd om oefeningen zelfstandig verder te zetten. Personal training: 60 of 90 minuten.",
+    "antwoordEn": "Physiotherapy: 30 minutes one-on-one, plus extra time to continue exercises independently. Personal training: 60 or 90 minutes.",
     "categorie": "praktisch",
     "site": "movenda",
     "volgorde": 14
   },
   {
     "vraag": "Waar vind ik de prijzen?",
+    "vraagEn": "Where can I find the prices?",
     "antwoord": "Bekijk de volledige tarieven en terugbetaling op de prijzenpagina.",
+    "antwoordEn": "See the full fees and reimbursement on the prices page.",
     "categorie": "prijzen",
     "site": "movenda",
     "volgorde": 15
