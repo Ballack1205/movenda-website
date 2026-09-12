@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
+import Routebeschrijving from "../../components/Routebeschrijving.astro";
 import { getLocaties, getLocatieBySlug, getTeamledenByLocatie } from "../../lib/content";
 import { breadcrumbNode } from "../../lib/schema";
 
@@ -27,6 +28,7 @@ const jsonLd = [
   title={`${locatie.naam} | Adres & openingsuren`}
   description={`${locatie.naam} — ${locatie.type}, ${locatie.adres}. Openingsuren, telefoon, route en het team op deze locatie.`}
   path={`/locaties/${locatie.slug}`}
+  altPath={`/en/locaties/${locatie.slug}`}
   brand={brand}
   jsonLd={jsonLd}
 >
@@ -70,12 +72,7 @@ const jsonLd = [
       </div>
     </div>
 
-    {locatie.routebeschrijving && (
-      <div class="mt-8 rounded-2xl border border-brand-border bg-brand-surface p-6">
-        <h2 class="font-semibold">Route</h2>
-        <p class="mt-2 text-sm text-brand-muted">{locatie.routebeschrijving}</p>
-      </div>
-    )}
+    <Routebeschrijving locatie={locatie} title="Route" class="mt-8" />
 
     <p class="mt-8 text-xs text-brand-muted">
       BTW {locatie.btw}

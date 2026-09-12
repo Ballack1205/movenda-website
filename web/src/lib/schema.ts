@@ -125,7 +125,13 @@ export function localBusinessNode(locatie: Locatie): JsonLdNode {
     name: locatie.naam,
     description: locatie.type,
     url: `${SITE_URL}/locaties/${locatie.slug}`,
-    image: absoluteUrl("/og-default.jpg"),
+    image: absoluteUrl(
+      locatie.foto
+        ? locatie.foto.startsWith("http")
+          ? `${locatie.foto}?w=1200&h=630&fit=crop&auto=format`
+          : locatie.foto
+        : "/og-default.jpg",
+    ),
     address: compact({
       "@type": "PostalAddress",
       streetAddress: adres.streetAddress,

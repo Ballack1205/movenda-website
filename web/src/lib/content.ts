@@ -87,6 +87,8 @@ export interface Locatie {
   /** Google Business Profile link (sameAs in JSON-LD). Julie fills this in Sanity. */
   googleBusinessUrl?: string;
   routebeschrijving?: string;
+  /** Exterior / entrance photo. Sanity URL or a /public path. */
+  foto?: string;
   rpr?: string;
   instagram?: string;
   facebook?: string;
@@ -407,6 +409,7 @@ const locatieProjection = `{
   "geo": { "lat": geo.lat, "lng": geo.lng },
   telefoon, email, uren, urenNote, btw, iban, bic, mapsUrl, googleBusinessUrl,
   routebeschrijving, rpr, instagram, facebook, verdiepingNote,
+  "foto": foto.asset->url,
   "updatedAt": _updatedAt
 }`;
 
@@ -490,14 +493,28 @@ function normalizeTeamlid(row: Teamlid): Teamlid {
   };
 }
 
+const locatieFotoFallback: Record<string, string> = {
+  olympia: "/locaties/olympia-ingang.jpg",
+};
+
+function normalizeLocatie(row: Locatie): Locatie {
+  return {
+    ...row,
+    foto: row.foto || locatieFotoFallback[row.slug],
+  };
+}
+
 export async function getLocaties(): Promise<Locatie[]> {
-  return sanity.fetch(`*[_type == "locatie"] | order(slug.current asc) ${locatieProjection}`);
+  const rows = await sanity.fetch(`*[_type == "locatie"] | order(slug.current asc) ${locatieProjection}`);
+  return (rows || []).map(normalizeLocatie);
 }
 
 export async function getLocatieBySlug(slug: LocatieSlug): Promise<Locatie | undefined> {
-  return sanity.fetch(`*[_type == "locatie" && slug.current == $slug][0] ${locatieProjection}`, {
-    slug,
-  });
+  const row = await sanity.fetch(
+    `*[_type == "locatie" && slug.current == $slug][0] ${locatieProjection}`,
+    { slug },
+  );
+  return row ? normalizeLocatie(row) : undefined;
 }
 
 export async function getDiensten(): Promise<Dienst[]> {

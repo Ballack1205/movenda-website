@@ -1,11 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Routebeschrijving from "../../components/Routebeschrijving.astro";
 import { getLocaties } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
 
 const locaties = (await getLocaties()).sort((a, b) =>
   a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
 );
+const olympia = locaties.find((l) => l.slug === "olympia");
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
 
 const jsonLd = [
@@ -49,6 +51,15 @@ const jsonLd = [
         </div>
       ))}
     </div>
+
+    {olympia && (
+      <Routebeschrijving
+        locatie={olympia}
+        lang="en"
+        title="First visit to Movenda — Olympia?"
+        class="mt-8"
+      />
+    )}
 
     <form class="mt-12 grid gap-4" data-contact-form>
       <div class="grid gap-4 sm:grid-cols-2">

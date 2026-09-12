@@ -11,6 +11,11 @@ export function blogPhotoSrc(src: string, variant: "card" | "hero" | "inline" = 
   return `${src}?w=900&h=560&fit=max&auto=format`;
 }
 
+export function locatiePhotoSrc(src: string): string {
+  if (src.startsWith("/")) return src;
+  return `${src}?w=1200&h=900&fit=crop&auto=format`;
+}
+
 export function dienstPhotoSrc(src: string, variant: "card" | "hero" | "gallery" = "card"): string {
   if (variant === "hero") return `${src}?w=960&h=640&fit=max&auto=format`;
   if (variant === "gallery") return `${src}?w=720&h=540&fit=crop&auto=format`;

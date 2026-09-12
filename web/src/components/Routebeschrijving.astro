@@ -1,0 +1,44 @@
+---
+import type { Locatie } from "../lib/content";
+import { locatiePhotoSrc } from "../lib/images";
+
+interface Props {
+  locatie: Locatie;
+  title: string;
+  lang?: "nl" | "en";
+  class?: string;
+}
+
+const { locatie, lang = "nl", title, class: className = "" } = Astro.props;
+const tekst =
+  lang === "en" && locatie.slug === "olympia" && locatie.routebeschrijving
+    ? "First visit? Take the sports entrance on the left of the building, where Movenda is on the window. Check in at the info desk and say you are here for physiotherapy. You will get an access card and a staff member will show you upstairs. Upstairs, open the gate with the access card and walk around the corner to the second desk. You can wait in the waiting room there."
+    : locatie.routebeschrijving;
+const fotoAlt =
+  lang === "en"
+    ? `${locatie.naam} — take the sports entrance on the left of the building, where Movenda is on the window.`
+    : `${locatie.naam} — neem de sportieve ingang, links aan het gebouw waar Movenda op het venster staat.`;
+---
+
+{(tekst || locatie.foto) && (
+  <div class:list={["overflow-hidden rounded-2xl border border-brand-border bg-brand-surface", className]}>
+    <div class:list={["grid items-stretch", locatie.foto && tekst && "sm:grid-cols-2"]}>
+      {locatie.foto && (
+        <img
+          src={locatiePhotoSrc(locatie.foto)}
+          alt={fotoAlt}
+          width="1050"
+          height="850"
+          loading="lazy"
+          class="aspect-[4/3] h-full w-full object-cover sm:aspect-auto sm:min-h-[16rem]"
+        />
+      )}
+      {tekst && (
+        <div class="flex flex-col justify-center p-6">
+          <h2 class="font-semibold">{title}</h2>
+          <p class="mt-2 text-sm text-brand-muted">{tekst}</p>
+        </div>
+      )}
+    </div>
+  </div>
+)}

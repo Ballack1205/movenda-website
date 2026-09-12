@@ -58,9 +58,20 @@ export default defineType({
         "De vaste link naar jullie Google-vermelding (Google Maps → Delen → 'Link kopiëren', of de g.page/maps.app.goo.gl-link uit het Bedrijfsprofiel). Koppelt deze vestiging in de structured data aan Google Maps; belangrijk voor lokale SEO en AI-zoekmachines.",
     }),
     defineField({ name: "routebeschrijving", title: "Routebeschrijving eerste bezoek", type: "text", rows: 4 }),
+    defineField({
+      name: "foto",
+      title: "Foto van het gebouw / de ingang",
+      type: "image",
+      options: { hotspot: true },
+      description:
+        "Foto bij de routebeschrijving op Contact en de locatiepagina (bij Olympia: de sportieve ingang). Zonder upload toont de site de foto van de oude website.",
+    }),
     defineField({ name: "rpr", title: "RPR", type: "string" }),
     defineField({ name: "instagram", title: "Instagram-URL (deze vestiging)", type: "url" }),
     defineField({ name: "facebook", title: "Facebook-URL (deze vestiging)", type: "url" }),
     defineField({ name: "verdiepingNote", title: "Verdieping / extra locatie-noot", type: "string" }),
   ],
+  preview: {
+    select: { title: "naam", subtitle: "adres", media: "foto" },
+  },
 });
