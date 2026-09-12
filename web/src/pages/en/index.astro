@@ -80,8 +80,8 @@ const afspraakHref =
     />
   </section>
 
-  {(settings.slogans.homeEn || settings.slogans.home) && (
-    <SloganBanner quote={settings.slogans.homeEn || settings.slogans.home!} image={homeSquats} />
+  {settings.slogans.home && (
+    <SloganBanner quote={settings.slogans.home} image={homeSquats} />
   )}
 
   <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">

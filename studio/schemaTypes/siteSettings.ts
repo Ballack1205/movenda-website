@@ -146,15 +146,11 @@ export default defineType({
     defineField({
       name: "slogans",
       title: "Slogans",
-      description:
-        "Korte one-liners op de site. Nederlands is de hoofdtaal; de Engelse velden verschijnen alleen op de /en-pagina's (leeg = Nederlandse tekst).",
       type: "object",
       fields: [
-        defineField({ name: "home", title: "Homepage (NL)", type: "string", description: "Banner met foto onder de partnerlogo's. Elke zin komt op een eigen regel." }),
-        defineField({ name: "homeEn", title: "Homepage (EN)", type: "string" }),
+        defineField({ name: "home", title: "Homepage", type: "string" }),
         defineField({ name: "kine", title: "Kinesitherapie", type: "string" }),
-        defineField({ name: "mpc", title: "MPC (NL)", type: "string" }),
-        defineField({ name: "mpcEn", title: "MPC (EN)", type: "string" }),
+        defineField({ name: "mpc", title: "MPC", type: "string" }),
         defineField({ name: "prijzenKine", title: "Prijzen kine", type: "string" }),
         defineField({ name: "prijzenPt", title: "Prijzen PT", type: "string" }),
       ],
