@@ -207,8 +207,10 @@ export interface SiteSettings {
   prijzenInfo: PrijzenInfo;
   slogans: {
     home?: string;
+    homeEn?: string;
     kine?: string;
     mpc?: string;
+    mpcEn?: string;
     prijzenKine?: string;
     prijzenPt?: string;
   };

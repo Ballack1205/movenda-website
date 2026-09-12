@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import SocialLinks from "../components/SocialLinks.astro";
@@ -37,6 +37,22 @@ const afspraakHref =
 const partners = await getPartners("movenda");
 const getuigenissen = await getGetuigenissen("olympia");
 
+// LCP: the hero photo is the largest thing above the fold on every viewport. Same widths/sizes as
+// the <Image> below so the preload resolves to the identical hashed files and no bytes are wasted.
+const heroSizes = "(min-width: 1024px) 60vw, 100vw";
+const heroWidths = [640, 960, 1280];
+const heroPreload = await getImage({ src: homeHero, widths: heroWidths, sizes: heroSizes });
+const heroLinks = [
+  {
+    rel: "preload",
+    as: "image",
+    href: heroPreload.src,
+    imagesrcset: heroPreload.srcSet.attribute,
+    imagesizes: heroSizes,
+    fetchpriority: "high" as const,
+  },
+];
+
 const kinesistenCount = team.filter((t) => t.rol.toLowerCase().includes("kinesitherapeut")).length;
 const trainerCount = team.filter(
   (t) => t.rol.toLowerCase().includes("trainer") || t.rol.toLowerCase().includes("coach"),
@@ -49,6 +65,7 @@ const trainerCount = team.filter(
   description="Movenda is dé groepspraktijk kinesitherapie en personal training in Hasselt, met een tweede vestiging Movenda Performance Centre in Kuringen."
   path="/"
   altPath="/en"
+  extraLinks={heroLinks}
 >
   {/*
     Hero — editorial, asymmetric. Breakout grid: [gutter | copy 32rem | photo 40rem + gutter].
@@ -96,8 +113,8 @@ const trainerCount = team.filter(
         <Image
           src={homeHero}
           alt="Trainer van Movenda begeleidt een klant tijdens een training"
-          widths={[640, 960, 1280]}
-          sizes="(min-width: 1024px) 60vw, 100vw"
+          widths={heroWidths}
+          sizes={heroSizes}
           class="aspect-[4/3] w-full object-cover sm:aspect-[3/2] lg:absolute lg:inset-0 lg:aspect-auto lg:h-full"
           priority
         />
@@ -115,7 +132,9 @@ const trainerCount = team.filter(
   </section>
 
   <style>
-    /* Entrance: copy fades up in a stagger, photo settles in. CSS only; respects reduced motion. */
+    /* Entrance: copy fades up in a stagger, photo settles in. CSS only; respects reduced motion.
+       The photo never animates opacity: Chrome only counts an LCP candidate once it is visible,
+       so a fade-in would push the measured LCP back by the whole animation. Scale-only is fine. */
     @media (prefers-reduced-motion: no-preference) {
       .hero-in {
         animation: hero-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -136,8 +155,8 @@ const trainerCount = team.filter(
       to { opacity: 1; transform: none; }
     }
     @keyframes hero-settle {
-      from { opacity: 0; transform: scale(1.02); }
-      to { opacity: 1; transform: none; }
+      from { transform: scale(1.02); }
+      to { transform: none; }
     }
   </style>
 
@@ -183,10 +202,11 @@ const trainerCount = team.filter(
     />
   </section>
 
-  <section class="mx-auto grid max-w-6xl gap-6 px-4 py-16 sm:grid-cols-2">
+  {/* On phones this follows the MPC pijler directly, so keep the gap tight and the cards compact. */}
+  <section class="mx-auto grid max-w-6xl gap-4 px-4 pt-2 pb-10 sm:grid-cols-2 sm:gap-6 sm:py-16">
     <a
       href="/locaties/olympia"
-      class="group rounded-2xl border border-brand-border bg-brand-surface p-8 transition hover:border-brand-primary"
+      class="group rounded-2xl border border-brand-border bg-brand-surface p-6 transition hover:border-brand-primary sm:p-8"
     >
       <h2 class="text-2xl font-bold text-brand-primary">Movenda — Olympia</h2>
       <p class="mt-2 text-brand-muted">
@@ -199,7 +219,7 @@ const trainerCount = team.filter(
     </a>
     <a
       href="/mpc"
-      class="group relative overflow-hidden rounded-2xl p-8 text-white transition hover:opacity-95"
+      class="group relative overflow-hidden rounded-2xl p-6 text-white transition hover:opacity-95 sm:p-8"
     >
       <Image
         src={mpcHero}

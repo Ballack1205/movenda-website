@@ -40,7 +40,19 @@ export interface Props {
   article?: ArticleMeta;
   /** Force noindex for this page regardless of the preview flag (thank-you / QR landing pages). */
   noindex?: boolean;
-  extraLinks?: { rel: string; type?: string; href: string; title?: string }[];
+  extraLinks?: HeadLink[];
+}
+
+export interface HeadLink {
+  rel: string;
+  type?: string;
+  href: string;
+  title?: string;
+  // Preload hints: resource kind plus responsive candidates, so a hero image starts downloading before CSS parses.
+  as?: string;
+  imagesrcset?: string;
+  imagesizes?: string;
+  fetchpriority?: "high" | "low" | "auto";
 }
 
 const {
@@ -78,7 +90,7 @@ const ogLocaleAlt = lang === "en" ? "nl_BE" : "en_GB";
 const nlPath = lang === "en" ? altPath : path;
 const enPath = lang === "en" ? path : altPath;
 
-const defaultLinks = [
+const defaultLinks: HeadLink[] = [
   { rel: "alternate", type: "text/plain", href: "/llms.txt", title: "LLM context" },
   { rel: "alternate", type: "application/rss+xml", href: "/rss.xml", title: "Movenda blog" },
 ];
@@ -133,7 +145,16 @@ const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
     {headLinks.map((link) => (
-      <link rel={link.rel} type={link.type} href={link.href} title={link.title} />
+      <link
+        rel={link.rel}
+        type={link.type}
+        href={link.href}
+        title={link.title}
+        as={link.as}
+        imagesrcset={link.imagesrcset}
+        imagesizes={link.imagesizes}
+        fetchpriority={link.fetchpriority}
+      />
     ))}
     <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
   </head>

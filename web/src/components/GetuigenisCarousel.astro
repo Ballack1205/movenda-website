@@ -32,7 +32,6 @@ const t = {
   prev: lang === "en" ? "Previous quote" : "Vorige getuigenis",
   next: lang === "en" ? "Next quote" : "Volgende getuigenis",
   list: lang === "en" ? "Client testimonials" : "Getuigenissen van cliënten",
-  photoSoon: lang === "en" ? "Photo coming soon" : "Foto volgt",
   slide: (i: number, total: number) =>
     lang === "en" ? `Quote ${i} of ${total}` : `Getuigenis ${i} van ${total}`,
 };
@@ -93,6 +92,7 @@ function locatieTekst(locatie?: LocatieSlug | "beide"): string | undefined {
             aria-roledescription="slide"
             aria-label={t.slide(index + 1, items.length)}
           >
+            {/* No photo yet → initials only. Never show editorial placeholders ("Foto volgt") to visitors. */}
             <div class="relative aspect-[3/4] w-24 shrink-0 overflow-hidden rounded-xl bg-brand-header sm:w-28">
               {item.foto ? (
                 <img
@@ -105,11 +105,10 @@ function locatieTekst(locatie?: LocatieSlug | "beide"): string | undefined {
                   class="h-full w-full object-cover object-top"
                 />
               ) : (
-                <div class="flex h-full w-full flex-col items-center justify-center gap-1.5 px-2 text-center">
-                  <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sm font-bold text-white">
+                <div class="flex h-full w-full items-center justify-center" aria-hidden="true">
+                  <span class="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-base font-bold text-white">
                     {initials(item.naam)}
                   </span>
-                  <span class="text-[10px] font-medium text-white/70">{t.photoSoon}</span>
                 </div>
               )}
             </div>
@@ -136,8 +135,9 @@ function locatieTekst(locatie?: LocatieSlug | "beide"): string | undefined {
       })}
     </div>
 
+    {/* Each dot sits in a 44×44 hit area (WCAG 2.5.8 / Lighthouse target-size); the visible dot stays small. */}
     {items.length > 1 && (
-      <div class="mt-4 flex items-center justify-center gap-2" data-carousel-dots role="tablist" aria-label={t.list}>
+      <div class="mt-2 flex items-center justify-center" data-carousel-dots role="tablist" aria-label={t.list}>
         {items.map((item, index) => (
           <button
             type="button"
@@ -146,8 +146,10 @@ function locatieTekst(locatie?: LocatieSlug | "beide"): string | undefined {
             data-index={index}
             aria-label={t.slide(index + 1, items.length)}
             aria-selected={index === 0 ? "true" : "false"}
-            class="h-2.5 w-2.5 rounded-full bg-brand-border transition aria-selected:w-7 aria-selected:bg-brand-primary"
-          ></button>
+            class="group flex h-11 min-w-11 items-center justify-center px-1"
+          >
+            <span class="h-3 w-3 rounded-full bg-brand-border transition group-aria-selected:w-8 group-aria-selected:bg-brand-primary"></span>
+          </button>
         ))}
       </div>
     )}

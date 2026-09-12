@@ -80,8 +80,8 @@ const afspraakHref =
     />
   </section>
 
-  {settings.slogans.home && (
-    <SloganBanner quote={settings.slogans.home} image={homeSquats} />
+  {(settings.slogans.homeEn || settings.slogans.home) && (
+    <SloganBanner quote={settings.slogans.homeEn || settings.slogans.home!} image={homeSquats} />
   )}
 
   <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">
@@ -120,8 +120,8 @@ const afspraakHref =
     />
   </section>
 
-  <section class="mx-auto grid max-w-6xl gap-6 px-4 py-16 sm:grid-cols-2">
-    <div class="rounded-2xl border border-brand-border bg-brand-surface p-8">
+  <section class="mx-auto grid max-w-6xl gap-4 px-4 pt-2 pb-10 sm:grid-cols-2 sm:gap-6 sm:py-16">
+    <div class="rounded-2xl border border-brand-border bg-brand-surface p-6 sm:p-8">
       <h2 class="text-2xl font-bold text-brand-primary">Movenda — Olympia</h2>
       <p class="mt-2 text-brand-muted">
         Physiotherapy and personal training at Sportcentrum Olympia, Hasselt. Manual therapy, dry
@@ -130,7 +130,7 @@ const afspraakHref =
     </div>
     <a
       href="/en/mpc"
-      class="group relative overflow-hidden rounded-2xl p-8 text-white transition hover:opacity-95"
+      class="group relative overflow-hidden rounded-2xl p-6 text-white transition hover:opacity-95 sm:p-8"
     >
       <Image src={mpcHero} alt="" width={640} height={480} class="absolute inset-0 h-full w-full object-cover" />
       <div class="absolute inset-0 bg-brand-header/80"></div>

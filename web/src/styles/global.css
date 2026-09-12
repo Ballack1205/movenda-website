@@ -25,6 +25,10 @@
 [data-brand="mpc"] {
   --brand-header: #122f56;
   --brand-bg: #e4ebf3;
+  /* The MPC page background is a shade darker, which dropped primary/muted text to 4.4:1 and
+     4.3:1. One step darker on both keeps them above WCAG AA 4.5:1 (5.4:1 and 4.9:1). */
+  --brand-primary: #11629a;
+  --brand-muted: #4d6680;
 }
 
 @theme {

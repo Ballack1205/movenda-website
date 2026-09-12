@@ -44,8 +44,8 @@ const jsonLd = [
       <h1 class="mt-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl xl:text-5xl">
         Perform at your highest level, data-driven
       </h1>
-      {settings.slogans.mpc && (
-        <p class="mt-2 text-pretty text-lg font-medium text-brand-primary">{settings.slogans.mpc}</p>
+      {(settings.slogans.mpcEn || settings.slogans.mpc) && (
+        <p class="mt-2 text-pretty text-lg font-medium text-brand-primary">{settings.slogans.mpcEn || settings.slogans.mpc}</p>
       )}
       <p class="mt-4 max-w-xl text-pretty text-brand-muted">
         A multidisciplinary performance centre focused on maximising performance for

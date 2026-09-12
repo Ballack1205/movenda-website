@@ -73,6 +73,8 @@ const socials = (
 ).filter((s) => s.href);
 
 const iconClass = "mt-0.5 h-4 w-4 shrink-0 text-white/50";
+// Small uppercase labels on the deep-blue footer: white/50 measured 3.5:1, white/70 is 5.3:1 (WCAG AA ≥ 4.5).
+const labelClass = "text-xs font-semibold uppercase tracking-wide text-white/70";
 const socialClass =
   "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/80 transition hover:border-white/40 hover:bg-white/10 hover:text-white";
 ---
@@ -127,7 +129,7 @@ const socialClass =
 
       {socials.length > 0 && (
         <div class="mt-auto pt-8">
-          <p class="text-xs font-semibold uppercase tracking-wide text-white/50">{t.follow}</p>
+          <p class={labelClass}>{t.follow}</p>
           <div class="mt-2 flex gap-2">
             {socials.map((s) => (
               <a href={s.href} target="_blank" rel="noopener" class={socialClass} aria-label={`${brand === "mpc" ? "Movenda Performance Centre" : "Movenda"} op ${s.label}`}>
@@ -163,7 +165,7 @@ const socialClass =
             <h3 id={`footer-${locatie.slug}`} class="font-heading text-base font-semibold leading-tight text-white">
               {locatie.naam}
             </h3>
-            <p class="mt-0.5 text-xs uppercase tracking-wide text-white/50">{locatie.type}</p>
+            <p class="mt-0.5 text-xs uppercase tracking-wide text-white/70">{locatie.type}</p>
           </div>
         </div>
 
@@ -196,28 +198,56 @@ const socialClass =
           )}
         </ul>
 
+        {/*
+          Opening hours: two locations × 7 days made the mobile footer ~1400px tall, so on phones
+          the list is collapsed behind a <details> (native, no JS). From md up it is always open.
+        */}
         <div class="mt-6">
-          <p class="text-xs font-semibold uppercase tracking-wide text-white/50">
-            {t.hours}
-            {!sharedNote && locatie.urenNote && (
-              <span class="font-normal normal-case tracking-normal"> · {locatie.urenNote}</span>
-            )}
-          </p>
-          <dl class="mt-2 grid max-w-xs grid-cols-[auto_1fr] gap-x-6 gap-y-1 tabular-nums">
-            {locatie.uren.map((u) => (
-              <>
-                <dt>{u.dag}</dt>
-                <dd class="text-right text-white">{u.van}–{u.tot}</dd>
-              </>
-            ))}
-          </dl>
+          <details class="group md:hidden">
+            <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 [&::-webkit-details-marker]:hidden">
+              <span class={labelClass}>
+                {t.hours}
+                {!sharedNote && locatie.urenNote && (
+                  <span class="font-normal normal-case tracking-normal"> · {locatie.urenNote}</span>
+                )}
+              </span>
+              <svg class="h-4 w-4 shrink-0 text-white/70 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </summary>
+            <dl class="mt-1 grid max-w-xs grid-cols-[auto_1fr] gap-x-6 gap-y-1 pb-2 tabular-nums">
+              {locatie.uren.map((u) => (
+                <>
+                  <dt>{u.dag}</dt>
+                  <dd class="text-right text-white">{u.van}–{u.tot}</dd>
+                </>
+              ))}
+            </dl>
+          </details>
+
+          <div class="hidden md:block">
+            <p class={labelClass}>
+              {t.hours}
+              {!sharedNote && locatie.urenNote && (
+                <span class="font-normal normal-case tracking-normal"> · {locatie.urenNote}</span>
+              )}
+            </p>
+            <dl class="mt-2 grid max-w-xs grid-cols-[auto_1fr] gap-x-6 gap-y-1 tabular-nums">
+              {locatie.uren.map((u) => (
+                <>
+                  <dt>{u.dag}</dt>
+                  <dd class="text-right text-white">{u.van}–{u.tot}</dd>
+                </>
+              ))}
+            </dl>
+          </div>
         </div>
       </section>
     ))}
   </div>
 
   <div class="border-t border-white/10 px-4 py-5">
-    <div class="mx-auto flex max-w-6xl flex-col gap-2 text-xs text-white/60 md:flex-row md:items-center md:justify-between">
+    <div class="mx-auto flex max-w-6xl flex-col gap-2 text-xs text-white/75 md:flex-row md:items-center md:justify-between">
       <p>
         © {year} Movenda
         {shown.map((l) => (
@@ -229,7 +259,7 @@ const socialClass =
         {showCookieLink && (
           <a href={privacyHref + "#cookies"} data-consent-open class="hover:text-white">{t.cookies}</a>
         )}
-        <span class="text-white/40">Preview in ontwikkeling — niet de live site van movenda.be</span>
+        <span class="text-white/70">Preview in ontwikkeling — niet de live site van movenda.be</span>
       </p>
     </div>
   </div>
