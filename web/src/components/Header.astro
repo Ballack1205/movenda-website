@@ -113,7 +113,7 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
               <div
                 id={id}
                 class:list={[
-                  "absolute left-0 top-full z-20 hidden pt-3",
+                  "absolute left-0 top-full z-20 hidden max-w-[calc(100vw-1rem)] pt-3",
                   wide ? "w-[34rem]" : "w-64",
                 ]}
                 data-nav-panel
@@ -317,10 +317,26 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
   // --- Desktop dropdowns -------------------------------------------------
   // Click/tap toggles (works on touch); mouse hover opens with a short delay
   // and closes with a grace period. Esc, outside click and focus leaving the
-  // group all close it. Panels near the right edge flip to right alignment.
+  // group all close it. Wide panels (Training, Kinesitherapie, Groepslessen)
+  // are shifted so they stay inside the viewport — flipping to right-0 used
+  // to push a 34rem menu off the left edge on tablets.
   const groups = Array.from(header?.querySelectorAll<HTMLElement>("[data-nav-group]") ?? []);
   const HOVER_OPEN_MS = 80;
   const HOVER_CLOSE_MS = 180;
+  const GUTTER = 8;
+
+  const placePanel = (panel: HTMLElement) => {
+    panel.style.left = "0px";
+    panel.style.right = "auto";
+    const rect = panel.getBoundingClientRect();
+    const min = GUTTER;
+    const max = window.innerWidth - GUTTER;
+    let left = rect.left;
+    if (rect.right > max) left -= rect.right - max;
+    if (left < min) left = min;
+    const parentLeft = (panel.offsetParent as HTMLElement | null)?.getBoundingClientRect().left ?? 0;
+    panel.style.left = `${Math.round(left - parentLeft)}px`;
+  };
 
   const setOpen = (group: HTMLElement, open: boolean) => {
     const trigger = group.querySelector<HTMLButtonElement>("[data-nav-trigger]");
@@ -328,10 +344,10 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     if (!trigger || !panel) return;
     trigger.setAttribute("aria-expanded", String(open));
     panel.classList.toggle("hidden", !open);
-    if (open) {
-      panel.classList.remove("right-0", "left-auto");
-      const rect = panel.getBoundingClientRect();
-      if (rect.right > window.innerWidth - 8) panel.classList.add("right-0", "left-auto");
+    if (open) placePanel(panel);
+    else {
+      panel.style.left = "";
+      panel.style.right = "";
     }
   };
   const closeAll = (except?: HTMLElement) => groups.forEach((g) => g !== except && setOpen(g, false));
@@ -366,6 +382,14 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     group.addEventListener("focusout", (event) => {
       const next = event.relatedTarget as Node | null;
       if (!next || !group.contains(next)) setOpen(group, false);
+    });
+  });
+
+  window.addEventListener("resize", () => {
+    groups.forEach((g) => {
+      if (!isOpen(g)) return;
+      const panel = g.querySelector<HTMLElement>("[data-nav-panel]");
+      if (panel) placePanel(panel);
     });
   });
 
