@@ -86,6 +86,7 @@ const t = {
   colleagues: lang === "en" ? "colleagues" : "collega's",
   empty: lang === "en" ? "No colleagues in this selection." : "Geen collega's in deze selectie.",
   close: lang === "en" ? "Close" : "Sluiten",
+  profile: lang === "en" ? "View profile" : "Bekijk profiel",
   showMatches: lang === "en" ? "Show my matches ↓" : "Toon mijn matches ↓",
   yourMatches: lang === "en" ? "Your matches" : "Jouw matches",
   reset: lang === "en" ? "Clear my choices" : "Wis mijn keuzes",
@@ -154,14 +155,16 @@ const filters = [
     </p>
 
     <div class="mt-4 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3" data-grid>
-      {team.map((lid) => (
+      {team.map((lid) => {
+        const bio = lang === "en" ? lid.bioEn || lid.bio : lid.bio;
+        return (
         <article
           class="group overflow-hidden rounded-xl border border-brand-border bg-brand-surface transition hover:border-brand-primary sm:rounded-2xl"
           data-card
           data-slug={lid.slug}
         >
           <a href={withLang(`/team/${lid.slug}`, lang)} class="block">
-            <div class="aspect-[3/4] w-full overflow-hidden bg-brand-header">
+            <div class="relative aspect-[3/4] w-full overflow-hidden bg-brand-header">
               {lid.foto ? (
                 <img
                   src={teamPhotoSrc(lid.foto, "card")}
@@ -174,6 +177,17 @@ const filters = [
               ) : (
                 <div class="flex h-full w-full items-center justify-center text-2xl font-semibold text-white/80 sm:text-3xl">
                   {lid.voornaam[0]}{lid.naam[0]}
+                </div>
+              )}
+              {/* Hover/focus reveal: the bio slides up over the photo (pointer devices only, see <style>).
+                  Same text as the detail page, so Julie edits it once in Sanity. */}
+              {bio && (
+                <div
+                  class="team-card-reveal absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-header via-brand-header/95 to-brand-header/0 px-4 pb-4 pt-16 text-white sm:px-5 sm:pb-5"
+                  aria-hidden="true"
+                >
+                  <p class="line-clamp-4 text-[13px] leading-relaxed text-white/90 lg:line-clamp-6 lg:text-sm">{bio}</p>
+                  <p class="mt-3 text-sm font-semibold">{t.profile} →</p>
                 </div>
               )}
             </div>
@@ -189,7 +203,8 @@ const filters = [
             </div>
           </a>
         </article>
-      ))}
+        );
+      })}
     </div>
 
     <p data-empty hidden class="mt-6 rounded-2xl border border-dashed border-brand-border p-6 text-center text-brand-muted">
@@ -269,6 +284,33 @@ const filters = [
     </dialog>
   )}
 </Layout>
+
+<style>
+  /* Bio panel is hidden below the photo and slides up on hover (pointer devices)
+     or keyboard focus. Touch devices skip the hover state: a tap opens the profile. */
+  .team-card-reveal {
+    transform: translateY(100%);
+    opacity: 0;
+    transition:
+      transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+      opacity 0.25s ease;
+  }
+  [data-card]:focus-within .team-card-reveal {
+    transform: none;
+    opacity: 1;
+  }
+  @media (hover: hover) {
+    [data-card]:hover .team-card-reveal {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .team-card-reveal {
+      transition: none;
+    }
+  }
+</style>
 
 <script define:vars={{ payload }} is:inline>
   // Team grid: always shows everyone; only the role/location filter narrows it.
