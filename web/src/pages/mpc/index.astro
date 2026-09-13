@@ -6,6 +6,7 @@ import SocialLinks from "../../components/SocialLinks.astro";
 import DienstCard from "../../components/DienstCard.astro";
 import PartnerBand from "../../components/PartnerBand.astro";
 import GetuigenisCarousel from "../../components/GetuigenisCarousel.astro";
+import PaginaFoto from "../../components/PaginaFoto.astro";
 import {
   getDienstenByCategorie,
   getLocatieBySlug,
@@ -13,6 +14,8 @@ import {
   getFaqs,
   getSiteSettings,
   getGetuigenissen,
+  getPagina,
+  paginaAlineas,
 } from "../../lib/content";
 import { localBusinessSchema, breadcrumbSchema, faqPageSchema } from "../../lib/schema";
 import mpcHero from "../../assets/marketing/mpc-hero.jpg";
@@ -26,27 +29,20 @@ const partners = await getPartners("mpc");
 const faqs = await getFaqs("mpc");
 const settings = await getSiteSettings();
 const getuigenissen = await getGetuigenissen("mpc");
+// H1, intro, hero photo and the three pillar texts: Studio → Pagina's → MPC (overzicht).
+const pagina = await getPagina("mpc");
 
-const pillars = [
-  {
-    href: "#training",
-    titel: "Training",
-    tekst: "Performance, personal training, duo en data-analyse.",
-    foto: training.find((d) => d.afbeelding)?.afbeelding,
-  },
-  {
-    href: "#sportrevalidatie",
-    titel: "Sportrevalidatie",
-    tekst: "Herstel na blessure, dry needling, cupping en taping.",
-    foto: rehab.find((d) => d.afbeelding)?.afbeelding,
-  },
-  {
-    href: "/mpc/groepslessen",
-    titel: "Groepslessen",
-    tekst: "HIIT, Full Body, PowerPlus, boxing, running en meer. Max. 8 personen.",
-    foto: groep.find((d) => d.afbeelding)?.afbeelding,
-  },
+// Pillar order is fixed (training, rehab, group); Julie edits title + text per pillar.
+const pillarTargets = [
+  { href: "#training", foto: training.find((d) => d.afbeelding)?.afbeelding },
+  { href: "#sportrevalidatie", foto: rehab.find((d) => d.afbeelding)?.afbeelding },
+  { href: "/mpc/groepslessen", foto: groep.find((d) => d.afbeelding)?.afbeelding },
 ];
+const pillars = pillarTargets.map((t, i) => ({
+  ...t,
+  titel: pagina.pijlers[i]?.kop || "",
+  tekst: pagina.pijlers[i]?.tekst || "",
+})).filter((p) => p.titel);
 
 const jsonLd = [
   localBusinessSchema(locatie),
@@ -59,8 +55,8 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Movenda Performance Centre | Performance training Hasselt"
-  description="Movenda Performance Centre in Kuringen: data-gedreven performance training en sportrevalidatie voor recreatieve en professionele sporters."
+  title={pagina.seoTitle || "Movenda Performance Centre | Performance training Hasselt"}
+  description={pagina.seoDescription || ""}
   path="/mpc"
   altPath="/en/mpc"
   brand="mpc"
@@ -77,16 +73,14 @@ const jsonLd = [
         Movenda Performance Centre
       </p>
       <h1 class="text-balance text-3xl font-bold tracking-tight sm:text-4xl md:mt-3 xl:text-5xl">
-        Presteer op je hoogste niveau, data-gedreven begeleid
+        {pagina.titel}
       </h1>
       {settings.slogans.mpc && (
         <p class="mt-2 text-pretty text-lg font-medium text-brand-primary">{settings.slogans.mpc}</p>
       )}
-      <p class="mt-4 max-w-xl text-pretty text-brand-muted">
-        Een multidisciplinair performance centre gericht op prestatiemaximalisatie van
-        (semi-)professionele sporters en medische revalidatie op basis van data-analyse. Open
-        ruimte, hoogwaardige toestellen en een één-op-één begeleiding.
-      </p>
+      {paginaAlineas(pagina).map((tekst) => (
+        <p class="mt-4 max-w-xl text-pretty text-brand-muted">{tekst}</p>
+      ))}
       <div class="mt-6 flex flex-wrap gap-3">
         <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="rounded-full bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-primary-dark sm:px-6 sm:text-base">
           Bel {locatie.telefoon}
@@ -101,8 +95,9 @@ const jsonLd = [
       </div>
     </div>
     <div class="relative -mx-4 md:mx-0">
-      <Image
-        src={mpcHero}
+      <PaginaFoto
+        pagina={pagina}
+        fallback={mpcHero}
         alt="Movenda Performance Centre trainingsruimte"
         width={800}
         height={600}

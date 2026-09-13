@@ -3,7 +3,8 @@ import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import DienstCard from "../../components/DienstCard.astro";
-import { getDienstenByCategorie, getLocatieBySlug, getSiteSettings } from "../../lib/content";
+import PaginaFoto from "../../components/PaginaFoto.astro";
+import { getDienstenByCategorie, getLocatieBySlug, getSiteSettings, getPagina, paginaAlineas, paginaTekst } from "../../lib/content";
 import { breadcrumbSchema, localBusinessSchema } from "../../lib/schema";
 import kineHero from "../../assets/marketing/kine-hero.jpg";
 import kineSecondary from "../../assets/marketing/kine-secondary.jpg";
@@ -11,6 +12,7 @@ import kineSecondary from "../../assets/marketing/kine-secondary.jpg";
 const locatie = (await getLocatieBySlug("olympia"))!;
 const diensten = await getDienstenByCategorie("kine");
 const settings = await getSiteSettings();
+const pagina = await getPagina("kinesitherapie");
 const klachten = settings.homePijlers.kine.lijstEn?.length
   ? settings.homePijlers.kine.lijstEn
   : settings.homePijlers.kine.lijst;
@@ -25,8 +27,8 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Physiotherapy Hasselt | Movenda"
-  description="A team of experienced physiotherapists in Hasselt: manual therapy, dry needling, acupuncture, pre- and postnatal physiotherapy and more."
+  title={paginaTekst(pagina, "seoTitle", "en") || "Physiotherapy Hasselt | Movenda"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
   path="/en/kinesitherapie"
   altPath="/kinesitherapie"
   lang="en"
@@ -35,21 +37,13 @@ const jsonLd = [
   <section class="mx-auto max-w-6xl px-4 py-12">
     <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
       <div>
-        <h1 class="text-3xl font-bold">Physiotherapy Hasselt</h1>
+        <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", "en")}</h1>
         {settings.slogans.kine && (
           <p class="mt-2 text-lg font-medium text-brand-primary">{settings.slogans.kine}</p>
         )}
-        <p class="mt-3 max-w-xl text-brand-muted">
-          At Movenda in Hasselt you'll find a team of experienced physiotherapists who treat a wide
-          range of muscle and joint complaints. Whether you have back pain, are recovering from an
-          injury or surgery, or simply want to move without pain — we build a treatment plan around
-          you.
-        </p>
-        <p class="mt-3 max-w-xl text-brand-muted">
-          We combine classic physiotherapy with current techniques and insights. Every session is 30
-          minutes one-on-one, after which you have extra time to continue your exercises independently.
-          You take an active part in your own recovery.
-        </p>
+        {paginaAlineas(pagina, "en").map((tekst) => (
+          <p class="mt-3 max-w-xl text-brand-muted">{tekst}</p>
+        ))}
         <div class="mt-6 flex flex-wrap items-center gap-3">
           <a
             href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`}
@@ -60,8 +54,9 @@ const jsonLd = [
           <GoogleReviewBadge locatie="olympia" lang="en" />
         </div>
       </div>
-      <Image
-        src={kineHero}
+      <PaginaFoto
+        pagina={pagina}
+        fallback={kineHero}
         alt="Manual therapy treatment at Movenda"
         width={640}
         height={720}

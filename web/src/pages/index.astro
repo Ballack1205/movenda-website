@@ -12,6 +12,7 @@ import GoogleReviewsFeed from "../components/GoogleReviewsFeed.astro";
 import TeamCarousel from "../components/TeamCarousel.astro";
 import SloganBanner from "../components/SloganBanner.astro";
 import HomePijler from "../components/HomePijler.astro";
+import PaginaFoto from "../components/PaginaFoto.astro";
 import {
   getTeamleden,
   getSiteSettings,
@@ -19,7 +20,9 @@ import {
   getPartners,
   getGetuigenissen,
   getLocaties,
+  getPagina,
   homePijlerDiensten,
+  paginaAlineas,
   teamCounts,
 } from "../lib/content";
 import homeHero from "../assets/marketing/home-hero.jpg";
@@ -50,29 +53,35 @@ const heroLocaties = (await getLocaties())
   gemeente: loc.adres.split(",").pop()?.trim().replace(/^\d{4}\s*/, "") ?? "",
 }));
 
+// Hero copy (eyebrow, H1, intro) + optional own hero photo: Studio → Pagina's → Homepage.
+const pagina = await getPagina("home");
+
 // LCP: the hero photo is the largest thing above the fold on every viewport. Same widths/sizes as
 // the <Image> below so the preload resolves to the identical hashed files and no bytes are wasted.
 const heroSizes = "(min-width: 1024px) 60vw, 100vw";
 const heroWidths = [640, 960, 1280];
-const heroPreload = await getImage({ src: homeHero, widths: heroWidths, sizes: heroSizes });
-const heroLinks = [
-  {
-    rel: "preload",
-    as: "image",
-    href: heroPreload.src,
-    imagesrcset: heroPreload.srcSet.attribute,
-    imagesizes: heroSizes,
-    fetchpriority: "high" as const,
-  },
-];
+const heroPreload = pagina.foto ? null : await getImage({ src: homeHero, widths: heroWidths, sizes: heroSizes });
+const heroLinks = heroPreload
+  ? [
+      {
+        rel: "preload",
+        as: "image",
+        href: heroPreload.src,
+        imagesrcset: heroPreload.srcSet.attribute,
+        imagesizes: heroSizes,
+        fetchpriority: "high" as const,
+      },
+    ]
+  : [];
 
 const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team);
+const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, trainers: trainerCount });
 
 ---
 
 <Layout
-  title="Kinesitherapie & personal training Hasselt | Movenda"
-  description="Movenda is dé groepspraktijk kinesitherapie en personal training in Hasselt, met een tweede vestiging Movenda Performance Centre in Kuringen."
+  title={pagina.seoTitle || "Kinesitherapie & personal training Hasselt | Movenda"}
+  description={pagina.seoDescription || ""}
   path="/"
   altPath="/en"
   extraLinks={heroLinks}
@@ -90,14 +99,13 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
       <div class="hero-copy order-last flex flex-col justify-center lg:order-none lg:col-start-2 lg:col-end-3 lg:py-10 lg:pr-10 lg:pl-4 xl:pr-12">
         {/* Eyebrow: on mobile it sits on the photo (see .hero-eyebrow below) so the H1 starts right under it. */}
         <p class="hero-in hidden text-base font-medium text-brand-primary lg:block">
-          Kinesitherapie en personal training in Hasselt
+          {pagina.ondertitel}
         </p>
         <h1 class="hero-in text-display lg:mt-3">
-          Bewegen, herstellen en presteren in Hasselt
+          {pagina.titel}
         </h1>
         <p class="hero-in mt-5 max-w-md text-[1.0625rem] leading-relaxed text-brand-muted">
-          Met {kinesistenCount} kinesisten en {trainerCount} trainers en coaches begeleiden we jou bij herstel,
-          blessurepreventie en een gezonde, actieve levensstijl. Persoonlijk, medisch verantwoord en volledig op maat.
+          {heroIntro.join(" ")}
         </p>
         {/* Both CTAs fit on one row from 360px up (tighter padding + text-sm below sm). Narrower than that they stack full-width. */}
         <div class="hero-in mt-6 flex flex-wrap items-center gap-2.5 sm:gap-3">
@@ -122,9 +130,12 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
       </div>
 
       <div class="hero-media relative -mx-4 -mt-8 sm:mx-0 sm:mt-0 lg:col-start-3 lg:col-end-5 lg:min-h-[32rem]">
-        <Image
-          src={homeHero}
+        <PaginaFoto
+          pagina={pagina}
+          fallback={homeHero}
           alt="Trainer van Movenda begeleidt een klant tijdens een training"
+          width={1280}
+          height={853}
           widths={heroWidths}
           sizes={heroSizes}
           class="hero-photo aspect-[4/3] w-full object-cover sm:aspect-[3/2] lg:absolute lg:inset-0 lg:aspect-auto lg:h-full"
@@ -138,7 +149,7 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
             class="inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full bg-black/60 px-3.5 py-2 text-[0.75rem] font-semibold leading-tight tracking-tight text-white ring-1 ring-white/25 min-[375px]:text-[0.8125rem] sm:text-sm"
           >
             <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-white shadow-[0_0_0_3px_rgba(255,255,255,0.25)]" aria-hidden="true"></span>
-            Kinesitherapie en personal training in Hasselt
+            {pagina.ondertitel}
           </p>
         </div>
         <figure class="hero-inset absolute bottom-6 -left-10 hidden w-40 xl:block">

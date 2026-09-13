@@ -12,6 +12,7 @@ import GoogleReviewsFeed from "../../components/GoogleReviewsFeed.astro";
 import TeamCarousel from "../../components/TeamCarousel.astro";
 import SloganBanner from "../../components/SloganBanner.astro";
 import HomePijler from "../../components/HomePijler.astro";
+import PaginaFoto from "../../components/PaginaFoto.astro";
 import {
   getTeamleden,
   getSiteSettings,
@@ -19,7 +20,10 @@ import {
   getPartners,
   getGetuigenissen,
   getLocaties,
+  getPagina,
   homePijlerDiensten,
+  paginaAlineas,
+  paginaTekst,
   teamCounts,
 } from "../../lib/content";
 import { partnerBandTitle } from "../../lib/i18n";
@@ -51,26 +55,32 @@ const heroLocaties = (await getLocaties())
   gemeente: loc.adres.split(",").pop()?.trim().replace(/^\d{4}\s*/, "") ?? "",
 }));
 
+const pagina = await getPagina("home");
+
 const heroSizes = "(min-width: 1024px) 60vw, 100vw";
 const heroWidths = [640, 960, 1280];
-const heroPreload = await getImage({ src: homeHero, widths: heroWidths, sizes: heroSizes });
-const heroLinks = [
-  {
-    rel: "preload",
-    as: "image",
-    href: heroPreload.src,
-    imagesrcset: heroPreload.srcSet.attribute,
-    imagesizes: heroSizes,
-    fetchpriority: "high" as const,
-  },
-];
+const heroPreload = pagina.foto ? null : await getImage({ src: homeHero, widths: heroWidths, sizes: heroSizes });
+const heroLinks = heroPreload
+  ? [
+      {
+        rel: "preload",
+        as: "image",
+        href: heroPreload.src,
+        imagesrcset: heroPreload.srcSet.attribute,
+        imagesizes: heroSizes,
+        fetchpriority: "high" as const,
+      },
+    ]
+  : [];
 
 const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team);
+const heroIntro = paginaAlineas(pagina, "en", { kinesisten: kinesistenCount, trainers: trainerCount });
+const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
 ---
 
 <Layout
-  title="Physiotherapy & personal training Hasselt | Movenda"
-  description="Movenda is the leading physiotherapy and personal training practice in Hasselt, Belgium, with a second location — Movenda Performance Centre — in Kuringen."
+  title={paginaTekst(pagina, "seoTitle", "en") || "Physiotherapy & personal training Hasselt | Movenda"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
   path="/en"
   altPath="/"
   lang="en"
@@ -83,14 +93,13 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
       <div class="hero-copy order-last flex flex-col justify-center lg:order-none lg:col-start-2 lg:col-end-3 lg:py-10 lg:pr-10 lg:pl-4 xl:pr-12">
         {/* Eyebrow: on mobile it sits on the photo (see .hero-eyebrow below) so the H1 starts right under it. */}
         <p class="hero-in hidden text-base font-medium text-brand-primary lg:block">
-          Physiotherapy and personal training in Hasselt
+          {heroEyebrow}
         </p>
         <h1 class="hero-in text-display lg:mt-3">
-          Move, recover and perform in Hasselt
+          {paginaTekst(pagina, "titel", "en")}
         </h1>
         <p class="hero-in mt-5 max-w-md text-[1.0625rem] leading-relaxed text-brand-muted">
-          With {kinesistenCount} physiotherapists and {trainerCount} trainers and coaches we guide you through recovery,
-          injury prevention and a healthy, active lifestyle. Personal, medically sound and fully tailored to you.
+          {heroIntro.join(" ")}
         </p>
         {/* Both CTAs fit on one row from 360px up (tighter padding + text-sm below sm). Narrower than that they stack full-width. */}
         <div class="hero-in mt-6 flex flex-wrap items-center gap-2.5 sm:gap-3">
@@ -115,9 +124,12 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
       </div>
 
       <div class="hero-media relative -mx-4 -mt-8 sm:mx-0 sm:mt-0 lg:col-start-3 lg:col-end-5 lg:min-h-[32rem]">
-        <Image
-          src={homeHero}
+        <PaginaFoto
+          pagina={pagina}
+          fallback={homeHero}
           alt="A Movenda trainer coaching a client during a session"
+          width={1280}
+          height={853}
           widths={heroWidths}
           sizes={heroSizes}
           class="hero-photo aspect-[4/3] w-full object-cover sm:aspect-[3/2] lg:absolute lg:inset-0 lg:aspect-auto lg:h-full"
@@ -131,7 +143,7 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
             class="inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full bg-black/60 px-3.5 py-2 text-[0.75rem] font-semibold leading-tight tracking-tight text-white ring-1 ring-white/25 min-[375px]:text-[0.8125rem] sm:text-sm"
           >
             <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-white shadow-[0_0_0_3px_rgba(255,255,255,0.25)]" aria-hidden="true"></span>
-            Physiotherapy and personal training in Hasselt
+            {heroEyebrow}
           </p>
         </div>
         <figure class="hero-inset absolute bottom-6 -left-10 hidden w-40 xl:block">

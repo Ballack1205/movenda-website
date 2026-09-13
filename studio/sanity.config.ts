@@ -10,8 +10,8 @@ const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
 const showVision = process.env.SANITY_STUDIO_VISION === "true";
 
-const NO_DELETE = new Set(["siteSettings", "keuzehulp", "locatie"]);
-const HIDE_FROM_CREATE = new Set(["siteSettings", "keuzehulp", "locatie", "googleReviewInfo", "homePijler"]);
+const NO_DELETE = new Set(["siteSettings", "keuzehulp", "locatie", "pagina"]);
+const HIDE_FROM_CREATE = new Set(["siteSettings", "keuzehulp", "locatie", "pagina", "googleReviewInfo", "homePijler"]);
 
 // i18n approach: plain sibling fields (e.g. `rol` / `rolEn`, `bio` / `bioEn`)
 // instead of the internationalized-array plugin. Dutch is required, English

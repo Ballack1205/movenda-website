@@ -7,6 +7,7 @@ import {
   CommentIcon,
   ComposeIcon,
   DocumentsIcon,
+  DocumentTextIcon,
   EarthGlobeIcon,
   HelpCircleIcon,
   ImageIcon,
@@ -35,6 +36,15 @@ export const deskStructure: StructureResolver = (S) =>
         .title("Site-instellingen")
         .icon(CogIcon)
         .child(S.document().schemaType("siteSettings").documentId("siteSettings")),
+      S.listItem()
+        .title("Pagina's (teksten & foto's)")
+        .icon(DocumentTextIcon)
+        .child(
+          S.documentTypeList("pagina")
+            .title("Pagina's")
+            .initialValueTemplates([])
+            .defaultOrdering([{ field: "_createdAt", direction: "asc" }]),
+        ),
       S.documentTypeListItem("popup").title("Pop-ups").icon(RocketIcon),
       S.divider(),
 

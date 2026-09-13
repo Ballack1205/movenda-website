@@ -3,7 +3,8 @@ import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import DienstCard from "../components/DienstCard.astro";
-import { getDienstenByCategorie, getLocatieBySlug, getSiteSettings } from "../lib/content";
+import PaginaFoto from "../components/PaginaFoto.astro";
+import { getDienstenByCategorie, getLocatieBySlug, getSiteSettings, getPagina, paginaAlineas } from "../lib/content";
 import { breadcrumbSchema, localBusinessSchema } from "../lib/schema";
 import trainingHero from "../assets/marketing/training-hero.jpg";
 import trainingSecondary from "../assets/marketing/training-secondary.jpg";
@@ -11,6 +12,7 @@ import trainingSecondary from "../assets/marketing/training-secondary.jpg";
 const locatie = (await getLocatieBySlug("olympia"))!;
 const diensten = await getDienstenByCategorie("training");
 const settings = await getSiteSettings();
+const pagina = await getPagina("training");
 // Same list Julie edits for the homepage pijler (siteSettings -> Homepage).
 const doelgroepen = settings.homePijlers.training.lijst;
 
@@ -24,8 +26,8 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Training Hasselt: personal, duo & sportspecifiek | Movenda"
-  description="Personal training, duotraining en sportspecifieke begeleiding in Hasselt, gegeven door kinesitherapeuten met sportspecifieke kennis."
+  title={pagina.seoTitle || "Training Hasselt: personal, duo & sportspecifiek | Movenda"}
+  description={pagina.seoDescription || ""}
   path="/training"
   altPath="/en/training"
   jsonLd={jsonLd}
@@ -33,18 +35,10 @@ const jsonLd = [
   <section class="mx-auto max-w-6xl px-4 py-12">
     <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
       <div>
-        <h1 class="text-3xl font-bold">Personal Training Hasselt</h1>
-        <p class="mt-3 max-w-xl text-brand-muted">
-          We hebben verschillende soorten trainingen waarin we samen de uitdaging aangaan om jouw
-          persoonlijke doelstellingen (spierontwikkeling, afslanken en conditietraining) te
-          bereiken. Een PT-sessie duurt minimaal een uur, maar kan zeker ook langer — alles wordt
-          afgestemd op wat jij wil!
-        </p>
-        <p class="mt-3 max-w-xl text-brand-muted">
-          Bij Movenda train je onder begeleiding van een personal trainer die ook kinesitherapeut
-          is. Jouw schema wordt niet alleen afgestemd op je doelen, maar ook op je lichaam,
-          beperkingen en medische voorgeschiedenis.
-        </p>
+        <h1 class="text-3xl font-bold">{pagina.titel}</h1>
+        {paginaAlineas(pagina).map((tekst) => (
+          <p class="mt-3 max-w-xl text-brand-muted">{tekst}</p>
+        ))}
         <div class="mt-6 flex flex-wrap items-center gap-3">
           <a
             href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`}
@@ -55,8 +49,9 @@ const jsonLd = [
           <GoogleReviewBadge locatie="olympia" />
         </div>
       </div>
-      <Image
-        src={trainingHero}
+      <PaginaFoto
+        pagina={pagina}
+        fallback={trainingHero}
         alt="Personal training sessie bij Movenda"
         width={640}
         height={480}

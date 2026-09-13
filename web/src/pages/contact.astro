@@ -1,12 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Routebeschrijving from "../components/Routebeschrijving.astro";
-import { getLocaties } from "../lib/content";
+import { getLocaties, getPagina, paginaAlineas } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 
 const locaties = (await getLocaties()).sort((a, b) =>
   a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
 );
+const pagina = await getPagina("contact");
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
 const olympia = locaties.find((l) => l.slug === "olympia");
 const mapEmbedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(olympia?.adres || "Kuringersteenweg 242 Hasselt")}&z=15&output=embed`;
@@ -39,18 +40,17 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Contact & afspraak | Movenda Hasselt"
-  description="Neem contact op met Movenda (Olympia, Hasselt) of het Movenda Performance Centre (Kuringen) via telefoon, e-mail of het contactformulier."
+  title={pagina.seoTitle || "Contact & afspraak | Movenda Hasselt"}
+  description={pagina.seoDescription || ""}
   path="/contact"
   altPath="/en/contact"
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="text-3xl font-bold">Neem contact op</h1>
-    <p class="mt-2 max-w-2xl text-brand-muted">
-      Heb je een vraag of wil je een afspraak maken? Vul het formulier in en we nemen zo snel
-      mogelijk contact met je op. Je kan ons ook rechtstreeks bellen of mailen.
-    </p>
+    <h1 class="text-3xl font-bold">{pagina.titel}</h1>
+    {paginaAlineas(pagina).map((tekst) => (
+      <p class="mt-2 max-w-2xl text-brand-muted">{tekst}</p>
+    ))}
 
     <div class="mt-10 grid items-stretch gap-8 sm:grid-cols-2">
       {locaties.map((locatie) => (

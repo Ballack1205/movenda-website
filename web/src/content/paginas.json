@@ -1,0 +1,143 @@
+{
+  "home": {
+    "ondertitel": "Kinesitherapie en personal training in Hasselt",
+    "ondertitelEn": "Physiotherapy and personal training in Hasselt",
+    "titel": "Bewegen, herstellen en presteren in Hasselt",
+    "titelEn": "Move, recover and perform in Hasselt",
+    "intro": "Met {kinesisten} kinesisten en {trainers} trainers en coaches begeleiden we jou bij herstel, blessurepreventie en een gezonde, actieve levensstijl. Persoonlijk, medisch verantwoord en volledig op maat.",
+    "introEn": "With {kinesisten} physiotherapists and {trainers} trainers and coaches we guide you through recovery, injury prevention and a healthy, active lifestyle. Personal, medically sound and fully tailored to you.",
+    "fotoAlt": "Trainer van Movenda begeleidt een klant tijdens een training",
+    "seoTitle": "Kinesitherapie & personal training Hasselt | Movenda",
+    "seoDescription": "Movenda is dé groepspraktijk kinesitherapie en personal training in Hasselt, met een tweede vestiging Movenda Performance Centre in Kuringen.",
+    "seoTitleEn": "Physiotherapy & personal training Hasselt | Movenda",
+    "seoDescriptionEn": "Movenda is the leading physiotherapy and personal training practice in Hasselt, Belgium, with a second location — Movenda Performance Centre — in Kuringen."
+  },
+  "over": {
+    "titel": "De Movenda-visie",
+    "titelEn": "The Movenda vision",
+    "intro": "Movenda in Hasselt is dé groepspraktijk kinesitherapie en personal training die iedereen op een gezonde en medisch verantwoorde manier wil laten bewegen. Wij werken met elke persoon individueel, zowel voor kinesitherapie als voor personal training.\n\nElke patiënt wordt individueel behandeld, waardoor we kunnen ingaan op de specifieke klachten in een ruimer kader. Voor een optimaal herstel benaderen we de patiënt in zijn totaliteit, zodat ook onderliggende klachten deel uitmaken van het herstelproces. Daarom combineren we onze passieve manuele behandeling steevast met actieve oefentherapie — we motiveren onze patiënten om actief deel te nemen aan hun revalidatie, niet om volledig afhankelijk te zijn van de therapeut.\n\nOnze therapeuten volgen jaarlijks interne en externe bijscholingen — manuele therapie, myofasciale therapie, osteopathie, acupunctuur, dry needling — om je op de best mogelijke manier te blijven behandelen. We investeren in nieuwe technologie met wetenschappelijke onderbouwing, zoals BEST & Medical Lasering voor sneller weefselherstel. We werken daarnaast samen met de opleiding kinesitherapie aan de UHasselt en bieden elk jaar meerdere stageplaatsen aan.",
+    "introEn": "Movenda in Hasselt is the group practice for physiotherapy and personal training that wants everyone to move in a healthy, medically sound way. We work with every person individually, for physiotherapy as well as personal training.\n\nEvery patient is treated individually, so we can address the specific complaint in a broader context. For optimal recovery we look at the whole person, so underlying complaints are part of the recovery process too. That is why we always combine hands-on manual treatment with active exercise therapy — we motivate patients to take an active part in their rehabilitation, not to depend entirely on the therapist.\n\nOur therapists take internal and external training every year — manual therapy, myofascial therapy, osteopathy, acupuncture, dry needling — to keep treating you in the best possible way. We invest in new, evidence-based technology such as BEST & Medical Lasering for faster tissue recovery. We also work with the physiotherapy programme at UHasselt and offer several internships every year.",
+    "fotoAlt": "Coach en klant bij Movenda",
+    "blokken": [
+      {
+        "kop": "Movenda Rehabilitation",
+        "tekst": "Elke patiënt wordt individueel behandeld, in zijn totaliteit. We combineren passieve manuele behandeling steevast met actieve oefentherapie. We behandelen steeds een half uur één-op-één, waarna je extra tijd hebt om de oefentherapie zelfstandig te doen. We willen een progressieve praktijk zijn: kwaliteit en constante innovatie. Een gezond leven is pijnvrij sporten en bewegen, met aandacht voor eetgewoonten, slaap en beperkte alcohol- en tabakconsumptie. Onze therapeuten volgen bijscholingen in manuele therapie, myofasciale therapie, osteopathie, acupunctuur en dry needling.",
+        "kopEn": "Movenda Rehabilitation",
+        "tekstEn": "Every patient is treated individually, as a whole. We always combine hands-on manual treatment with active exercise therapy. Sessions last half an hour one-on-one, after which you have extra time to continue the exercises independently. We want to be a progressive practice: quality and constant innovation. A healthy life is pain-free sport and movement, with attention to eating habits, sleep and limited alcohol and tobacco. Our therapists take further training in manual therapy, myofascial therapy, osteopathy, acupuncture and dry needling."
+      },
+      {
+        "kop": "Movenda Training",
+        "tekst": "Personal-trainingcoaching richt zich op een gezonde levensstijl — eetgewoonten, slaap, sport en beweging — én op esthetische doelen. Elke atleet krijgt een individueel schema op maat van tijd en lichaam, onder het toeziend oog van een kinesitherapeut.",
+        "kopEn": "Movenda Training",
+        "tekstEn": "Personal-training coaching focuses on a healthy lifestyle — eating habits, sleep, sport and movement — and on aesthetic goals. Every athlete gets an individual programme tailored to time and body, under the eye of a physiotherapist."
+      },
+      {
+        "kop": "Movenda Performance Centre",
+        "tekst": "Onze tweede vestiging in Kuringen is gericht op performance training en sportrevalidatie voor recreatieve en professionele sporters, plus corporate coaching, groepslessen en boksen.",
+        "kopEn": "Movenda Performance Centre",
+        "tekstEn": "Our second location in Kuringen focuses on performance training and sports rehabilitation for recreational and professional athletes, plus corporate coaching, group classes and boxing."
+      },
+      {
+        "kop": "Partnerships",
+        "tekst": "Wij zijn een dynamisch, sportief en gemotiveerd team dat graag de sportclubs in en rond Hasselt ondersteunt. We werken onder meer samen met Hubo Limburg United, AF Corse, tennisclub Tenkie, motorcrossers in het MXGP-circuit, tennisclub Excelsior en zaalvoetbalclub VKM Godsheide.",
+        "kopEn": "Partnerships",
+        "tekstEn": "We are a dynamic, sporty and motivated team that likes to support sports clubs in and around Hasselt. We work with Hubo Limburg United, AF Corse, tennis club Tenkie, motocross riders on the MXGP circuit, tennis club Excelsior and indoor football club VKM Godsheide, among others."
+      }
+    ],
+    "kenmerken": [
+      { "kop": "Individuele behandelingen", "tekst": "Elke patiënt wordt individueel behandeld en krijgt een eigen schema.", "kopEn": "Individual treatments", "tekstEn": "Every patient is treated individually and gets their own programme." },
+      { "kop": "Ruime locatie", "tekst": "Gelegen in Sportcentrum Olympia te Hasselt.", "kopEn": "Spacious location", "tekstEn": "Based at Sportcentrum Olympia in Hasselt." },
+      { "kop": "Sfeer", "tekst": "Een jong en dynamisch team zorgt voor een motiverende begeleiding.", "kopEn": "Atmosphere", "tekstEn": "A young, dynamic team provides motivating coaching." },
+      { "kop": "Vooruitstrevend", "tekst": "Kwalitatief en constant innoverend.", "kopEn": "Forward-looking", "tekstEn": "High quality and constantly innovating." },
+      { "kop": "Professioneel team", "tekst": "Onze gelicentieerde kinesisten scholen zich op regelmatige basis bij.", "kopEn": "Professional team", "tekstEn": "Our licensed physiotherapists take regular further training." },
+      { "kop": "Netwerk", "tekst": "Samenwerking met verschillende sportclubs.", "kopEn": "Network", "tekstEn": "Collaboration with several sports clubs." }
+    ],
+    "stappenTitel": "Zo werkt een eerste bezoek bij Movenda",
+    "stappenTitelEn": "How a first visit to Movenda works",
+    "stappenIntro": "Of je nu komt voor kinesitherapie of personal training — bij Movenda weet je altijd op voorhand wat je kunt verwachten. Geen verrassingen, wel een aanpak volledig op maat van jouw lichaam en doelen.",
+    "stappenIntroEn": "Whether you come for physiotherapy or personal training — at Movenda you always know in advance what to expect. No surprises, just an approach fully tailored to your body and goals.",
+    "stappen": [
+      { "kop": "Maak een afspraak", "tekst": "Neem contact op via telefoon, e-mail of ons contactformulier. We koppelen je aan de therapeut of coach die het best aansluit bij jouw klacht of doel. Je ontvangt een bevestiging met praktische info over de locatie en wat je best meebrengt.", "kopEn": "Make an appointment", "tekstEn": "Get in touch by phone, email or our contact form. We match you with the therapist or coach who best fits your complaint or goal. You receive a confirmation with practical info about the location and what to bring." },
+      { "kop": "Intake & screening", "tekst": "Bij je eerste sessie nemen we de tijd voor een grondige intake. We bespreken je klachten, medische voorgeschiedenis en doelstellingen. Daarna volgt een functionele screening: we kijken hoe je beweegt, waar beperkingen zitten en wat de oorzaak is van het probleem — niet enkel het symptoom.", "kopEn": "Intake & screening", "tekstEn": "At your first session we take time for a thorough intake. We discuss your complaints, medical history and goals. Then comes a functional screening: how you move, where limitations sit, and what causes the problem — not only the symptom." },
+      { "kop": "Behandeling of trainingsplan op maat", "tekst": "Op basis van de screening stellen we een gepersonaliseerd traject op. Voor kinesitherapie combineren we passieve behandelingen zoals manuele therapie en dry needling met actieve oefentherapie. Voor personal training werk je met een schema dat perfect past bij jouw niveau, agenda en lichaam.", "kopEn": "Tailored treatment or training plan", "tekstEn": "Based on the screening we draw up a personalised trajectory. For physiotherapy we combine hands-on treatments such as manual therapy and dry needling with active exercise therapy. For personal training you work with a programme that fits your level, schedule and body." },
+      { "kop": "Opvolging & bijsturing", "tekst": "Elke sessie wordt individueel begeleid. We evalueren regelmatig je vooruitgang en passen het schema aan waar nodig. Je bent nooit overgelaten aan jezelf.", "kopEn": "Follow-up & adjustment", "tekstEn": "Every session is individually coached. We regularly evaluate your progress and adjust the plan where needed. You are never left to it on your own." },
+      { "kop": "Langetermijnaanpak", "tekst": "Ons doel is niet alleen dat je klachtenvrij bent, maar dat je bewuster en actiever in het leven staat. We coachen je ook na de revalidatie zodat je terugval vermijdt en gezonde gewoonten aanhoudt.", "kopEn": "Long-term approach", "tekstEn": "Our goal is not only that you are complaint-free, but that you live more consciously and actively. We also coach you after rehabilitation so you avoid relapse and keep healthy habits." }
+    ],
+    "seoTitle": "Over Movenda | Groepspraktijk kinesitherapie Hasselt",
+    "seoDescription": "De visie van Movenda: individuele begeleiding, een actieve aanpak en samenwerking met sportclubs in en rond Hasselt.",
+    "seoTitleEn": "About Movenda | Group physiotherapy practice Hasselt",
+    "seoDescriptionEn": "Movenda's vision: individual coaching, an active approach and collaboration with sports clubs in and around Hasselt."
+  },
+  "kinesitherapie": {
+    "titel": "Kinesitherapie Hasselt",
+    "titelEn": "Physiotherapy Hasselt",
+    "intro": "Bij Movenda in Hasselt vind je een team van ervaren kinesisten die je begeleiden bij uiteenlopende spier- en gewrichtsklachten. Of je nu last hebt van rugpijn, herstelt na een blessure of een operatie, of gewoon pijnvrij wil bewegen — onze kinesitherapeuten stellen een behandeling op maat voor jou op.\n\nWij combineren klassieke kinesitherapie met de nieuwste technieken en inzichten. Elke behandeling duurt 30 minuten één-op-één, waarna je extra tijd krijgt om je oefeningen zelfstandig verder te zetten. Zo werk jij actief mee aan je eigen herstel.",
+    "introEn": "At Movenda in Hasselt you will find a team of experienced physiotherapists who guide you through a wide range of muscle and joint complaints. Whether you have back pain, are recovering from an injury or surgery, or simply want to move without pain — our physiotherapists draw up a treatment tailored to you.\n\nWe combine classic physiotherapy with the latest techniques and insights. Every treatment lasts 30 minutes one-on-one, after which you get extra time to continue your exercises independently. That way you take an active part in your own recovery.",
+    "fotoAlt": "Manuele therapie behandeling bij Movenda",
+    "seoTitle": "Kinesitherapie Hasselt | Movenda",
+    "seoDescription": "Team van ervaren kinesisten in Hasselt: manuele therapie, dry needling, acupunctuur, pre- en postnatale kinesitherapie en meer.",
+    "seoTitleEn": "Physiotherapy Hasselt | Movenda",
+    "seoDescriptionEn": "A team of experienced physiotherapists in Hasselt: manual therapy, dry needling, acupuncture, pre- and postnatal physiotherapy and more."
+  },
+  "training": {
+    "titel": "Personal Training Hasselt",
+    "titelEn": "Personal Training Hasselt",
+    "intro": "We hebben verschillende soorten trainingen waarin we samen de uitdaging aangaan om jouw persoonlijke doelstellingen (spierontwikkeling, afslanken en conditietraining) te bereiken. Een PT-sessie duurt minimaal een uur, maar kan zeker ook langer — alles wordt afgestemd op wat jij wil!\n\nBij Movenda train je onder begeleiding van een personal trainer die ook kinesitherapeut is. Jouw schema wordt niet alleen afgestemd op je doelen, maar ook op je lichaam, beperkingen en medische voorgeschiedenis.",
+    "introEn": "We offer several kinds of training in which we take on the challenge together to reach your personal goals (muscle development, weight loss and conditioning). A PT session lasts at least an hour but can certainly be longer — everything is tuned to what you want.\n\nAt Movenda you train under the guidance of a personal trainer who is also a physiotherapist. Your programme is tailored not only to your goals, but also to your body, limitations and medical history.",
+    "fotoAlt": "Personal training sessie bij Movenda",
+    "seoTitle": "Training Hasselt: personal, duo & sportspecifiek | Movenda",
+    "seoDescription": "Personal training, duotraining en sportspecifieke begeleiding in Hasselt, gegeven door kinesitherapeuten met sportspecifieke kennis.",
+    "seoTitleEn": "Training Hasselt: personal, duo & sport-specific | Movenda",
+    "seoDescriptionEn": "Personal training, duo training and sport-specific coaching in Hasselt, given by physiotherapists with sport-specific knowledge."
+  },
+  "mpc": {
+    "titel": "Presteer op je hoogste niveau, data-gedreven begeleid",
+    "titelEn": "Perform at your highest level, guided by data",
+    "intro": "Een multidisciplinair performance centre gericht op prestatiemaximalisatie van (semi-)professionele sporters en medische revalidatie op basis van data-analyse. Open ruimte, hoogwaardige toestellen en een één-op-één begeleiding.",
+    "introEn": "A multidisciplinary performance centre focused on maximising the performance of (semi-)professional athletes and on medical rehabilitation based on data analysis. Open space, high-end equipment and one-on-one coaching.",
+    "fotoAlt": "Movenda Performance Centre trainingsruimte",
+    "pijlers": [
+      { "kop": "Training", "tekst": "Performance, personal training, duo en data-analyse.", "kopEn": "Training", "tekstEn": "Performance, personal training, duo and data analysis." },
+      { "kop": "Sportrevalidatie", "tekst": "Herstel na blessure, dry needling, cupping en taping.", "kopEn": "Sports rehabilitation", "tekstEn": "Recovery after injury, dry needling, cupping and taping." },
+      { "kop": "Groepslessen", "tekst": "HIIT, Full Body, PowerPlus, boxing, running en meer. Max. 8 personen.", "kopEn": "Group classes", "tekstEn": "HIIT, Full Body, PowerPlus, boxing, running and more. Max. 8 people." }
+    ],
+    "seoTitle": "Movenda Performance Centre | Performance training Hasselt",
+    "seoDescription": "Movenda Performance Centre in Kuringen: data-gedreven performance training en sportrevalidatie voor recreatieve en professionele sporters.",
+    "seoTitleEn": "Movenda Performance Centre | Performance training Hasselt",
+    "seoDescriptionEn": "Movenda Performance Centre in Kuringen: data-driven performance training and sports rehabilitation for recreational and professional athletes."
+  },
+  "mpc-visie": {
+    "titel": "Onze visie",
+    "titelEn": "Our vision",
+    "intro": "Het Movenda Performance Centre in Kuringen is een multidisciplinair centrum voor prestatiemaximalisatie van (semi-)professionele sporters en voor medische revalidatie op basis van data-analyse.\n\nWe geloven dat vooruitgang meetbaar moet zijn. Objectieve data — kracht, conditie, herstel — maakt keuzes helder en houdt je eerlijk. Geen giswerk, wel een plan dat we samen bijsturen.\n\nBegeleiding is één-op-één of in kleine groepen (maximaal 8). Zo blijft de aandacht bij jouw lichaam, jouw sport en jouw doel — of je nu terugkomt van een blessure of mik op een persoonlijk record.",
+    "introEn": "The Movenda Performance Centre in Kuringen is a multidisciplinary centre for maximising performance of (semi-)professional athletes and for medical rehabilitation based on data analysis.\n\nWe believe progress should be measurable. Objective data — strength, fitness, recovery — makes choices clear and keeps you honest. No guesswork, but a plan we adjust together.\n\nCoaching is one-on-one or in small groups (maximum 8). Attention stays on your body, your sport and your goal — whether you are coming back from injury or aiming for a personal best.",
+    "ctaTekst": "Contacteer je performance specialist",
+    "ctaTekstEn": "Contact your performance specialist",
+    "seoTitle": "Visie | Movenda Performance Centre",
+    "seoDescription": "De visie van het Movenda Performance Centre: objectieve data, één-op-één begeleiding en duurzame sportprestatie.",
+    "seoTitleEn": "Vision | Movenda Performance Centre",
+    "seoDescriptionEn": "The vision of the Movenda Performance Centre: objective data, one-on-one coaching and sustainable sporting performance."
+  },
+  "contact": {
+    "titel": "Neem contact op",
+    "titelEn": "Get in touch",
+    "intro": "Heb je een vraag of wil je een afspraak maken? Vul het formulier in en we nemen zo snel mogelijk contact met je op. Je kan ons ook rechtstreeks bellen of mailen.",
+    "introEn": "Have a question or want to book an appointment? Fill in the form and we'll get back to you as soon as possible. You can also call or email us directly.",
+    "seoTitle": "Contact & afspraak | Movenda Hasselt",
+    "seoDescription": "Neem contact op met Movenda (Olympia, Hasselt) of het Movenda Performance Centre (Kuringen) via telefoon, e-mail of het contactformulier.",
+    "seoTitleEn": "Contact & appointments | Movenda Hasselt",
+    "seoDescriptionEn": "Get in touch with Movenda (Olympia, Hasselt) or the Movenda Performance Centre (Kuringen) by phone, email or the contact form."
+  },
+  "jobs": {
+    "titel": "Werken bij Movenda",
+    "titelEn": "Work at Movenda",
+    "intro": "Word je graag deel van ons team van kinesisten, personal trainers en performance coaches?",
+    "introEn": "Would you like to join our team of physiotherapists, personal trainers and performance coaches?",
+    "legeTekst": "Momenteel geen openstaande vacatures.\nInteresse om toch je spontane sollicitatie te sturen? Mail naar",
+    "legeTekstEn": "No open vacancies at the moment.\nStill interested in sending a speculative application? Email",
+    "seoTitle": "Vacatures | Werken bij Movenda Hasselt",
+    "seoDescription": "Bekijk de openstaande vacatures bij Movenda in Hasselt en het Movenda Performance Centre in Kuringen.",
+    "seoTitleEn": "Jobs | Work at Movenda Hasselt",
+    "seoDescriptionEn": "See open vacancies at Movenda in Hasselt and the Movenda Performance Centre in Kuringen."
+  }
+}

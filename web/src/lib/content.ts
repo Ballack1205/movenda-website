@@ -10,6 +10,7 @@ import seedGetuigenissen from "../content/getuigenissen.json";
 import seedBlog from "../content/blog.json";
 import seedSportaanbod from "../content/sportaanbod.json";
 import seedDiensten from "../content/diensten.json";
+import seedPaginas from "../content/paginas.json";
 import { resolveBlogMedia } from "./blog";
 import type { Lang } from "./i18n";
 
@@ -794,6 +795,147 @@ function mergePijler(key: HomePijlerKey, fromSanity?: Partial<HomePijler>): Home
     lijst: fromSanity?.lijst?.length ? fromSanity.lijst : seed.lijst,
     lijstEn: fromSanity?.lijstEn?.length ? fromSanity.lijstEn : seed.lijstEn,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Fixed pages (home, over, kine, …): H1, intro, hero photo, SEO and the text
+// blocks that used to be hardcoded in Astro. One `pagina` document per key.
+// Sanity wins field by field; the seed JSON (the launch copy) fills the gaps.
+
+export type PaginaKey = keyof typeof seedPaginas;
+
+export interface PaginaBlok {
+  kop: string;
+  tekst: string;
+  kopEn?: string;
+  tekstEn?: string;
+}
+
+export interface Pagina {
+  key: PaginaKey;
+  ondertitel?: string;
+  ondertitelEn?: string;
+  titel: string;
+  titelEn?: string;
+  intro?: string;
+  introEn?: string;
+  /** Sanity CDN URL of the uploaded hero photo; undefined = use the bundled asset. */
+  foto?: string;
+  /** Hotspot Julie picked in the Studio (0–1), used as crop focal point. */
+  fotoHotspot?: { x: number; y: number };
+  fotoAlt?: string;
+  blokken: PaginaBlok[];
+  kenmerken: PaginaBlok[];
+  stappenTitel?: string;
+  stappenTitelEn?: string;
+  stappenIntro?: string;
+  stappenIntroEn?: string;
+  stappen: PaginaBlok[];
+  pijlers: PaginaBlok[];
+  legeTekst?: string;
+  legeTekstEn?: string;
+  ctaTekst?: string;
+  ctaTekstEn?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoTitleEn?: string;
+  seoDescriptionEn?: string;
+}
+
+type PaginaSeed = Partial<Omit<Pagina, "key" | "foto">>;
+type PaginaRow = Partial<Pagina> & { foto?: string; fotoHotspot?: { x: number; y: number } | null };
+
+function mergeBlokken(cms: PaginaBlok[] | undefined, seed: PaginaBlok[] | undefined): PaginaBlok[] {
+  return cms?.length ? cms : seed || [];
+}
+
+export async function getPagina(key: PaginaKey): Promise<Pagina> {
+  const seed = (seedPaginas as Record<string, PaginaSeed>)[key] || {};
+  const row = (await sanity.fetch(
+    `*[_type == "pagina" && key == $key][0]{
+      ondertitel, ondertitelEn, titel, titelEn, intro, introEn,
+      "foto": foto.asset->url, "fotoHotspot": foto.hotspot{ x, y }, fotoAlt,
+      blokken, kenmerken, stappenTitel, stappenTitelEn, stappenIntro, stappenIntroEn, stappen, pijlers,
+      legeTekst, legeTekstEn, ctaTekst, ctaTekstEn,
+      seoTitle, seoDescription, seoTitleEn, seoDescriptionEn
+    }`,
+    { key },
+  )) as PaginaRow | null;
+
+  const pick = <K extends keyof PaginaSeed>(field: K): PaginaSeed[K] | undefined => {
+    const live = row?.[field as keyof PaginaRow] as PaginaSeed[K] | undefined;
+    if (typeof live === "string") return (live.trim() ? live : seed[field]) as PaginaSeed[K];
+    return (live ?? seed[field]) as PaginaSeed[K] | undefined;
+  };
+
+  return {
+    key,
+    ondertitel: pick("ondertitel"),
+    ondertitelEn: pick("ondertitelEn"),
+    titel: pick("titel") || "",
+    titelEn: pick("titelEn"),
+    intro: pick("intro"),
+    introEn: pick("introEn"),
+    foto: row?.foto || undefined,
+    fotoHotspot: row?.foto && row.fotoHotspot ? row.fotoHotspot : undefined,
+    fotoAlt: pick("fotoAlt"),
+    blokken: mergeBlokken(row?.blokken, seed.blokken),
+    kenmerken: mergeBlokken(row?.kenmerken, seed.kenmerken),
+    stappenTitel: pick("stappenTitel"),
+    stappenTitelEn: pick("stappenTitelEn"),
+    stappenIntro: pick("stappenIntro"),
+    stappenIntroEn: pick("stappenIntroEn"),
+    stappen: mergeBlokken(row?.stappen, seed.stappen),
+    pijlers: mergeBlokken(row?.pijlers, seed.pijlers),
+    legeTekst: pick("legeTekst"),
+    legeTekstEn: pick("legeTekstEn"),
+    ctaTekst: pick("ctaTekst"),
+    ctaTekstEn: pick("ctaTekstEn"),
+    seoTitle: pick("seoTitle"),
+    seoDescription: pick("seoDescription"),
+    seoTitleEn: pick("seoTitleEn"),
+    seoDescriptionEn: pick("seoDescriptionEn"),
+  };
+}
+
+type PaginaTekstVeld =
+  | "ondertitel"
+  | "titel"
+  | "intro"
+  | "stappenTitel"
+  | "stappenIntro"
+  | "legeTekst"
+  | "ctaTekst"
+  | "seoTitle"
+  | "seoDescription";
+
+/** NL field, or its EN twin when present and lang is "en". */
+export function paginaTekst(p: Pagina, field: PaginaTekstVeld, lang: Lang = "nl"): string {
+  const nl = p[field] || "";
+  if (lang !== "en") return nl;
+  const en = p[`${field}En` as keyof Pagina];
+  return typeof en === "string" && en.trim() ? en : nl;
+}
+
+/** Intro as paragraphs (blank line = new paragraph). Fills {kinesisten}/{trainers} from `vars`. */
+export function paginaAlineas(
+  p: Pagina,
+  lang: Lang = "nl",
+  vars: Record<string, string | number> = {},
+): string[] {
+  const raw = paginaTekst(p, "intro", lang);
+  return raw
+    .split(/\n\s*\n/)
+    .map((s) => s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m)).trim())
+    .filter(Boolean);
+}
+
+export function paginaBlokKop(b: PaginaBlok, lang: Lang = "nl"): string {
+  return lang === "en" ? b.kopEn || b.kop : b.kop;
+}
+
+export function paginaBlokTekst(b: PaginaBlok, lang: Lang = "nl"): string {
+  return lang === "en" ? b.tekstEn || b.tekst : b.tekst;
 }
 
 /** Strip the SEO-only " Hasselt" suffix some dienst titles carry ("Manuele therapie Hasselt"). */

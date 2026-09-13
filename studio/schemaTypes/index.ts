@@ -16,8 +16,10 @@ import popup from "./popup";
 import keuzehulp from "./keuzehulp";
 import keuzehulpTag from "./keuzehulpTag";
 import specialisatie from "./specialisatie";
+import pagina from "./pagina";
 
 export const schemaTypes = [
+  pagina,
   teamlid,
   specialisatie,
   locatie,

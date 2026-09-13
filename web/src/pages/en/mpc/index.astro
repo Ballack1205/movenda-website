@@ -6,6 +6,7 @@ import SocialLinks from "../../../components/SocialLinks.astro";
 import DienstCard from "../../../components/DienstCard.astro";
 import PartnerBand from "../../../components/PartnerBand.astro";
 import GetuigenisCarousel from "../../../components/GetuigenisCarousel.astro";
+import PaginaFoto from "../../../components/PaginaFoto.astro";
 import {
   getDienstenByCategorie,
   getLocatieBySlug,
@@ -13,6 +14,11 @@ import {
   getFaqs,
   getSiteSettings,
   getGetuigenissen,
+  getPagina,
+  paginaAlineas,
+  paginaBlokKop,
+  paginaBlokTekst,
+  paginaTekst,
 } from "../../../lib/content";
 import { localBusinessSchema, breadcrumbSchema, faqPageSchema } from "../../../lib/schema";
 import { faqCopy, partnerBandTitle } from "../../../lib/i18n";
@@ -27,27 +33,21 @@ const partners = await getPartners("mpc");
 const faqs = await getFaqs("mpc");
 const settings = await getSiteSettings();
 const getuigenissen = await getGetuigenissen("mpc", "en");
+const pagina = await getPagina("mpc");
 
-const pillars = [
-  {
-    href: "#training",
-    titel: "Training",
-    tekst: "Performance, personal training, duo sessions and data analysis.",
-    foto: training.find((d) => d.afbeelding)?.afbeelding,
-  },
-  {
-    href: "#sportrevalidatie",
-    titel: "Sports rehabilitation",
-    tekst: "Recovery after injury, dry needling, cupping and taping.",
-    foto: rehab.find((d) => d.afbeelding)?.afbeelding,
-  },
-  {
-    href: "/en/mpc/groepslessen",
-    titel: "Group classes",
-    tekst: "HIIT, Full Body, PowerPlus, boxing, running and more. Max. 8 people.",
-    foto: groep.find((d) => d.afbeelding)?.afbeelding,
-  },
+const pillarTargets = [
+  { href: "#training", foto: training.find((d) => d.afbeelding)?.afbeelding },
+  { href: "#sportrevalidatie", foto: rehab.find((d) => d.afbeelding)?.afbeelding },
+  { href: "/en/mpc/groepslessen", foto: groep.find((d) => d.afbeelding)?.afbeelding },
 ];
+const pillars = pillarTargets.map((t, i) => {
+  const blok = pagina.pijlers[i];
+  return {
+    ...t,
+    titel: blok ? paginaBlokKop(blok, "en") : "",
+    tekst: blok ? paginaBlokTekst(blok, "en") : "",
+  };
+}).filter((p) => p.titel);
 
 const jsonLd = [
   localBusinessSchema(locatie),
@@ -62,8 +62,8 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Movenda Performance Centre | Sports performance Hasselt"
-  description="Movenda Performance Centre in Kuringen: data-driven performance training and sports rehabilitation for recreational and professional athletes."
+  title={paginaTekst(pagina, "seoTitle", "en") || "Movenda Performance Centre | Sports performance Hasselt"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
   path="/en/mpc"
   altPath="/mpc"
   brand="mpc"
@@ -81,16 +81,14 @@ const jsonLd = [
         Movenda Performance Centre
       </p>
       <h1 class="text-balance text-3xl font-bold tracking-tight sm:text-4xl md:mt-3 xl:text-5xl">
-        Perform at your highest level, data-driven
+        {paginaTekst(pagina, "titel", "en")}
       </h1>
       {settings.slogans.mpc && (
         <p class="mt-2 text-pretty text-lg font-medium text-brand-primary">{settings.slogans.mpc}</p>
       )}
-      <p class="mt-4 max-w-xl text-pretty text-brand-muted">
-        A multidisciplinary performance centre focused on maximising performance for
-        (semi-)professional athletes and evidence-based medical rehabilitation. Open space,
-        high-end equipment and one-on-one coaching.
-      </p>
+      {paginaAlineas(pagina, "en").map((tekst) => (
+        <p class="mt-4 max-w-xl text-pretty text-brand-muted">{tekst}</p>
+      ))}
       <div class="mt-6 flex flex-wrap gap-3">
         <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="rounded-full bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-primary-dark sm:px-6 sm:text-base">
           Call {locatie.telefoon}
@@ -105,8 +103,9 @@ const jsonLd = [
       </div>
     </div>
     <div class="relative -mx-4 md:mx-0">
-      <Image
-        src={mpcHero}
+      <PaginaFoto
+        pagina={pagina}
+        fallback={mpcHero}
         alt="Movenda Performance Centre training space"
         width={800}
         height={600}

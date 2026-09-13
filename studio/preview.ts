@@ -11,6 +11,18 @@ type PreviewDoc = {
   slug?: { current?: string } | string;
   categorie?: string;
   locatie?: string;
+  key?: string;
+};
+
+const PAGINA_PATHS: Record<string, string> = {
+  home: "/",
+  over: "/over",
+  kinesitherapie: "/kinesitherapie",
+  training: "/training",
+  mpc: "/mpc",
+  "mpc-visie": "/mpc/visie",
+  contact: "/contact",
+  jobs: "/jobs",
 };
 
 function slugOf(doc: PreviewDoc): string | undefined {
@@ -35,6 +47,8 @@ export function resolvePreviewUrl(document: PreviewDoc): string | undefined {
   if (!type) return undefined;
 
   switch (type) {
+    case "pagina":
+      return `${PREVIEW_URL}${PAGINA_PATHS[document.key || ""] ?? "/"}`;
     case "teamlid":
       return slug ? `${PREVIEW_URL}/team/${slug}` : `${PREVIEW_URL}/team`;
     case "blogPost":

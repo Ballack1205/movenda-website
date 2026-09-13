@@ -58,6 +58,12 @@ Safe to re-run — uses deterministic `_id`s (`teamlid-<slug>` etc.) so it
 overwrites the same seeded docs and never touches documents Julie created
 by hand.
 
+Fixed-page copy (`pagina-<key>`, 8 docs) is seeded from
+`web/src/content/paginas.json` with `npx sanity exec scripts/seed-paginas.mjs
+--with-user-token`. That script only fills *empty* fields, so Julie's edits
+survive a re-run. Add a page: extend `PAGINAS` in `schemaTypes/pagina.ts`,
+add the key to `paginas.json` and `preview.ts`, re-run the seed.
+
 ## Schemas (`schemaTypes/`)
 
 | Schema | Matches `web/src/lib/content.ts` shape |
@@ -69,6 +75,7 @@ by hand.
 | `popup` | `Popup` (event overlays Julie can turn on/off; signup form or link) |
 | `getuigenis` | `Getuigenis` (quote carousel: quote, naam, foto, locatie, volgorde, show/hide) |
 | `lesrooster` | `Lesrooster` (MPC group-class timetable; was missing from the old sidebar) |
+| `pagina` | `Pagina` (H1, intro, hero photo, SEO + text blocks of the 8 fixed pages: home, over, kine, training, mpc, mpc-visie, contact, jobs. Not creatable/deletable from the Studio; fields hide per page) |
 
 Once real Sanity data exists, update `web/src/lib/content.ts` to query
 `@sanity/client` with GROQ instead of reading the local JSON in

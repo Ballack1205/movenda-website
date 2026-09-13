@@ -1,10 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getVacatures, getSiteSettings } from "../../lib/content";
+import { getVacatures, getSiteSettings, getPagina, paginaAlineas, paginaTekst } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
 
 const vacatures = await getVacatures();
 const settings = await getSiteSettings();
+const pagina = await getPagina("jobs");
+const [leegKop, ...leegRest] = paginaTekst(pagina, "legeTekst", "en").split("\n");
+const leegTekst = leegRest.join(" ").trim();
 
 const jsonLd = [
   breadcrumbSchema([
@@ -15,24 +18,24 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Jobs | Work at Movenda Hasselt"
-  description="See open vacancies at Movenda in Hasselt and the Movenda Performance Centre in Kuringen."
+  title={paginaTekst(pagina, "seoTitle", "en") || "Jobs | Work at Movenda Hasselt"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
   path="/en/jobs"
   altPath="/jobs"
   lang="en"
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-3xl px-4 py-12">
-    <h1 class="text-3xl font-bold">Work at Movenda</h1>
-    <p class="mt-2 text-brand-muted">
-      Would you like to join our team of physiotherapists, personal trainers and performance coaches?
-    </p>
+    <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", "en")}</h1>
+    {paginaAlineas(pagina, "en").map((tekst) => (
+      <p class="mt-2 text-brand-muted">{tekst}</p>
+    ))}
 
     {vacatures.length === 0 ? (
       <div class="mt-10 rounded-2xl border border-brand-border bg-brand-surface p-8 text-center">
-        <p class="font-semibold">No open vacancies at the moment.</p>
+        <p class="font-semibold">{leegKop || "No open vacancies at the moment."}</p>
         <p class="mt-2 text-sm text-brand-muted">
-          Still interested in sending a speculative application? Email{" "}
+          {leegTekst || "Speculative application? Email"}{" "}
           <a href={`mailto:${settings.email}`} class="font-semibold text-brand-primary hover:underline">
             {settings.email}
           </a>.
