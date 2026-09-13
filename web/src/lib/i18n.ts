@@ -136,7 +136,7 @@ export function partnerBandTitle(title: string | undefined, lang: Lang): string 
 
 export const KEUZEHULP_EN = {
   titel: "Who's the right fit?",
-  intro: "Pick what applies to you — one choice per question is enough. This is a guide, not medical advice.",
+  intro: "Pick what applies to you — you can select more than one option per question. This is a guide, not medical advice.",
   vragen: {
     klacht: "How can we help?",
     regio: "Where is the complaint?",

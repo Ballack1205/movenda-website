@@ -132,7 +132,7 @@ async function main() {
     actief: true,
     titel: "Wie past bij mij?",
     intro:
-      "Kies wat op jou van toepassing is — één keuze per vraag is genoeg. We tonen de collega's die het best passen. Dit is een hulpmiddel, geen medisch advies.",
+      "Kies wat op jou van toepassing is — je mag per vraag meerdere opties aanklikken. We tonen de collega's die het best passen. Dit is een hulpmiddel, geen medisch advies.",
     vragen: {
       klacht: "Waarmee kunnen we je helpen?",
       regio: "Waar zit de klacht?",

@@ -569,7 +569,7 @@ export async function getKeuzehulp(): Promise<Keuzehulp> {
     titel: doc?.titel || "Wie past bij mij?",
     intro:
       doc?.intro ||
-      "Kies wat op jou van toepassing is — één keuze per vraag is genoeg. Dit is een hulpmiddel, geen medisch advies.",
+      "Kies wat op jou van toepassing is — je mag per vraag meerdere opties aanklikken. Dit is een hulpmiddel, geen medisch advies.",
     vragen: { ...KEUZEHULP_DEFAULT_VRAGEN, ...(doc?.vragen || {}) },
     geenMatchTekst:
       doc?.geenMatchTekst ||

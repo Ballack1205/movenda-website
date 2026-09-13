@@ -46,7 +46,12 @@ const tagLabels: Record<string, string> = {};
 for (const cat of vragen) for (const t of keuzehulp.opties[cat]) tagLabels[t.id] = keuzehulpTagLabel(t, lang);
 
 const khTitel = lang === "en" ? KEUZEHULP_EN.titel : keuzehulp.titel;
-const khIntro = lang === "en" ? KEUZEHULP_EN.intro : keuzehulp.intro;
+const khIntro = lang === "en"
+  ? KEUZEHULP_EN.intro
+  : (keuzehulp.intro || "").replace(
+      /één keuze per vraag is genoeg/i,
+      "je mag per vraag meerdere opties aanklikken",
+    ) || keuzehulp.intro;
 const khVragen = lang === "en" ? KEUZEHULP_EN.vragen : keuzehulp.vragen;
 const khGeenMatch = lang === "en" ? KEUZEHULP_EN.geenMatchTekst : keuzehulp.geenMatchTekst;
 
@@ -241,7 +246,7 @@ const filters = [
             {vragen.map((cat) => (
               <fieldset class={cat === "klacht" ? "sm:col-span-2" : ""}>
                 <legend class="text-sm font-semibold">{khVragen[cat]}</legend>
-                <div class="mt-2 flex flex-wrap gap-1.5" role="group" data-vraag={cat}>
+                <div class="mt-2 flex flex-wrap gap-1.5" role="group" aria-multiselectable="true" data-vraag={cat}>
                   {keuzehulp.opties[cat].map((tag) => (
                     <button
                       type="button"
@@ -342,9 +347,9 @@ const filters = [
   renderGrid();
 
   // "Wie past bij mij?" — scoring recommender inside a <dialog>.
-  // One answer per question, 1 point per matching tag, ranked by score then
-  // editorial order. Nobody with 0 points is listed; if nobody matches every
-  // answer we still show the best partial matches (never an empty result).
+  // Multi-select on every question. 1 point per matching tag, ranked by
+  // score then editorial order. Nobody with 0 points is listed; if nobody
+  // matches every answer we still show the best partial matches.
   const dialog = document.querySelector("[data-keuzehulp]");
   if (dialog) {
     const openBtns = document.querySelectorAll("[data-open-keuzehulp]");
@@ -356,23 +361,22 @@ const filters = [
     const jumpWrap = dialog.querySelector("[data-jump-wrap]");
     const jumpBtn = dialog.querySelector("[data-jump]");
     const MAX_RESULTS = 6;
-    const selected = new Map(); // categorie -> tagId
+    const selected = new Set(); // tag ids, any question
 
     const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
     function syncUrl() {
       const p = new URLSearchParams(location.search);
-      if (selected.size) p.set("k", [...selected.values()].join(","));
+      if (selected.size) p.set("k", [...selected].join(","));
       else p.delete("k");
       const qs = p.toString();
       history.replaceState(null, "", (qs ? `?${qs}` : location.pathname) + (dialog.open ? "#keuzehulp" : ""));
     }
 
     function renderResults() {
-      const chosen = [...selected.values()];
+      const chosen = [...selected];
       for (const group of vraagGroups) {
-        const active = selected.get(group.dataset.vraag);
-        group.querySelectorAll("[data-tag]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tag === active)));
+        group.querySelectorAll("[data-tag]").forEach((b) => b.setAttribute("aria-pressed", String(selected.has(b.dataset.tag))));
       }
       resetBtn.hidden = chosen.length === 0;
       jumpWrap.hidden = chosen.length === 0;
@@ -445,9 +449,9 @@ const filters = [
       group.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-tag]");
         if (!btn) return;
-        const cat = group.dataset.vraag;
-        if (selected.get(cat) === btn.dataset.tag) selected.delete(cat); // tap again = deselect
-        else selected.set(cat, btn.dataset.tag);
+        const id = btn.dataset.tag;
+        if (selected.has(id)) selected.delete(id);
+        else selected.add(id);
         renderResults();
       });
     }
@@ -469,11 +473,9 @@ const filters = [
 
     // Deep links: ?k=tag,tag prefills (a therapist can send a patient a link); #keuzehulp opens it.
     const params = new URLSearchParams(location.search);
-    const initialTags = (params.get("k") || "").split(",").filter(Boolean);
-    for (const group of vraagGroups) {
-      const btn = [...group.querySelectorAll("[data-tag]")].find((b) => initialTags.includes(b.dataset.tag));
-      if (btn) selected.set(group.dataset.vraag, btn.dataset.tag);
-    }
+    const known = new Set([...dialog.querySelectorAll("[data-tag]")].map((b) => b.dataset.tag));
+    const initialTags = (params.get("k") || "").split(",").filter((id) => known.has(id));
+    for (const id of initialTags) selected.add(id);
     renderResults();
     if (initialTags.length || location.hash === "#keuzehulp") open();
   }
