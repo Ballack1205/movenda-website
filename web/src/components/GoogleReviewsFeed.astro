@@ -37,8 +37,16 @@ const fallbackLabel = lang === "en" ? "Read our Google reviews" : "Lees onze Goo
   // in the meantime. Once the Elfsight title is switched off, uncomment the
   // block below (and restore a top margin on .google-reviews-widget) to
   // bring the visible NL/EN heading back.
+  //
+  // No top padding on the section below: the previous section (getuigenissen
+  // carousel) already ends with its own bottom padding, so this sits right
+  // up against it — that's what pulls "What Our Customers Say" higher up the
+  // page. The bottom padding is kept smaller than Instagram's old top
+  // padding so that (this pb) + (Instagram's pt) == (getuigenissen's pb) —
+  // the gap above and below this block ends up equal (symmetric). See the
+  // matching comment in InstagramFeed.astro.
   show && (
-    <section class="google-reviews-feed scroll-mt-24 px-4 py-10 sm:py-14" aria-labelledby="google-reviews-heading">
+    <section class="google-reviews-feed scroll-mt-24 px-4 pb-4 pt-0 sm:pb-6" aria-labelledby="google-reviews-heading">
       <div class="mx-auto max-w-6xl">
         <h2 id="google-reviews-heading" class="sr-only">
           {heading}

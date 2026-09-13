@@ -21,8 +21,12 @@ const fallbackLabel = lang === "en" ? "Open our Instagram" : "Open onze Instagra
 ---
 
 {
+  // pt-6 (not the old pt-10/pt-14) so "Volg ons" sits closer under the
+  // Google reviews block above — combined with that block's own bottom
+  // padding, the gap here matches the gap above the Google reviews block
+  // (see the comment in GoogleReviewsFeed.astro).
   show && (
-    <section class="instagram-feed scroll-mt-24 px-4 pb-4 pt-10 sm:pt-14" aria-labelledby="instagram-heading">
+    <section class="instagram-feed scroll-mt-24 px-4 pb-4 pt-6" aria-labelledby="instagram-heading">
       <div class="mx-auto max-w-6xl">
         <div class="flex flex-col items-center text-center">
           <h2 id="instagram-heading" class="text-2xl font-bold sm:text-3xl">
