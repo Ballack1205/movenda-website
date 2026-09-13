@@ -39,6 +39,9 @@
     "doelgroepen": [
       "Ondernemers",
       "Sporters (algemeen)"
+    ],
+    "disciplines": [
+      "kine"
     ]
   },
   {
@@ -70,6 +73,9 @@
     ],
     "doelgroepen": [
       "Topsport"
+    ],
+    "disciplines": [
+      "pt"
     ]
   },
   {
@@ -112,6 +118,9 @@
       "Gymnastiek",
       "Hyrox",
       "Lopers"
+    ],
+    "disciplines": [
+      "kine"
     ]
   },
   {
@@ -153,6 +162,9 @@
     "doelgroepen": [
       "Ondernemers",
       "Recreatieve sporters"
+    ],
+    "disciplines": [
+      "kine"
     ]
   },
   {
@@ -201,6 +213,9 @@
       "Lopers",
       "Recreatieve sporters",
       "Motorcross"
+    ],
+    "disciplines": [
+      "kine"
     ]
   },
   {
@@ -237,7 +252,10 @@
     "klachten": [],
     "regio": [],
     "sporten": [],
-    "doelgroepen": []
+    "doelgroepen": [],
+    "disciplines": [
+      "kine"
+    ]
   },
   {
     "slug": "simon-cornelissen",
@@ -278,6 +296,10 @@
     "doelgroepen": [
       "Jonge atleten",
       "Bovenhandse slagsporten"
+    ],
+    "disciplines": [
+      "kine",
+      "pt"
     ]
   },
   {
@@ -314,6 +336,9 @@
     "sporten": [],
     "doelgroepen": [
       "Pre- en postnatale training"
+    ],
+    "disciplines": [
+      "kine"
     ]
   },
   {
@@ -360,7 +385,10 @@
       "Bekken"
     ],
     "sporten": [],
-    "doelgroepen": []
+    "doelgroepen": [],
+    "disciplines": [
+      "kine"
+    ]
   },
   {
     "slug": "maarten-bernaerts",
@@ -405,6 +433,9 @@
     "doelgroepen": [
       "Recreatieve sporters",
       "Balsporten"
+    ],
+    "disciplines": [
+      "kine"
     ]
   },
   {
@@ -448,6 +479,10 @@
     ],
     "doelgroepen": [
       "Alle sporten"
+    ],
+    "disciplines": [
+      "kine",
+      "pt"
     ]
   },
   {
@@ -478,6 +513,9 @@
       "Ondernemers",
       "Dames",
       "Corporate coaching"
+    ],
+    "disciplines": [
+      "pt"
     ]
   },
   {
@@ -506,6 +544,9 @@
     "doelgroepen": [
       "Topsport",
       "Corporate coaching"
+    ],
+    "disciplines": [
+      "pt"
     ]
   },
   {
@@ -542,6 +583,10 @@
     "sporten": [],
     "doelgroepen": [
       "Alle sporten"
+    ],
+    "disciplines": [
+      "kine",
+      "pt"
     ]
   },
   {
@@ -577,6 +622,9 @@
       "Recreatieve sporters",
       "Jonge atleten",
       "Alle sporten"
+    ],
+    "disciplines": [
+      "pt"
     ]
   },
   {
@@ -603,6 +651,9 @@
     "sporten": [],
     "doelgroepen": [
       "Boksen"
+    ],
+    "disciplines": [
+      "pt"
     ]
   },
   {
@@ -642,7 +693,10 @@
       "Fietsen"
     ],
     "doelgroepen": [],
-    "fotoAssetId": "image-507d83818e897a4fb0ab735fff659df6a58bf961-400x533-jpg"
+    "fotoAssetId": "image-507d83818e897a4fb0ab735fff659df6a58bf961-400x533-jpg",
+    "disciplines": [
+      "kine"
+    ]
   },
   {
     "slug": "an-janssen",
@@ -669,7 +723,10 @@
     "regio": [],
     "sporten": [],
     "doelgroepen": [],
-    "fotoAssetId": "image-9781891f7fc2e97ad67b8a8ea95e6ba1f7f3fb68-400x533-jpg"
+    "fotoAssetId": "image-9781891f7fc2e97ad67b8a8ea95e6ba1f7f3fb68-400x533-jpg",
+    "disciplines": [
+      "kine"
+    ]
   },
   {
     "slug": "julie-spaas",
@@ -687,6 +744,7 @@
     "bio": "Julie is de kracht achter zowel Movenda als het Movenda Performance Centre. Als verantwoordelijke voor de website, marketing, communicatie en boekhouding zorgt ze ervoor dat beide vestigingen ook buiten de behandelkamer sterk staan. Daarnaast staat ze altijd klaar voor al je praktische vragen en info.",
     "bioEn": "Julie is the driving force behind both Movenda and the Movenda Performance Centre. As the person responsible for the website, marketing, communication and accounts she makes sure both locations stand strong outside the treatment room too. She is also always ready for your practical questions and information.",
     "volgorde": 19,
-    "actief": true
+    "actief": true,
+    "disciplines": []
   }
 ]

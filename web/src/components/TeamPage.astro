@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { getTeamleden, getSiteSettings, getKeuzehulp, KEUZEHULP_CATEGORIEEN } from "../lib/content";
+import { getTeamleden, getSiteSettings, getKeuzehulp, KEUZEHULP_CATEGORIEEN, isKinesist, isTrainer } from "../lib/content";
 import TeamGroupPhoto from "./TeamGroupPhoto.astro";
 import { teamPhotoSrc } from "../lib/images";
 import { breadcrumbNode, teamListNode } from "../lib/schema";
@@ -53,8 +53,8 @@ const payload = {
     face: lid.foto ? teamPhotoSrc(lid.foto, "face") : null,
     initialen: `${lid.voornaam[0]}${lid.naam[0]}`,
     tags: lid.keuzehulpTags.map((t) => t.id),
-    kine: /kinesi|manueel|osteopath|vroed|physio/i.test(lid.rol + (lid.rolEn || "")),
-    pt: /trainer|coach|performance/i.test(lid.rol + (lid.rolEn || "")),
+    kine: isKinesist(lid),
+    pt: isTrainer(lid),
     olympia: lid.locaties.includes("olympia"),
     mpc: lid.locaties.includes("mpc"),
   })),

@@ -44,6 +44,21 @@ export default defineType({
       description: "Engelse vertaling. Leeg = valt terug op NL.",
     }),
     defineField({
+      name: "disciplines",
+      title: "Telt mee als",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        list: [
+          { title: "Kinesist", value: "kine" },
+          { title: "Trainer / coach", value: "pt" },
+        ],
+        layout: "grid",
+      },
+      description:
+        "Bepaalt de aantallen op de homepage ('Met 13 kinesisten en 8 trainers en coaches …') en de knoppen Kinesisten / Trainers & coaches op de teampagina. Beide aanvinken mag. Niets aanvinken voor wie geen therapeut of trainer is (bv. office).",
+    }),
+    defineField({
       name: "locaties",
       title: "Locatie(s)",
       type: "array",

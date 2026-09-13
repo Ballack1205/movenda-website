@@ -33,7 +33,7 @@ const logoSrc = (logo: string, height: number) => `${logo}?h=${height}&fit=max&a
 
 {
   partners.length > 0 && (
-    <section class="border-y border-brand-border bg-brand-surface py-10">
+    <section class="partnerband-section relative z-[1] border-y border-brand-border bg-brand-surface py-10">
       <h2 class="px-4 text-center text-sm font-semibold uppercase tracking-wide text-brand-muted">{title}</h2>
       <div
         class:list={["partnerband", "mt-6", { "partnerband--static": !animatie }]}
@@ -146,9 +146,30 @@ const logoSrc = (logo: string, height: number) => `${logo}?h=${height}&fit=max&a
     animation-play-state: paused;
   }
 
+  .partnerband-section:hover,
+  .partnerband-section:focus-within {
+    z-index: 20;
+  }
+
+  /* While paused the scaled logo may grow past the rail; let it paint over
+     the sections above and below instead of being clipped by overflow. */
+  .partnerband:hover,
+  .partnerband:focus-within {
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
   .partnerband__item {
+    position: relative;
+    z-index: 0;
     display: flex;
     align-items: center;
+  }
+
+  .partnerband__item:hover,
+  .partnerband__item:focus-within {
+    z-index: 2;
   }
 
   .partnerband__item a:focus-visible {
@@ -164,7 +185,7 @@ const logoSrc = (logo: string, height: number) => `${logo}?h=${height}&fit=max&a
     object-fit: contain;
     filter: grayscale(1);
     opacity: 0.65;
-    transition: filter 0.25s ease, opacity 0.25s ease;
+    transition: filter 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
   }
 
   .partnerband__naam {
@@ -176,9 +197,11 @@ const logoSrc = (logo: string, height: number) => `${logo}?h=${height}&fit=max&a
     transition: color 0.25s ease;
   }
 
-  .partnerband__item:hover .partnerband__logo {
+  .partnerband__item:hover .partnerband__logo,
+  .partnerband__item:focus-within .partnerband__logo {
     filter: none;
     opacity: 1;
+    transform: scale(1.07);
   }
 
   .partnerband__item:hover .partnerband__naam {

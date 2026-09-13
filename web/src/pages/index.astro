@@ -17,7 +17,9 @@ import {
   getDienstenByCategorie,
   getPartners,
   getGetuigenissen,
+  getLocaties,
   homePijlerDiensten,
+  teamCounts,
 } from "../lib/content";
 import homeHero from "../assets/marketing/home-hero.jpg";
 import mpcHero from "../assets/marketing/mpc-hero.jpg";
@@ -37,6 +39,16 @@ const afspraakHref =
 const partners = await getPartners("movenda");
 const getuigenissen = await getGetuigenissen("olympia");
 
+// Photo label: "Olympia · Hasselt | Performance Centre · Kuringen". Names and towns come from the
+// Locatie records so a rename in Sanity shows up here too. Main practice (Olympia) first.
+const heroLocaties = (await getLocaties())
+  .sort((a, b) => (a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0))
+  .map((loc) => ({
+  href: `/locaties/${loc.slug}`,
+  naam: loc.naam.replace(/^Movenda\s+/i, ""),
+  gemeente: loc.adres.split(",").pop()?.trim().replace(/^\d{4}\s*/, "") ?? "",
+}));
+
 // LCP: the hero photo is the largest thing above the fold on every viewport. Same widths/sizes as
 // the <Image> below so the preload resolves to the identical hashed files and no bytes are wasted.
 const heroSizes = "(min-width: 1024px) 60vw, 100vw";
@@ -53,10 +65,7 @@ const heroLinks = [
   },
 ];
 
-const kinesistenCount = team.filter((t) => t.rol.toLowerCase().includes("kinesitherapeut")).length;
-const trainerCount = team.filter(
-  (t) => t.rol.toLowerCase().includes("trainer") || t.rol.toLowerCase().includes("coach"),
-).length;
+const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team);
 
 ---
 
@@ -78,15 +87,16 @@ const trainerCount = team.filter(
       class="mx-auto grid max-w-6xl gap-8 px-4 pt-8 pb-6 sm:pb-10 lg:max-w-none lg:grid-cols-[1fr_minmax(0,36rem)_minmax(0,36rem)_1fr] lg:gap-0 lg:px-0 lg:pt-0 lg:pb-0"
     >
       <div class="hero-copy order-last flex flex-col justify-center lg:order-none lg:col-start-2 lg:col-end-3 lg:py-10 lg:pr-10 lg:pl-4 xl:pr-12">
-        <p class="hero-in text-base font-medium text-brand-primary">
-          Groepspraktijk in Hasselt en Kuringen
+        {/* Eyebrow: on mobile it sits on the photo (see .hero-eyebrow below) so the H1 starts right under it. */}
+        <p class="hero-in hidden text-base font-medium text-brand-primary lg:block">
+          Kinesitherapie en personal training in Hasselt
         </p>
-        <h1 class="hero-in mt-3 text-display">
+        <h1 class="hero-in text-display lg:mt-3">
           Bewegen, herstellen en presteren in Hasselt
         </h1>
         <p class="hero-in mt-5 max-w-md text-[1.0625rem] leading-relaxed text-brand-muted">
-          Kinesitherapie en personal training onder één dak, in Sportcentrum Olympia en het Performance
-          Centre in Kuringen. Je wordt altijd één-op-één begeleid door één van onze {kinesistenCount} kinesisten of {trainerCount} trainers — met een plan dat bij jouw klacht en jouw doel past.
+          Met {kinesistenCount} kinesisten en {trainerCount} trainers en coaches begeleiden we jou bij herstel,
+          blessurepreventie en een gezonde, actieve levensstijl. Persoonlijk, medisch verantwoord en volledig op maat.
         </p>
         <div class="hero-in mt-6 flex flex-wrap items-center gap-3">
           <a
@@ -118,6 +128,11 @@ const trainerCount = team.filter(
           class="aspect-[4/3] w-full object-cover sm:aspect-[3/2] lg:absolute lg:inset-0 lg:aspect-auto lg:h-full"
           priority
         />
+        <p
+          class="hero-eyebrow absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent px-4 pb-5 pt-16 text-base font-semibold text-white sm:px-5 lg:hidden"
+        >
+          Kinesitherapie en personal training in Hasselt
+        </p>
         <figure class="hero-inset absolute bottom-6 -left-10 hidden w-40 xl:block">
           <Image
             src={kineHero}
@@ -127,6 +142,24 @@ const trainerCount = team.filter(
             class="aspect-[4/5] w-full object-cover ring-8 ring-brand-bg"
           />
         </figure>
+        <nav
+          aria-label="Onze locaties"
+          class="hero-label absolute bottom-6 right-6 hidden items-center gap-3 rounded-full bg-white/90 py-2 pl-3 pr-4 text-sm text-brand-text shadow-md backdrop-blur lg:flex"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-brand-primary" aria-hidden="true">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          {heroLocaties.map((loc, i) => (
+            <>
+              {i > 0 && <span class="h-4 w-px bg-brand-border" aria-hidden="true"></span>}
+              <a href={loc.href} class="whitespace-nowrap hover:text-brand-primary">
+                <span class="font-semibold">{loc.naam}</span>
+                <span class="text-brand-muted"> · {loc.gemeente}</span>
+              </a>
+            </>
+          ))}
+        </nav>
       </div>
     </div>
   </section>
@@ -146,7 +179,9 @@ const trainerCount = team.filter(
       .hero-media {
         animation: hero-settle 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
       }
-      .hero-inset {
+      .hero-inset,
+      .hero-label,
+      .hero-eyebrow {
         animation: hero-rise 0.7s 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
       }
     }

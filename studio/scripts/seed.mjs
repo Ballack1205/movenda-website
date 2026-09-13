@@ -51,6 +51,7 @@ async function seedTeam() {
       slug: { _type: "slug", current: lid.slug },
       rol: lid.rol,
       rolEn: lid.rolEn,
+      disciplines: lid.disciplines || [],
       locaties: lid.locaties,
       specialisaties: lid.specialisaties,
       bio: lid.bio,

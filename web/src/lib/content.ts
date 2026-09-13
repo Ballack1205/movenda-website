@@ -22,12 +22,16 @@ export interface Club {
   url?: string;
 }
 
+export type Discipline = "kine" | "pt";
+
 export interface Teamlid {
   slug: string;
   voornaam: string;
   naam: string;
   rol: string;
   rolEn?: string;
+  /** "Telt mee als" in Studio: drives the homepage counts and the /team role filter. */
+  disciplines: Discipline[];
   locaties: LocatieSlug[];
   specialisaties: string[];
   email: string;
@@ -417,7 +421,7 @@ export function formatEuro(bedrag?: number): string | undefined {
 
 const teamlidProjection = `{
   "slug": slug.current,
-  voornaam, naam, rol, rolEn, locaties, specialisaties, email, bio, bioEn,
+  voornaam, naam, rol, rolEn, disciplines, locaties, specialisaties, email, bio, bioEn,
   volgorde, actief,
   "foto": foto.asset->url,
   tariefKine, tariefPt, tariefPtMpc, tariefPerformance,
@@ -467,6 +471,20 @@ export async function getTeamlidBySlug(slug: string): Promise<Teamlid | undefine
 export async function getTeamledenByLocatie(locatie: LocatieSlug): Promise<Teamlid[]> {
   const team = await getTeamleden();
   return team.filter((t) => t.locaties.includes(locatie));
+}
+
+// Discipline is what Julie ticks under "Telt mee als" on the teamlid (kine / pt / both / none),
+// not guessed from the role text. One definition, used by the homepage counts and the /team
+// filter so they can never disagree.
+export const isKinesist = (lid: Teamlid) => lid.disciplines.includes("kine");
+export const isTrainer = (lid: Teamlid) => lid.disciplines.includes("pt");
+
+/** { kinesisten, trainers } for "Met 13 kinesisten en 8 trainers en coaches …". */
+export function teamCounts(team: Teamlid[]): { kinesisten: number; trainers: number } {
+  return {
+    kinesisten: team.filter(isKinesist).length,
+    trainers: team.filter(isTrainer).length,
+  };
 }
 
 const KEUZEHULP_DEFAULT_VRAGEN: Record<KeuzehulpCategorie, string> = {
@@ -519,6 +537,7 @@ function normalizeTeamlid(row: Teamlid): Teamlid {
       .map((t) => ({ ...t, actief: t.actief !== false })),
     specialisaties: row.specialisaties || [],
     locaties: row.locaties || [],
+    disciplines: row.disciplines || [],
   };
 }
 
