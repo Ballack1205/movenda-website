@@ -9,6 +9,7 @@ import seedTeam from "../content/team.json";
 import seedGetuigenissen from "../content/getuigenissen.json";
 import seedBlog from "../content/blog.json";
 import seedSportaanbod from "../content/sportaanbod.json";
+import seedDiensten from "../content/diensten.json";
 import { resolveBlogMedia } from "./blog";
 import type { Lang } from "./i18n";
 
@@ -674,10 +675,31 @@ const dienstCoverFallback: Record<string, string> = {
   running: "/dienst-covers/running.jpg",
 };
 
+const seedDienstByKey = new Map(
+  (seedDiensten as Pick<Dienst, "slug" | "categorie" | "bodyEn" | "seoTitleEn" | "seoDescriptionEn">[]).map(
+    (d) => [`${d.categorie}:${d.slug}`, d],
+  ),
+);
+
+/** Prefer Julie's CMS English when it is complete; if Sanity still has the
+ * short summary from the first EN pass, use the full seed translation. */
+function pickFullerEn(cms?: string, seed?: string): string | undefined {
+  const live = cms?.trim();
+  const fallback = seed?.trim();
+  if (!live) return fallback;
+  if (!fallback) return live;
+  if (fallback.length > live.length + 60) return fallback;
+  return live;
+}
+
 function normalizeDienst(row: Dienst): Dienst {
   const fallback = dienstCoverFallback[row.slug];
+  const fromSeed = seedDienstByKey.get(`${row.categorie}:${row.slug}`);
   return {
     ...row,
+    bodyEn: pickFullerEn(row.bodyEn, fromSeed?.bodyEn),
+    seoTitleEn: row.seoTitleEn || fromSeed?.seoTitleEn,
+    seoDescriptionEn: row.seoDescriptionEn || fromSeed?.seoDescriptionEn,
     afbeelding: row.afbeelding || fallback,
     galerij: row.galerij?.length ? row.galerij : fallback ? [fallback] : [],
     gekoppeldeTeamleden: row.gekoppeldeTeamleden || [],

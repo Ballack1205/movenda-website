@@ -157,6 +157,8 @@ async function seedDiensten() {
       volgorde: dienst.volgorde,
       seoTitle: dienst.seoTitle,
       seoDescription: dienst.seoDescription,
+      seoTitleEn: dienst.seoTitleEn,
+      seoDescriptionEn: dienst.seoDescriptionEn,
       gekoppeldeTeamleden: (dienst.gekoppeldeTeamleden || []).map((slug) => ({
         _type: "reference",
         _ref: `teamlid-${slug}`,
