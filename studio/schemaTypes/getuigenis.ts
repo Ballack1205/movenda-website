@@ -1,9 +1,13 @@
+import { CommentIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { EN_FIELDSET } from "./helpers";
 
 export default defineType({
   name: "getuigenis",
   title: "Getuigenis",
   type: "document",
+  icon: CommentIcon,
+  fieldsets: [EN_FIELDSET],
   description:
     "Citaten van cliënten in de carousel op de site. Nieuw = Nieuw document. Vul quote, naam en (liefst) een foto in, publiceer. Zet Actief uit om te verbergen zonder te verwijderen.",
   fields: [
@@ -20,6 +24,7 @@ export default defineType({
       title: "Quote (EN)",
       type: "text",
       rows: 4,
+      fieldset: "en",
       description: "Engelse vertaling. Leeg = de Nederlandse quote op /en.",
     }),
     defineField({
@@ -54,6 +59,7 @@ export default defineType({
       name: "rolEn",
       title: "Context (EN)",
       type: "string",
+      fieldset: "en",
       description: "Voor de Engelse site. Leeg = toont de Nederlandse context.",
     }),
     defineField({

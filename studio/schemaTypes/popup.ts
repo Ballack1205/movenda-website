@@ -1,16 +1,25 @@
+import { RocketIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { EN_FIELDSET } from "./helpers";
 
 export default defineType({
   name: "popup",
   title: "Pop-up",
   type: "document",
+  icon: RocketIcon,
   description:
     "Venster dat bezoekers zien bij het openen van de site (zoals de Social Run op de oude site). Zet 'Actief' aan om te tonen. Slechts de laatst bewerkte actieve pop-up verschijnt.",
+  groups: [
+    { name: "inhoud", title: "Inhoud", default: true },
+    { name: "gedrag", title: "Wanneer & waar" },
+  ],
+  fieldsets: [EN_FIELDSET],
   fields: [
     defineField({
       name: "actief",
       title: "Actief (tonen op de website)",
       type: "boolean",
+      group: "gedrag",
       description:
         "Hoofdschakelaar. Uit = pop-up blijft in het CMS maar is nergens zichtbaar, ook niet binnen de datums hieronder.",
       initialValue: false,
@@ -19,19 +28,22 @@ export default defineType({
       name: "titel",
       title: "Titel (NL)",
       type: "string",
+      group: "inhoud",
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: "titelEn", title: "Titel (EN)", type: "string" }),
+    defineField({ name: "titelEn", title: "Titel (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
       name: "afbeelding",
       title: "Foto bovenaan",
       type: "image",
+      group: "inhoud",
       options: { hotspot: true },
     }),
     defineField({
       name: "inhoud",
       title: "Tekst (NL)",
       type: "array",
+      group: "inhoud",
       of: [{ type: "block" }],
       description: "Datum, plaats, opsommingen… Vet en lijstjes werken hier.",
       validation: (Rule) => Rule.required(),
@@ -40,19 +52,23 @@ export default defineType({
       name: "inhoudEn",
       title: "Tekst (EN)",
       type: "array",
+      group: "inhoud",
+      fieldset: "en",
       of: [{ type: "block" }],
     }),
     defineField({
       name: "knopTekst",
       title: "Tekst op de knop (NL)",
       type: "string",
+      group: "inhoud",
       initialValue: "Schrijf je in!",
     }),
-    defineField({ name: "knopTekstEn", title: "Tekst op de knop (EN)", type: "string" }),
+    defineField({ name: "knopTekstEn", title: "Tekst op de knop (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
       name: "actie",
       title: "Wat doet de knop?",
       type: "string",
+      group: "inhoud",
       options: {
         list: [
           { title: "Gaat naar een formulier-link (Google Form) — aanbevolen", value: "link" },
@@ -67,6 +83,7 @@ export default defineType({
       name: "knopUrl",
       title: "Formulier-URL",
       type: "url",
+      group: "inhoud",
       description:
         "Plak hier de Google Form-link, bv. https://forms.gle/… De knop opent die in een nieuw tabblad.",
       hidden: ({ parent }) => parent?.actie !== "link",
@@ -84,6 +101,7 @@ export default defineType({
       title: "Extra vragen op het formulier",
       description: "Naam, e-mail en telefoon staan er al op. Voeg hier bv. 'Welke afstand?' toe.",
       type: "array",
+      group: "inhoud",
       hidden: ({ parent }) => parent?.actie !== "formulier",
       of: [
         {
@@ -130,6 +148,7 @@ export default defineType({
       name: "toonOp",
       title: "Tonen op",
       type: "string",
+      group: "gedrag",
       options: {
         list: [
           { title: "Heel de site", value: "overal" },
@@ -143,12 +162,14 @@ export default defineType({
       name: "geldigVan",
       title: "Tonen vanaf (optioneel)",
       type: "datetime",
+      group: "gedrag",
       description: "Leeg = meteen, zolang Actief aan staat.",
     }),
     defineField({
       name: "geldigTot",
       title: "Tonen tot (optioneel)",
       type: "datetime",
+      group: "gedrag",
       description:
         "Automatisch: na dit moment verdwijnt de pop-up vanzelf, ook zonder opnieuw te publiceren. Actief mag aan blijven staan.",
     }),
@@ -156,6 +177,7 @@ export default defineType({
       name: "eenKeerPerBezoeker",
       title: "Na sluiten niet meer tonen",
       type: "boolean",
+      group: "gedrag",
       description: "Aanbevolen. Uit = elke keer dat iemand de site opent.",
       initialValue: true,
     }),

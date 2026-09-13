@@ -1,3 +1,4 @@
+import { SearchIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 
 // Singleton: copy and question labels for the "Wie past bij mij?" chooser on
@@ -7,6 +8,8 @@ export default defineType({
   name: "keuzehulp",
   title: "Keuzehulp (Wie past bij mij?)",
   type: "document",
+  icon: SearchIcon,
+  description: "Teksten van de filter op de teampagina. De keuzes zelf staan onder Keuze-opties.",
   fields: [
     defineField({ name: "actief", title: "Keuzehulp tonen op de teampagina", type: "boolean", initialValue: true }),
     defineField({ name: "titel", title: "Titel", type: "string", initialValue: "Wie past bij mij?" }),

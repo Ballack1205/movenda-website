@@ -1,4 +1,6 @@
+import { TagIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { EN_FIELDSET } from "./helpers";
 
 // One specialisation a teamlid can carry ("Manuele therapie", "Boxing coaching").
 // Julie manages the vocabulary here; therapists pick from it via
@@ -9,6 +11,8 @@ export default defineType({
   name: "specialisatie",
   title: "Specialisatie",
   type: "document",
+  icon: TagIcon,
+  fieldsets: [EN_FIELDSET],
   fields: [
     defineField({
       name: "naam",
@@ -20,6 +24,7 @@ export default defineType({
       name: "naamEn",
       title: "Naam (EN)",
       type: "string",
+      fieldset: "en",
       description: "Leeg = de Engelse site toont de Nederlandse naam.",
     }),
     defineField({

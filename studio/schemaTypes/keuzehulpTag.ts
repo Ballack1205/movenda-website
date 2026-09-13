@@ -1,4 +1,6 @@
+import { TagIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { EN_FIELDSET } from "./helpers";
 
 // One answer option in the "Wie past bij mij?" chooser on /team. Julie
 // manages the vocabulary here (add/rename/reorder); therapists are tagged
@@ -15,6 +17,8 @@ export default defineType({
   name: "keuzehulpTag",
   title: "Keuzehulp-tag",
   type: "document",
+  icon: TagIcon,
+  fieldsets: [EN_FIELDSET],
   fields: [
     defineField({
       name: "label",
@@ -26,6 +30,7 @@ export default defineType({
       name: "labelEn",
       title: "Label (EN)",
       type: "string",
+      fieldset: "en",
       description: "Voor de Engelse site. Leeg = toont het Nederlandse label.",
     }),
     defineField({

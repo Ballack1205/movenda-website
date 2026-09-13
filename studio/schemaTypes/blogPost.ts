@@ -1,4 +1,6 @@
+import { ComposeIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { EN_FIELDSET, SLUG_DESCRIPTION } from "./helpers";
 
 const BLOG_TAGS = [
   { title: "Rugpijn", value: "rugpijn" },
@@ -17,22 +19,32 @@ export default defineType({
   name: "blogPost",
   title: "Blogpost",
   type: "document",
+  icon: ComposeIcon,
+  description: "Nieuw artikel = Nieuw document. Titel, tekst, coverfoto, datum, publiceren. De site herbouwt daarna vanzelf.",
+  groups: [
+    { name: "inhoud", title: "Artikel", default: true },
+    { name: "seo", title: "SEO" },
+  ],
+  fieldsets: [EN_FIELDSET],
   fields: [
-    defineField({ name: "titel", title: "Titel (NL)", type: "string", validation: (Rule) => Rule.required() }),
-    defineField({ name: "titelEn", title: "Titel (EN)", type: "string" }),
+    defineField({ name: "titel", title: "Titel (NL)", type: "string", group: "inhoud", validation: (Rule) => Rule.required() }),
+    defineField({ name: "titelEn", title: "Titel (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
       name: "slug",
       title: "Slug (URL)",
       type: "slug",
+      group: "inhoud",
       options: { source: "titel" },
+      description: SLUG_DESCRIPTION,
       validation: (Rule) => Rule.required(),
     }),
-    defineField({ name: "excerpt", title: "Korte samenvatting (NL)", type: "text", rows: 2 }),
-    defineField({ name: "excerptEn", title: "Korte samenvatting (EN)", type: "text", rows: 2 }),
+    defineField({ name: "excerpt", title: "Korte samenvatting (NL)", type: "text", rows: 2, group: "inhoud" }),
+    defineField({ name: "excerptEn", title: "Korte samenvatting (EN)", type: "text", rows: 2, group: "inhoud", fieldset: "en" }),
     defineField({
       name: "cover",
       title: "Coverfoto",
       type: "image",
+      group: "inhoud",
       options: { hotspot: true },
       description:
         "Foto bovenaan het artikel en op het overzicht. Leeg laten mag — het team zet dan een fallback-foto klaar.",
@@ -41,6 +53,7 @@ export default defineType({
       name: "coverFit",
       title: "Cover bijsnijden",
       type: "string",
+      group: "inhoud",
       options: {
         list: [
           { title: "Invullen (foto)", value: "cover" },
@@ -55,6 +68,7 @@ export default defineType({
       name: "body",
       title: "Inhoud (NL)",
       type: "array",
+      group: "inhoud",
       of: [{ type: "block" }, { type: "image", options: { hotspot: true } }],
       validation: (Rule) => Rule.required(),
     }),
@@ -62,24 +76,29 @@ export default defineType({
       name: "bodyEn",
       title: "Inhoud (EN)",
       type: "array",
+      group: "inhoud",
+      fieldset: "en",
       of: [{ type: "block" }, { type: "image", options: { hotspot: true } }],
     }),
     defineField({
       name: "auteur",
       title: "Auteur",
       type: "reference",
+      group: "inhoud",
       to: [{ type: "teamlid" }],
     }),
     defineField({
       name: "publicatiedatum",
       title: "Publicatiedatum",
       type: "date",
+      group: "inhoud",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "tags",
       title: "Tags",
       type: "array",
+      group: "inhoud",
       of: [{ type: "string" }],
       options: {
         list: [...BLOG_TAGS],
@@ -90,7 +109,7 @@ export default defineType({
       validation: (Rule) =>
         Rule.custom((tags) => {
           if (!tags) return true;
-          const unknown = tags.filter((tag) => !BLOG_TAG_VALUES.has(tag));
+          const unknown = tags.filter((tag): tag is string => typeof tag === "string" && !BLOG_TAG_VALUES.has(tag));
           return unknown.length ? `Onbekende tag(s): ${unknown.join(", ")}. Kies tags uit de lijst.` : true;
         }),
     }),
@@ -98,10 +117,18 @@ export default defineType({
       name: "seoTitle",
       title: "SEO-titel",
       type: "string",
+      group: "seo",
       description: "Leeg = artikeltitel + ' | Movenda blog'. Hou het onder 60 tekens, anders kapt Google af.",
       validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
     }),
-    defineField({ name: "seoDescription", title: "SEO-omschrijving", type: "text", rows: 2, validation: (Rule) => Rule.max(160) }),
+    defineField({
+      name: "seoDescription",
+      title: "SEO-omschrijving",
+      type: "text",
+      group: "seo",
+      rows: 2,
+      validation: (Rule) => Rule.max(160),
+    }),
   ],
   orderings: [
     { title: "Nieuwste eerst", name: "publicatiedatumDesc", by: [{ field: "publicatiedatum", direction: "desc" }] },

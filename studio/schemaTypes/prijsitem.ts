@@ -1,4 +1,6 @@
+import { BillIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { EN_FIELDSET } from "./helpers";
 
 // Which page/section a price appears in follows from the category alone — no
 // name matching. Adding "Kickboxing — 10 lessen" under "MPC — groepslessen"
@@ -17,12 +19,16 @@ export default defineType({
   name: "prijsitem",
   title: "Prijs",
   type: "document",
+  icon: BillIcon,
+  description: "Eén rij in een prijstabel. De categorie bepaalt op welke pagina de prijs staat.",
+  fieldsets: [EN_FIELDSET],
   fields: [
     defineField({ name: "naam", title: "Behandeling / formule (NL)", type: "string", validation: (Rule) => Rule.required() }),
     defineField({
       name: "naamEn",
       title: "Behandeling / formule (EN)",
       type: "string",
+      fieldset: "en",
       description: "Voor de Engelse site. Leeg = toont de Nederlandse naam.",
     }),
     defineField({
@@ -47,6 +53,7 @@ export default defineType({
       name: "notitieEn",
       title: "Publieke noot (EN)",
       type: "string",
+      fieldset: "en",
       description: "Leeg = toont de Nederlandse noot.",
     }),
     defineField({

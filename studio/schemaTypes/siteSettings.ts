@@ -1,19 +1,28 @@
+import { CogIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 
 export default defineType({
   name: "siteSettings",
   title: "Site-instellingen",
   type: "document",
-  // Singleton: only one document of this type should exist. Enforce this
-  // in the Studio's structure.ts / desk structure (hide "create new").
+  icon: CogIcon,
+  description:
+    "Algemene teksten, knoppen en blokken die over de hele site terugkomen. Er is maar één document — niet verwijderen.",
+  groups: [
+    { name: "algemeen", title: "Algemeen", default: true },
+    { name: "homepage", title: "Homepage" },
+    { name: "prijzen", title: "Prijzen" },
+    { name: "tracking", title: "Analytics & cookies" },
+  ],
   fields: [
-    defineField({ name: "siteNaam", title: "Sitenaam", type: "string", initialValue: "Movenda" }),
-    defineField({ name: "tagline", title: "Tagline", type: "string" }),
-    defineField({ name: "email", title: "Algemeen e-mailadres", type: "string" }),
+    defineField({ name: "siteNaam", title: "Sitenaam", type: "string", initialValue: "Movenda", group: "algemeen" }),
+    defineField({ name: "tagline", title: "Tagline", type: "string", group: "algemeen" }),
+    defineField({ name: "email", title: "Algemeen e-mailadres", type: "string", group: "algemeen", validation: (Rule) => Rule.email() }),
     defineField({
       name: "socials",
       title: "Social media",
       type: "object",
+      group: "algemeen",
       fields: [
         defineField({ name: "instagram", title: "Instagram-URL", type: "url" }),
         defineField({ name: "facebook", title: "Facebook-URL", type: "url" }),
@@ -24,6 +33,7 @@ export default defineType({
       name: "booking",
       title: "Boekknop",
       type: "object",
+      group: "algemeen",
       description: "Staat standaard UIT. Zet 'enabled' aan zodra jullie een agenda-tool kiezen.",
       fields: [
         defineField({ name: "enabled", title: "Boekknop tonen op de site", type: "boolean", initialValue: false }),
@@ -35,6 +45,7 @@ export default defineType({
       name: "teamfoto",
       title: "Groepsfoto team",
       type: "object",
+      group: "homepage",
       description:
         "Brede foto van het hele team, getoond bovenaan de Team-pagina. Kies bij het uploaden een focuspunt (hotspot) op de gezichten, zodat de foto op smalle schermen goed wordt bijgesneden. Zonder foto gebruikt de site de groepsfoto van de oude website.",
       options: { collapsible: true, collapsed: true },
@@ -61,8 +72,10 @@ export default defineType({
     }),
     defineField({
       name: "googleReviews",
-      title: "Google reviews",
+      title: "Google reviews (badge)",
       type: "object",
+      group: "homepage",
+      description: "Score en aantal op de homepage, locatiepagina's en contact. Geen betaalde reviews-API.",
       fields: [
         defineField({ name: "olympia", title: "Olympia", type: "googleReviewInfo" }),
         defineField({ name: "mpc", title: "MPC", type: "googleReviewInfo" }),
@@ -72,6 +85,7 @@ export default defineType({
       name: "analytics",
       title: "Analytics",
       type: "object",
+      group: "tracking",
       description:
         "Google Analytics start pas nadat een bezoeker op 'Oké' klikt in de cookiebalk. Umami is cookieloos en telt altijd anoniem mee (geen toestemming nodig).",
       fields: [
@@ -117,6 +131,7 @@ export default defineType({
       name: "prijzenInfo",
       title: "Prijzen-pagina — algemene info",
       type: "object",
+      group: "prijzen",
       fields: [
         defineField({ name: "basishonorarium", title: "Basishonorarium (€)", type: "number" }),
         defineField({ name: "intro", title: "Introtekst boven de tabellen", type: "text", rows: 3 }),
@@ -138,6 +153,9 @@ export default defineType({
                 { name: "omschrijving", type: "string", title: "Omschrijving" },
                 { name: "bedrag", type: "string", title: "Ereloon" },
               ],
+              preview: {
+                select: { title: "categorie", subtitle: "bedrag" },
+              },
             },
           ],
         }),
@@ -147,6 +165,7 @@ export default defineType({
       name: "slogans",
       title: "Slogans",
       type: "object",
+      group: "homepage",
       fields: [
         defineField({ name: "home", title: "Homepage", type: "string" }),
         defineField({ name: "kine", title: "Kinesitherapie", type: "string" }),
@@ -161,6 +180,7 @@ export default defineType({
       description:
         "De drie blokken onder de hero op de homepage. Per pijler: titel, korte tekst en de lijst 'waarvoor kom je / voor wie'. De technieken ernaast komen automatisch uit 'Diensten'.",
       type: "object",
+      group: "homepage",
       fields: [
         defineField({ name: "kine", title: "Kinesitherapie", type: "homePijler" }),
         defineField({ name: "training", title: "Personal training", type: "homePijler" }),
@@ -173,6 +193,7 @@ export default defineType({
       title: "Partnerbalk",
       description: "De bewegende logobalk. De partners zelf beheer je onder 'Partners & logo's'.",
       type: "object",
+      group: "homepage",
       fields: [
         defineField({ name: "titel", title: "Titel boven de balk (Movenda)", type: "string", initialValue: "Onze partners" }),
         defineField({ name: "titelMpc", title: "Titel boven de balk (MPC)", type: "string", initialValue: "Corporate partners" }),
@@ -206,6 +227,7 @@ export default defineType({
       description:
         "De feed boven de nieuwsbrief, dezelfde Elfsight-widget als op de oude site. Uit = blok verborgen. Het widget-ID hoef je alleen te wijzigen als Elfsight een nieuwe code geeft.",
       type: "object",
+      group: "homepage",
       fields: [
         defineField({ name: "enabled", title: "Tonen op de homepage", type: "boolean", initialValue: true }),
         defineField({
@@ -229,6 +251,7 @@ export default defineType({
       description:
         "Live Google-reviews onder de getuigenissen-carousel op de homepage, via dezelfde Elfsight-widget als op de oude site ('Untitled Google Reviews'). Uit = blok verborgen. Het widget-ID hoef je alleen te wijzigen als Elfsight een nieuwe code geeft.",
       type: "object",
+      group: "homepage",
       fields: [
         defineField({ name: "enabled", title: "Tonen op de homepage", type: "boolean", initialValue: true }),
         defineField({
@@ -250,6 +273,7 @@ export default defineType({
       name: "nieuwsbrief",
       title: "Nieuwsbriefblok",
       type: "object",
+      group: "homepage",
       fields: [
         defineField({ name: "enabled", title: "Tonen", type: "boolean", initialValue: true }),
         defineField({ name: "titel", title: "Titel (NL)", type: "string" }),
@@ -266,4 +290,7 @@ export default defineType({
       ],
     }),
   ],
+  preview: {
+    prepare: () => ({ title: "Site-instellingen" }),
+  },
 });

@@ -7,6 +7,12 @@ This is Julie's editor. She never opens this folder or the code — she uses
 the hosted Studio URL above and logs in with her email (or a Google/GitHub
 account) once invited.
 
+The Studio is Dutch. Daily work (settings, pop-ups, team) sits at the top;
+the MPC lesrooster is a first-class list. Long forms (teamlid, locatie,
+site-instellingen, blog, dienst, pop-up) use tabs. English fields are
+collapsed. The document menu has **Open preview** (pitch site until go-live).
+Site-instellingen, keuzehulp and the two locaties cannot be deleted.
+
 Seeded on 2026-09-10 with the real pitch-preview content (19 teamleden, 2
 locaties, 2 diensten, site-instellingen) via `scripts/seed.mjs`, so the
 "add a teammate" demo starts from real data instead of an empty project.
@@ -62,6 +68,7 @@ by hand.
 | `siteSettings` | `SiteSettings` (singleton — booking off by default, Google reviews) |
 | `popup` | `Popup` (event overlays Julie can turn on/off; signup form or link) |
 | `getuigenis` | `Getuigenis` (quote carousel: quote, naam, foto, locatie, volgorde, show/hide) |
+| `lesrooster` | `Lesrooster` (MPC group-class timetable; was missing from the old sidebar) |
 
 Once real Sanity data exists, update `web/src/lib/content.ts` to query
 `@sanity/client` with GROQ instead of reading the local JSON in

@@ -1,9 +1,11 @@
+import { ImageIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 
 export default defineType({
   name: "partner",
   title: "Partner",
   type: "document",
+  icon: ImageIcon,
   description:
     "Clubs, bedrijven en scholen in de bewegende partnerbalk op de site. Enkel externe partners — het Movenda- en MPC-logo horen hier niet in. Nieuwe partner = nieuw document.",
   fields: [
