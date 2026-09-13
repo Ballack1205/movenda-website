@@ -66,12 +66,17 @@ const jsonLd = [
   brand="mpc"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 md:grid-cols-2 md:gap-10 md:py-16">
-    <div class="min-w-0">
-      <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">
+  {/*
+    Hero. On phones the photo comes first, full-bleed, with the brand name in a glass chip on the
+    photo (same pattern as the homepage); the copy follows. From md up: copy left, rounded photo right.
+  */}
+  <section class="mx-auto grid max-w-6xl items-center gap-8 px-4 pb-10 pt-0 md:grid-cols-2 md:gap-10 md:py-16">
+    <div class="order-last min-w-0 md:order-none">
+      {/* Eyebrow: on phones it sits on the photo (chip below), so it is hidden here until md. */}
+      <p class="hidden text-sm font-semibold uppercase tracking-wide text-brand-primary md:block">
         Movenda Performance Centre
       </p>
-      <h1 class="mt-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl xl:text-5xl">
+      <h1 class="text-balance text-3xl font-bold tracking-tight sm:text-4xl md:mt-3 xl:text-5xl">
         Presteer op je hoogste niveau, data-gedreven begeleid
       </h1>
       {settings.slogans.mpc && (
@@ -91,18 +96,30 @@ const jsonLd = [
         </a>
       </div>
       <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
-        <GoogleReviewBadge locatie="mpc" />
+        <GoogleReviewBadge locatie="mpc" class="w-full justify-center sm:w-auto sm:justify-start" />
         <SocialLinks brand="mpc" class="w-full justify-center sm:w-auto sm:justify-start" />
       </div>
     </div>
-    <Image
-      src={mpcHero}
-      alt="Movenda Performance Centre trainingsruimte"
-      width={800}
-      height={600}
-      class="aspect-[16/10] w-full rounded-3xl object-cover object-top shadow-xl md:aspect-[4/3] xl:aspect-[5/4]"
-      priority
-    />
+    <div class="relative -mx-4 md:mx-0">
+      <Image
+        src={mpcHero}
+        alt="Movenda Performance Centre trainingsruimte"
+        width={800}
+        height={600}
+        class="aspect-[4/3] w-full object-cover object-top sm:aspect-[16/10] md:aspect-[4/3] md:rounded-3xl md:shadow-xl xl:aspect-[5/4]"
+        priority
+      />
+      <div
+        class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center bg-gradient-to-t from-black/55 via-black/20 to-transparent px-4 pb-4 pt-20 md:hidden"
+      >
+        <p
+          class="inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full bg-white/20 px-3.5 py-2 text-[0.8125rem] font-bold leading-tight tracking-tight text-white ring-1 ring-white/30 backdrop-blur-3xl backdrop-saturate-150 sm:text-sm"
+        >
+          <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-white shadow-[0_0_0_3px_rgba(255,255,255,0.25)]" aria-hidden="true"></span>
+          Movenda Performance Centre
+        </p>
+      </div>
+    </div>
   </section>
 
   <section class="mx-auto max-w-6xl px-4 pb-8">

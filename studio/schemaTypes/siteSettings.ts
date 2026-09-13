@@ -224,6 +224,29 @@ export default defineType({
       options: { collapsible: true, collapsed: true },
     }),
     defineField({
+      name: "googleReviewsFeed",
+      title: "Google Reviews-blok (homepage)",
+      description:
+        "Live Google-reviews onder de getuigenissen-carousel op de homepage, via dezelfde Elfsight-widget als op de oude site ('Untitled Google Reviews'). Uit = blok verborgen. Het widget-ID hoef je alleen te wijzigen als Elfsight een nieuwe code geeft.",
+      type: "object",
+      fields: [
+        defineField({ name: "enabled", title: "Tonen op de homepage", type: "boolean", initialValue: true }),
+        defineField({
+          name: "titel",
+          title: "Titel boven het blok",
+          type: "string",
+          initialValue: "Wat klanten zeggen op Google",
+        }),
+        defineField({
+          name: "widgetId",
+          title: "Elfsight widget-ID",
+          type: "string",
+          description: "Het ID uit de embed-code (elfsight-app-…). Leeg = standaard Movenda Google Reviews-widget.",
+        }),
+      ],
+      options: { collapsible: true, collapsed: true },
+    }),
+    defineField({
       name: "nieuwsbrief",
       title: "Nieuwsbriefblok",
       type: "object",

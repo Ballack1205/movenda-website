@@ -8,6 +8,7 @@ import PartnerBand from "../components/PartnerBand.astro";
 import NewsletterBlock from "../components/NewsletterBlock.astro";
 import InstagramFeed from "../components/InstagramFeed.astro";
 import GetuigenisCarousel from "../components/GetuigenisCarousel.astro";
+import GoogleReviewsFeed from "../components/GoogleReviewsFeed.astro";
 import TeamCarousel from "../components/TeamCarousel.astro";
 import SloganBanner from "../components/SloganBanner.astro";
 import HomePijler from "../components/HomePijler.astro";
@@ -131,10 +132,10 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
         />
         {/* Mobile eyebrow: a compact glass chip bottom-left on the photo, with a soft scrim behind it so it reads on any crop. */}
         <div
-          class="hero-eyebrow pointer-events-none absolute inset-x-0 bottom-0 flex items-end bg-gradient-to-t from-black/55 via-black/20 to-transparent px-4 pb-4 pt-20 sm:px-5 lg:hidden"
+          class="hero-eyebrow pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center bg-gradient-to-t from-black/55 via-black/20 to-transparent px-4 pb-4 pt-20 sm:px-5 lg:hidden"
         >
           <p
-            class="inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full bg-white/20 px-3.5 py-2 text-[0.75rem] font-semibold leading-tight tracking-tight text-white ring-1 ring-white/30 backdrop-blur-xl min-[375px]:text-[0.8125rem] sm:text-sm"
+            class="inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full bg-white/20 px-3.5 py-2 text-[0.75rem] font-semibold leading-tight tracking-tight text-white ring-1 ring-white/30 backdrop-blur-3xl backdrop-saturate-150 min-[375px]:text-[0.8125rem] sm:text-sm"
           >
             <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-white shadow-[0_0_0_3px_rgba(255,255,255,0.25)]" aria-hidden="true"></span>
             Kinesitherapie en personal training in Hasselt
@@ -301,6 +302,8 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
   </section>
 
   <GetuigenisCarousel items={getuigenissen} />
+
+  <GoogleReviewsFeed settings={settings} />
 
   <InstagramFeed settings={settings} />
 

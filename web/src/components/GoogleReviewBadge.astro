@@ -27,7 +27,11 @@ const hasReviews = Boolean(reviews && reviews.rating > 0 && reviews.count && rev
 
 const ratingText = lang === "en" ? reviews.rating.toFixed(1) : reviews.rating.toFixed(1).replace(".", ",");
 const filledStars = Math.round(reviews.rating);
-const label =
+// Visible copy is just the count: the G mark says "Google" and the stars say the score. The
+// full score stays in the aria-label so screen readers still get it. Keeps the line on one row
+// on phones (the longer label used to wrap into "35+ / reviews" and "Lees / ze").
+const visibleLabel = `${reviews.count} reviews`;
+const a11yLabel =
   lang === "en"
     ? `${ratingText} on Google · ${reviews.count} reviews`
     : `${ratingText} op Google · ${reviews.count} reviews`;
@@ -39,8 +43,8 @@ const cta = lang === "en" ? "Read them" : "Lees ze";
     href={reviews.reviewUrl}
     target="_blank"
     rel="noopener noreferrer"
-    class={`group inline-flex items-center gap-2.5 text-sm text-brand-text ${className}`}
-    aria-label={`${label} — ${cta}`}
+    class={`group inline-flex items-center gap-2 whitespace-nowrap text-sm text-brand-text ${className}`}
+    aria-label={`${a11yLabel} — ${cta}`}
   >
     <!-- Google "G" mark -->
     <svg class="h-4.5 w-4.5 shrink-0" viewBox="0 0 48 48" aria-hidden="true">
@@ -60,7 +64,7 @@ const cta = lang === "en" ? "Read them" : "Lees ze";
         </svg>
       ))}
     </span>
-    <span class="font-medium">{label}</span>
+    <span class="font-medium">{visibleLabel}</span>
     <span class="text-brand-muted underline decoration-brand-border underline-offset-4 transition group-hover:text-brand-primary group-hover:decoration-brand-primary">
       {cta}
     </span>

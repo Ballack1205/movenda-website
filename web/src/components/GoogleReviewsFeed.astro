@@ -1,0 +1,72 @@
+---
+/**
+ * Homepage Google Reviews block — same Elfsight widget as movenda.be
+ * ("Untitled Google Reviews"). Placed below the curated getuigenissen
+ * carousel: that carousel is hand-picked photo quotes Julie edits in
+ * Sanity, this block is the live, unfiltered feed straight from Google
+ * (real names, real dates, real star ratings — Elfsight pulls it from
+ * the Google Business Profile, same Elfsight plan as the Instagram feed,
+ * no new SaaS). Julie can hide it or swap the widget ID in
+ * Site-instellingen.
+ */
+import type { SiteSettings } from "../lib/content";
+
+interface Props {
+  settings: SiteSettings;
+  lang?: "nl" | "en";
+}
+
+const { settings, lang = "nl" } = Astro.props;
+const feed = settings.googleReviewsFeed;
+const widgetId = feed.widgetId?.trim();
+const show = feed.enabled && !!widgetId;
+const olympiaReviews = settings.googleReviews.olympia;
+
+const heading = lang === "en" ? "What our customers say" : feed.titel || "Wat klanten zeggen op Google";
+const fallbackLabel = lang === "en" ? "Read our Google reviews" : "Lees onze Google reviews";
+---
+
+{
+  // The Elfsight "Google Reviews" app renders its own built-in title
+  // ("What Our Customers Say"), editable in the Elfsight dashboard
+  // (Design → Header) — Julie/founder handle that on their end, not here.
+  //
+  // Our own NL/EN kicker + heading are hidden for now (commented out below,
+  // not deleted) so we don't stack two titles on top of each other. An
+  // sr-only heading keeps the section properly labelled for screen readers
+  // in the meantime. Once the Elfsight title is switched off, uncomment the
+  // block below (and restore a top margin on .google-reviews-widget) to
+  // bring the visible NL/EN heading back.
+  show && (
+    <section class="google-reviews-feed scroll-mt-24 px-4 py-10 sm:py-14" aria-labelledby="google-reviews-heading">
+      <div class="mx-auto max-w-6xl">
+        <h2 id="google-reviews-heading" class="sr-only">
+          {heading}
+        </h2>
+
+        {/*
+        <div class="flex flex-col items-center text-center">
+          <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">Google reviews</p>
+          <h2 class="mt-1 text-2xl font-bold sm:text-3xl">{heading}</h2>
+        </div>
+        */}
+
+        <div class="google-reviews-widget min-h-[22rem]">
+          <div class={`elfsight-app-${widgetId}`} data-elfsight-app-lazy></div>
+        </div>
+
+        <noscript>
+          {olympiaReviews?.reviewUrl && (
+            <p class="mt-4 text-center text-sm text-brand-muted">
+              <a href={olympiaReviews.reviewUrl} class="font-semibold text-brand-primary hover:underline" target="_blank" rel="noopener">
+                {fallbackLabel} →
+              </a>
+            </p>
+          )}
+        </noscript>
+      </div>
+
+      <script is:inline src="https://elfsightcdn.com/platform.js" async></script>
+    </section>
+  )
+}

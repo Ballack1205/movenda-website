@@ -151,6 +151,11 @@
     "titel": "Volg ons",
     "widgetId": "7108de0f-f7f4-4dfd-990f-443ab8e68566"
   },
+  "googleReviewsFeed": {
+    "enabled": true,
+    "titel": "Wat klanten zeggen op Google",
+    "widgetId": "4574da10-a0e4-4c28-9f62-93e57d02ef76"
+  },
   "nieuwsbrief": {
     "enabled": true,
     "titel": "Ontvang tips om je gezondheid en prestaties te verbeteren",

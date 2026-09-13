@@ -257,12 +257,20 @@ export interface SiteSettings {
     titel?: string;
     widgetId: string;
   };
+  googleReviewsFeed: {
+    enabled: boolean;
+    titel?: string;
+    widgetId: string;
+  };
   partnerband: PartnerbandSettings;
   homePijlers: HomePijlers;
 }
 
 /** Existing Elfsight Instagram Feed on movenda.be ("Untitled Instagram Feed 2"). */
 export const DEFAULT_INSTAGRAM_WIDGET_ID = "7108de0f-f7f4-4dfd-990f-443ab8e68566";
+
+/** Existing Elfsight Google Reviews widget on movenda.be ("Untitled Google Reviews"). */
+export const DEFAULT_GOOGLE_REVIEWS_WIDGET_ID = "4574da10-a0e4-4c28-9f62-93e57d02ef76";
 
 export interface Faq {
   vraag: string;
@@ -678,7 +686,7 @@ function normalizeDienst(row: Dienst): Dienst {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
-    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, partnerband, homePijlers,
+    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, googleReviewsFeed, partnerband, homePijlers,
       teamfoto{ "url": afbeelding.asset->url, alt, bijschrift, "hotspot": afbeelding.hotspot{ x, y } } }`,
   );
   const olympia = await getLocatieBySlug("olympia");
@@ -724,6 +732,17 @@ export async function getSiteSettings(): Promise<SiteSettings> {
         settings?.instagramFeed?.widgetId ||
         seedSettings.instagramFeed?.widgetId ||
         DEFAULT_INSTAGRAM_WIDGET_ID,
+    },
+    googleReviewsFeed: {
+      enabled: settings?.googleReviewsFeed?.enabled !== false,
+      titel:
+        settings?.googleReviewsFeed?.titel ||
+        seedSettings.googleReviewsFeed?.titel ||
+        "Wat klanten zeggen op Google",
+      widgetId:
+        settings?.googleReviewsFeed?.widgetId ||
+        seedSettings.googleReviewsFeed?.widgetId ||
+        DEFAULT_GOOGLE_REVIEWS_WIDGET_ID,
     },
     partnerband: {
       titel: settings?.partnerband?.titel || "Onze partners",
@@ -949,7 +968,10 @@ export async function getGetuigenissen(locatie?: LocatieSlug, lang: Lang = "nl")
       ...item,
       tekstEn: item.tekstEn || seedGetuigenisBySlug.get(item.slug)?.tekstEn,
     }))
-    .filter((item) => lang !== "en" || !isPlaceholderGetuigenis(item));
+    // Placeholder getuigenissen ("Naam volgt", "Deze getuigenis volgt nog…") are
+    // seed/CMS rows waiting on a real quote from Julie. They must never appear on
+    // the live carousel in any language — showing them reads as fake reviews.
+    .filter((item) => !isPlaceholderGetuigenis(item));
   if (!locatie) return items;
   return items.filter((g) => !g.locatie || g.locatie === "beide" || g.locatie === locatie);
 }

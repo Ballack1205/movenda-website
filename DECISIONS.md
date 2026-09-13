@@ -33,8 +33,9 @@ Answers to `HANDOFF.md` §8, confirmed by the founder on 2026-09-10. This file i
 
 ## Google Business Profile / reviews
 
-- Movenda has **30+ five-star Google reviews**. These are shown as a visible badge (score, count, link to reviews, "write a review" link) on the homepage, both location pages, and contact — sourced from `siteSettings.googleReviews` (per location), edited by Julie, not a paid reviews API.
+- Movenda has **30+ five-star Google reviews**. A visible badge (score, count, link to reviews, "write a review" link) is shown on the homepage, both location pages, and contact — sourced from `siteSettings.googleReviews` (per location), edited by Julie, not a paid reviews API.
 - No `AggregateRating` JSON-LD is added for the site's own `LocalBusiness` markup (Google no longer shows self-reported aggregate ratings as a rich result for local businesses; the real signal lives on the Google Business Profile itself).
+- **Update (2026-09-13):** the curated getuigenissen carousel is hand-picked photo quotes, not a substitute for real reviews, and the placeholder rows ("Naam volgt") were leaking through on the Dutch homepage — fixed in `getGetuigenissen()` to filter placeholders in every language, not just English. The founder also asked for the **real, live Google reviews** the old movenda.be showed. That was the **Elfsight "Google Reviews" widget** (`elfsight-app-4574da10-a0e4-4c28-9f62-93e57d02ef76`, same Elfsight plan already reused for the Instagram feed — no new SaaS). Re-added as `GoogleReviewsFeed.astro`, homepage only, directly below the getuigenissen carousel (`siteSettings.googleReviewsFeed`, Julie can hide it or swap the widget ID). This reverses the 2026-09-10 call above to skip it.
 
 ## Analytics
 
@@ -54,7 +55,7 @@ Defaults confirmed with the founder in the takeover plan:
 
 - Newsletter: block on the homepage; signups go through the existing Render contact API to a Resend audience (`RESEND_AUDIENCE_ID`). No Brevo (would be new SaaS).
 - Keuzehulp: 3-step filter on `/team#keuzehulp` using CMS tags (same routing data as the old Verwijskompas SVG).
-- Elfsight Google Reviews widget is not rebuilt; reviews stay a Google badge + getuigenissen.
+- ~~Elfsight Google Reviews widget is not rebuilt; reviews stay a Google badge + getuigenissen.~~ Reversed 2026-09-13 — see "Google Business Profile / reviews" above.
 - Instagram feed on `/` (above the newsletter): same Elfsight widget as the old Squarespace home (`7108de0f-f7f4-4dfd-990f-443ab8e68566`, account `@sportpraktijk_movenda`). Julie can hide it or change the widget ID in Site-instellingen. Existing Elfsight plan, not new SaaS. Lazy-loaded when the block is in view.
 - Partner logos may be reused (already public on movenda.be).
 - SkiFit / Running: only the existing `/sgt` blurb + rooster + prijs — no invented copy.

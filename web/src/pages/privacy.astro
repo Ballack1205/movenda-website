@@ -11,10 +11,11 @@ const locaties = (await getLocaties()).sort((a, b) =>
   a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
 );
 const settings = await getSiteSettings();
-const { analytics, instagramFeed } = settings;
+const { analytics, instagramFeed, googleReviewsFeed } = settings;
 const gaActive = analytics.enabled && !!analytics.ga4Id;
 const umamiActive = analytics.enabled && analytics.umami.enabled && !!analytics.umami.websiteId;
 const instagramActive = instagramFeed.enabled && !!instagramFeed.widgetId;
+const googleReviewsActive = googleReviewsFeed.enabled && !!googleReviewsFeed.widgetId;
 
 const updated = "11 september 2026";
 
@@ -160,6 +161,17 @@ const jsonLd = [
               <td class="px-4 py-3">Via het tonen van de feed</td>
             </tr>
           )}
+          {googleReviewsActive && (
+            <tr>
+              <td class="px-4 py-3 font-semibold text-brand-text">Elfsight / Google Reviews</td>
+              <td class="px-4 py-3">
+                Toont onze echte Google-reviews op de homepage. Het script laadt als je naar dat
+                blok scrollt. Elfsight en Google kunnen dan cookies plaatsen.
+              </td>
+              <td class="px-4 py-3">Volgens Elfsight / Google</td>
+              <td class="px-4 py-3">Via het tonen van de reviews</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
@@ -173,6 +185,7 @@ const jsonLd = [
       {umamiActive && <li>Umami (cookieloze statistieken)</li>}
       <li>Google Maps (kaart, enkel na je klik)</li>
       {instagramActive && <li>Elfsight (Instagram-feed op de homepage)</li>}
+      {googleReviewsActive && <li>Elfsight (Google Reviews-blok op de homepage)</li>}
     </ul>
 
     <h2 class="mt-10 text-xl font-semibold">5. Je rechten</h2>
