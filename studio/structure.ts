@@ -12,6 +12,7 @@ export const deskStructure: StructureResolver = (S) =>
       S.documentTypeListItem("popup").title("Pop-ups"),
       S.divider(),
       S.documentTypeListItem("teamlid").title("Teamleden"),
+      S.documentTypeListItem("specialisatie").title("Specialisaties (van teamleden)"),
       S.listItem()
         .title("Keuzehulp (Wie past bij mij?)")
         .child(

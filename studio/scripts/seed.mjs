@@ -40,6 +40,25 @@ function slugify(input) {
     .replace(/(^-|-$)/g, "");
 }
 
+const specialisatieId = (naam) => `specialisatie-${slugify(naam)}`;
+
+// Vocabulary of specialisaties (NL, EN, optional dienst link). createIfNotExists:
+// once Julie has edited a name/translation in the Studio, a re-seed keeps hers.
+async function seedSpecialisaties() {
+  const items = readJson("specialisaties.json");
+  for (const s of items) {
+    const [categorie, slug] = (s.dienst || "").split("/");
+    await client.createIfNotExists({
+      _id: specialisatieId(s.naam),
+      _type: "specialisatie",
+      naam: s.naam,
+      naamEn: s.naamEn,
+      ...(s.dienst ? { dienst: { _type: "reference", _ref: `dienst-${categorie}-${slug}` } } : {}),
+    });
+  }
+  console.log(`Seeded ${items.length} specialisaties.`);
+}
+
 async function seedTeam() {
   const team = readJson("team.json");
   for (const lid of team) {
@@ -53,7 +72,12 @@ async function seedTeam() {
       rolEn: lid.rolEn,
       disciplines: lid.disciplines || [],
       locaties: lid.locaties,
-      specialisaties: lid.specialisaties,
+      // team.json lists specialisaties by NL name; they reference the vocabulary seeded above.
+      specialisaties: (lid.specialisaties || []).map((naam) => ({
+        _type: "reference",
+        _ref: specialisatieId(naam),
+        _key: slugify(naam),
+      })),
       bio: lid.bio,
       bioEn: lid.bioEn,
       email: lid.email,
@@ -88,6 +112,7 @@ async function seedLocaties() {
       _id: `locatie-${loc.slug}`,
       _type: "locatie",
       naam: loc.naam,
+      korteNaam: loc.korteNaam,
       slug: { _type: "slug", current: loc.slug },
       brand: loc.brand,
       type: loc.type,
@@ -209,16 +234,21 @@ async function seedFaqs() {
 async function seedPrijzen() {
   const prijzen = readJson("prijzen.json");
   for (const item of prijzen) {
+    // The three MPC categories were one "mpc" category when these docs were first
+    // seeded; keep the old _id prefix so a re-seed updates rather than duplicates.
+    const idCategorie = item.categorie.startsWith("mpc-") ? "mpc" : item.categorie;
     await client.createOrReplace({
-      _id: `prijsitem-${item.categorie}-${slugify(item.naam)}`,
+      _id: `prijsitem-${idCategorie}-${slugify(item.naam)}`,
       _type: "prijsitem",
       naam: item.naam,
+      naamEn: item.naamEn,
       categorie: item.categorie,
       bedrag: item.bedrag,
       eenheid: item.eenheid || undefined,
       vanaf: item.vanaf,
       opAanvraag: item.opAanvraag,
       notitie: item.notitie,
+      notitieEn: item.notitieEn,
       interneNotitie: item.interneNotitie,
       volgorde: item.volgorde,
     });
@@ -287,6 +317,7 @@ async function seedGetuigenissen() {
       tekstEn: g.tekstEn,
       naam: g.naam,
       rol: g.rol,
+      rolEn: g.rolEn,
       locatie: g.locatie,
       volgorde: g.volgorde,
       slug: { _type: "slug", current: g.slug },
@@ -369,6 +400,7 @@ async function seedBlogPosts() {
   console.log(`Ensured ${posts.length} seed blogposts exist; filled missing EN fields.`);
 }
 
+await seedSpecialisaties();
 await seedTeam();
 await seedLocaties();
 await seedDiensten();

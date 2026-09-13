@@ -5,7 +5,6 @@
  */
 import type { Getuigenis, LocatieSlug } from "../lib/content";
 import { getuigenisPhotoSrc } from "../lib/images";
-import { tagLabel } from "../lib/i18n";
 
 export interface Props {
   items: Getuigenis[];
@@ -85,7 +84,7 @@ function locatieTekst(locatie?: LocatieSlug | "beide"): string | undefined {
     >
       {items.map((item, index) => {
         const plaats = locatieTekst(item.locatie);
-        const rol = item.rol ? tagLabel(item.rol, lang) : undefined;
+        const rol = (lang === "en" ? item.rolEn : undefined) || item.rol || undefined;
         const meta = [rol, plaats].filter(Boolean).join(" · ");
         const quote = lang === "en" ? item.tekstEn || item.tekst : item.tekst;
         return (

@@ -96,33 +96,6 @@ export const PRIJZEN_INFO_EN = {
     "Please cancel at least 24 hours in advance by phone or email. Later cancellation or a no-show: we charge the full session.",
 };
 
-const PRIJS_NAAM_EN: Record<string, string> = {
-  "Manuele therapie (30 min)": "Manual therapy (30 min)",
-  "Oefentherapie (30 min)": "Exercise therapy (30 min)",
-  "Dry Needling (30 min)": "Dry needling (30 min)",
-  "Cupping / Taping (30 min)": "Cupping / taping (30 min)",
-  "Cardiovasculaire revalidatie (30 min)": "Cardiovascular rehabilitation (30 min)",
-  "Pre- en postnatale kinesitherapie (30 min)": "Pre- and postnatal physiotherapy (30 min)",
-  "Acupunctuur (30 min)": "Acupuncture (30 min)",
-  Inspanningstest: "Exercise test",
-  "Personal Training (60 min)": "Personal training (60 min)",
-  "Personal Training (90 min)": "Personal training (90 min)",
-  "Duotraining (60 min)": "Duo training (60 min)",
-  "Sportspecifieke screening + schema (90 min)": "Sport-specific screening + programme (90 min)",
-  "Sportspecifieke training (60 min)": "Sport-specific training (60 min)",
-  "Pre- en postnatale training (60 min)": "Pre- and postnatal training (60 min)",
-  "Training aan huis": "Home training",
-  "Sportrevalidatie (30 min)": "Sports rehabilitation (30 min)",
-  "High Performance Training (60 min)": "High performance training (60 min)",
-  "High Performance Specialization (60 min)": "High performance specialisation (60 min)",
-  "Small group training — 10 lessen": "Small group training — 10 classes",
-  "Boxing — 10 lessen": "Boxing — 10 classes",
-  "Corporate coaching": "Corporate coaching",
-  "Sportspecifieke screening (90 min)": "Sport-specific screening (90 min)",
-  "Lactaatdrempel-screening": "Lactate threshold screening",
-  "Data-analyse": "Data analysis",
-};
-
 const NOMEN_CAT_EN: Record<string, string> = {
   Courant: "Standard (courant)",
   "F-acuut": "F-acute",
@@ -136,21 +109,6 @@ const NOMEN_OMS_EN: Record<string, string> = {
   Verslag: "Report",
   "1e t.e.m. 60e beurt": "1st to 60th session",
 };
-
-export function prijsNaam(naam: string, lang: Lang): string {
-  if (lang !== "en") return naam;
-  return PRIJS_NAAM_EN[naam] || naam.replace(/\blessen\b/gi, "classes");
-}
-
-export function prijsNotitie(note: string | undefined, lang: Lang): string | undefined {
-  if (!note) return undefined;
-  if (lang !== "en") return note;
-  return note
-    .replace(/ex BTW/gi, "excl. VAT")
-    .replace(/enkel op afspraak/gi, "by appointment only")
-    .replace(/incl\. opvolging/gi, "incl. follow-up")
-    .replace(/bij MPC/gi, "at MPC");
-}
 
 export function nomenCategorie(categorie: string, lang: Lang): string {
   if (lang !== "en") return categorie;
@@ -176,13 +134,6 @@ export function partnerBandTitle(title: string | undefined, lang: Lang): string 
   return title;
 }
 
-export const NEWSLETTER_EN = {
-  titel: "Get tips to improve your health and performance",
-  tekst:
-    "We regularly share practical exercise tips, news from the practice, and everything about physiotherapy and performance training.",
-  socialProof: "More than 2,000 people already subscribed",
-};
-
 export const KEUZEHULP_EN = {
   titel: "Who's the right fit?",
   intro: "Pick what applies to you — one choice per question is enough. This is a guide, not medical advice.",
@@ -195,82 +146,6 @@ export const KEUZEHULP_EN = {
   geenMatchTekst:
     "No exact match, but these colleagues are closest to your question. Unsure? Call us — we'll point you to the right person.",
 };
-
-const TAG_EN: Record<string, string> = {
-  Rugpijn: "Back pain",
-  Nekpijn: "Neck pain",
-  Schouder: "Shoulder",
-  Knie: "Knee",
-  Enkel: "Ankle",
-  Heup: "Hip",
-  Pols: "Wrist",
-  Elleboog: "Elbow",
-  Kaak: "Jaw",
-  Hoofdpijn: "Headache",
-  Duizeligheid: "Dizziness",
-  Sportblessure: "Sports injury",
-  Sportblessures: "Sports injuries",
-  Prenataal: "Prenatal",
-  Postnataal: "Postnatal",
-  "Pre- en postnataal": "Pre- and postnatal",
-  Zwangerschap: "Pregnancy",
-  "Manuele therapie": "Manual therapy",
-  "Dry needling": "Dry needling",
-  "Personal training": "Personal training",
-  Performance: "Performance",
-  Revalidatie: "Rehabilitation",
-  Sportrevalidatie: "Sports rehabilitation",
-  Kinderkinesitherapie: "Paediatric physiotherapy",
-  Voetbal: "Football",
-  Basketbal: "Basketball",
-  Volleybal: "Volleyball",
-  Tennis: "Tennis",
-  Lopen: "Running",
-  Wielrennen: "Cycling",
-  Zwemmen: "Swimming",
-  Atletiek: "Athletics",
-  Veldrijden: "Cyclocross",
-  Motorcross: "Motocross",
-  Volwassene: "Adult",
-  Kind: "Child",
-  Senior: "Senior",
-  Atleet: "Athlete",
-  Topsport: "Elite sport",
-  Kinesitherapie: "Physiotherapy",
-  "Personal Training": "Personal training",
-  "Dry Needling": "Dry needling",
-  "Musculoskeletale revalidatie": "Musculoskeletal rehabilitation",
-  "Advanced Dry Needling": "Advanced dry needling",
-  "Schouder- en polsrevalidatie": "Shoulder and wrist rehabilitation",
-  "Sportspecifieke Screening + Training": "Sport-specific screening + training",
-  "Sportspecifieke training": "Sport-specific training",
-  "Inspanningstesten met lactaatmeting": "Exercise tests with lactate measurement",
-  "Pelvische reëducatie": "Pelvic rehabilitation",
-  Vroedvrouw: "Midwife",
-  "Osteopathie (i.o.)": "Osteopathy (in training)",
-  "Physical coach Hubo Limburg United": "Physical coach Hubo Limburg United",
-  "Full Body coaching": "Full-body coaching",
-  "Physical coach HLU Academy": "Physical coach HLU Academy",
-  "Boxing coaching": "Boxing coaching",
-  "Kaakklachten (TMJ)": "Jaw complaints (TMJ)",
-  "Sprint- en loopblessures": "Sprint and running injuries",
-  "Manuele lymfedrainage": "Manual lymphatic drainage",
-  Auriculotherapie: "Auriculotherapy",
-  "Data-analyse": "Data analysis",
-  "Performance coaching": "Performance coaching",
-  "Pre- en postnatale revalidatie": "Pre- and postnatal rehabilitation",
-  "Pre- en postnatale training": "Pre- and postnatal training",
-  HIIT: "HIIT",
-  Taping: "Taping",
-  "Cycling-gerelateerde klachten": "Cycling-related complaints",
-  "Kinesitherapeut STVV": "Physiotherapist STVV",
-  "Manuele therapie (i.o.)": "Manual therapy (in training)",
-};
-
-export function tagLabel(label: string, lang: Lang): string {
-  if (lang !== "en") return label;
-  return TAG_EN[label] || label;
-}
 
 export type FaqCopy = { vraag: string; antwoord: string };
 

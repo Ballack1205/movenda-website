@@ -7,6 +7,12 @@ export default defineType({
   fields: [
     defineField({ name: "naam", title: "Naam", type: "string", validation: (Rule) => Rule.required() }),
     defineField({
+      name: "korteNaam",
+      title: "Korte naam",
+      type: "string",
+      description: "Bv. 'Olympia' of 'Performance Centre'. Gebruikt op teamkaarten en -pagina's waar de volledige naam te lang is. Leeg = volledige naam.",
+    }),
+    defineField({
       name: "slug",
       title: "Slug (URL)",
       type: "slug",

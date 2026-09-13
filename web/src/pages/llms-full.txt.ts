@@ -12,8 +12,13 @@ import {
   getSiteSettings,
   getTeamleden,
   isMpcCategorie,
+  locatieKorteNamen,
+  prijsNaam,
+  prijsNootVolledig,
+  specialisatieNaam,
   type Dienst,
   type Prijsitem,
+  type PrijsCategorie,
 } from "../lib/content";
 import { NOINDEX, SITE_URL } from "../lib/site";
 
@@ -30,7 +35,10 @@ function dienstBlock(dienst: Dienst, prijzen: Prijsitem[]): string {
   const prijs = findPrijsVoorDienst(dienst, prijzen);
   const lines = [`### ${dienstKorteTitel(dienst)}`, `URL: ${SITE_URL}${dienstHref(dienst)}`];
   if (dienst.titelEn) lines.push(`English name: ${dienst.titelEn.replace(/ Hasselt$/, "")}`);
-  if (prijs) lines.push(`Price: ${formatPrijs(prijs)}${prijs.notitie ? ` (${prijs.notitie})` : ""}`);
+  if (prijs) {
+    const noot = prijsNootVolledig(prijs, "en");
+    lines.push(`Price: ${formatPrijs(prijs, "en")}${noot ? ` (${noot})` : ""}`);
+  }
   lines.push("", (dienst.intro || dienst.seoDescription || "").trim());
   if (dienst.body) lines.push("", dienst.body.trim());
   return lines.join("\n");
@@ -72,12 +80,23 @@ export const GET: APIRoute = async () => {
     })
     .join("\n\n");
 
-  const prijsText = (["kine", "training", "screening", "mpc"] as const)
+  const prijsLabels: Record<PrijsCategorie, string> = {
+    kine: "Physiotherapy (Movenda Olympia)",
+    training: "Training (Movenda Olympia)",
+    "mpc-training": "Movenda Performance Centre — training",
+    "mpc-rehab": "Movenda Performance Centre — sports rehabilitation",
+    "mpc-groep": "Movenda Performance Centre — group classes",
+    screening: "Movenda Performance Centre — screening & data",
+  };
+  const prijsText = (Object.keys(prijsLabels) as PrijsCategorie[])
     .map((cat) => {
       const items = prijzen.filter((p) => p.categorie === cat);
       if (!items.length) return undefined;
-      const label = { kine: "Physiotherapy (Movenda Olympia)", training: "Training (Movenda Olympia)", screening: "Screening & testing", mpc: "Movenda Performance Centre (excl. VAT)" }[cat];
-      return `### ${label}\n${items.map((p) => `- ${p.naam}: ${formatPrijs(p)}${p.notitie ? ` — ${p.notitie}` : ""}`).join("\n")}`;
+      const rows = items.map((p) => {
+        const noot = prijsNootVolledig(p, "en");
+        return `- ${prijsNaam(p, "en")}: ${formatPrijs(p, "en")}${noot ? ` — ${noot}` : ""}`;
+      });
+      return `### ${prijsLabels[cat]}\n${rows.join("\n")}`;
     })
     .filter(Boolean)
     .join("\n\n");
@@ -95,12 +114,14 @@ export const GET: APIRoute = async () => {
 
   const teamText = team
     .map((lid) => {
-      const where = lid.locaties.map((s) => (s === "mpc" ? "MPC" : "Olympia")).join(", ");
+      const where = locatieKorteNamen(lid.locaties, locaties).join(", ");
       return [
         `### ${lid.voornaam} ${lid.naam} — ${lid.rol}`,
         `URL: ${SITE_URL}/team/${lid.slug}`,
         where ? `Works at: ${where}` : undefined,
-        lid.specialisaties.length ? `Specialisations: ${lid.specialisaties.join(", ")}` : undefined,
+        lid.specialisaties.length
+          ? `Specialisations: ${lid.specialisaties.map((s) => specialisatieNaam(s, "en")).join(", ")}`
+          : undefined,
         lid.clubs.length ? `Clubs: ${lid.clubs.map((c) => c.naam).join(", ")}` : undefined,
         "",
         lid.bio.trim(),

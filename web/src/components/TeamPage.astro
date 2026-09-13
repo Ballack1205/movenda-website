@@ -1,10 +1,21 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { getTeamleden, getSiteSettings, getKeuzehulp, KEUZEHULP_CATEGORIEEN, isKinesist, isTrainer } from "../lib/content";
+import {
+  getTeamleden,
+  getSiteSettings,
+  getKeuzehulp,
+  getLocaties,
+  KEUZEHULP_CATEGORIEEN,
+  isKinesist,
+  isTrainer,
+  keuzehulpTagLabel,
+  locatieKorteNamen,
+  specialisatieNaam,
+} from "../lib/content";
 import TeamGroupPhoto from "./TeamGroupPhoto.astro";
 import { teamPhotoSrc } from "../lib/images";
 import { breadcrumbNode, teamListNode } from "../lib/schema";
-import { KEUZEHULP_EN, tagLabel, withLang, type Lang } from "../lib/i18n";
+import { KEUZEHULP_EN, withLang, type Lang } from "../lib/i18n";
 
 interface Props {
   lang?: Lang;
@@ -14,6 +25,7 @@ const { lang = "nl" } = Astro.props;
 const team = await getTeamleden();
 const settings = await getSiteSettings();
 const keuzehulp = await getKeuzehulp();
+const locaties = await getLocaties();
 const path = withLang("/team", lang);
 const homePath = withLang("/", lang);
 
@@ -28,11 +40,10 @@ const jsonLd = [
 const vragen = KEUZEHULP_CATEGORIEEN.filter((cat) => keuzehulp.opties[cat].length > 0);
 const toonKeuzehulp = keuzehulp.actief && vragen.length > 0;
 
-const locatieLabel = (slugs: string[]) =>
-  slugs.map((s) => (s === "mpc" ? "Performance Centre" : "Olympia")).join(" · ");
+const locatieLabel = (slugs: typeof team[number]["locaties"]) => locatieKorteNamen(slugs, locaties).join(" · ");
 
 const tagLabels: Record<string, string> = {};
-for (const cat of vragen) for (const t of keuzehulp.opties[cat]) tagLabels[t.id] = tagLabel(t.label, lang);
+for (const cat of vragen) for (const t of keuzehulp.opties[cat]) tagLabels[t.id] = keuzehulpTagLabel(t, lang);
 
 const khTitel = lang === "en" ? KEUZEHULP_EN.titel : keuzehulp.titel;
 const khIntro = lang === "en" ? KEUZEHULP_EN.intro : keuzehulp.intro;
@@ -172,7 +183,7 @@ const filters = [
               <p class="mt-1 text-[11px] text-brand-muted sm:text-xs">{locatieLabel(lid.locaties)}</p>
               {lid.specialisaties.length > 0 && (
                 <p class="mt-3 hidden line-clamp-2 text-sm text-brand-muted sm:block">
-                  {lid.specialisaties.slice(0, 4).map((s) => tagLabel(s, lang)).join(" · ")}
+                  {lid.specialisaties.slice(0, 4).map((s) => specialisatieNaam(s, lang)).join(" · ")}
                 </p>
               )}
             </div>
@@ -223,7 +234,7 @@ const filters = [
                       aria-pressed="false"
                       class="rounded-full border border-brand-border bg-brand-bg px-3 py-1.5 text-left text-[13px] leading-tight text-brand-text transition hover:border-brand-primary hover:text-brand-primary aria-pressed:border-brand-primary aria-pressed:bg-brand-primary aria-pressed:text-white sm:py-1 sm:text-sm"
                     >
-                      {tagLabel(tag.label, lang)}
+                      {keuzehulpTagLabel(tag, lang)}
                     </button>
                   ))}
                 </div>

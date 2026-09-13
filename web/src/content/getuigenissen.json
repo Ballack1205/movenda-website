@@ -5,6 +5,7 @@
     "tekstEn": "I never thought I would take up sport. I have now been training at Movenda for two years and have run three marathons (Paris, Berlin and Rotterdam). My body is stronger and I am full of energy.",
     "naam": "Vanhees G.",
     "rol": "Personal training",
+    "rolEn": "Personal training",
     "locatie": "olympia",
     "volgorde": 1,
     "actief": true
@@ -15,6 +16,7 @@
     "tekstEn": "This testimonial will follow.",
     "naam": "Naam volgt",
     "rol": "Kinesitherapie",
+    "rolEn": "Physiotherapy",
     "locatie": "olympia",
     "volgorde": 2,
     "actief": true
@@ -25,6 +27,7 @@
     "tekstEn": "This testimonial will follow.",
     "naam": "Naam volgt",
     "rol": "Kinesitherapie",
+    "rolEn": "Physiotherapy",
     "locatie": "olympia",
     "volgorde": 3,
     "actief": true
@@ -35,6 +38,7 @@
     "tekstEn": "This testimonial will follow.",
     "naam": "Naam volgt",
     "rol": "Personal training",
+    "rolEn": "Personal training",
     "locatie": "olympia",
     "volgorde": 4,
     "actief": true
@@ -45,6 +49,7 @@
     "tekstEn": "This testimonial will follow.",
     "naam": "Naam volgt",
     "rol": "Personal training",
+    "rolEn": "Personal training",
     "locatie": "olympia",
     "volgorde": 5,
     "actief": true
@@ -55,6 +60,7 @@
     "tekstEn": "With the support from our objective data we have been able to serve our athletes better than ever.",
     "naam": "Movenda Performance Centre",
     "rol": "Performance",
+    "rolEn": "Performance",
     "locatie": "mpc",
     "volgorde": 6,
     "actief": true

@@ -1,56 +1,39 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 import {
-  getPrijzenByCategorie,
+  getPrijzen,
   getSiteSettings,
   getTeamleden,
   getLocatieBySlug,
   formatPrijs,
   formatEuro,
+  prijsNaam,
+  prijsNotitie,
   type Prijsitem,
 } from "../../../lib/content";
 import { breadcrumbSchema } from "../../../lib/schema";
-import { PRIJZEN_INFO_EN, prijsNaam, prijsNotitie } from "../../../lib/i18n";
+import { PRIJZEN_INFO_EN } from "../../../lib/i18n";
 
 const locatie = (await getLocatieBySlug("mpc"))!;
 const settings = await getSiteSettings();
 const info = settings.prijzenInfo;
-const mpc = await getPrijzenByCategorie("mpc");
-const screening = await getPrijzenByCategorie("screening");
 const coaches = (await getTeamleden()).filter(
   (t) => t.locaties.includes("mpc") && (t.tariefPtMpc || t.tariefPerformance),
 );
 const showPerformance = coaches.some((t) => t.tariefPerformance);
 
-const GROEP = /10 lessen|small group|boxing|corporate/i;
-const REHAB = /sportrevalidatie|manuele|oefentherapie|pre- en postnatale/i;
-
-const groep = mpc.filter((p) => GROEP.test(p.naam));
-const rehab = mpc.filter((p) => REHAB.test(p.naam));
-const training = mpc.filter((p) => !GROEP.test(p.naam) && !REHAB.test(p.naam));
-
-const sections: { title: string; items: Prijsitem[] }[] = [
-  { title: "Training", items: training },
-  { title: "Sports rehabilitation", items: rehab },
-  { title: "Group classes", items: groep },
-  { title: "Screening & data", items: screening },
-].filter((s) => s.items.length > 0);
-
-function publicNote(notitie?: string): string | undefined {
-  if (!notitie) return undefined;
-  const text = notitie
-    .split("·")
-    .map((part) => part.trim())
-    .filter(
-      (part) =>
-        part &&
-        !/^Julie:/i.test(part) &&
-        !/^ex BTW( bij MPC)?$/i.test(part) &&
-        !/^enkel op afspraak$/i.test(part),
-    )
-    .join(" · ");
-  return text || undefined;
-}
+// One table per price category; Julie picks the category on the prijsitem in Sanity.
+const prijzen = await getPrijzen();
+const sections: { title: string; items: Prijsitem[] }[] = (
+  [
+    ["Training", "mpc-training"],
+    ["Sports rehabilitation", "mpc-rehab"],
+    ["Group classes", "mpc-groep"],
+    ["Screening & data", "screening"],
+  ] as const
+)
+  .map(([title, categorie]) => ({ title, items: prijzen.filter((p) => p.categorie === categorie) }))
+  .filter((s) => s.items.length > 0);
 
 const jsonLd = [
   breadcrumbSchema([
@@ -86,12 +69,12 @@ const jsonLd = [
           <table class="w-full text-left text-sm">
             <tbody>
               {section.items.map((item, i) => {
-                const note = publicNote(item.notitie);
+                const note = prijsNotitie(item, "en");
                 return (
                   <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
                     <td class="px-4 py-3">
-                      {prijsNaam(item.naam, "en")}
-                      {prijsNotitie(note, "en") && <span class="block text-xs text-brand-muted">{prijsNotitie(note, "en")}</span>}
+                      {prijsNaam(item, "en")}
+                      {note && <span class="block text-xs text-brand-muted">{note}</span>}
                     </td>
                     <td class="px-4 py-3 text-right font-semibold whitespace-nowrap text-brand-primary">
                       {formatPrijs(item, "en")}

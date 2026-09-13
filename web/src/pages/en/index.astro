@@ -91,16 +91,17 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
           With {kinesistenCount} physiotherapists and {trainerCount} trainers and coaches we guide you through recovery,
           injury prevention and a healthy, active lifestyle. Personal, medically sound and fully tailored to you.
         </p>
-        <div class="hero-in mt-6 flex flex-wrap items-center gap-3">
+        {/* Both CTAs fit on one row from 360px up (tighter padding + text-sm below sm). Narrower than that they stack full-width. */}
+        <div class="hero-in mt-6 flex flex-wrap items-center gap-2.5 sm:gap-3">
           <a
             href={`tel:${settings.telefoonOlympia.replace(/\s+/g, "")}`}
-            class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+            class="whitespace-nowrap rounded-full bg-brand-primary px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-brand-primary-dark max-[359px]:w-full sm:px-6 sm:text-base"
           >
             Call {settings.telefoonOlympia}
           </a>
           <a
             href="/en/contact"
-            class="rounded-full border border-brand-border px-6 py-3 font-semibold text-brand-text transition hover:border-brand-primary"
+            class="whitespace-nowrap rounded-full border border-brand-border px-4 py-3 text-center text-sm font-semibold text-brand-text transition hover:border-brand-primary max-[359px]:w-full sm:px-6 sm:text-base"
           >
             Contact us
           </a>
@@ -121,11 +122,17 @@ const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team)
           class="aspect-[4/3] w-full object-cover sm:aspect-[3/2] lg:absolute lg:inset-0 lg:aspect-auto lg:h-full"
           priority
         />
-        <p
-          class="hero-eyebrow absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent px-4 pb-5 pt-16 text-base font-semibold text-white sm:px-5 lg:hidden"
+        {/* Mobile eyebrow: a compact glass chip bottom-left on the photo, with a soft scrim behind it so it reads on any crop. */}
+        <div
+          class="hero-eyebrow pointer-events-none absolute inset-x-0 bottom-0 flex items-end bg-gradient-to-t from-black/55 via-black/20 to-transparent px-4 pb-4 pt-20 sm:px-5 lg:hidden"
         >
-          Physiotherapy and personal training in Hasselt
-        </p>
+          <p
+            class="inline-flex max-w-full items-center gap-2 whitespace-nowrap rounded-full bg-white/20 px-3.5 py-2 text-[0.75rem] font-semibold leading-tight tracking-tight text-white ring-1 ring-white/30 backdrop-blur-xl min-[375px]:text-[0.8125rem] sm:text-sm"
+          >
+            <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-white shadow-[0_0_0_3px_rgba(255,255,255,0.25)]" aria-hidden="true"></span>
+            Physiotherapy and personal training in Hasselt
+          </p>
+        </div>
         <figure class="hero-inset absolute bottom-6 -left-10 hidden w-40 xl:block">
           <Image
             src={kineHero}

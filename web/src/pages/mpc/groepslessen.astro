@@ -14,9 +14,8 @@ import { breadcrumbSchema } from "../../lib/schema";
 const locatie = (await getLocatieBySlug("mpc"))!;
 const rooster = await getLesrooster();
 const groep = await getDienstenByCategorie("mpc-groep");
-const memberships = (await getPrijzenByCategorie("mpc")).filter((p) =>
-  /10 lessen|small group|boxing/i.test(p.naam),
-);
+// Everything Julie filed under "MPC — groepslessen" in Sanity.
+const memberships = await getPrijzenByCategorie("mpc-groep");
 
 const dagen = ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"];
 

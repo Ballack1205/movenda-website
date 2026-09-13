@@ -3,6 +3,8 @@ import Layout from "../../layouts/Layout.astro";
 import GetuigenisCarousel from "../../components/GetuigenisCarousel.astro";
 import {
   getPrijzenByCategorie,
+  prijsNaam,
+  prijsNotitie,
   getSiteSettings,
   getTeamleden,
   getGetuigenissen,
@@ -10,7 +12,7 @@ import {
   formatEuro,
 } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
-import { PRIJZEN_INFO_EN, nomenCategorie, nomenOmschrijving, prijsNaam, prijsNotitie } from "../../lib/i18n";
+import { PRIJZEN_INFO_EN, nomenCategorie, nomenOmschrijving } from "../../lib/i18n";
 
 const kine = await getPrijzenByCategorie("kine");
 const training = await getPrijzenByCategorie("training");
@@ -80,7 +82,7 @@ const jsonLd = [
             <tbody>
               {kine.map((item, i) => (
                 <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
-                  <td class="px-4 py-3">{prijsNaam(item.naam, "en")}</td>
+                  <td class="px-4 py-3">{prijsNaam(item, "en")}</td>
                   <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item, "en")}</td>
                 </tr>
               ))}
@@ -159,8 +161,8 @@ const jsonLd = [
               {training.map((item, i) => (
                 <tr class={i % 2 === 0 ? "bg-brand-surface" : ""}>
                   <td class="px-4 py-3">
-                    {prijsNaam(item.naam, "en")}
-                    {prijsNotitie(item.notitie, "en") && <span class="block text-xs text-brand-muted">{prijsNotitie(item.notitie, "en")}</span>}
+                    {prijsNaam(item, "en")}
+                    {prijsNotitie(item, "en") && <span class="block text-xs text-brand-muted">{prijsNotitie(item, "en")}</span>}
                   </td>
                   <td class="px-4 py-3 text-right font-semibold text-brand-primary">{formatPrijs(item, "en")}</td>
                 </tr>

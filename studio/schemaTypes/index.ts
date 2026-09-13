@@ -15,9 +15,11 @@ import getuigenis from "./getuigenis";
 import popup from "./popup";
 import keuzehulp from "./keuzehulp";
 import keuzehulpTag from "./keuzehulpTag";
+import specialisatie from "./specialisatie";
 
 export const schemaTypes = [
   teamlid,
+  specialisatie,
   locatie,
   dienst,
   siteSettings,

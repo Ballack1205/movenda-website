@@ -75,7 +75,9 @@ export default defineType({
       name: "specialisaties",
       title: "Specialisaties",
       type: "array",
-      of: [{ type: "string" }],
+      of: [{ type: "reference", to: [{ type: "specialisatie" }] }],
+      description:
+        "Kies uit de lijst; de eerste vier staan op de teamkaart, allemaal op de detailpagina. Ontbreekt er een? Maak ze aan onder Specialisaties (daar staat ook de Engelse naam en de link naar een dienst).",
     }),
     defineField({
       name: "bio",

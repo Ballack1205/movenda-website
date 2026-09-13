@@ -14,7 +14,9 @@ import type { Lang } from "./i18n";
 
 export type LocatieSlug = "olympia" | "mpc";
 export type DienstCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep";
-export type PrijsCategorie = "kine" | "training" | "mpc" | "screening";
+/** Mirrors PRIJS_CATEGORIEEN in the Studio; the category alone decides which page/table a price lands in. */
+export type PrijsCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep" | "screening";
+export const MPC_PRIJS_CATEGORIEEN: PrijsCategorie[] = ["mpc-training", "mpc-rehab", "mpc-groep", "screening"];
 export type FaqSite = "movenda" | "mpc" | "beide";
 
 export interface Club {
@@ -33,7 +35,8 @@ export interface Teamlid {
   /** "Telt mee als" in Studio: drives the homepage counts and the /team role filter. */
   disciplines: Discipline[];
   locaties: LocatieSlug[];
-  specialisaties: string[];
+  /** References to specialisatie documents (Julie's vocabulary), in the order she picked them. */
+  specialisaties: Specialisatie[];
   email: string;
   bio: string;
   bioEn?: string;
@@ -51,12 +54,25 @@ export interface Teamlid {
   updatedAt?: string;
 }
 
+export interface Specialisatie {
+  id: string;
+  naam: string;
+  naamEn?: string;
+  /** Dienst Julie linked in the Studio; the tag becomes a link to that page. */
+  dienst?: Pick<Dienst, "slug" | "categorie">;
+}
+
+export function specialisatieNaam(s: Specialisatie, lang: Lang = "nl"): string {
+  return lang === "en" ? s.naamEn || s.naam : s.naam;
+}
+
 export type KeuzehulpCategorie = "klacht" | "regio" | "sport" | "doelgroep";
 export const KEUZEHULP_CATEGORIEEN: KeuzehulpCategorie[] = ["klacht", "regio", "sport", "doelgroep"];
 
 export interface KeuzehulpTag {
   id: string;
   label: string;
+  labelEn?: string;
   categorie: KeuzehulpCategorie;
   volgorde?: number;
   actief: boolean;
@@ -81,6 +97,8 @@ export interface Openingsuur {
 export interface Locatie {
   slug: LocatieSlug;
   naam: string;
+  /** "Olympia" / "Performance Centre" — for team cards; falls back to naam without the brand prefix. */
+  korteNaam: string;
   brand: "movenda" | "mpc";
   type: string;
   adres: string;
@@ -126,7 +144,8 @@ export interface Dienst {
   galerij: string[];
   volgorde: number;
   /** Explicitly linked prijsitem (Sanity reference); see findPrijsVoorDienst for the fallback. */
-  prijs?: Prijsitem;
+  /** Raw prijsitem Julie linked; exclBtw is resolved via getPrijzen() in findPrijsVoorDienst. */
+  prijs?: Omit<Prijsitem, "exclBtw">;
   updatedAt?: string;
 }
 
@@ -227,8 +246,11 @@ export interface SiteSettings {
   nieuwsbrief: {
     enabled: boolean;
     titel?: string;
+    titelEn?: string;
     tekst?: string;
+    tekstEn?: string;
     socialProof?: string;
+    socialProofEn?: string;
   };
   instagramFeed: {
     enabled: boolean;
@@ -253,14 +275,38 @@ export interface Faq {
 }
 
 export interface Prijsitem {
+  id: string;
   naam: string;
+  naamEn?: string;
   categorie: PrijsCategorie;
   bedrag: number;
   eenheid?: string;
   vanaf: boolean;
   opAanvraag: boolean;
   notitie?: string;
+  notitieEn?: string;
   volgorde: number;
+  /** Resolved in getPrijzen(): MPC/screening price and Site-instellingen says MPC quotes ex VAT. */
+  exclBtw: boolean;
+}
+
+export function prijsNaam(item: Pick<Prijsitem, "naam" | "naamEn">, lang: Lang = "nl"): string {
+  return lang === "en" ? item.naamEn || item.naam : item.naam;
+}
+
+export function prijsNotitie(item: Pick<Prijsitem, "notitie" | "notitieEn">, lang: Lang = "nl"): string | undefined {
+  return lang === "en" ? item.notitieEn || item.notitie : item.notitie;
+}
+
+/** MPC (and screening) prices are quoted ex VAT when Julie says so in Site-instellingen → Prijzen. */
+function prijsIsExclBtw(item: Pick<Prijsitem, "categorie">, exBtwMpc: boolean | undefined): boolean {
+  return exBtwMpc !== false && MPC_PRIJS_CATEGORIEEN.includes(item.categorie);
+}
+
+/** "incl. opvolging · excl. BTW" — the public note plus the VAT flag, per language. */
+export function prijsNootVolledig(item: Prijsitem, lang: Lang = "nl"): string | undefined {
+  const parts = [prijsNotitie(item, lang), item.exclBtw ? (lang === "en" ? "excl. VAT" : "excl. BTW") : undefined];
+  return parts.filter(Boolean).join(" · ") || undefined;
 }
 
 export interface Partner {
@@ -301,6 +347,7 @@ export interface Getuigenis {
   tekstEn?: string;
   naam: string;
   rol?: string;
+  rolEn?: string;
   locatie?: LocatieSlug | "beide";
   foto?: string;
   volgorde: number;
@@ -421,18 +468,19 @@ export function formatEuro(bedrag?: number): string | undefined {
 
 const teamlidProjection = `{
   "slug": slug.current,
-  voornaam, naam, rol, rolEn, disciplines, locaties, specialisaties, email, bio, bioEn,
+  voornaam, naam, rol, rolEn, disciplines, locaties, email, bio, bioEn,
   volgorde, actief,
+  "specialisaties": specialisaties[]->{ "id": _id, naam, naamEn, "dienst": dienst->{ "slug": slug.current, categorie } },
   "foto": foto.asset->url,
   tariefKine, tariefPt, tariefPtMpc, tariefPerformance,
   clubs,
-  "keuzehulpTags": keuzehulpTags[]->{ "id": _id, label, categorie, volgorde, actief },
+  "keuzehulpTags": keuzehulpTags[]->{ "id": _id, label, labelEn, categorie, volgorde, actief },
   "updatedAt": _updatedAt
 }`;
 
 const locatieProjection = `{
   "slug": slug.current,
-  naam, brand, type, adres,
+  naam, korteNaam, brand, type, adres,
   "geo": { "lat": geo.lat, "lng": geo.lng },
   telefoon, email, uren, urenNote, btw, iban, bic, mapsUrl, googleBusinessUrl,
   routebeschrijving, rpr, instagram, facebook, verdiepingNote,
@@ -440,7 +488,7 @@ const locatieProjection = `{
   "updatedAt": _updatedAt
 }`;
 
-const prijsitemProjection = `{ naam, categorie, bedrag, eenheid, vanaf, opAanvraag, notitie, volgorde }`;
+const prijsitemProjection = `{ "id": _id, naam, naamEn, categorie, bedrag, eenheid, vanaf, opAanvraag, notitie, notitieEn, volgorde }`;
 
 const dienstProjection = `{
   "slug": slug.current,
@@ -501,7 +549,7 @@ export async function getKeuzehulp(): Promise<Keuzehulp> {
   const [doc, tags] = await Promise.all([
     sanity.fetch(`*[_id == "keuzehulp"][0]{ actief, titel, intro, vragen, geenMatchTekst }`),
     sanity.fetch(
-      `*[_type == "keuzehulpTag" && actief != false] | order(categorie asc, coalesce(volgorde, 9999) asc, label asc){ "id": _id, label, categorie, volgorde, actief }`,
+      `*[_type == "keuzehulpTag" && actief != false] | order(categorie asc, coalesce(volgorde, 9999) asc, label asc){ "id": _id, label, labelEn, categorie, volgorde, actief }`,
     ) as Promise<KeuzehulpTag[]>,
   ]);
   const opties = { klacht: [], regio: [], sport: [], doelgroep: [] } as Record<KeuzehulpCategorie, KeuzehulpTag[]>;
@@ -535,10 +583,16 @@ function normalizeTeamlid(row: Teamlid): Teamlid {
     keuzehulpTags: (row.keuzehulpTags || [])
       .filter((t): t is KeuzehulpTag => Boolean(t && t.id && t.label && t.categorie))
       .map((t) => ({ ...t, actief: t.actief !== false })),
-    specialisaties: row.specialisaties || [],
+    specialisaties: (row.specialisaties || []).filter(
+      (s): s is Specialisatie => Boolean(s && s.id && s.naam),
+    ),
     locaties: row.locaties || [],
     disciplines: row.disciplines || [],
   };
+}
+
+export function keuzehulpTagLabel(tag: Pick<KeuzehulpTag, "label" | "labelEn">, lang: Lang = "nl"): string {
+  return lang === "en" ? tag.labelEn || tag.label : tag.label;
 }
 
 const locatieFotoFallback: Record<string, string> = {
@@ -548,8 +602,14 @@ const locatieFotoFallback: Record<string, string> = {
 function normalizeLocatie(row: Locatie): Locatie {
   return {
     ...row,
+    korteNaam: row.korteNaam || row.naam.replace(/^Movenda\s+/i, ""),
     foto: row.foto || locatieFotoFallback[row.slug],
   };
+}
+
+/** "Olympia · Performance Centre" for a teamlid, from the Locatie records (not hardcoded). */
+export function locatieKorteNamen(slugs: LocatieSlug[], locaties: Locatie[]): string[] {
+  return locaties.filter((loc) => slugs.includes(loc.slug)).map((loc) => loc.korteNaam);
 }
 
 export async function getLocaties(): Promise<Locatie[]> {
@@ -742,15 +802,19 @@ export async function getFaqs(site?: Exclude<FaqSite, "beide">): Promise<Faq[]> 
 }
 
 export async function getPrijzen(): Promise<Prijsitem[]> {
-  return sanity.fetch(`*[_type == "prijsitem"] | order(volgorde asc) ${prijsitemProjection}`);
+  const [rows, exBtwMpc] = await Promise.all([
+    sanity.fetch(`*[_type == "prijsitem"] | order(volgorde asc) ${prijsitemProjection}`) as Promise<Prijsitem[]>,
+    sanity.fetch(`*[_id == "siteSettings"][0].prijzenInfo.exBtwMpc`) as Promise<boolean | undefined>,
+  ]);
+  return (rows || []).map((row) => ({ ...row, exclBtw: prijsIsExclBtw(row, exBtwMpc) }));
 }
 
 const prijsCategorieVoorDienst: Record<DienstCategorie, PrijsCategorie[]> = {
   kine: ["kine"],
   training: ["training", "screening"],
-  "mpc-training": ["mpc", "screening"],
-  "mpc-rehab": ["mpc"],
-  "mpc-groep": ["mpc"],
+  "mpc-training": ["mpc-training", "screening"],
+  "mpc-rehab": ["mpc-rehab"],
+  "mpc-groep": ["mpc-groep"],
 };
 
 function normalizeNaam(value: string): string {
@@ -772,7 +836,11 @@ function normalizeNaam(value: string): string {
  */
 export function findPrijsVoorDienst(dienst: Dienst, prijzen: Prijsitem[]): Prijsitem | undefined {
   const linked = dienst.prijs;
-  if (linked) return linked.opAanvraag ? undefined : linked;
+  // The dienst projection carries the raw prijsitem; take the resolved copy (exclBtw) from the list.
+  if (linked) {
+    if (linked.opAanvraag) return undefined;
+    return prijzen.find((p) => p.id === linked.id) || { ...linked, exclBtw: false };
+  }
   const naam = normalizeNaam(dienstKorteTitel(dienst));
   if (!naam) return undefined;
   const cats = prijsCategorieVoorDienst[dienst.categorie] || [];
@@ -871,7 +939,7 @@ export async function getGetuigenissen(locatie?: LocatieSlug, lang: Lang = "nl")
   const rows: Getuigenis[] = await sanity.fetch(
     `*[_type == "getuigenis" && actief != false] | order(volgorde asc) {
       "slug": coalesce(slug.current, _id),
-      tekst, tekstEn, naam, rol, locatie, volgorde,
+      tekst, tekstEn, naam, rol, rolEn, locatie, volgorde,
       "foto": foto.asset->url,
       "actief": actief != false
     }`,
@@ -1048,11 +1116,3 @@ export async function getActivePopup(path: string): Promise<Popup | undefined> {
     .find((popup) => popupMatchesPath(popup.toonOp, path) && popupIsInWindow(popup));
 }
 
-export function matchSpecialisatieToDienst(tag: string, diensten: Dienst[]): Dienst | undefined {
-  const needle = tag.toLowerCase();
-  return diensten.find((d) => {
-    const titel = d.titel.toLowerCase();
-    const slug = d.slug.replace(/-/g, " ");
-    return titel.includes(needle) || needle.includes(titel.replace(/ hasselt$/, "")) || slug.includes(needle);
-  });
-}

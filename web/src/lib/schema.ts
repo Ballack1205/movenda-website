@@ -8,6 +8,9 @@
 // shown as a badge linking to Google, not as self-reported schema.
 import {
   dienstSeoDescriptionEn,
+  prijsNaam,
+  prijsNootVolledig,
+  specialisatieNaam,
   type BlogPost,
   type Dienst,
   type Faq,
@@ -186,7 +189,7 @@ export function personNode(teamlid: Teamlid, lang: "nl" | "en" = "nl"): JsonLdNo
     email: teamlid.email,
     url: `${SITE_URL}${withLang(`/team/${teamlid.slug}`, lang)}`,
     image: imageObject(teamlid.foto ? `${teamlid.foto}?w=900&h=1350&fit=max&auto=format` : undefined),
-    knowsAbout: teamlid.specialisaties,
+    knowsAbout: teamlid.specialisaties.map((s) => specialisatieNaam(s, lang)),
     worksFor: { "@id": ids.organization() },
     workLocation: teamlid.locaties.map((slug) => ({ "@id": ids.locatie(slug) })),
     memberOf: teamlid.clubs.map((c) => compact({ "@type": "SportsOrganization", name: c.naam, url: c.url })),
@@ -253,7 +256,12 @@ export function serviceNode(dienst: Dienst, locatie: Locatie, opts: ServiceNodeO
           price: prijs.bedrag,
           priceCurrency: "EUR",
           url,
-          description: [prijs.naam, prijs.eenheid ? `per ${prijs.eenheid}` : undefined, prijs.vanaf ? "(vanaf)" : undefined, prijs.notitie]
+          description: [
+            prijsNaam(prijs, lang),
+            prijs.eenheid ? `per ${prijs.eenheid}` : undefined,
+            prijs.vanaf ? (lang === "en" ? "(from)" : "(vanaf)") : undefined,
+            prijsNootVolledig(prijs, lang),
+          ]
             .filter(Boolean)
             .join(" "),
           availability: "https://schema.org/InStock",

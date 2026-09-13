@@ -154,7 +154,10 @@
   "nieuwsbrief": {
     "enabled": true,
     "titel": "Ontvang tips om je gezondheid en prestaties te verbeteren",
+    "titelEn": "Get tips to improve your health and performance",
     "tekst": "Geregeld delen we praktische oefentips, nieuws uit de praktijk en alles over kinesitherapie en performance training.",
-    "socialProof": "Meer dan 2.000 mensen gingen je voor"
+    "tekstEn": "We regularly share practical exercise tips, news from the practice, and everything about physiotherapy and performance training.",
+    "socialProof": "Meer dan 2.000 mensen gingen je voor",
+    "socialProofEn": "More than 2,000 people already subscribed"
   }
 }

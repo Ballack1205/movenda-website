@@ -51,6 +51,12 @@ export default defineType({
       description: "Kort, onder de naam. Bv. 'Personal training', 'Kinesitherapie', 'Performance'.",
     }),
     defineField({
+      name: "rolEn",
+      title: "Context (EN)",
+      type: "string",
+      description: "Voor de Engelse site. Leeg = toont de Nederlandse context.",
+    }),
+    defineField({
       name: "locatie",
       title: "Locatie",
       type: "string",

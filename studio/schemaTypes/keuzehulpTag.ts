@@ -23,6 +23,12 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "labelEn",
+      title: "Label (EN)",
+      type: "string",
+      description: "Voor de Engelse site. Leeg = toont het Nederlandse label.",
+    }),
+    defineField({
       name: "categorie",
       title: "Vraag waar deze tag bij hoort",
       type: "string",

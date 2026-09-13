@@ -3,9 +3,9 @@ import Layout from "../../layouts/Layout.astro";
 import {
   getTeamleden,
   getTeamlidBySlug,
-  getDiensten,
-  matchSpecialisatieToDienst,
+  getLocaties,
   dienstHref,
+  locatieKorteNamen,
   formatEuro,
   rolKort,
   truncateAtSentence,
@@ -25,7 +25,7 @@ if (!lid) {
   return Astro.redirect("/team");
 }
 
-const diensten = await getDiensten();
+const locaties = await getLocaties();
 
 const jsonLd = [
   personNode(lid),
@@ -72,11 +72,7 @@ const title = `${lid.voornaam} ${lid.naam} | ${rolKort(lid.rol)} Hasselt | Moven
       <div>
         <h1 class="text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
         <p class="mt-1 text-lg font-medium text-brand-primary">{lid.rol}</p>
-        <p class="mt-2 text-sm text-brand-muted">
-          {lid.locaties.includes("olympia") && "Olympia"}
-          {lid.locaties.includes("olympia") && lid.locaties.includes("mpc") && " · "}
-          {lid.locaties.includes("mpc") && "MPC"}
-        </p>
+        <p class="mt-2 text-sm text-brand-muted">{locatieKorteNamen(lid.locaties, locaties).join(" · ")}</p>
         {(lid.tariefKine || lid.tariefPt || lid.tariefPtMpc || lid.tariefPerformance) && (
           <p class="mt-2 text-sm">
             {lid.tariefKine && <span>Kine {formatEuro(lid.tariefKine)}</span>}
@@ -94,18 +90,15 @@ const title = `${lid.voornaam} ${lid.naam} | ${rolKort(lid.rol)} Hasselt | Moven
       <div class="mt-8">
         <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Specialisaties</h2>
         <ul class="mt-3 flex flex-wrap gap-2">
-          {lid.specialisaties.map((s) => {
-            const match = matchSpecialisatieToDienst(s, diensten);
-            return (
-              <li>
-                {match ? (
-                  <a href={dienstHref(match)} class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-primary hover:underline">{s}</a>
-                ) : (
-                  <span class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-text">{s}</span>
-                )}
-              </li>
-            );
-          })}
+          {lid.specialisaties.map((s) => (
+            <li>
+              {s.dienst ? (
+                <a href={dienstHref(s.dienst)} class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-primary hover:underline">{s.naam}</a>
+              ) : (
+                <span class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-text">{s.naam}</span>
+              )}
+            </li>
+          ))}
         </ul>
       </div>
     )}

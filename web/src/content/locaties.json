@@ -2,6 +2,7 @@
   {
     "slug": "olympia",
     "naam": "Movenda Olympia",
+    "korteNaam": "Olympia",
     "brand": "movenda",
     "type": "Kinesitherapie & personal training",
     "adres": "Kuringersteenweg 242, 3500 Hasselt",
@@ -31,6 +32,7 @@
   {
     "slug": "mpc",
     "naam": "Movenda Performance Centre",
+    "korteNaam": "Performance Centre",
     "brand": "mpc",
     "type": "Performance training & sportrevalidatie",
     "adres": "Lammerweg 33, 3511 Kuringen",
