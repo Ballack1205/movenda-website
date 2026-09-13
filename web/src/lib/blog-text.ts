@@ -64,7 +64,7 @@ export function blogPostToMarkdown(post: BlogPost): string {
     !hasImages && post.photos?.length
       ? post.photos.map((src) => markdownImage(src, post.titel)).join("\n\n")
       : "";
-  const tags = post.tags?.length ? `\nTags: ${post.tags.map(blogTagLabel).join(", ")}` : "";
+  const tags = post.tags?.length ? `\nTags: ${post.tags.map((tag) => blogTagLabel(tag)).join(", ")}` : "";
   const byline = [post.publicatiedatum, post.auteurNaam].filter(Boolean).join(" · ");
 
   return `# ${post.titel}

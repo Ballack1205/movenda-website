@@ -88,7 +88,7 @@ const jsonLd = [
     // OG expects a profile URL here; the team page is the author's profile.
     author: post.auteurSlug ? absoluteUrl(`/team/${post.auteurSlug}`) : post.auteurNaam,
     section: "Blog",
-    tags: tags.map(blogTagLabel),
+    tags: tags.map((tag) => blogTagLabel(tag)),
   }}
   extraLinks={[
     { rel: "alternate", type: "text/markdown", href: `/blog/${post.slug}.md`, title: "Artikel (Markdown)" },
