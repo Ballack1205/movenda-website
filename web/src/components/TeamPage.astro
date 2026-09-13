@@ -92,6 +92,8 @@ const t = {
   empty: lang === "en" ? "No colleagues in this selection." : "Geen collega's in deze selectie.",
   close: lang === "en" ? "Close" : "Sluiten",
   profile: lang === "en" ? "View profile" : "Bekijk profiel",
+  about: lang === "en" ? "Show bio of {name}" : "Toon bio van {name}",
+  hideBio: lang === "en" ? "Hide bio of {name}" : "Verberg bio van {name}",
   showMatches: lang === "en" ? "Show my matches ↓" : "Toon mijn matches ↓",
   yourMatches: lang === "en" ? "Your matches" : "Jouw matches",
   reset: lang === "en" ? "Clear my choices" : "Wis mijn keuzes",
@@ -164,7 +166,7 @@ const filters = [
         const bio = lang === "en" ? lid.bioEn || lid.bio : lid.bio;
         return (
         <article
-          class="group overflow-hidden rounded-xl border border-brand-border bg-brand-surface transition hover:border-brand-primary sm:rounded-2xl"
+          class="group relative overflow-hidden rounded-xl border border-brand-border bg-brand-surface transition hover:border-brand-primary sm:rounded-2xl"
           data-card
           data-slug={lid.slug}
         >
@@ -184,15 +186,14 @@ const filters = [
                   {lid.voornaam[0]}{lid.naam[0]}
                 </div>
               )}
-              {/* Hover/focus reveal: the bio slides up over the photo (pointer devices only, see <style>).
-                  Same text as the detail page, so Julie edits it once in Sanity. */}
+              {/* Bio overlay: desktop hover/focus; on touch the i-button toggles it. */}
               {bio && (
                 <div
-                  class="team-card-reveal absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-header via-brand-header/95 to-brand-header/0 px-4 pb-4 pt-16 text-white sm:px-5 sm:pb-5"
+                  class="team-card-reveal pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-header via-brand-header/95 to-brand-header/0 px-3 pb-3 pt-12 text-white sm:px-5 sm:pb-5 sm:pt-16"
                   aria-hidden="true"
                 >
-                  <p class="line-clamp-4 text-[13px] leading-relaxed text-white/90 lg:line-clamp-6 lg:text-sm">{bio}</p>
-                  <p class="mt-3 text-sm font-semibold">{t.profile} →</p>
+                  <p class="team-card-reveal-text line-clamp-3 text-[13px] leading-relaxed text-white/90 sm:line-clamp-4 lg:line-clamp-6 lg:text-sm">{bio}</p>
+                  <p class="mt-2 text-sm font-semibold sm:mt-3">{t.profile} →</p>
                 </div>
               )}
             </div>
@@ -207,6 +208,23 @@ const filters = [
               )}
             </div>
           </a>
+          {bio && (
+            <button
+              type="button"
+              data-card-info
+              data-label-show={t.about.replace("{name}", `${lid.voornaam} ${lid.naam}`)}
+              data-label-hide={t.hideBio.replace("{name}", `${lid.voornaam} ${lid.naam}`)}
+              aria-expanded="false"
+              aria-label={t.about.replace("{name}", `${lid.voornaam} ${lid.naam}`)}
+              class="team-card-info absolute right-2 top-2 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white shadow-sm backdrop-blur-sm lg:hidden"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 11v5" />
+                <circle cx="12" cy="8" r="0.75" fill="currentColor" stroke="none" />
+              </svg>
+            </button>
+          )}
         </article>
         );
       })}
@@ -291,8 +309,9 @@ const filters = [
 </Layout>
 
 <style>
-  /* Bio panel is hidden below the photo and slides up on hover (pointer devices)
-     or keyboard focus. Touch devices skip the hover state: a tap opens the profile. */
+  /* Bio panel sits under the photo. Desktop (lg+) reveals it on hover/focus.
+     Below lg the i-button toggles [data-bio-open] instead — hover would steal
+     the first tap on tablets that report hover. */
   .team-card-reveal {
     transform: translateY(100%);
     opacity: 0;
@@ -300,11 +319,35 @@ const filters = [
       transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
       opacity 0.25s ease;
   }
-  [data-card]:focus-within .team-card-reveal {
+  [data-card][data-bio-open] .team-card-reveal {
     transform: none;
     opacity: 1;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 1.25rem;
+    background: linear-gradient(
+      to top,
+      var(--brand-header) 0%,
+      color-mix(in srgb, var(--brand-header) 92%, transparent) 70%,
+      color-mix(in srgb, var(--brand-header) 35%, transparent) 100%
+    );
   }
-  @media (hover: hover) {
+  [data-card][data-bio-open] .team-card-reveal-text {
+    -webkit-line-clamp: 8;
+    line-clamp: 8;
+  }
+  [data-card][data-bio-open] .team-card-reveal > :last-child {
+    margin-top: auto;
+  }
+  @media (min-width: 1024px) {
+    [data-card]:focus-within .team-card-reveal {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  @media (hover: hover) and (min-width: 1024px) {
     [data-card]:hover .team-card-reveal {
       transform: none;
       opacity: 1;
@@ -345,6 +388,38 @@ const filters = [
     }),
   );
   renderGrid();
+
+  // Mobile/tablet: tap the i-button to slide the bio up; tap it again or
+  // anywhere outside the card to close. The rest of the card stays a link.
+  function setBioOpen(card, open) {
+    const btn = card.querySelector("[data-card-info]");
+    card.toggleAttribute("data-bio-open", open);
+    if (!btn) return;
+    btn.setAttribute("aria-expanded", String(open));
+    btn.setAttribute("aria-label", open ? btn.dataset.labelHide : btn.dataset.labelShow);
+  }
+  function closeBios(except) {
+    for (const card of cards) {
+      if (card !== except && card.hasAttribute("data-bio-open")) setBioOpen(card, false);
+    }
+  }
+  for (const card of cards) {
+    const btn = card.querySelector("[data-card-info]");
+    if (!btn) continue;
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const next = !card.hasAttribute("data-bio-open");
+      closeBios(card);
+      setBioOpen(card, next);
+    });
+  }
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-card-info]")) return;
+    const openCard = e.target.closest("[data-card][data-bio-open]");
+    if (openCard) return;
+    closeBios();
+  });
 
   // "Wie past bij mij?" — scoring recommender inside a <dialog>.
   // Multi-select on every question. 1 point per matching tag, ranked by
