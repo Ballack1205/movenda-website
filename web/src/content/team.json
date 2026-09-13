@@ -56,8 +56,8 @@
       "Data-analyse"
     ],
     "email": "ce@mpc.movenda.be",
-    "bio": "Met meer dan 10 jaar ervaring is hij een echte performance specialist. Hij werkt graag met data om zo objectieve progressie te kunnen aantonen en algehele prestatie te verbeteren.",
-    "bioEn": "With more than 10 years of experience he is a true performance specialist. He likes to work with data so progress is objective and overall performance can improve.",
+    "bio": "Met meer dan 10 jaar ervaring is hij een echte performance specialist. Hij werkt graag met data om zo objectieve progressie te kunnen aantonen en algehele prestatie te verbeteren. Zijn arbeidsethos en ambitie zijn opmerkelijk hoog, en dat wil hij ook doorgeven aan zijn atleten. Want grenzen verleggen begint bij de bereidheid om jezelf elke dag opnieuw uit te dagen.",
+    "bioEn": "With more than 10 years of experience he is a true performance specialist. He likes to work with data so progress is objective and overall performance can improve. His work ethic and ambition are remarkably high, and he wants to pass that on to his athletes. Pushing boundaries starts with the willingness to challenge yourself every day.",
     "volgorde": 2,
     "actief": true,
     "tariefPtMpc": 77,
@@ -90,8 +90,8 @@
       "Personal Training"
     ],
     "email": "josje@movenda.be",
-    "bio": "Met meer dan 10 jaar ervaring staat Josje bekend om haar directe en duidelijke aanpak, volledig afgestemd op de noden van elke patiënt. Ze heeft een bijzondere expertise in schouder- en polsklachten.",
-    "bioEn": "With more than 10 years of experience, Josje is known for her direct, clear approach, fully tailored to each patient. She has particular expertise in shoulder and wrist complaints.",
+    "bio": "Met meer dan 10 jaar ervaring staat Josje bekend om haar directe en duidelijke aanpak, volledig afgestemd op de noden van elke patiënt. Ze combineert gerichte oefeningen met fijne gesprekken tijdens de behandeling en heeft een bijzondere expertise in schouder- en polsklachten.",
+    "bioEn": "With more than 10 years of experience, Josje is known for her direct, clear approach, fully tailored to each patient. She combines targeted exercises with easy conversation during treatment and has particular expertise in shoulder and wrist complaints.",
     "volgorde": 3,
     "actief": true,
     "tariefKine": 40,
@@ -131,8 +131,8 @@
       "Personal Training"
     ],
     "email": "koen@movenda.be",
-    "bio": "Met meer dan 10 jaar ervaring benadert Koen elke patiënt vanuit een holistische kijk. Hij combineert klassieke kinesitherapie met oosterse behandeltechnieken zoals acupunctuur en auriculotherapie.",
-    "bioEn": "With more than 10 years of experience, Koen takes a holistic view of every patient. He combines classic physiotherapy with Eastern techniques such as acupuncture and auriculotherapy.",
+    "bio": "Met meer dan 10 jaar ervaring benadert Koen elke patiënt vanuit een holistische kijk — niet enkel de klacht, maar het lichaam in zijn geheel. Hij combineert klassieke kinesitherapie met oosterse behandeltechnieken zoals acupunctuur en auriculotherapie voor een brede en diepgaande aanpak.",
+    "bioEn": "With more than 10 years of experience, Koen takes a holistic view of every patient — not just the complaint, but the body as a whole. He combines classic physiotherapy with Eastern techniques such as acupuncture and auriculotherapy for a broad and thorough approach.",
     "volgorde": 4,
     "actief": true,
     "tariefKine": 40,
@@ -168,14 +168,15 @@
     ],
     "specialisaties": [
       "Manuele therapie",
+      "Musculoskeletale revalidatie",
       "Dry Needling",
       "Personal Training",
       "Sportspecifieke training",
       "Inspanningstesten met lactaatmeting"
     ],
     "email": "jens@movenda.be",
-    "bio": "Jens werkt zowel bij Movenda als bij het Movenda Performance Centre waar hij naast de klassieke revalidaties instaat voor sportspecifieke revalidaties en trainingen. Hij heeft een extra expertise in motorcross.",
-    "bioEn": "Jens works at both Movenda and the Movenda Performance Centre, where besides classic rehab he handles sport-specific rehabilitation and training. He has extra expertise in motocross.",
+    "bio": "Jens werkt zowel bij Movenda als bij het Movenda Performance Centre waar hij naast de klassieke revalidaties instaat voor sportspecifieke revalidaties en trainingen. Hij heeft een extra expertise in motorcross en staat bekend voor zijn persoonlijke aanpak, veelzijdigheid en toewijding.",
+    "bioEn": "Jens works at both Movenda and the Movenda Performance Centre, where besides classic rehab he handles sport-specific rehabilitation and training. He has extra expertise in motocross and is known for his personal approach, versatility and dedication.",
     "volgorde": 5,
     "actief": true,
     "tariefKine": 39,
@@ -221,8 +222,8 @@
       "Taping"
     ],
     "email": "pieter@movenda.be",
-    "bio": "Pieter is fulltime kinesitherapeut bij KRC Genk en blijft daarnaast verbonden met Movenda. Brede expertise in sportrevalidatie en blessurepreventie.",
-    "bioEn": "Pieter is a full-time physiotherapist at KRC Genk and remains connected to Movenda. Broad expertise in sports rehabilitation and injury prevention.",
+    "bio": "Pieter vervulde onlangs een ware jongensdroom: hij werd fulltime kinesitherapeut bij KRC Genk. Toch blijft hij verbonden met Movenda, want de connectie met de praktijk is hem te dierbaar om zomaar los te laten. Met zijn brede expertise in sportrevalidatie en blessurepreventie en een ruim scala aan behandeltechnieken blijft hij een vaste waarde in ons team.",
+    "bioEn": "Pieter recently fulfilled a real boyhood dream: he became a full-time physiotherapist at KRC Genk. He remains connected to Movenda, because the practice means too much to simply let go. With his broad expertise in sports rehabilitation and injury prevention and a wide range of treatment techniques, he remains a fixture in our team.",
     "volgorde": 6,
     "actief": true,
     "tariefKine": 39,
@@ -255,8 +256,8 @@
       "Personal Training"
     ],
     "email": "simon@movenda.be",
-    "bio": "Simon begeleidt zijn patiënten en sporters met een actieve aanpak waarbij revalidatie en training hand in hand gaan.",
-    "bioEn": "Simon coaches patients and athletes with an active approach where rehabilitation and training go hand in hand.",
+    "bio": "Simon begeleidt zijn patiënten en sporters met een actieve aanpak waarbij revalidatie en training hand in hand gaan. Hij motiveert mensen om niet alleen te herstellen, maar ook sterker terug te komen.",
+    "bioEn": "Simon coaches patients and athletes with an active approach where rehabilitation and training go hand in hand. He motivates people not only to recover, but to come back stronger.",
     "volgorde": 7,
     "actief": true,
     "tariefKine": 39,
@@ -297,8 +298,8 @@
       "Pre- en postnatale training"
     ],
     "email": "tanse@movenda.be",
-    "bio": "Tanse is de enige therapeut bij Movenda met een dubbele achtergrond als kinesitherapeut én vroedvrouw. Unieke, holistische begeleiding voor vrouwen tijdens en na de zwangerschap.",
-    "bioEn": "Tanse is the only therapist at Movenda with a dual background as a physiotherapist and midwife. Unique, holistic coaching for women during and after pregnancy.",
+    "bio": "Tanse is de enige therapeut bij Movenda met een dubbele achtergrond als kinesitherapeut én vroedvrouw. Daardoor biedt ze een unieke, holistische begeleiding voor vrouwen tijdens en na de zwangerschap, inclusief pelvische reëducatie en hersteltraining.",
+    "bioEn": "Tanse is the only therapist at Movenda with a dual background as a physiotherapist and midwife. That is why she offers unique, holistic guidance for women during and after pregnancy, including pelvic floor rehabilitation and recovery training.",
     "volgorde": 8,
     "actief": true,
     "tariefKine": 40,
@@ -330,11 +331,12 @@
       "Musculoskeletale revalidatie",
       "Osteopathie (i.o.)",
       "Sportspecifieke training",
-      "Personal Training"
+      "Personal Training",
+      "Kinesitherapeut STVV"
     ],
     "email": "miel@movenda.be",
-    "bio": "Miel combineert een bachelor LO met kinesitherapie en is in opleiding voor osteopathie. Ook actief als kinesitherapeut bij STVV.",
-    "bioEn": "Miel combines a bachelor in physical education with physiotherapy and is training in osteopathy. Also active as a physiotherapist at STVV.",
+    "bio": "Miel is de enige therapeut bij Movenda met een dubbele achtergrond als kinesitherapeut én bachelor LO, daarnaast is hij momenteel in opleiding voor osteopathie. Die brede achtergrond geeft hem een unieke kijk op beweging, sport en revalidatie. Naast zijn werk bij Movenda is hij ook actief als kinesitherapeut bij STVV.",
+    "bioEn": "Miel is the only therapist at Movenda with a dual background as a physiotherapist and a bachelor in physical education, and he is currently training in osteopathy. That broad background gives him a unique view of movement, sport and rehabilitation. Alongside his work at Movenda he is also a physiotherapist at STVV.",
     "volgorde": 9,
     "actief": true,
     "tariefKine": 38,
@@ -374,11 +376,12 @@
       "Manuele therapie",
       "Musculoskeletale revalidatie",
       "Sportspecifieke training",
-      "Personal Training"
+      "Personal Training",
+      "Kinesitherapeut STVV"
     ],
     "email": "maarten@movenda.be",
-    "bio": "Maarten combineert zijn praktijkervaring bij Movenda met zijn rol als kinesitherapeut bij voetbalclub STVV.",
-    "bioEn": "Maarten combines his practice work at Movenda with his role as physiotherapist at football club STVV.",
+    "bio": "Maarten combineert zijn praktijkervaring bij Movenda met zijn rol als kinesitherapeut bij voetbalclub STVV. Met zijn afgeronde opleiding manuele therapie biedt hij een brede en diepgaande aanpak voor uiteenlopende klachten.",
+    "bioEn": "Maarten combines his practice work at Movenda with his role as physiotherapist at football club STVV. With his completed manual therapy training he offers a broad and thorough approach for a wide range of complaints.",
     "volgorde": 10,
     "actief": true,
     "tariefKine": 37,
@@ -421,8 +424,8 @@
       "Physical coach Hubo Limburg United"
     ],
     "email": "arne@mpc.movenda.be",
-    "bio": "Arne combineert zijn expertise als kinesitherapeut met een sterke passie voor sportprestaties, actief bij Hubo Limburg United.",
-    "bioEn": "Arne combines his expertise as a physiotherapist with a strong passion for sports performance, and is active at Hubo Limburg United.",
+    "bio": "Arne combineert zijn expertise als kinesitherapeut met een sterke passie voor sportprestaties. Hij is actief bij het Movenda Performance Centre en werkt tevens als physical coach bij basketbalclub Hubo Limburg United. Zijn kennis van topsport vertaalt hij naar gerichte begeleiding voor elke sporter.",
+    "bioEn": "Arne combines his expertise as a physiotherapist with a strong passion for sports performance. He works at the Movenda Performance Centre and is also a physical coach at basketball club Hubo Limburg United. He translates his knowledge of elite sport into targeted coaching for every athlete.",
     "volgorde": 11,
     "actief": true,
     "tariefKine": 38,
@@ -463,8 +466,8 @@
       "Full Body coaching"
     ],
     "email": "charlotte@mpc.movenda.be",
-    "bio": "Charlotte brengt energie en structuur in elke training, individueel en in groep.",
-    "bioEn": "Charlotte brings energy and structure to every session, individually and in a group.",
+    "bio": "Charlotte brengt energie en structuur in elke training. Bij het Movenda Performance Centre begeleidt ze zowel individuele klanten als groepen, met een aanpak die uitdagend én motiverend is. Ze staat bekend voor haar betrokkenheid en haar vermogen om het beste uit mensen te halen.",
+    "bioEn": "Charlotte brings energy and structure to every session. At the Movenda Performance Centre she coaches both individuals and groups, with an approach that is challenging and motivating. She is known for her involvement and her ability to bring out the best in people.",
     "volgorde": 12,
     "actief": true,
     "tariefPtMpc": 74,
@@ -492,8 +495,8 @@
       "Data-analyse"
     ],
     "email": "yannick@mpc.movenda.be",
-    "bio": "Yannick combineert zijn passie voor sport met een analytische kijk op prestaties.",
-    "bioEn": "Yannick combines his passion for sport with an analytical view of performance.",
+    "bio": "Yannick combineert zijn passie voor sport met een analytische kijk op prestaties. Als performance coach en data-analist bij het Movenda Performance Centre gebruikt hij objectieve data om trainingen te optimaliseren en sporters verder te helpen groeien.",
+    "bioEn": "Yannick combines his passion for sport with an analytical view of performance. As a performance coach and data analyst at the Movenda Performance Centre he uses objective data to optimise training and help athletes keep growing.",
     "volgorde": 13,
     "actief": true,
     "tariefPtMpc": 74,
@@ -519,12 +522,13 @@
     "specialisaties": [
       "Musculoskeletale revalidatie",
       "Sportrevalidatie",
+      "Manuele therapie (i.o.)",
       "Personal Training",
       "Sportspecifieke training"
     ],
     "email": "jana@movenda.be",
-    "bio": "Jana combineert haar passie voor sportrevalidatie met gerichte personal training.",
-    "bioEn": "Jana combines her passion for sports rehabilitation with targeted personal training.",
+    "bio": "Jana combineert haar passie voor sportrevalidatie met gerichte personal training. Ze begeleidt sporters van herstel tot optimale prestatie en werkt ook actief bij het Movenda Performance Centre.",
+    "bioEn": "Jana combines her passion for sports rehabilitation with targeted personal training. She coaches athletes from recovery through to peak performance and also works at the Movenda Performance Centre.",
     "volgorde": 14,
     "actief": true,
     "tariefKine": 37,
@@ -555,8 +559,8 @@
       "Physical coach HLU Academy"
     ],
     "email": "quinten@mpc.movenda.be",
-    "bio": "Quinten daagt je uit én ondersteunt je om je doelen te bereiken, van recreatieve sporters tot jonge talenten.",
-    "bioEn": "Quinten challenges and supports you to reach your goals, from recreational athletes to young talents.",
+    "bio": "Quinten is de personal trainer die jou uitdaagt én ondersteunt om je doelen te bereiken. Vanuit het Movenda Performance Centre begeleidt hij zowel recreatieve sporters als jonge talenten. Hij is ook actief als physical coach bij de Hubo Limburg United Academy.",
+    "bioEn": "Quinten is the personal trainer who both challenges and supports you to reach your goals. From the Movenda Performance Centre he coaches recreational athletes and young talents. He is also a physical coach at the Hubo Limburg United Academy.",
     "volgorde": 15,
     "actief": true,
     "tariefPtMpc": 74,
@@ -589,8 +593,8 @@
       "Boxing coaching"
     ],
     "email": "dimi@mpc.movenda.be",
-    "bio": "Dimitri is de boksingspecialist van het Movenda Performance Centre.",
-    "bioEn": "Dimitri is the boxing specialist at the Movenda Performance Centre.",
+    "bio": "Dimitri is de boksingspecialist van het Movenda Performance Centre. Of je nu wil leren boksen, je conditie wil verbeteren of gewoon op zoek bent naar een uitdagende training — Dimitri leidt jou op een veilige en gedisciplineerde manier door elke sessie.",
+    "bioEn": "Dimitri is the boxing specialist at the Movenda Performance Centre. Whether you want to learn to box, improve your fitness or simply want a challenging workout — Dimitri guides you through every session in a safe, disciplined way.",
     "volgorde": 16,
     "actief": true,
     "tariefPtMpc": 74,
@@ -614,11 +618,12 @@
       "Manuele therapie",
       "Dry Needling",
       "Kaakklachten (TMJ)",
-      "Sprint- en loopblessures"
+      "Sprint- en loopblessures",
+      "Cycling-gerelateerde klachten"
     ],
     "email": "stijn@movenda.be",
-    "bio": "Stijn combineert een brede sportachtergrond met een wetenschappelijk onderbouwde aanpak, gericht op de onderliggende oorzaak voor duurzaam herstel.",
-    "bioEn": "Stijn combines a broad sports background with an evidence-based approach, focused on the underlying cause for lasting recovery.",
+    "bio": "Stijn brengt meer dan vijf jaar praktijkervaring mee en combineert een brede sportachtergrond, als voormalig tennisspeler, padelspeler, ultrarunner en ex-voetballer, met een wetenschappelijk onderbouwde aanpak. Hij kijkt verder dan de klacht alleen en zoekt samen met zijn patiënten naar de onderliggende oorzaak voor duurzaam herstel.",
+    "bioEn": "Stijn brings more than five years of clinical experience and combines a broad sports background — as a former tennis player, padel player, ultra runner and ex-footballer — with an evidence-based approach. He looks beyond the complaint itself and works with his patients to find the underlying cause for lasting recovery.",
     "volgorde": 17,
     "actief": true,
     "tariefKine": 37,
@@ -636,7 +641,8 @@
       "Lopen",
       "Fietsen"
     ],
-    "doelgroepen": []
+    "doelgroepen": [],
+    "fotoAssetId": "image-507d83818e897a4fb0ab735fff659df6a58bf961-400x533-jpg"
   },
   {
     "slug": "an-janssen",
@@ -652,8 +658,8 @@
       "Musculoskeletale revalidatie"
     ],
     "email": "an@movenda.be",
-    "bio": "An brengt jarenlange ervaring mee uit ziekenhuizen en privépraktijken en is de enige met de specialisatie manuele lymfedrainage.",
-    "bioEn": "An brings years of experience from hospitals and private practices and is the only team member specialised in manual lymphatic drainage.",
+    "bio": "An brengt jarenlange ervaring mee uit zowel ziekenhuizen als privépraktijken. Ze is de enige met de specialisatie manuele lymfedrainage. Haar brede achtergrond en veelzijdige expertise maken haar een bijzonder waardevolle aanvulling voor ons team.",
+    "bioEn": "An brings years of experience from both hospitals and private practices. She is the only team member specialised in manual lymphatic drainage. Her broad background and versatile expertise make her a particularly valuable addition to our team.",
     "volgorde": 18,
     "actief": true,
     "tariefKine": 37,
@@ -662,7 +668,8 @@
     ],
     "regio": [],
     "sporten": [],
-    "doelgroepen": []
+    "doelgroepen": [],
+    "fotoAssetId": "image-9781891f7fc2e97ad67b8a8ea95e6ba1f7f3fb68-400x533-jpg"
   },
   {
     "slug": "julie-spaas",
@@ -677,8 +684,8 @@
     ],
     "specialisaties": [],
     "email": "julie@movenda.be",
-    "bio": "Julie is de kracht achter zowel Movenda als het Movenda Performance Centre: website, marketing, communicatie en boekhouding.",
-    "bioEn": "Julie is the driving force behind both Movenda and the Movenda Performance Centre: website, marketing, communication and accounts.",
+    "bio": "Julie is de kracht achter zowel Movenda als het Movenda Performance Centre. Als verantwoordelijke voor de website, marketing, communicatie en boekhouding zorgt ze ervoor dat beide vestigingen ook buiten de behandelkamer sterk staan. Daarnaast staat ze altijd klaar voor al je praktische vragen en info.",
+    "bioEn": "Julie is the driving force behind both Movenda and the Movenda Performance Centre. As the person responsible for the website, marketing, communication and accounts she makes sure both locations stand strong outside the treatment room too. She is also always ready for your practical questions and information.",
     "volgorde": 19,
     "actief": true
   }

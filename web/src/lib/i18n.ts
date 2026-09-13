@@ -262,6 +262,9 @@ const TAG_EN: Record<string, string> = {
   "Pre- en postnatale training": "Pre- and postnatal training",
   HIIT: "HIIT",
   Taping: "Taping",
+  "Cycling-gerelateerde klachten": "Cycling-related complaints",
+  "Kinesitherapeut STVV": "Physiotherapist STVV",
+  "Manuele therapie (i.o.)": "Manual therapy (in training)",
 };
 
 export function tagLabel(label: string, lang: Lang): string {
