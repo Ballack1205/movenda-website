@@ -145,6 +145,11 @@ export interface Dienst {
   afbeelding?: string;
   galerij: string[];
   volgorde: number;
+  /** Julie's switch: false hides the dienst from the header dropdowns only (page stays live). */
+  toonInMenu?: boolean;
+  /** Short label for the header dropdown; falls back to the (shortened) title. */
+  menuLabel?: string;
+  menuLabelEn?: string;
   /** Explicitly linked prijsitem (Sanity reference); see findPrijsVoorDienst for the fallback. */
   /** Raw prijsitem Julie linked; exclBtw is resolved via getPrijzen() in findPrijsVoorDienst. */
   prijs?: Omit<Prijsitem, "exclBtw">;
@@ -211,6 +216,27 @@ export interface HomePijler {
   lijstTitelEn?: string;
   lijst: string[];
   lijstEn?: string[];
+  /** Photo next to the block; undefined = the bundled marketing photo. */
+  foto?: CmsFoto;
+}
+
+/**
+ * A photo Julie uploaded in the Studio to replace a bundled marketing photo.
+ * `url` is the Sanity CDN URL; `hotspot` (0–1) is used as crop focal point.
+ * Rendered by components/CmsFoto.astro, which falls back to the local asset.
+ */
+export interface CmsFoto {
+  url: string;
+  hotspot?: { x: number; y: number };
+  alt?: string;
+}
+
+/** GROQ projection for a `{ afbeelding, alt }`-style object field → CmsFoto (null when no upload). */
+export const CMS_FOTO_PROJECTION = `{ "url": afbeelding.asset->url, "hotspot": afbeelding.hotspot{ x, y }, alt }`;
+
+function toCmsFoto(row: { url?: string | null; hotspot?: { x: number; y: number } | null; alt?: string | null } | null | undefined): CmsFoto | undefined {
+  if (!row?.url) return undefined;
+  return { url: row.url, hotspot: row.hotspot || undefined, alt: row.alt?.trim() || undefined };
 }
 
 export type HomePijlerKey = "kine" | "training" | "mpc";
@@ -266,6 +292,10 @@ export interface SiteSettings {
   };
   partnerband: PartnerbandSettings;
   homePijlers: HomePijlers;
+  /** Default share image (og:image) for pages without their own; undefined = /og-default.jpg. */
+  ogAfbeelding?: string;
+  /** Google Search Console "HTML tag" verification token (content attribute only). */
+  googleSiteVerification?: string;
 }
 
 /** Existing Elfsight Instagram Feed on movenda.be ("Untitled Instagram Feed 2"). */
@@ -384,7 +414,11 @@ export interface BlogPost {
   tags?: string[];
   seoTitle?: string;
   seoDescription?: string;
+  /** Diensten Julie linked ("Gaat over deze behandelingen"): internal links blog ↔ dienst page. */
+  diensten?: BlogPostDienst[];
 }
+
+export type BlogPostDienst = Pick<Dienst, "slug" | "categorie" | "titel" | "titelEn">;
 
 export interface Vacature {
   slug: string;
@@ -504,6 +538,7 @@ const dienstProjection = `{
   "slug": slug.current,
   categorie, titel, titelEn, intro, slogan, body, bodyEn,
   ctaLabel, ctaUrl, seoTitle, seoDescription, seoTitleEn, seoDescriptionEn, volgorde,
+  "toonInMenu": coalesce(toonInMenu, true), menuLabel, menuLabelEn,
   "gekoppeldeTeamleden": gekoppeldeTeamleden[]->slug.current,
   "afbeelding": afbeelding.asset->url,
   "galerij": galerij[].asset->url,
@@ -709,8 +744,10 @@ function normalizeDienst(row: Dienst): Dienst {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
-    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, googleReviewsFeed, partnerband, homePijlers,
-      teamfoto{ "url": afbeelding.asset->url, alt, bijschrift, "hotspot": afbeelding.hotspot{ x, y } } }`,
+    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, googleReviewsFeed, partnerband,
+      homePijlers{ kine{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, training{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, mpc{ ..., "foto": foto${CMS_FOTO_PROJECTION} } },
+      teamfoto{ "url": afbeelding.asset->url, alt, bijschrift, "hotspot": afbeelding.hotspot{ x, y } },
+      "ogAfbeelding": ogAfbeelding.asset->url }`,
   );
   const olympia = await getLocatieBySlug("olympia");
   const mpc = await getLocatieBySlug("mpc");
@@ -778,14 +815,21 @@ export async function getSiteSettings(): Promise<SiteSettings> {
       training: mergePijler("training", settings?.homePijlers?.training),
       mpc: mergePijler("mpc", settings?.homePijlers?.mpc),
     },
+    ogAfbeelding: settings?.ogAfbeelding || undefined,
+    // Lives under Analytics in the Studio (same tab as the GA4 id), top-level here.
+    googleSiteVerification: (settings?.analytics?.googleSiteVerification as string | undefined)?.trim() || undefined,
   };
 }
 
 // Until Julie fills in "Homepage — drie pijlers" in Sanity, the seed copy
 // (the same texts as the old movenda.be homepage) is used field by field.
-function mergePijler(key: HomePijlerKey, fromSanity?: Partial<HomePijler>): HomePijler {
+function mergePijler(
+  key: HomePijlerKey,
+  fromSanity?: Partial<Omit<HomePijler, "foto">> & { foto?: Parameters<typeof toCmsFoto>[0] },
+): HomePijler {
   const seed = seedSettings.homePijlers[key] as HomePijler;
   return {
+    foto: toCmsFoto(fromSanity?.foto),
     titel: fromSanity?.titel || seed.titel,
     titelEn: fromSanity?.titelEn || seed.titelEn,
     tekst: fromSanity?.tekst || seed.tekst,
@@ -824,6 +868,12 @@ export interface Pagina {
   /** Hotspot Julie picked in the Studio (0–1), used as crop focal point. */
   fotoHotspot?: { x: number; y: number };
   fotoAlt?: string;
+  /** Second photo further down the overview pages (kine, training, mpc); undefined = bundled asset. */
+  fotoSecundair?: CmsFoto;
+  /** Background photo of the slogan banner (home only); undefined = bundled asset. */
+  bannerFoto?: CmsFoto;
+  /** Muted looping hero video (mpc only): Sanity CDN URL of the uploaded mp4/webm. */
+  heroVideo?: string;
   blokken: PaginaBlok[];
   kenmerken: PaginaBlok[];
   stappenTitel?: string;
@@ -836,17 +886,47 @@ export interface Pagina {
   legeTekstEn?: string;
   ctaTekst?: string;
   ctaTekstEn?: string;
+  /** Contact form: choices for "Hoe ben je bij ons terechtgekomen?" (contact page only). */
+  verwijsopties: VerwijsOptie[];
   seoTitle?: string;
   seoDescription?: string;
   seoTitleEn?: string;
   seoDescriptionEn?: string;
 }
 
-type PaginaSeed = Partial<Omit<Pagina, "key" | "foto">>;
-type PaginaRow = Partial<Pagina> & { foto?: string; fotoHotspot?: { x: number; y: number } | null };
+/** Which follow-up question a referral choice triggers in the contact form. */
+export type VerwijsVervolg = "geen" | "naam" | "club" | "event" | "tekst";
+
+export interface VerwijsOptie {
+  label: string;
+  labelEn?: string;
+  vervolg: VerwijsVervolg;
+}
+
+type PaginaSeed = Partial<Omit<Pagina, "key" | "foto" | "fotoSecundair" | "bannerFoto" | "heroVideo">>;
+type CmsFotoRow = Parameters<typeof toCmsFoto>[0];
+type PaginaRow = Partial<Omit<Pagina, "fotoSecundair" | "bannerFoto">> & {
+  foto?: string;
+  fotoHotspot?: { x: number; y: number } | null;
+  fotoSecundair?: CmsFotoRow;
+  bannerFoto?: CmsFotoRow;
+  heroVideo?: string | null;
+};
 
 function mergeBlokken(cms: PaginaBlok[] | undefined, seed: PaginaBlok[] | undefined): PaginaBlok[] {
   return cms?.length ? cms : seed || [];
+}
+
+const VERWIJS_VERVOLG = new Set<VerwijsVervolg>(["geen", "naam", "club", "event", "tekst"]);
+
+function normalizeVerwijsopties(items: Partial<VerwijsOptie>[] | undefined): VerwijsOptie[] {
+  return (items || [])
+    .filter((item): item is Partial<VerwijsOptie> & { label: string } => !!item.label?.trim())
+    .map((item) => ({
+      label: item.label.trim(),
+      labelEn: item.labelEn?.trim() || undefined,
+      vervolg: VERWIJS_VERVOLG.has(item.vervolg as VerwijsVervolg) ? (item.vervolg as VerwijsVervolg) : "geen",
+    }));
 }
 
 export async function getPagina(key: PaginaKey): Promise<Pagina> {
@@ -855,8 +935,12 @@ export async function getPagina(key: PaginaKey): Promise<Pagina> {
     `*[_type == "pagina" && key == $key][0]{
       ondertitel, ondertitelEn, titel, titelEn, intro, introEn,
       "foto": foto.asset->url, "fotoHotspot": foto.hotspot{ x, y }, fotoAlt,
+      "fotoSecundair": fotoSecundair${CMS_FOTO_PROJECTION},
+      "bannerFoto": bannerFoto${CMS_FOTO_PROJECTION},
+      "heroVideo": heroVideo.asset->url,
       blokken, kenmerken, stappenTitel, stappenTitelEn, stappenIntro, stappenIntroEn, stappen, pijlers,
       legeTekst, legeTekstEn, ctaTekst, ctaTekstEn,
+      verwijsopties[]{ label, labelEn, vervolg },
       seoTitle, seoDescription, seoTitleEn, seoDescriptionEn
     }`,
     { key },
@@ -879,6 +963,9 @@ export async function getPagina(key: PaginaKey): Promise<Pagina> {
     foto: row?.foto || undefined,
     fotoHotspot: row?.foto && row.fotoHotspot ? row.fotoHotspot : undefined,
     fotoAlt: pick("fotoAlt"),
+    fotoSecundair: toCmsFoto(row?.fotoSecundair),
+    bannerFoto: toCmsFoto(row?.bannerFoto),
+    heroVideo: row?.heroVideo || undefined,
     blokken: mergeBlokken(row?.blokken, seed.blokken),
     kenmerken: mergeBlokken(row?.kenmerken, seed.kenmerken),
     stappenTitel: pick("stappenTitel"),
@@ -891,6 +978,7 @@ export async function getPagina(key: PaginaKey): Promise<Pagina> {
     legeTekstEn: pick("legeTekstEn"),
     ctaTekst: pick("ctaTekst"),
     ctaTekstEn: pick("ctaTekstEn"),
+    verwijsopties: normalizeVerwijsopties(row?.verwijsopties?.length ? row.verwijsopties : seed.verwijsopties),
     seoTitle: pick("seoTitle"),
     seoDescription: pick("seoDescription"),
     seoTitleEn: pick("seoTitleEn"),
@@ -942,6 +1030,15 @@ export function paginaBlokTekst(b: PaginaBlok, lang: Lang = "nl"): string {
 export function dienstKorteTitel(dienst: Pick<Dienst, "titel" | "titelEn">, lang: "nl" | "en" = "nl"): string {
   const titel = lang === "en" ? dienst.titelEn || dienst.titel : dienst.titel;
   return titel.replace(/ Hasselt$/, "");
+}
+
+/** Label in the header dropdown: Julie's "Korte naam voor het menu" wins, otherwise the short title. */
+export function dienstMenuLabel(
+  dienst: Pick<Dienst, "titel" | "titelEn" | "menuLabel" | "menuLabelEn">,
+  lang: "nl" | "en" = "nl",
+): string {
+  const eigen = lang === "en" ? dienst.menuLabelEn || dienst.menuLabel : dienst.menuLabel;
+  return eigen?.trim() || dienstKorteTitel(dienst, lang);
 }
 
 /**
@@ -1159,6 +1256,7 @@ const blogPostProjection = `{
   "auteurNaam": auteur->voornaam + " " + auteur->naam,
   "auteurSlug": auteur->slug.current,
   publicatiedatum, tags, seoTitle, seoDescription,
+  "diensten": gerelateerdeDiensten[]->{ "slug": slug.current, categorie, titel, titelEn },
   "updatedAt": _updatedAt
 }`;
 
@@ -1225,6 +1323,33 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | undefi
     { slug },
   );
   return row ? normalizeBlogPost(row) : undefined;
+}
+
+/**
+ * Blog posts for the "Lees ook" block on a dienst page. Posts Julie explicitly
+ * linked to the dienst come first; when there are fewer than `limit`, posts
+ * whose title/summary/tags mention the dienst name fill up (so "Dry needling"
+ * picks up an older article about dry needling she never linked).
+ */
+export async function getBlogPostsVoorDienst(
+  dienst: Pick<Dienst, "slug" | "categorie" | "titel">,
+  limit = 3,
+): Promise<BlogPost[]> {
+  const posts = await getBlogPosts();
+  const linked = posts.filter((post) =>
+    post.diensten?.some((d) => d.slug === dienst.slug && d.categorie === dienst.categorie),
+  );
+  if (linked.length >= limit) return linked.slice(0, limit);
+
+  const naam = dienstKorteTitel(dienst).toLowerCase();
+  const stem = naam.replace(/(therapie|training|behandeling)$/i, "").trim();
+  const needle = stem.length >= 5 ? stem : naam;
+  const mentioned = posts.filter(
+    (post) =>
+      !linked.includes(post) &&
+      [post.titel, post.excerpt || "", ...(post.tags || [])].join(" ").toLowerCase().includes(needle),
+  );
+  return [...linked, ...mentioned].slice(0, limit);
 }
 
 export async function getRelatedBlogPosts(slug: string, limit = 3): Promise<BlogPost[]> {

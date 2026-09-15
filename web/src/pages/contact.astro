@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Routebeschrijving from "../components/Routebeschrijving.astro";
+import ContactVerwijsVraag from "../components/ContactVerwijsVraag.astro";
 import { getLocaties, getPagina, paginaAlineas } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 
@@ -12,24 +13,6 @@ const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda
 const olympia = locaties.find((l) => l.slug === "olympia");
 const mapEmbedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(olympia?.adres || "Kuringersteenweg 242 Hasselt")}&z=15&output=embed`;
 
-const hoeGevonden = [
-  "Huisarts",
-  "Specialist",
-  "Gynaecoloog",
-  "Vroedvrouw",
-  "Familie",
-  "Vrienden",
-  "Sportclub trainer of coach",
-  "Google / Google Maps",
-  "Instagram",
-  "Facebook",
-  "Een evenement of activiteit van Movenda",
-  "Via een andere zorgverlener",
-  "Bedrijf / werkgever",
-  "Andere",
-];
-
-const followUpNaam = ["Huisarts", "Specialist", "Gynaecoloog", "Vroedvrouw", "Via een andere zorgverlener"];
 
 const jsonLd = [
   breadcrumbSchema([
@@ -150,6 +133,7 @@ const jsonLd = [
           <option value="Movenda Performance Centre">Movenda Performance Centre</option>
         </select>
       </div>
+      <ContactVerwijsVraag opties={pagina.verwijsopties} />
       <fieldset class="rounded-lg border border-brand-border px-4 py-3">
         <legend class="px-1 text-sm font-semibold">Waarvoor wil je langskomen?</legend>
         <div class="mt-2 flex flex-wrap gap-4 text-sm">
@@ -167,18 +151,6 @@ const jsonLd = [
           <label><input type="radio" name="voorschrift" value="Niet van toepassing" /> Niet van toepassing</label>
         </div>
       </fieldset>
-      <label class="text-sm">
-        <span class="font-semibold">Hoe ben je bij ons terechtgekomen?</span>
-        <select class="mt-1 w-full rounded-lg border border-brand-border px-4 py-3" name="hoeGevonden" data-hoe>
-          <option value="">Kies wat het best past</option>
-          {hoeGevonden.map((opt) => (
-            <option value={opt}>{opt}</option>
-          ))}
-        </select>
-      </label>
-      <input class="hidden rounded-lg border border-brand-border px-4 py-3" type="text" name="hoeGevondenDetail" data-hoe-detail placeholder="Naam / extra info" />
-      <textarea class="hidden rounded-lg border border-brand-border px-4 py-3" name="clubNaam" rows="2" data-club placeholder="Naam van de club"></textarea>
-      <input class="hidden rounded-lg border border-brand-border px-4 py-3" type="text" name="eventNaam" data-event placeholder="Welk event?" />
       <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Jouw vraag of bericht" required minlength="5"></textarea>
       <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
       <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
@@ -189,13 +161,9 @@ const jsonLd = [
   </section>
 </Layout>
 
-<script define:vars={{ apiUrl: contactApiUrl, followUpNaam }} is:inline>
+<script define:vars={{ apiUrl: contactApiUrl }} is:inline>
   const form = document.querySelector("[data-contact-form]");
   const status = document.querySelector("[data-contact-status]");
-  const hoe = document.querySelector("[data-hoe]");
-  const detail = document.querySelector("[data-hoe-detail]");
-  const club = document.querySelector("[data-club]");
-  const eventField = document.querySelector("[data-event]");
 
   // Click-to-load Google Maps (see comment on the [data-map] element).
   const mapBox = document.querySelector("[data-map]");
@@ -209,13 +177,6 @@ const jsonLd = [
     mapBox.replaceChildren(iframe);
     mapBox.className = "mt-8 h-72 overflow-hidden rounded-2xl border border-brand-border";
     window.mvTrack?.("map_load");
-  });
-
-  hoe?.addEventListener("change", () => {
-    const v = hoe.value;
-    detail.classList.toggle("hidden", !followUpNaam.includes(v) && v !== "Andere");
-    club.classList.toggle("hidden", v !== "Sportclub trainer of coach");
-    eventField.classList.toggle("hidden", v !== "Een evenement of activiteit van Movenda");
   });
 
   form?.addEventListener("submit", async (e) => {

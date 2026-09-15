@@ -119,6 +119,22 @@
     "seoDescriptionEn": "The vision of the Movenda Performance Centre: objective data, one-on-one coaching and sustainable sporting performance."
   },
   "contact": {
+    "verwijsopties": [
+      { "label": "Huisarts", "labelEn": "GP", "vervolg": "naam" },
+      { "label": "Specialist", "labelEn": "Specialist", "vervolg": "naam" },
+      { "label": "Gynaecoloog", "labelEn": "Gynaecologist", "vervolg": "naam" },
+      { "label": "Vroedvrouw", "labelEn": "Midwife", "vervolg": "naam" },
+      { "label": "Familie", "labelEn": "Family", "vervolg": "geen" },
+      { "label": "Vrienden", "labelEn": "Friends", "vervolg": "geen" },
+      { "label": "Sportclub, trainer of coach", "labelEn": "Sports club, trainer or coach", "vervolg": "club" },
+      { "label": "Google / Google Maps", "labelEn": "Google / Google Maps", "vervolg": "geen" },
+      { "label": "Instagram", "labelEn": "Instagram", "vervolg": "geen" },
+      { "label": "Facebook", "labelEn": "Facebook", "vervolg": "geen" },
+      { "label": "Een evenement of activiteit van Movenda", "labelEn": "A Movenda event or activity", "vervolg": "event" },
+      { "label": "Via een andere zorgverlener", "labelEn": "Another healthcare provider", "vervolg": "naam" },
+      { "label": "Bedrijf / werkgever", "labelEn": "Company / employer", "vervolg": "tekst" },
+      { "label": "Andere", "labelEn": "Other", "vervolg": "tekst" }
+    ],
     "titel": "Neem contact op",
     "titelEn": "Get in touch",
     "intro": "Heb je een vraag of wil je een afspraak maken? Vul het formulier in en we nemen zo snel mogelijk contact met je op. Je kan ons ook rechtstreeks bellen of mailen.",

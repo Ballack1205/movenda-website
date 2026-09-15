@@ -2,9 +2,10 @@
 // Hero photo of a fixed page. Julie's upload in Sanity (Pagina's → Hoofdfoto)
 // wins; without an upload the bundled marketing photo is used through
 // astro:assets so nothing changes for pages she has not touched.
-import { Image } from "astro:assets";
+// Thin wrapper around CmsFoto that reads the hero fields of a Pagina.
 import type { ImageMetadata } from "astro";
 import type { Pagina } from "../lib/content";
+import CmsFoto from "./CmsFoto.astro";
 
 export interface Props {
   pagina: Pick<Pagina, "foto" | "fotoHotspot" | "fotoAlt">;
@@ -20,36 +21,8 @@ export interface Props {
   sizes?: string;
 }
 
-const { pagina, fallback, alt, width, height, class: className, priority, widths, sizes } = Astro.props;
-
-function cdn(w: number, h: number): string {
-  const fp = pagina.fotoHotspot
-    ? `&crop=focalpoint&fp-x=${pagina.fotoHotspot.x.toFixed(3)}&fp-y=${pagina.fotoHotspot.y.toFixed(3)}`
-    : "";
-  return `${pagina.foto}?w=${w}&h=${h}&fit=crop${fp}&auto=format`;
-}
-
-const cmsWidths = widths || [width, width * 2];
-const cmsSrcset = pagina.foto
-  ? cmsWidths.map((w) => `${cdn(w, Math.round((w * height) / width))} ${w}w`).join(", ")
-  : undefined;
+const { pagina, ...rest } = Astro.props;
+const foto = pagina.foto ? { url: pagina.foto, hotspot: pagina.fotoHotspot, alt: pagina.fotoAlt } : undefined;
 ---
 
-{pagina.foto ? (
-  <img
-    src={cdn(width, height)}
-    srcset={cmsSrcset}
-    sizes={sizes || `${width}px`}
-    alt={pagina.fotoAlt || alt}
-    width={width}
-    height={height}
-    class={className}
-    loading={priority ? "eager" : "lazy"}
-    fetchpriority={priority ? "high" : undefined}
-    decoding="async"
-  />
-) : widths ? (
-  <Image src={fallback} alt={alt} widths={widths} sizes={sizes} class={className} priority={priority} />
-) : (
-  <Image src={fallback} alt={alt} width={width} height={height} class={className} priority={priority} />
-)}
+<CmsFoto foto={foto} {...rest} />

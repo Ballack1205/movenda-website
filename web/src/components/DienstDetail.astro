@@ -1,7 +1,8 @@
 ---
-import { formatEuro, type Dienst, type Locatie, type Teamlid } from "../lib/content";
+import { formatEuro, getBlogPostsVoorDienst, type Dienst, type Locatie, type Teamlid } from "../lib/content";
 import { dienstPhotoSrc, teamPhotoSrc } from "../lib/images";
 import { localizeHref, withLang } from "../lib/i18n";
+import BlogPostCard from "./BlogPostCard.astro";
 
 interface Props {
   dienst: Dienst;
@@ -24,6 +25,10 @@ const ctaLabel =
       : "Contact us"
     : dienst.ctaLabel || "Maak een afspraak";
 const ctaUrl = localizeHref(dienst.ctaUrl, lang);
+// "Lees ook": articles Julie linked to this dienst (Blogpost → "Gaat over deze behandelingen"),
+// topped up with posts that mention it. Internal links dienst ↔ blog are what make the blog
+// count for the ranking of the treatment pages.
+const posts = await getBlogPostsVoorDienst(dienst, 3);
 
 function tariefFor(lid: Teamlid): string | undefined {
   if (dienst.categorie === "kine") return formatEuro(lid.tariefKine);
@@ -104,4 +109,17 @@ function tariefFor(lid: Teamlid): string | undefined {
       {locatie.telefoon}
     </a>
   </div>
+
+  {posts.length > 0 && (
+    <aside class="mt-14 border-t border-brand-border pt-10">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">
+        {lang === "en" ? "Read more about this" : "Lees ook"}
+      </h2>
+      <div class={`mt-4 grid gap-6 ${posts.length > 1 ? "sm:grid-cols-2" : ""}`}>
+        {posts.map((post) => (
+          <BlogPostCard post={post} lang={lang} />
+        ))}
+      </div>
+    </aside>
+  )}
 </article>

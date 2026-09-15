@@ -1,0 +1,73 @@
+---
+// English twin of /blog/tag/[tag]; same tag values, English labels.
+import Layout from "../../../../layouts/Layout.astro";
+import BlogPostCard from "../../../../components/BlogPostCard.astro";
+import { getBlogPosts } from "../../../../lib/content";
+import { blogListSchema, breadcrumbSchema } from "../../../../lib/schema";
+import { BLOG_TAGS, blogTagLabel } from "../../../../lib/blog";
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts();
+  return BLOG_TAGS.filter((tag) => posts.some((post) => post.tags?.includes(tag.value))).map((tag) => ({
+    params: { tag: tag.value },
+  }));
+}
+
+const { tag } = Astro.params;
+const allPosts = await getBlogPosts();
+const posts = allPosts.filter((post) => post.tags?.includes(tag!));
+const label = blogTagLabel(tag!, "en");
+const others = BLOG_TAGS.filter((item) => item.value !== tag && allPosts.some((post) => post.tags?.includes(item.value)));
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Blog", path: "/en/blog" },
+    { name: label, path: `/en/blog/tag/${tag}` },
+  ]),
+  blogListSchema(posts, "en"),
+];
+---
+
+<Layout
+  title={`${label} | Blog | Movenda Hasselt`}
+  description={`Articles on ${label.toLowerCase()} by the physiotherapists and trainers of Movenda in Hasselt: causes, exercises, prevention and recovery.`}
+  path={`/en/blog/tag/${tag}`}
+  altPath={`/blog/tag/${tag}`}
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 py-12 lg:py-16">
+    <a href="/en/blog" class="text-sm font-semibold text-brand-primary hover:underline">← Blog</a>
+    <p class="mt-5 text-sm font-semibold uppercase tracking-wide text-brand-primary">Topic</p>
+    <h1 class="mt-2 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">{label}</h1>
+    <p class="mt-4 max-w-2xl text-lg text-brand-muted">
+      {posts.length === 1 ? "One article" : `${posts.length} articles`} on {label.toLowerCase()}, written by the
+      Movenda team in Hasselt.
+    </p>
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <BlogPostCard post={post} lang="en" />
+      ))}
+    </div>
+
+    {others.length > 0 && (
+      <nav class="mt-14" aria-label="Other topics">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Other topics</h2>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {others.map((item) => (
+            <li>
+              <a
+                href={`/en/blog/tag/${item.value}`}
+                class="inline-block rounded-full border border-brand-border px-3 py-1.5 text-sm font-semibold text-brand-text transition hover:border-brand-primary hover:text-brand-primary"
+              >
+                {blogTagLabel(item.value, "en")}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+  </section>
+</Layout>

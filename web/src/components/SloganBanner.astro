@@ -1,23 +1,33 @@
 ---
-import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
+import type { CmsFoto as CmsFotoData } from "../lib/content";
+import CmsFoto from "./CmsFoto.astro";
 
 interface Props {
   quote: string;
+  /** Bundled fallback photo. */
   image: ImageMetadata;
+  /** Julie's upload (Pagina's → Homepage → Foto achter de slogan-banner). */
+  foto?: CmsFotoData;
 }
 
-const { quote, image } = Astro.props;
+const { quote, image, foto } = Astro.props;
 const lines = quote.trim().split(/(?<=\.)\s+/).filter(Boolean);
+// The bundled photo has its subject top-centre; a CMS upload brings its own hotspot instead.
+const position = foto ? "object-center" : "object-[52%_22%]";
 ---
 
 <section class="relative isolate flex min-h-[16rem] items-center overflow-hidden sm:min-h-[18rem] lg:min-h-[20rem]">
-  <Image
-    src={image}
+  <CmsFoto
+    foto={foto}
+    fallback={image}
     alt=""
+    decorative
+    width={1920}
+    height={640}
     widths={[960, 1280, 1920]}
     sizes="100vw"
-    class="absolute inset-0 -z-10 h-full w-full object-cover object-[52%_22%]"
+    class={`absolute inset-0 -z-10 h-full w-full object-cover ${position}`}
   />
   <div class="absolute inset-0 -z-10 bg-brand-header/45" aria-hidden="true"></div>
   <p

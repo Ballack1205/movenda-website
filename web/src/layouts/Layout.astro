@@ -77,8 +77,15 @@ const {
 // DNS cutover (see DECISIONS.md). robots.txt.ts reads the same flag.
 const noindex = NOINDEX || pageNoindex;
 const canonical = absoluteUrl(path);
+
+const [popup, settings, locaties] = await Promise.all([getActivePopup(path), getSiteSettings(), getLocaties()]);
+
 // Sanity returns null (not undefined) for a missing image, so the prop default does not kick in.
-const og = ogImageSrc(ogImage || "/og-default.jpg", ogImage ? ogImageShape : "wide");
+// Pages without their own image fall back to Julie's default share image (Site-instellingen),
+// and only then to the bundled /og-default.jpg.
+const ogFallback = settings.ogAfbeelding || "/og-default.jpg";
+const usesPageImage = !!ogImage && ogImage !== "/og-default.jpg";
+const og = ogImageSrc(usesPageImage ? ogImage! : ogFallback, usesPageImage ? ogImageShape : "wide");
 const ogImageUrl = absoluteUrl(og.url);
 const siteName = brand === "mpc" ? "Movenda Performance Centre" : "Movenda";
 const ogLocale = lang === "en" ? "en_GB" : "nl_BE";
@@ -99,8 +106,6 @@ const headLinks = [
   ...extraLinks,
 ];
 
-const [popup, settings, locaties] = await Promise.all([getActivePopup(path), getSiteSettings(), getLocaties()]);
-
 // One @graph per page: Organization + WebSite + both vestigingen always, plus
 // whatever the page passes in (Person, Service, BreadcrumbList, ...), deduped
 // by @id so a page may pass a richer version of a shared node.
@@ -116,6 +121,9 @@ const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {settings.googleSiteVerification && (
+      <meta name="google-site-verification" content={settings.googleSiteVerification} />
+    )}
     {nlPath && <link rel="alternate" hreflang="nl-BE" href={absoluteUrl(nlPath)} />}
     {enPath && <link rel="alternate" hreflang="en" href={absoluteUrl(enPath)} />}
     {nlPath && <link rel="alternate" hreflang="x-default" href={absoluteUrl(nlPath)} />}

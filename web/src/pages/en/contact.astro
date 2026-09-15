@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Routebeschrijving from "../../components/Routebeschrijving.astro";
+import ContactVerwijsVraag from "../../components/ContactVerwijsVraag.astro";
 import { getLocaties, getPagina, paginaAlineas, paginaTekst } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
 import { byAppointment, legalCourt, locatieType, weekday } from "../../lib/i18n";
@@ -13,24 +14,6 @@ const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda
 const olympia = locaties.find((l) => l.slug === "olympia");
 const mapEmbedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(olympia?.adres || "Kuringersteenweg 242 Hasselt")}&z=15&output=embed`;
 
-const hoeGevonden = [
-  { value: "Huisarts", label: "GP" },
-  { value: "Specialist", label: "Specialist" },
-  { value: "Gynaecoloog", label: "Gynaecologist" },
-  { value: "Vroedvrouw", label: "Midwife" },
-  { value: "Familie", label: "Family" },
-  { value: "Vrienden", label: "Friends" },
-  { value: "Sportclub trainer of coach", label: "Sports club trainer or coach" },
-  { value: "Google / Google Maps", label: "Google / Google Maps" },
-  { value: "Instagram", label: "Instagram" },
-  { value: "Facebook", label: "Facebook" },
-  { value: "Een evenement of activiteit van Movenda", label: "A Movenda event or activity" },
-  { value: "Via een andere zorgverlener", label: "Another healthcare provider" },
-  { value: "Bedrijf / werkgever", label: "Company / employer" },
-  { value: "Andere", label: "Other" },
-];
-
-const followUpNaam = ["Huisarts", "Specialist", "Gynaecoloog", "Vroedvrouw", "Via een andere zorgverlener"];
 
 const jsonLd = [
   breadcrumbSchema([
@@ -149,6 +132,7 @@ const jsonLd = [
           <option value="Movenda Performance Centre">Movenda Performance Centre</option>
         </select>
       </div>
+      <ContactVerwijsVraag opties={pagina.verwijsopties} lang="en" />
       <fieldset class="rounded-lg border border-brand-border px-4 py-3">
         <legend class="px-1 text-sm font-semibold">What would you like to come in for?</legend>
         <div class="mt-2 flex flex-wrap gap-4 text-sm">
@@ -166,18 +150,6 @@ const jsonLd = [
           <label><input type="radio" name="voorschrift" value="Niet van toepassing" /> Not applicable</label>
         </div>
       </fieldset>
-      <label class="text-sm">
-        <span class="font-semibold">How did you find us?</span>
-        <select class="mt-1 w-full rounded-lg border border-brand-border px-4 py-3" name="hoeGevonden" data-hoe>
-          <option value="">Choose what fits best</option>
-          {hoeGevonden.map((opt) => (
-            <option value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-      </label>
-      <input class="hidden rounded-lg border border-brand-border px-4 py-3" type="text" name="hoeGevondenDetail" data-hoe-detail placeholder="Name / extra info" />
-      <textarea class="hidden rounded-lg border border-brand-border px-4 py-3" name="clubNaam" rows="2" data-club placeholder="Name of the club"></textarea>
-      <input class="hidden rounded-lg border border-brand-border px-4 py-3" type="text" name="eventNaam" data-event placeholder="Which event?" />
       <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Your question or message" required minlength="5"></textarea>
       <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
       <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
@@ -188,13 +160,9 @@ const jsonLd = [
   </section>
 </Layout>
 
-<script define:vars={{ apiUrl: contactApiUrl, followUpNaam }} is:inline>
+<script define:vars={{ apiUrl: contactApiUrl }} is:inline>
   const form = document.querySelector("[data-contact-form]");
   const status = document.querySelector("[data-contact-status]");
-  const hoe = document.querySelector("[data-hoe]");
-  const detail = document.querySelector("[data-hoe-detail]");
-  const club = document.querySelector("[data-club]");
-  const eventField = document.querySelector("[data-event]");
 
   const mapBox = document.querySelector("[data-map]");
   mapBox?.querySelector("[data-map-load]")?.addEventListener("click", () => {
@@ -207,13 +175,6 @@ const jsonLd = [
     mapBox.replaceChildren(iframe);
     mapBox.className = "mt-8 h-72 overflow-hidden rounded-2xl border border-brand-border";
     window.mvTrack?.("map_load");
-  });
-
-  hoe?.addEventListener("change", () => {
-    const v = hoe.value;
-    detail.classList.toggle("hidden", !followUpNaam.includes(v) && v !== "Andere");
-    club.classList.toggle("hidden", v !== "Sportclub trainer of coach");
-    eventField.classList.toggle("hidden", v !== "Een evenement of activiteit van Movenda");
   });
 
   form?.addEventListener("submit", async (e) => {

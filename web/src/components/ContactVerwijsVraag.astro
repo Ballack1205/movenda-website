@@ -1,0 +1,82 @@
+---
+// "Hoe ben je bij ons terechtgekomen?" in the contact form. Julie asked for
+// this right at the top and mandatory: it tells the practice which referrers
+// (doctors, clubs, Google…) actually bring patients. Choices + which follow-up
+// each one triggers come from the CMS (Pagina's → Contact → Blokken); the
+// defaults are the list from the old Squarespace form.
+//
+// Field names are unchanged so api/server.js keeps working:
+//   hoeGevonden        the chosen option (always the Dutch label, for the mail)
+//   hoeGevondenDetail  follow-up "naam" / "tekst"
+//   clubNaam           follow-up "club"
+//   eventNaam          follow-up "event"
+import type { VerwijsOptie } from "../lib/content";
+
+interface Props {
+  opties: VerwijsOptie[];
+  lang?: "nl" | "en";
+}
+
+const { opties, lang = "nl" } = Astro.props;
+
+const t = {
+  nl: {
+    vraag: "Hoe ben je bij ons terechtgekomen?",
+    kies: "Kies wat het best past",
+    naam: "Naam van de arts, specialist of zorgverlener",
+    club: "Naam van de club (en eventueel de trainer)",
+    event: "Welk event of welke activiteit?",
+    tekst: "Vertel gerust iets meer",
+  },
+  en: {
+    vraag: "How did you find us?",
+    kies: "Choose what fits best",
+    naam: "Name of the doctor, specialist or care provider",
+    club: "Name of the club (and coach, if any)",
+    event: "Which event or activity?",
+    tekst: "Feel free to tell us more",
+  },
+}[lang];
+
+const input = "rounded-lg border border-brand-border px-4 py-3";
+---
+
+<div class="grid gap-4" data-verwijs>
+  <label class="text-sm">
+    <span class="font-semibold">{t.vraag} <span aria-hidden="true" class="text-brand-primary">*</span></span>
+    <select class={`mt-1 w-full ${input}`} name="hoeGevonden" required data-verwijs-select>
+      <option value="">{t.kies}</option>
+      {opties.map((opt) => (
+        <option value={opt.label} data-vervolg={opt.vervolg}>
+          {lang === "en" ? opt.labelEn || opt.label : opt.label}
+        </option>
+      ))}
+    </select>
+  </label>
+  <input class={`hidden ${input}`} type="text" name="hoeGevondenDetail" data-vervolg-veld="naam" placeholder={t.naam} aria-label={t.naam} autocomplete="off" />
+  <input class={`hidden ${input}`} type="text" name="clubNaam" data-vervolg-veld="club" placeholder={t.club} aria-label={t.club} autocomplete="organization" />
+  <input class={`hidden ${input}`} type="text" name="eventNaam" data-vervolg-veld="event" placeholder={t.event} aria-label={t.event} autocomplete="off" />
+  <input class={`hidden ${input}`} type="text" name="hoeGevondenDetail" data-vervolg-veld="tekst" placeholder={t.tekst} aria-label={t.tekst} autocomplete="off" />
+</div>
+
+<script>
+  // Show only the follow-up field that belongs to the chosen option; disable the others so a hidden
+  // field never travels along (two inputs share the name hoeGevondenDetail).
+  for (const box of document.querySelectorAll<HTMLElement>("[data-verwijs]")) {
+    const select = box.querySelector<HTMLSelectElement>("[data-verwijs-select]");
+    const velden = box.querySelectorAll<HTMLInputElement>("[data-vervolg-veld]");
+    const update = () => {
+      const chosen = select?.selectedOptions[0]?.dataset.vervolg || "geen";
+      for (const veld of velden) {
+        const show = veld.dataset.vervolgVeld === chosen;
+        veld.classList.toggle("hidden", !show);
+        veld.disabled = !show;
+        if (!show) veld.value = "";
+      }
+    };
+    select?.addEventListener("change", update);
+    // After a successful send the page calls form.reset(); re-sync once the browser has cleared the values.
+    box.closest("form")?.addEventListener("reset", () => setTimeout(update));
+    update();
+  }
+</script>

@@ -7,6 +7,7 @@
 // See DECISIONS.md for why there is no AggregateRating here — reviews are
 // shown as a badge linking to Google, not as self-reported schema.
 import {
+  dienstHref,
   dienstSeoDescriptionEn,
   prijsNaam,
   prijsNootVolledig,
@@ -314,6 +315,10 @@ export function blogPostingNode(post: BlogPost, lang: Lang = "nl"): JsonLdNode {
     dateModified: post.updatedAt || post.publicatiedatum,
     image: blogImage(post.cover),
     keywords: post.tags?.join(", "),
+    // Ties the article to the Service nodes of the linked dienst pages (same @id as serviceNode).
+    about: post.diensten?.length
+      ? post.diensten.map((d) => ({ "@id": ids.service(dienstHref(d, lang)) }))
+      : undefined,
     author: post.auteurNaam
       ? compact({
           "@type": "Person",

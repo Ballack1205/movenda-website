@@ -1,0 +1,61 @@
+---
+// Any photo Julie may replace from the Studio. Her upload (Sanity CDN URL +
+// hotspot) wins; without an upload the bundled marketing photo is rendered
+// through astro:assets, so pages she has not touched look exactly as before.
+//
+// PaginaFoto (hero of a fixed page) is a thin wrapper around this; use
+// CmsFoto directly for secondary photos, banners and pijler images.
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import type { CmsFoto } from "../lib/content";
+
+export interface Props {
+  foto?: CmsFoto;
+  fallback: ImageMetadata;
+  /** Alt for the bundled photo; Julie's "Beschrijving van de foto" wins when she uploaded one. */
+  alt: string;
+  width: number;
+  height: number;
+  class?: string;
+  priority?: boolean;
+  /** Responsive widths (both the CMS srcset and the bundled photo use them). */
+  widths?: number[];
+  sizes?: string;
+  /** Decorative image: force alt="" even when Julie filled in a description. */
+  decorative?: boolean;
+}
+
+const { foto, fallback, alt, width, height, class: className, priority, widths, sizes, decorative } = Astro.props;
+
+function cdn(w: number, h: number): string {
+  const fp = foto?.hotspot
+    ? `&crop=focalpoint&fp-x=${foto.hotspot.x.toFixed(3)}&fp-y=${foto.hotspot.y.toFixed(3)}`
+    : "";
+  return `${foto?.url}?w=${w}&h=${h}&fit=crop${fp}&auto=format`;
+}
+
+const cmsWidths = widths || [width, width * 2];
+const cmsSrcset = foto?.url
+  ? cmsWidths.map((w) => `${cdn(w, Math.round((w * height) / width))} ${w}w`).join(", ")
+  : undefined;
+const altText = decorative ? "" : foto?.alt || alt;
+---
+
+{foto?.url ? (
+  <img
+    src={cdn(width, height)}
+    srcset={cmsSrcset}
+    sizes={sizes || `${width}px`}
+    alt={altText}
+    width={width}
+    height={height}
+    class={className}
+    loading={priority ? "eager" : "lazy"}
+    fetchpriority={priority ? "high" : undefined}
+    decoding="async"
+  />
+) : widths ? (
+  <Image src={fallback} alt={altText} widths={widths} sizes={sizes} class={className} priority={priority} />
+) : (
+  <Image src={fallback} alt={altText} width={width} height={height} class={className} priority={priority} />
+)}

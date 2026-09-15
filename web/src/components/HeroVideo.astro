@@ -1,0 +1,80 @@
+---
+// Hero of a fixed page with an optional muted looping video on top of the
+// photo (Pagina's → MPC → "Video bovenaan"). The photo is always rendered:
+// it is the LCP element, the poster while the video buffers, and the only
+// thing shown when the visitor prefers reduced motion or the video fails.
+// No video = exactly the PaginaFoto output, so pages without a clip are
+// untouched.
+import type { ImageMetadata } from "astro";
+import type { Pagina } from "../lib/content";
+import PaginaFoto from "./PaginaFoto.astro";
+
+export interface Props {
+  pagina: Pick<Pagina, "foto" | "fotoHotspot" | "fotoAlt" | "heroVideo">;
+  fallback: ImageMetadata;
+  alt: string;
+  width: number;
+  height: number;
+  /** Classes for the photo (aspect ratio, rounding, shadow). The video copies the box. */
+  class?: string;
+  priority?: boolean;
+}
+
+const { pagina, fallback, alt, width, height, class: className = "", priority } = Astro.props;
+const video = pagina.heroVideo;
+const type = video?.toLowerCase().endsWith(".webm") ? "video/webm" : "video/mp4";
+---
+
+{video ? (
+  <div class="hero-video relative">
+    <PaginaFoto pagina={pagina} fallback={fallback} alt={alt} width={width} height={height} class={className} priority={priority} />
+    {/* Decorative: the photo carries the alt text; the clip only adds atmosphere. Vertical clips are
+        covered (centre crop) into the same box as the photo, so Julie may upload a phone recording. */}
+    <video
+      class={`hero-video__clip absolute inset-0 h-full w-full object-cover ${className}`}
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-hidden="true"
+      tabindex="-1"
+      disablepictureinpicture
+    >
+      <source src={video} type={type} />
+    </video>
+  </div>
+) : (
+  <PaginaFoto pagina={pagina} fallback={fallback} alt={alt} width={width} height={height} class={className} priority={priority} />
+)}
+
+<style>
+  /* Only fade the clip in once it actually plays, so the photo stays the visible LCP element
+     and nothing flashes when the network is slow. */
+  .hero-video__clip {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .hero-video__clip.is-playing {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-video__clip {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Autoplay may be refused (Low Power Mode, data saver); then the photo simply stays. Remove the
+  // element instead of leaving a stalled black box.
+  for (const clip of document.querySelectorAll<HTMLVideoElement>(".hero-video__clip")) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      clip.remove();
+      continue;
+    }
+    clip.addEventListener("playing", () => clip.classList.add("is-playing"), { once: true });
+    clip.addEventListener("error", () => clip.remove(), { once: true });
+    clip.play().catch(() => clip.remove());
+  }
+</script>

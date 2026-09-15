@@ -15,7 +15,8 @@ export default defineType({
   title: "Dienst",
   type: "document",
   icon: DocumentsIcon,
-  description: "Behandeling of training met een eigen pagina. Titel, tekst en foto hier; de layout blijft in de code.",
+  description:
+    "Behandeling of training met een eigen pagina. Titel, tekst en foto hier; de layout blijft in de code. Een nieuwe dienst verschijnt automatisch in het menu onder haar categorie. Snel starten? Open een gelijkaardige dienst en kies ‘Dupliceren als nieuw concept’.",
   groups: [
     { name: "inhoud", title: "Dienst", default: true },
     { name: "seo", title: "SEO" },
@@ -72,6 +73,24 @@ export default defineType({
         "Koppel het tarief dat bij deze dienst hoort. Wordt als prijs meegegeven in de structured data (zo kan Google/AI 'wat kost dry needling in Hasselt' beantwoorden). Niet ingevuld = we zoeken automatisch op naam.",
     }),
     defineField({ name: "volgorde", title: "Volgorde", type: "number", initialValue: 0, group: "inhoud" }),
+    defineField({
+      name: "toonInMenu",
+      title: "Tonen in het menu",
+      type: "boolean",
+      group: "inhoud",
+      initialValue: true,
+      description:
+        "Uit = de pagina blijft bestaan en vindbaar, maar staat niet in het uitklapmenu bovenaan (bv. bij een tijdelijk aanbod of een te lange lijst).",
+    }),
+    defineField({
+      name: "menuLabel",
+      title: "Korte naam voor het menu (optioneel)",
+      type: "string",
+      group: "inhoud",
+      description: "Leeg = de titel. Handig als de titel te lang is voor het uitklapmenu, bv. ‘Pre- en postnataal’.",
+      validation: (Rule) => Rule.max(32).warning("Hou het kort, anders past het niet in het menu."),
+    }),
+    defineField({ name: "menuLabelEn", title: "Korte naam voor het menu (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
       name: "seoTitle",
       title: "SEO-titel (NL)",

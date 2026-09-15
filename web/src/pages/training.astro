@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import CmsFoto from "../components/CmsFoto.astro";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import DienstCard from "../components/DienstCard.astro";
@@ -66,8 +66,9 @@ const jsonLd = [
           <DienstCard dienst={dienst} />
         ))}
       </div>
-      <Image
-        src={trainingSecondary}
+      <CmsFoto
+        foto={pagina.fotoSecundair}
+        fallback={trainingSecondary}
         alt="Krachttraining bij Movenda"
         width={480}
         height={640}

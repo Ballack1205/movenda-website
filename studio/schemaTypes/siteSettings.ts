@@ -30,6 +30,15 @@ export default defineType({
       ],
     }),
     defineField({
+      name: "ogAfbeelding",
+      title: "Standaard deelafbeelding (WhatsApp, Facebook, LinkedIn, Google)",
+      type: "image",
+      group: "algemeen",
+      options: { hotspot: true },
+      description:
+        "De afbeelding die verschijnt als iemand een link naar de site deelt en de pagina geen eigen foto heeft. Liggend, minstens 1200 × 630 px. Leeg = de huidige standaardafbeelding.",
+    }),
+    defineField({
       name: "booking",
       title: "Boekknop",
       type: "object",
@@ -106,6 +115,17 @@ export default defineType({
           initialValue: "test",
         }),
         defineField({ name: "ga4Id", title: "Google Analytics 4 — Measurement ID (G-XXXX)", type: "string" }),
+        defineField({
+          name: "googleSiteVerification",
+          title: "Google Search Console — verificatiecode",
+          type: "string",
+          description:
+            "Alleen nodig als Search Console vraagt om verificatie via een HTML-tag. Plak enkel de code (het stuk na content=\"…\"), niet de hele tag. Leeg = geen tag.",
+          validation: (Rule) =>
+            Rule.custom((value) =>
+              !value || /^[A-Za-z0-9_-]+$/.test(value.trim()) ? true : "Plak enkel de code zelf, zonder <meta …> of aanhalingstekens.",
+            ),
+        }),
         defineField({
           name: "umami",
           title: "Umami (cookieloos)",

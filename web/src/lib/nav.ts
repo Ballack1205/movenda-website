@@ -9,7 +9,7 @@
 
 import {
   dienstHref,
-  dienstKorteTitel,
+  dienstMenuLabel,
   getDiensten,
   getLocaties,
   getSiteSettings,
@@ -72,10 +72,11 @@ function loadNavData(): Promise<NavData> {
 function dienstLinks(diensten: Dienst[], categorie: DienstCategorie | DienstCategorie[], lang: Lang): NavLink[] {
   const cats = Array.isArray(categorie) ? categorie : [categorie];
   // Category order as passed in, then Julie's volgorde within a category.
+  // "Tonen in het menu" off (Studio → Diensten) hides a dienst here only; its page stays live.
   return diensten
-    .filter((d) => cats.includes(d.categorie))
+    .filter((d) => cats.includes(d.categorie) && d.toonInMenu !== false)
     .sort((a, b) => cats.indexOf(a.categorie) - cats.indexOf(b.categorie) || a.volgorde - b.volgorde)
-    .map((d) => ({ href: dienstHref(d, lang), label: dienstKorteTitel(d, lang) }));
+    .map((d) => ({ href: dienstHref(d, lang), label: dienstMenuLabel(d, lang) }));
 }
 
 function sportaanbodLinks(items: SportaanbodItem[], lang: Lang = "nl"): NavLink[] {

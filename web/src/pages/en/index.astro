@@ -1,5 +1,5 @@
 ---
-import { Image, getImage } from "astro:assets";
+import { getImage } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import SocialLinks from "../../components/SocialLinks.astro";
@@ -13,6 +13,7 @@ import TeamCarousel from "../../components/TeamCarousel.astro";
 import SloganBanner from "../../components/SloganBanner.astro";
 import HomePijler from "../../components/HomePijler.astro";
 import PaginaFoto from "../../components/PaginaFoto.astro";
+import CmsFoto from "../../components/CmsFoto.astro";
 import {
   getTeamleden,
   getSiteSettings,
@@ -56,6 +57,11 @@ const heroLocaties = (await getLocaties())
 }));
 
 const pagina = await getPagina("home");
+// The MPC teaser card at the bottom reuses the MPC page hero photo (Pagina's → MPC → Hoofdfoto).
+const mpcPagina = await getPagina("mpc");
+const mpcTeaserFoto = mpcPagina.foto
+  ? { url: mpcPagina.foto, hotspot: mpcPagina.fotoHotspot, alt: mpcPagina.fotoAlt }
+  : undefined;
 
 const heroSizes = "(min-width: 1024px) 60vw, 100vw";
 const heroWidths = [640, 960, 1280];
@@ -147,8 +153,9 @@ const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
           </p>
         </div>
         <figure class="hero-inset absolute bottom-6 -left-10 hidden w-40 xl:block">
-          <Image
-            src={kineHero}
+          <CmsFoto
+            foto={settings.homePijlers.kine.foto}
+            fallback={kineHero}
             alt="A Movenda physiotherapist treating a patient"
             width={352}
             height={440}
@@ -213,7 +220,7 @@ const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
   />
 
   {settings.slogans.home && (
-    <SloganBanner quote={settings.slogans.home} image={homeSquats} />
+    <SloganBanner quote={settings.slogans.home} image={homeSquats} foto={pagina.bannerFoto} />
   )}
 
   <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">
@@ -268,7 +275,7 @@ const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
       href="/en/mpc"
       class="group relative overflow-hidden rounded-2xl p-6 text-white transition hover:opacity-95 sm:p-8"
     >
-      <Image src={mpcHero} alt="" width={640} height={480} class="absolute inset-0 h-full w-full object-cover" />
+      <CmsFoto foto={mpcTeaserFoto} fallback={mpcHero} alt="" decorative width={640} height={480} class="absolute inset-0 h-full w-full object-cover" />
       <div class="absolute inset-0 bg-brand-header/80"></div>
       <div class="relative">
         <h2 class="text-2xl font-bold text-white">Movenda Performance Centre</h2>

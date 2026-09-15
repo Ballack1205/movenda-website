@@ -1,0 +1,76 @@
+---
+// One listing page per blog tag (/blog/tag/rugpijn). Tags are the closed
+// BLOG_TAGS list Julie picks from in the Studio; a tag without posts gets no
+// page. Gives Google a topical hub per subject (rugpijn, sportblessures…)
+// and links every article on that subject from one crawlable URL.
+import Layout from "../../../layouts/Layout.astro";
+import BlogPostCard from "../../../components/BlogPostCard.astro";
+import { getBlogPosts } from "../../../lib/content";
+import { blogListSchema, breadcrumbSchema } from "../../../lib/schema";
+import { BLOG_TAGS, blogTagLabel } from "../../../lib/blog";
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts();
+  return BLOG_TAGS.filter((tag) => posts.some((post) => post.tags?.includes(tag.value))).map((tag) => ({
+    params: { tag: tag.value },
+  }));
+}
+
+const { tag } = Astro.params;
+const allPosts = await getBlogPosts();
+const posts = allPosts.filter((post) => post.tags?.includes(tag!));
+const label = blogTagLabel(tag!);
+// Only tags that have a page (= at least one post), so no link ever 404s.
+const others = BLOG_TAGS.filter((item) => item.value !== tag && allPosts.some((post) => post.tags?.includes(item.value)));
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: label, path: `/blog/tag/${tag}` },
+  ]),
+  blogListSchema(posts),
+];
+---
+
+<Layout
+  title={`${label} | Blog | Movenda Hasselt`}
+  description={`Artikels over ${label.toLowerCase()} van de kinesisten en trainers van Movenda in Hasselt: oorzaken, oefeningen, preventie en herstel.`}
+  path={`/blog/tag/${tag}`}
+  altPath={`/en/blog/tag/${tag}`}
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-6xl px-4 py-12 lg:py-16">
+    <a href="/blog" class="text-sm font-semibold text-brand-primary hover:underline">← Blog</a>
+    <p class="mt-5 text-sm font-semibold uppercase tracking-wide text-brand-primary">Onderwerp</p>
+    <h1 class="mt-2 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">{label}</h1>
+    <p class="mt-4 max-w-2xl text-lg text-brand-muted">
+      {posts.length === 1 ? "Eén artikel" : `${posts.length} artikels`} over {label.toLowerCase()}, geschreven door
+      het team van Movenda in Hasselt.
+    </p>
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <BlogPostCard post={post} />
+      ))}
+    </div>
+
+    {others.length > 0 && (
+      <nav class="mt-14" aria-label="Andere onderwerpen">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Andere onderwerpen</h2>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {others.map((item) => (
+            <li>
+              <a
+                href={`/blog/tag/${item.value}`}
+                class="inline-block rounded-full border border-brand-border px-3 py-1.5 text-sm font-semibold text-brand-text transition hover:border-brand-primary hover:text-brand-primary"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+  </section>
+</Layout>

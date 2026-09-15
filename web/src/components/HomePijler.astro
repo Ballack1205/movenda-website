@@ -4,9 +4,9 @@
 // diensten records) + two CTAs. Three of these, alternating photo side,
 // replace the flat wall of tag pills. Copy lives in Sanity (siteSettings ->
 // Homepage — drie pijlers); layout lives here.
-import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import { dienstHref, dienstKorteTitel, type Dienst, type HomePijler } from "../lib/content";
+import CmsFoto from "./CmsFoto.astro";
 
 interface Props {
   pijler: HomePijler;
@@ -55,9 +55,13 @@ const rest = diensten.length - shown.length;
 
 <article class="grid items-center gap-8 py-12 lg:grid-cols-12 lg:gap-12 lg:py-16">
   <div class={`lg:col-span-5 ${reverse ? "lg:order-last" : ""}`}>
-    <Image
-      src={image}
+    {/* Julie's photo (Site-instellingen → Homepage → drie pijlers → Foto) wins over the bundled one. */}
+    <CmsFoto
+      foto={pijler.foto}
+      fallback={image}
       alt={imageAlt}
+      width={1024}
+      height={1280}
       widths={[480, 768, 1024]}
       sizes="(min-width: 1024px) 40vw, 100vw"
       class="aspect-[16/10] w-full rounded-3xl object-cover shadow-lg sm:aspect-[2/1] lg:aspect-[4/5]"

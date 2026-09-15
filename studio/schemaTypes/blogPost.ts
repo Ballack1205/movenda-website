@@ -20,7 +20,8 @@ export default defineType({
   title: "Blogpost",
   type: "document",
   icon: ComposeIcon,
-  description: "Nieuw artikel = Nieuw document. Titel, tekst, coverfoto, datum, publiceren. De site herbouwt daarna vanzelf.",
+  description:
+    "Nieuw artikel = Nieuw document. Titel, tekst, coverfoto, datum, publiceren. De site herbouwt daarna vanzelf. Vertrekken van een bestaand artikel? Open het en kies ‘Dupliceren als nieuw concept’ (pijltje naast Publiceren of ⋮ bovenaan).",
   groups: [
     { name: "inhoud", title: "Artikel", default: true },
     { name: "seo", title: "SEO" },
@@ -112,6 +113,16 @@ export default defineType({
           const unknown = tags.filter((tag): tag is string => typeof tag === "string" && !BLOG_TAG_VALUES.has(tag));
           return unknown.length ? `Onbekende tag(s): ${unknown.join(", ")}. Kies tags uit de lijst.` : true;
         }),
+    }),
+    defineField({
+      name: "gerelateerdeDiensten",
+      title: "Gaat over deze behandelingen / trainingen",
+      type: "array",
+      group: "inhoud",
+      of: [{ type: "reference", to: [{ type: "dienst" }] }],
+      validation: (Rule) => Rule.max(3).unique(),
+      description:
+        "Koppel 1 à 3 diensten. Onder het artikel komen dan knoppen naar die pagina’s, en op de dienstpagina verschijnt dit artikel onder ‘Lees ook’. Zo helpt elke blog de behandelpagina’s hoger in Google (bv. een artikel over dry needling → dienst Dry needling).",
     }),
     defineField({
       name: "seoTitle",

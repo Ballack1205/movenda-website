@@ -8,6 +8,12 @@ export default defineType({
   title: "Homepage-pijler",
   type: "object",
   fields: [
+    defineField({
+      name: "foto",
+      title: "Foto naast dit blok",
+      type: "cmsFoto",
+      description: "Staande of liggende foto naast de tekst. Leeg = de huidige foto van de site blijft staan.",
+    }),
     defineField({ name: "titel", title: "Titel", type: "string" }),
     defineField({ name: "titelEn", title: "Titel (EN)", type: "string" }),
     defineField({

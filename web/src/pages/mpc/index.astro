@@ -1,12 +1,12 @@
 ---
-import { Image } from "astro:assets";
+import CmsFoto from "../../components/CmsFoto.astro";
 import Layout from "../../layouts/Layout.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import SocialLinks from "../../components/SocialLinks.astro";
 import DienstCard from "../../components/DienstCard.astro";
 import PartnerBand from "../../components/PartnerBand.astro";
 import GetuigenisCarousel from "../../components/GetuigenisCarousel.astro";
-import PaginaFoto from "../../components/PaginaFoto.astro";
+import HeroVideo from "../../components/HeroVideo.astro";
 import {
   getDienstenByCategorie,
   getLocatieBySlug,
@@ -95,7 +95,7 @@ const jsonLd = [
       </div>
     </div>
     <div class="relative -mx-4 md:mx-0">
-      <PaginaFoto
+      <HeroVideo
         pagina={pagina}
         fallback={mpcHero}
         alt="Movenda Performance Centre trainingsruimte"
@@ -159,8 +159,9 @@ const jsonLd = [
           ))}
         </div>
       </div>
-      <Image
-        src={mpcSecondary}
+      <CmsFoto
+        foto={pagina.fotoSecundair}
+        fallback={mpcSecondary}
         alt="Trainingsruimte bij het Movenda Performance Centre"
         width={640}
         height={480}

@@ -100,6 +100,33 @@ export default defineType({
       group: "inhoud",
       hidden: only("home", "over", "kinesitherapie", "training", "mpc"),
     }),
+    defineField({
+      name: "heroVideo",
+      title: "Video bovenaan (in plaats van de foto)",
+      type: "file",
+      group: "inhoud",
+      hidden: only("mpc"),
+      options: { accept: "video/mp4,video/webm" },
+      description:
+        "Korte sfeervideo die geluidloos in een lus speelt op de plek van de hoofdfoto. Richtlijn: 10 à 20 seconden, liggend (16:9 of 4:3), maximaal 8 MB, geen geluid nodig. De hoofdfoto blijft het stilstaande beeld tot de video geladen is en voor bezoekers die bewegend beeld uitschakelen. Leeg = alleen de foto.",
+    }),
+    defineField({
+      name: "fotoSecundair",
+      title: "Tweede foto (verder op de pagina)",
+      type: "cmsFoto",
+      group: "inhoud",
+      hidden: only("kinesitherapie", "training", "mpc"),
+      description: "De foto naast de lijst met behandelingen of trainingen. Leeg = de huidige foto van de site blijft staan.",
+    }),
+    defineField({
+      name: "bannerFoto",
+      title: "Foto achter de slogan-banner",
+      type: "cmsFoto",
+      group: "inhoud",
+      hidden: only("home"),
+      description:
+        "Brede sfeerfoto achter de slogan (‘Life has its ups and downs…’), tussen de partnerbalk en de drie pijlers. Kies een liggende foto en een focuspunt; er komt een donkerblauwe waas over. Leeg = de huidige foto blijft staan.",
+    }),
 
     // --- Blocks per page -------------------------------------------------
     defineField({
@@ -147,6 +174,48 @@ export default defineType({
       hidden: only("mpc"),
       validation: (Rule) => Rule.max(3),
       description: "Alleen de titel en de korte tekst. De foto's en links komen automatisch uit de diensten.",
+    }),
+    defineField({
+      name: "verwijsopties",
+      title: "Contactformulier — ‘Hoe ben je bij ons terechtgekomen?’",
+      type: "array",
+      group: "blokken",
+      hidden: only("contact"),
+      description:
+        "De keuzes in het contactformulier, in deze volgorde. Per keuze kies je of er een vervolgvraag komt (naam van de verwijzer, naam van de club, welk event, of een vrij tekstvak). Leeg = de standaardlijst van de oude website.",
+      of: [
+        {
+          type: "object",
+          name: "verwijsoptie",
+          fields: [
+            defineField({ name: "label", title: "Keuze (NL)", type: "string", validation: (Rule) => Rule.required() }),
+            defineField({ name: "labelEn", title: "Keuze (EN)", type: "string" }),
+            defineField({
+              name: "vervolg",
+              title: "Vervolgvraag",
+              type: "string",
+              initialValue: "geen",
+              options: {
+                list: [
+                  { title: "Geen", value: "geen" },
+                  { title: "Naam van de verwijzer (arts, specialist…)", value: "naam" },
+                  { title: "Naam van de club", value: "club" },
+                  { title: "Welk event of welke activiteit?", value: "event" },
+                  { title: "Vrij tekstvak (extra info)", value: "tekst" },
+                ],
+                layout: "radio",
+              },
+            }),
+          ],
+          preview: {
+            select: { title: "label", vervolg: "vervolg" },
+            prepare({ title, vervolg }) {
+              const labels: Record<string, string> = { naam: "→ naam", club: "→ club", event: "→ event", tekst: "→ tekst" };
+              return { title, subtitle: labels[vervolg as string] || "" };
+            },
+          },
+        },
+      ],
     }),
     defineField({
       name: "legeTekst",
