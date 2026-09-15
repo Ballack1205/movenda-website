@@ -1,11 +1,14 @@
 ---
 // Hero of a fixed page with an optional muted looping video on top of the
-// photo (Pagina's → MPC → "Video bovenaan"). The photo is always rendered:
+// still (Pagina's → MPC → "Video bovenaan"). The still is always rendered:
 // it is the LCP element, the poster while the video buffers, and the only
 // thing shown when the visitor prefers reduced motion or the video fails.
-// No video = exactly the PaginaFoto output, so pages without a clip are
-// untouched.
+//
+// When a clip is set the still is drawn with the same CSS crop as the video
+// (object-cover + object-top of the full image). A pre-cropped 4:3 Sanity URL
+// is what made the clip jump onto a different part of the frame.
 import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
 import type { Pagina } from "../lib/content";
 import PaginaFoto from "./PaginaFoto.astro";
 
@@ -15,7 +18,7 @@ export interface Props {
   alt: string;
   width: number;
   height: number;
-  /** Classes for the photo (aspect ratio, rounding, shadow). The video copies the box. */
+  /** Classes for the box (aspect ratio, rounding, shadow). Photo and clip share them. */
   class?: string;
   priority?: boolean;
 }
@@ -23,18 +26,32 @@ export interface Props {
 const { pagina, fallback, alt, width, height, class: className = "", priority } = Astro.props;
 const video = pagina.heroVideo;
 const type = video?.toLowerCase().endsWith(".webm") ? "video/webm" : "video/mp4";
+const posterSrc = pagina.foto ? `${pagina.foto}?w=1080&fit=max&auto=format` : undefined;
+const posterAlt = pagina.fotoAlt || alt;
+// The page passes object-top (right for the old gym still). A portrait clip in a
+// landscape box then shows only the ceiling. Same crop on still + video, aimed
+// at the subject, is what makes the photo appear to start moving.
+const cropClass = className.replace(/\bobject-top\b/g, "object-[center_32%]");
 ---
 
 {video ? (
-  <div class="hero-video relative">
-    <PaginaFoto pagina={pagina} fallback={fallback} alt={alt} width={width} height={height} class={className} priority={priority} />
-    {/* Decorative: the photo carries the alt text; the clip only adds atmosphere. Vertical clips are
-        covered (centre crop) into the same box as the photo, so Julie may upload a phone recording.
-        No src/autoplay in the markup: the script attaches the source after `load`, so the clip never
-        competes with the hero photo (LCP) or the CSS/fonts for bandwidth. Lighthouse mobile: LCP on
-        /mpc went from 4.2 s back to the photo-only value once the download was deferred. */}
+  <div class="hero-video relative overflow-hidden md:rounded-3xl md:shadow-xl">
+    {posterSrc ? (
+      <img
+        src={posterSrc}
+        alt={posterAlt}
+        width={width}
+        height={height}
+        class={cropClass}
+        loading={priority ? "eager" : "lazy"}
+        fetchpriority={priority ? "high" : undefined}
+        decoding="async"
+      />
+    ) : (
+      <Image src={fallback} alt={posterAlt} width={width} height={height} class={cropClass} priority={priority} />
+    )}
     <video
-      class={`hero-video__clip absolute inset-0 h-full w-full object-cover ${className}`}
+      class={`hero-video__clip absolute inset-0 h-full w-full object-cover object-[center_32%] ${cropClass}`}
       muted
       loop
       playsinline
@@ -51,11 +68,10 @@ const type = video?.toLowerCase().endsWith(".webm") ? "video/webm" : "video/mp4"
 )}
 
 <style>
-  /* Only fade the clip in once it actually plays, so the photo stays the visible LCP element
-     and nothing flashes when the network is slow. */
   .hero-video__clip {
     opacity: 0;
-    transition: opacity 0.6s ease;
+    transition: opacity 1.4s ease-in-out;
+    pointer-events: none;
   }
   .hero-video__clip.is-playing {
     opacity: 1;
@@ -68,11 +84,22 @@ const type = video?.toLowerCase().endsWith(".webm") ? "video/webm" : "video/mp4"
 </style>
 
 <script>
-  // Start the clip only once the page has loaded, and only when motion/data allow it. Autoplay may
-  // still be refused (Low Power Mode); then the photo simply stays. Remove the element instead of
-  // leaving a stalled black box.
   const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   const skip = window.matchMedia("(prefers-reduced-motion: reduce)").matches || connection?.saveData === true;
+
+  function revealWhenPainted(clip: HTMLVideoElement) {
+    const show = () => clip.classList.add("is-playing");
+    const rvfc = (
+      clip as HTMLVideoElement & {
+        requestVideoFrameCallback?: (cb: () => void) => void;
+      }
+    ).requestVideoFrameCallback;
+    if (typeof rvfc === "function") {
+      rvfc.call(clip, show);
+      return;
+    }
+    clip.addEventListener("playing", show, { once: true });
+  }
 
   const start = () => {
     for (const clip of document.querySelectorAll<HTMLVideoElement>(".hero-video__clip")) {
@@ -83,27 +110,23 @@ const type = video?.toLowerCase().endsWith(".webm") ? "video/webm" : "video/mp4"
       const source = document.createElement("source");
       source.src = clip.dataset.src;
       source.type = clip.dataset.type || "video/mp4";
-      clip.addEventListener("playing", () => clip.classList.add("is-playing"), { once: true });
       clip.addEventListener("error", () => clip.remove(), { once: true });
+      revealWhenPainted(clip);
       clip.append(source);
       clip.load();
       clip.play().catch(() => clip.remove());
     }
   };
 
-  // The photo is on screen first; the 1–2 MB clip streams in as soon as the visitor shows signs of
-  // life (mouse, touch, scroll, key) or, failing that, a few seconds after `load`. Starting it during
-  // page load drags the clip into the critical path: Lighthouse mobile then books it against LCP
-  // (5.5 s instead of 3.2 s on /mpc), while real visitors see no difference.
   const FALLBACK_MS = 5000;
   let started = false;
+  const triggers = ["pointermove", "pointerdown", "touchstart", "keydown", "scroll"] as const;
   const once = () => {
     if (started) return;
     started = true;
     for (const type of triggers) window.removeEventListener(type, once);
     start();
   };
-  const triggers = ["pointermove", "pointerdown", "touchstart", "keydown", "scroll"] as const;
   for (const type of triggers) window.addEventListener(type, once, { passive: true });
   const schedule = () => window.setTimeout(once, FALLBACK_MS);
   if (document.readyState === "complete") schedule();
