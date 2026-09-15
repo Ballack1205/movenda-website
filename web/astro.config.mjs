@@ -35,7 +35,7 @@ async function getLastmodMap() {
         "locaties": *[_type == "locatie"]{ "slug": slug.current, "u": _updatedAt }
       }`;
       const res = await fetch(
-        `https://${SANITY_PROJECT}.api.sanity.io/v2026-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`,
+        `https://${SANITY_PROJECT}.apicdn.sanity.io/v2026-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`,
       );
       if (!res.ok) return map;
       const { result } = await res.json();

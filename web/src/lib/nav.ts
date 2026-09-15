@@ -56,8 +56,8 @@ interface NavData {
   sportaanbod: SportaanbodItem[];
 }
 
-// One fetch per build, not one per page: Header renders on every page and
-// the Sanity client has no cache (useCdn: false).
+// One fetch per build, not one per page. content.ts also memoizes the
+// underlying lists; this keeps Header from awaiting four getters on every route.
 let navDataPromise: Promise<NavData> | undefined;
 
 function loadNavData(): Promise<NavData> {

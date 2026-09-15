@@ -13,7 +13,9 @@ export const sanity = createClient({
   projectId,
   dataset,
   apiVersion: "2026-01-01",
-  // Static builds need the live API: the CDN can hide newly seeded types
-  // (partners, rooster, getuigenissen) for a few minutes after a write.
-  useCdn: false,
+  // API CDN (`apicdn.sanity.io`). Same public dataset, ~60 s delay after a
+  // write. The live API (`useCdn: false`) counts against the 250k/month Free
+  // quota; the CDN does not. Seed/migrate scripts keep `useCdn: false`.
+  // After Publish, Render rebuilds via webhook — that is later than 60 s.
+  useCdn: true,
 });

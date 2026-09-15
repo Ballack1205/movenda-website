@@ -3,6 +3,20 @@
 // always import from this file, never query Sanity directly.
 
 import { sanity } from "./sanity";
+
+// One in-flight result per process (one `astro build` or one `astro dev`).
+// Without this, Layout + Footer + Analytics + badges each re-fetched
+// siteSettings (3 calls) on every page and burned the Free API quota.
+const onceCache = new Map<string, Promise<unknown>>();
+
+function once<T>(key: string, load: () => Promise<T>): Promise<T> {
+  let hit = onceCache.get(key);
+  if (!hit) {
+    hit = load();
+    onceCache.set(key, hit);
+  }
+  return hit as Promise<T>;
+}
 import seedSettings from "../content/site-settings.json";
 import seedFaqs from "../content/faqs.json";
 import seedTeam from "../content/team.json";
@@ -547,18 +561,16 @@ const dienstProjection = `{
 }`;
 
 export async function getTeamleden(): Promise<Teamlid[]> {
-  const rows = await sanity.fetch(
-    `*[_type == "teamlid" && actief == true] | order(volgorde asc) ${teamlidProjection}`,
-  );
-  return (rows || []).map(normalizeTeamlid);
+  return once("teamleden", async () => {
+    const rows = await sanity.fetch(
+      `*[_type == "teamlid" && actief == true] | order(volgorde asc) ${teamlidProjection}`,
+    );
+    return (rows || []).map(normalizeTeamlid);
+  });
 }
 
 export async function getTeamlidBySlug(slug: string): Promise<Teamlid | undefined> {
-  const row = await sanity.fetch(
-    `*[_type == "teamlid" && slug.current == $slug][0] ${teamlidProjection}`,
-    { slug },
-  );
-  return row ? normalizeTeamlid(row) : undefined;
+  return (await getTeamleden()).find((lid) => lid.slug === slug);
 }
 
 export async function getTeamledenByLocatie(locatie: LocatieSlug): Promise<Teamlid[]> {
@@ -591,6 +603,10 @@ const KEUZEHULP_DEFAULT_VRAGEN: Record<KeuzehulpCategorie, string> = {
  * active keuzehulpTag documents; which therapist matches which option comes
  * from Teamlid.keuzehulpTags. Scoring/layout live in the page. */
 export async function getKeuzehulp(): Promise<Keuzehulp> {
+  return once("keuzehulp", loadKeuzehulp);
+}
+
+async function loadKeuzehulp(): Promise<Keuzehulp> {
   const [doc, tags] = await Promise.all([
     sanity.fetch(`*[_id == "keuzehulp"][0]{ actief, titel, intro, vragen, geenMatchTekst }`),
     sanity.fetch(
@@ -658,21 +674,21 @@ export function locatieKorteNamen(slugs: LocatieSlug[], locaties: Locatie[]): st
 }
 
 export async function getLocaties(): Promise<Locatie[]> {
-  const rows = await sanity.fetch(`*[_type == "locatie"] | order(slug.current asc) ${locatieProjection}`);
-  return (rows || []).map(normalizeLocatie);
+  return once("locaties", async () => {
+    const rows = await sanity.fetch(`*[_type == "locatie"] | order(slug.current asc) ${locatieProjection}`);
+    return (rows || []).map(normalizeLocatie);
+  });
 }
 
 export async function getLocatieBySlug(slug: LocatieSlug): Promise<Locatie | undefined> {
-  const row = await sanity.fetch(
-    `*[_type == "locatie" && slug.current == $slug][0] ${locatieProjection}`,
-    { slug },
-  );
-  return row ? normalizeLocatie(row) : undefined;
+  return (await getLocaties()).find((loc) => loc.slug === slug);
 }
 
 export async function getDiensten(): Promise<Dienst[]> {
-  const rows = await sanity.fetch(`*[_type == "dienst"] | order(volgorde asc) ${dienstProjection}`);
-  return (rows || []).map(normalizeDienst);
+  return once("diensten", async () => {
+    const rows = await sanity.fetch(`*[_type == "dienst"] | order(volgorde asc) ${dienstProjection}`);
+    return (rows || []).map(normalizeDienst);
+  });
 }
 
 export async function getDienstenByCategorie(
@@ -680,11 +696,7 @@ export async function getDienstenByCategorie(
 ): Promise<Dienst[]> {
   const cats =
     categorie === "mpc" ? MPC_CATEGORIES : Array.isArray(categorie) ? categorie : [categorie];
-  const rows = await sanity.fetch(
-    `*[_type == "dienst" && categorie in $cats] | order(volgorde asc) ${dienstProjection}`,
-    { cats },
-  );
-  return (rows || []).map(normalizeDienst);
+  return (await getDiensten()).filter((d) => cats.includes(d.categorie));
 }
 
 export async function getDienstBySlug(
@@ -693,15 +705,8 @@ export async function getDienstBySlug(
 ): Promise<Dienst | undefined> {
   const cats =
     categorie === "mpc" ? MPC_CATEGORIES : categorie ? [categorie] : undefined;
-  const row = cats
-    ? await sanity.fetch(
-        `*[_type == "dienst" && slug.current == $slug && categorie in $cats][0] ${dienstProjection}`,
-        { slug, cats },
-      )
-    : await sanity.fetch(`*[_type == "dienst" && slug.current == $slug][0] ${dienstProjection}`, {
-        slug,
-      });
-  return row ? normalizeDienst(row) : undefined;
+  const diensten = await getDiensten();
+  return diensten.find((d) => d.slug === slug && (!cats || cats.includes(d.categorie)));
 }
 
 // Old-site covers for diensten the media upload missed (no Sanity image yet).
@@ -743,6 +748,10 @@ function normalizeDienst(row: Dienst): Dienst {
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
+  return once("siteSettings", loadSiteSettings);
+}
+
+async function loadSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
     `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, googleReviewsFeed, partnerband,
       homePijlers{ kine{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, training{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, mpc{ ..., "foto": foto${CMS_FOTO_PROJECTION} } },
@@ -930,6 +939,10 @@ function normalizeVerwijsopties(items: Partial<VerwijsOptie>[] | undefined): Ver
 }
 
 export async function getPagina(key: PaginaKey): Promise<Pagina> {
+  return once(`pagina:${key}`, () => loadPagina(key));
+}
+
+async function loadPagina(key: PaginaKey): Promise<Pagina> {
   const seed = (seedPaginas as Record<string, PaginaSeed>)[key] || {};
   const row = (await sanity.fetch(
     `*[_type == "pagina" && key == $key][0]{
@@ -1062,13 +1075,19 @@ export function homePijlerDiensten(
 }
 
 export async function getFaqs(site?: Exclude<FaqSite, "beide">): Promise<Faq[]> {
+  const merged = await once("faqs", loadFaqs);
+  if (!site) return merged;
+  return merged.filter((faq) => !faq.site || faq.site === site || faq.site === "beide");
+}
+
+async function loadFaqs(): Promise<Faq[]> {
   const rows: Faq[] = await sanity.fetch(
     `*[_type == "faq"] | order(volgorde asc) { vraag, vraagEn, antwoord, antwoordEn, categorie, site, volgorde }`,
   );
   const seed = seedFaqs as Faq[];
   const byVolgorde = new Map(seed.map((f) => [`${f.site || "movenda"}-${f.volgorde}`, f]));
   const byVraag = new Map(seed.map((f) => [f.vraag, f]));
-  const merged = (rows || []).map((faq) => {
+  return (rows || []).map((faq) => {
     const fromSeed =
       byVolgorde.get(`${faq.site || "movenda"}-${faq.volgorde}`) || byVraag.get(faq.vraag);
     return {
@@ -1077,16 +1096,16 @@ export async function getFaqs(site?: Exclude<FaqSite, "beide">): Promise<Faq[]> 
       antwoordEn: faq.antwoordEn || fromSeed?.antwoordEn,
     };
   });
-  if (!site) return merged;
-  return merged.filter((faq) => !faq.site || faq.site === site || faq.site === "beide");
 }
 
 export async function getPrijzen(): Promise<Prijsitem[]> {
-  const [rows, exBtwMpc] = await Promise.all([
-    sanity.fetch(`*[_type == "prijsitem"] | order(volgorde asc) ${prijsitemProjection}`) as Promise<Prijsitem[]>,
-    sanity.fetch(`*[_id == "siteSettings"][0].prijzenInfo.exBtwMpc`) as Promise<boolean | undefined>,
-  ]);
-  return (rows || []).map((row) => ({ ...row, exclBtw: prijsIsExclBtw(row, exBtwMpc) }));
+  return once("prijzen", async () => {
+    const [rows, exBtwMpc] = await Promise.all([
+      sanity.fetch(`*[_type == "prijsitem"] | order(volgorde asc) ${prijsitemProjection}`) as Promise<Prijsitem[]>,
+      sanity.fetch(`*[_id == "siteSettings"][0].prijzenInfo.exBtwMpc`) as Promise<boolean | undefined>,
+    ]);
+    return (rows || []).map((row) => ({ ...row, exclBtw: prijsIsExclBtw(row, exBtwMpc) }));
+  });
 }
 
 const prijsCategorieVoorDienst: Record<DienstCategorie, PrijsCategorie[]> = {
@@ -1177,6 +1196,12 @@ export async function getPrijzenByCategorie(categorie: PrijsCategorie): Promise<
 }
 
 export async function getPartners(tonenOp?: "movenda" | "mpc"): Promise<Partner[]> {
+  const rows = await once("partners", loadPartners);
+  if (!tonenOp) return rows;
+  return rows.filter((p) => p.tonenOp === tonenOp || p.tonenOp === "beide");
+}
+
+async function loadPartners(): Promise<Partner[]> {
   // Partners seeded before the "actief" toggle existed have no such field;
   // missing counts as active so nothing silently drops out of the band.
   const rows: Partner[] = await sanity.fetch(
@@ -1187,12 +1212,11 @@ export async function getPartners(tonenOp?: "movenda" | "mpc"): Promise<Partner[
       "logo": logo.asset->url
     }`,
   );
-  if (!tonenOp) return rows || [];
-  return (rows || []).filter((p) => p.tonenOp === tonenOp || p.tonenOp === "beide");
+  return rows || [];
 }
 
 export async function getLesrooster(): Promise<LesroosterItem[]> {
-  return sanity.fetch(
+  return once("lesrooster", () => sanity.fetch(
     `*[_type == "lesrooster"] | order(volgorde asc) {
       les, dag, van, tot, volgorde,
       "coachNaam": coach->voornaam + " " + coach->naam,
@@ -1200,7 +1224,7 @@ export async function getLesrooster(): Promise<LesroosterItem[]> {
       "dienstSlug": dienst->slug.current,
       "dienstCategorie": dienst->categorie
     }`,
-  );
+  ));
 }
 
 const seedGetuigenisBySlug = new Map(
@@ -1216,6 +1240,12 @@ function isPlaceholderGetuigenis(item: Getuigenis): boolean {
 }
 
 export async function getGetuigenissen(locatie?: LocatieSlug, lang: Lang = "nl"): Promise<Getuigenis[]> {
+  const items = await once("getuigenissen", loadGetuigenissen);
+  if (!locatie) return items;
+  return items.filter((g) => !g.locatie || g.locatie === "beide" || g.locatie === locatie);
+}
+
+async function loadGetuigenissen(): Promise<Getuigenis[]> {
   const rows: Getuigenis[] = await sanity.fetch(
     `*[_type == "getuigenis" && actief != false] | order(volgorde asc) {
       "slug": coalesce(slug.current, _id),
@@ -1224,7 +1254,7 @@ export async function getGetuigenissen(locatie?: LocatieSlug, lang: Lang = "nl")
       "actief": actief != false
     }`,
   );
-  const items = (rows || [])
+  return (rows || [])
     .map((item) => ({
       ...item,
       tekstEn: item.tekstEn || seedGetuigenisBySlug.get(item.slug)?.tekstEn,
@@ -1233,8 +1263,6 @@ export async function getGetuigenissen(locatie?: LocatieSlug, lang: Lang = "nl")
     // seed/CMS rows waiting on a real quote from Julie. They must never appear on
     // the live carousel in any language — showing them reads as fake reviews.
     .filter((item) => !isPlaceholderGetuigenis(item));
-  if (!locatie) return items;
-  return items.filter((g) => !g.locatie || g.locatie === "beide" || g.locatie === locatie);
 }
 
 const blogImageBlock = `{
@@ -1311,18 +1339,16 @@ function normalizeBlogPost(row: BlogPost): BlogPost {
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
-  const rows: BlogPost[] = await sanity.fetch(
-    `*[_type == "blogPost"] | order(publicatiedatum desc) ${blogPostProjection}`,
-  );
-  return (rows || []).map(normalizeBlogPost);
+  return once("blogPosts", async () => {
+    const rows: BlogPost[] = await sanity.fetch(
+      `*[_type == "blogPost"] | order(publicatiedatum desc) ${blogPostProjection}`,
+    );
+    return (rows || []).map(normalizeBlogPost);
+  });
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
-  const row = await sanity.fetch(
-    `*[_type == "blogPost" && slug.current == $slug][0] ${blogPostProjection}`,
-    { slug },
-  );
-  return row ? normalizeBlogPost(row) : undefined;
+  return (await getBlogPosts()).find((post) => post.slug === slug);
 }
 
 /**
@@ -1363,8 +1389,10 @@ export async function getRelatedBlogPosts(slug: string, limit = 3): Promise<Blog
 }
 
 export async function getVacatures(): Promise<Vacature[]> {
-  return sanity.fetch(
-    `*[_type == "vacature" && actief == true] { "slug": slug.current, titel, "locatieNaam": locatie->naam, omschrijving, contactEmail, actief }`,
+  return once("vacatures", () =>
+    sanity.fetch(
+      `*[_type == "vacature" && actief == true] { "slug": slug.current, titel, "locatieNaam": locatie->naam, omschrijving, contactEmail, actief }`,
+    ),
   );
 }
 
@@ -1373,6 +1401,10 @@ const seedSportaanbodByNaam = new Map(
 );
 
 export async function getSportaanbod(): Promise<SportaanbodItem[]> {
+  return once("sportaanbod", loadSportaanbod);
+}
+
+async function loadSportaanbod(): Promise<SportaanbodItem[]> {
   const rows: SportaanbodItem[] = await sanity.fetch(
     `*[_type == "sportaanbodItem"] | order(volgorde asc) { naam, naamEn, tekst, tekstEn, link, volgorde }`,
   );
@@ -1399,6 +1431,11 @@ function popupIsInWindow(popup: Pick<Popup, "geldigVan" | "geldigTot">, now = Da
 }
 
 export async function getActivePopup(path: string): Promise<Popup | undefined> {
+  const popups = await once("popups", loadPopups);
+  return popups.find((popup) => popupMatchesPath(popup.toonOp, path) && popupIsInWindow(popup));
+}
+
+async function loadPopups(): Promise<Popup[]> {
   const rows: Popup[] = await sanity.fetch(
     `*[_type == "popup" && actief == true] | order(_updatedAt desc) {
       "id": _id,
@@ -1410,20 +1447,18 @@ export async function getActivePopup(path: string): Promise<Popup | undefined> {
       toonOp, geldigVan, geldigTot, eenKeerPerBezoeker
     }`,
   );
-  return (rows || [])
-    .map((row) => ({
-      ...row,
-      knopTekst: row.knopTekst || "Schrijf je in!",
-      actie: row.actie || "formulier",
-      extraVragen: (row.extraVragen || []).map((vraag) => ({
-        ...vraag,
-        type: vraag.type || "tekst",
-        opties: vraag.opties || [],
-        verplicht: vraag.verplicht !== false,
-      })),
-      toonOp: row.toonOp || "overal",
-      eenKeerPerBezoeker: row.eenKeerPerBezoeker !== false,
-    }))
-    .find((popup) => popupMatchesPath(popup.toonOp, path) && popupIsInWindow(popup));
+  return (rows || []).map((row) => ({
+    ...row,
+    knopTekst: row.knopTekst || "Schrijf je in!",
+    actie: row.actie || "formulier",
+    extraVragen: (row.extraVragen || []).map((vraag) => ({
+      ...vraag,
+      type: vraag.type || "tekst",
+      opties: vraag.opties || [],
+      verplicht: vraag.verplicht !== false,
+    })),
+    toonOp: row.toonOp || "overal",
+    eenKeerPerBezoeker: row.eenKeerPerBezoeker !== false,
+  }));
 }
 

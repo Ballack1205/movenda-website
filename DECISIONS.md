@@ -16,6 +16,10 @@ Answers to `HANDOFF.md` §8, confirmed by the founder on 2026-09-10. This file i
 | 8 | Brand | **One site, MPC as a dark "performance" sub-brand** — same component system, different color tokens/theme for `/mpc/*`. *(Update 2026-09-10: inspected the real movenda.be/mpc.movenda.be — there is no separate dark/orange MPC scheme on the live sites; MPC uses the exact same navy/blue palette as Movenda. Reverted `/mpc/*` to the shared palette to match the real house style; see `web/src/styles/global.css`.)* |
 | 9 | Budget / timeline / design | No external design; we design in code from the current logo/colors. Timeline: pitch preview first (Fase 1), full build after they choose us. |
 
+## Sanity API quota (2026-09-15)
+
+The site is static: visitors never hit Sanity. The Free 250k **live API** quota was burned by `useCdn: false` plus uncached `getSiteSettings()` (3 calls) on every page during `astro dev` and every Render build. The web client now uses the API CDN (`useCdn: true`) and memoizes each query once per process. Seed/migrate scripts stay on the live API. Local `astro dev` shows CMS edits after a restart (or ~60 s CDN delay).
+
 ## Hosting
 
 - **Render Static Site** (Hobby/free) for the pitch preview and, if chosen, production. DNS for `movenda.be` already lives on Cloudflare nameservers — moving hosting later to Cloudflare Pages is a small change (~30 min) if ever needed, but not required: Render supports custom domains + free TLS directly.
