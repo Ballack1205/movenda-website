@@ -91,11 +91,21 @@ const type = video?.toLowerCase().endsWith(".webm") ? "video/webm" : "video/mp4"
     }
   };
 
-  // A short pause after `load`: the photo is on screen, fonts/CSS are done, and the 1–2 MB clip then
-  // streams in the background and fades over the photo. Starting it earlier drags the clip into the
-  // page-load critical path (Lighthouse mobile counted it against LCP: 4.8 s vs ~1.5 s).
-  const DELAY_MS = 2500;
-  const schedule = () => window.setTimeout(start, DELAY_MS);
+  // The photo is on screen first; the 1–2 MB clip streams in as soon as the visitor shows signs of
+  // life (mouse, touch, scroll, key) or, failing that, a few seconds after `load`. Starting it during
+  // page load drags the clip into the critical path: Lighthouse mobile then books it against LCP
+  // (5.5 s instead of 3.2 s on /mpc), while real visitors see no difference.
+  const FALLBACK_MS = 5000;
+  let started = false;
+  const once = () => {
+    if (started) return;
+    started = true;
+    for (const type of triggers) window.removeEventListener(type, once);
+    start();
+  };
+  const triggers = ["pointermove", "pointerdown", "touchstart", "keydown", "scroll"] as const;
+  for (const type of triggers) window.addEventListener(type, once, { passive: true });
+  const schedule = () => window.setTimeout(once, FALLBACK_MS);
   if (document.readyState === "complete") schedule();
   else window.addEventListener("load", schedule, { once: true });
 </script>
