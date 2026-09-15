@@ -86,3 +86,74 @@ Vergelijk dat gerust live met hun huidige site via [PageSpeed Insights](https://
 - Contactformulier-backend (Resend), GA4 consent-banner + conversie-events.
 - Volledige 301-redirect-map + DNS-omzetting naar `movenda.be`.
 - Sanity-webhook uitbreiden zodra meer content-types live gaan (blog, vacatures, ...).
+
+## 9. Kosten (vraag van Julie, meeting 15/09)
+
+**Jaarlijks terugkerend (na go-live)**
+
+| Post | Kost | Opmerking |
+|---|---|---|
+| Domein `movenda.be` | ± €15–25 / jaar | Loopt vandaag al (registrar blijft; enkel de DNS-records wijzigen). |
+| Hosting website — Render Static Site | €0 | Gratis tier; statische site, geen server. Bandbreedte ruim voldoende voor een praktijk. |
+| Contactformulier-API — Render Web Service | €0 **of** ± US$7 / maand (± €80 / jaar) | Gratis tier "slaapt" na 15 min: het eerste formulier van de dag duurt dan 30–50 s. Aanbevolen: Starter-plan zodat verzenden altijd meteen lukt. |
+| Sanity CMS | €0 | Gratis plan volstaat voor Julie + ons (records, foto's, één korte video). Betaald plan pas nodig bij versiegeschiedenis/rollen of veel meer media — melden we vooraf. |
+| E-mail verzenden (Resend) | €0 | Gratis tier: ruim genoeg voor contact- en nieuwsbriefinschrijvingen. |
+| Elfsight (Instagram- en Google-reviews-widget) | bestaand abonnement | Hergebruikt van de oude site; geen nieuwe kost. Kan later weg als jullie dat willen. |
+| Google Analytics 4, Search Console, Bedrijfsprofiel | €0 | |
+| Squarespace | **−** huidig abonnement | Valt weg na go-live (opzeggen ná de DNS-omzetting, niet ervoor). |
+
+Netto: ± €100 / jaar met de aanbevolen always-on contact-API, ± €20 / jaar zonder. Geen nieuwe betaalde dienst zonder jullie akkoord (zie `AGENTS.md`).
+
+**Eenmalig — "er boenk op" en live**
+
+Inschatting in uren; het bedrag = uren × jouw uurtarief (bewust niet in dit document).
+
+| Blok | Uren (schatting) | Inhoud |
+|---|---|---|
+| Content & foto's | 6–8 | Alle nieuwe foto's/video plaatsen, alt-teksten, EN-vertalingen nalezen, prijzenconflicten afklaren met Julie. |
+| Keuzehulp "Wie past bij mij?" | 4–8 | Julie's Claude-boom omzetten naar CMS-vragen/-antwoorden (afhankelijk van hoe vertakt hij is). |
+| SEO-afwerking | 3–4 | Keyword-check per pagina (zie §10), Search Console koppelen, sitemap indienen, Bedrijfsprofiel-links, eerste blog↔dienst-koppelingen. |
+| Go-live | 3–4 | `PUBLIC_SITE_URL`/`PUBLIC_NOINDEX` omzetten, `X-Robots-Tag` weg, 301-map in Render, `mpc.movenda.be` → `/mpc/*`, DNS op Cloudflare, TLS, analytics op Live, controle. |
+| Julie-onboarding | 2 | Uitnodiging Studio, korte NL-handleiding, één sessie samen. |
+| Buffer | 4 | Onvoorziene feedback na livegang. |
+| **Totaal** | **22–30 u** | |
+
+Later, apart te begroten (pas na go-live): inschrijvingen voor groepslessen (8–16 u zonder externe tool), paginaovergangen/effecten (4–6 u), boekknop koppelen aan een agenda-tool (2 u + kost van die tool).
+
+## 10. Zoekwoorden → pagina (voor Julie)
+
+Elke pagina "draagt" één zoekterm. Titel en omschrijving staan in Sanity (SEO-tab); zo staan ze nu.
+
+| Zoekterm | Pagina | Status |
+|---|---|---|
+| kinesitherapie hasselt | `/kinesitherapie` | ✅ "Kinesitherapie Hasselt \| Movenda" |
+| **kinesist hasselt** | `/kinesitherapie` | ⚠️ "kinesist" staat enkel in de omschrijving. Tip: SEO-titel → "Kinesist in Hasselt \| Kinesitherapie bij Movenda" en het woord "kinesist(en)" in de intro. |
+| dry needling hasselt | `/kinesitherapie/dry-needling` | ✅ "Dry needling Hasselt \| Movenda" |
+| dry needling (sporters) | `/mpc/dry-needling` | ⚠️ Zelfde term als hierboven → twee pagina's concurreren. Tip: MPC-titel "Dry needling voor sporters \| MPC Kuringen" en tekst richten op sportrevalidatie. |
+| manuele therapie hasselt | `/kinesitherapie/manuele-therapie` | ✅ |
+| personal training hasselt | `/training` en `/training/personal-training` | ✅ (overzicht + dienst) |
+| sportrevalidatie hasselt | `/mpc/sportrevalidatie` | ✅ |
+| performance training hasselt | `/mpc` + `/mpc/performance-training` | ✅ |
+| groepslessen hasselt / hiit hasselt | `/mpc/groepslessen`, `/mpc/hiit` | ✅ |
+| pre- en postnatale kine hasselt | `/kinesitherapie/pre-en-postnatale-kinesitherapie` | ✅ |
+
+Hoe de blog meehelpt (nieuw sinds 15/09):
+- Bij elk artikel: **"Gaat over deze behandelingen"** → kies 1–3 diensten. Het artikel linkt dan naar die dienstpagina's en de dienstpagina toont het artikel onder **"Lees ook"**. Dat is precies het soort interne link dat Google gebruikt om te beslissen welke pagina relevant is voor "dry needling hasselt".
+- Tags maken nu automatisch onderwerp-pagina's (`/blog/tag/rugpijn`, `/blog/tag/sportblessures`, …).
+- Vuistregel voor nieuwe artikels: één zoekterm per artikel, die term in titel + eerste alinea, en koppel de dienst. Bv. "Wat is dry needling en wanneer helpt het?" → dienst Dry needling.
+
+## 11. Actiepunten na de meeting van 15/09
+
+Voor Julie / Movenda:
+- [ ] **Google Analytics 4**: property `G-WCV2RJG010` → Beheer → Toegangsbeheer → Jonas toevoegen als *Beheerder*.
+- [ ] **Google Search Console**: `movenda.be` (domein-property) → Instellingen → Gebruikers → Jonas als *Eigenaar*. Bestaat er geen property, dan maken we die na go-live (verificatiecode kan in Site-instellingen → Analytics).
+- [ ] **Google Bedrijfsprofiel**: Jonas als beheerder op beide vestigingen (nodig voor de review-links en `place_id`).
+- [ ] Keuzehulp-boom (HTML, gemaakt met Claude) doorsturen.
+- [ ] Liggende video (16:9) voor de MPC-hero als die er is — de huidige staande clip staat erop, maar wordt op desktop gecentreerd bijgesneden.
+- [ ] Logo's van de 10 partners die nu als tekst staan (zie `DECISIONS.md`).
+
+Voor ons:
+- [x] Feedback verwerkt (foto's, video, dupliceren, contactvraag, menu, SEO-links) — Studio opnieuw uitgerold.
+- [ ] Julie uitnodigen in Sanity als **Editor** (`sanity.io/manage` → project Movenda → Members → Invite) + korte NL-handleiding meesturen.
+- [ ] Na ontvangst keuzehulp-boom: inschatting + bouwen.
+- [ ] Eenmalig bedrag invullen (uren × tarief, §9) en aan Julie bezorgen.

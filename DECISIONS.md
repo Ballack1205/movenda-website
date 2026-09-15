@@ -116,6 +116,19 @@ Listed in `render.yaml`. `/over` is a real page (do **not** redirect it to `/`).
 | `/dry-needling` | `/mpc/dry-needling` |
 | `/duotraining` | `/mpc/duotraining` |
 
+## Julie's feedback round (2026-09-15)
+
+Processed after the first meeting with Julie; all live in the Studio and on the preview.
+
+- **Every photo is CMS-editable.** New optional fields, each falling back to the bundled marketing photo when empty: Pagina's → *Tweede foto* (kine/training/mpc overview), *Foto achter de slogan-banner* (home), Site-instellingen → Homepage → drie pijlers → *Foto*, Site-instellingen → *Standaard deelafbeelding* (og:image). The MPC teaser card on the homepage reuses the MPC page hero photo. Shared object type `cmsFoto` (image + alt); rendered by `web/src/components/CmsFoto.astro`.
+- **MPC hero video.** Pagina's → MPC → *Video bovenaan*: a muted looping mp4/webm on top of the hero photo (`HeroVideo.astro`). The photo stays the LCP element and poster; `prefers-reduced-motion` or a refused autoplay simply shows the photo. Julie's phone clip (portrait, 12 s) was re-encoded to 540×960, no audio, 1.5 MB and uploaded. A landscape clip would suit the desktop box better — asked.
+- **Blog ↔ dienst links for SEO.** Blogpost → *Gaat over deze behandelingen* (1–3 dienst references). Article shows "Meer over deze behandeling" buttons; dienst pages show "Lees ook" (linked posts first, then posts that mention the dienst name); `BlogPosting.about` → the `Service` `@id`. Tag pages `/blog/tag/[tag]` (+ `/en/`) exist for every tag with at least one post; tag pills on articles link to them.
+- **Contact form.** "Hoe ben je bij ons terechtgekomen?" moved directly under phone/location and made required. Options and their follow-up type (naam / club / event / vrije tekst / geen) are editable in Pagina's → Contact → Blokken; seeded with the exact list of the old Squarespace form. Field names unchanged, so `api/server.js` was not touched.
+- **Menu control.** Dienst → *Tonen in het menu* and *Korte naam voor het menu* (NL/EN). Adding a dienst already put it in its category dropdown automatically; the groups themselves stay code (AGENTS.md rule 6).
+- **Duplicate.** For record types (blogPost, dienst, faq, vacature, popup, getuigenis, prijsitem, lesrooster, teamlid, partner) the built-in duplicate action sits directly under Publiceren as "Dupliceren als nieuw concept" and also in the pane ⋮ menu. Singletons keep it hidden.
+- **Search Console.** Site-instellingen → Analytics → *Google Search Console — verificatiecode* renders `<meta name="google-site-verification">`; only needed if DNS verification is not used.
+- Costs, keyword→page map and the post-meeting action list: `PITCH.md` §9–11.
+
 ## Not yet decided / to confirm with Julie
 
 - Exact scheduler tool for the booking button, once Movenda picks a CMS/dev partner.
