@@ -1,0 +1,13 @@
+---
+import { THEME } from "../lib/site";
+
+interface Props {
+  n: number;
+}
+
+const { n } = Astro.props;
+---
+
+{THEME === "lab" && (
+  <p class="section-kicker" aria-hidden="true">{String(n).padStart(2, "0")}</p>
+)}

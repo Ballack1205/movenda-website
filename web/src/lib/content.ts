@@ -256,6 +256,38 @@ function toCmsFoto(row: { url?: string | null; hotspot?: { x: number; y: number 
 export type HomePijlerKey = "kine" | "training" | "mpc";
 export type HomePijlers = Record<HomePijlerKey, HomePijler>;
 
+/** One lab homepage photo-door. Julie adds/reorders these in Site-instellingen. */
+export interface HomeDeur {
+  korteNaam: string;
+  korteNaamEn?: string;
+  regel?: string;
+  regelEn?: string;
+  tekst?: string;
+  tekstEn?: string;
+  href: string;
+  foto?: CmsFoto;
+}
+
+export function localizeInternalHref(href: string, lang: Lang): string {
+  if (lang !== "en") return href;
+  if (!href.startsWith("/") || href.startsWith("/en")) return href;
+  return `/en${href}`;
+}
+
+export function homeDeurNaam(deur: HomeDeur, lang: Lang): string {
+  return (lang === "en" && deur.korteNaamEn) || deur.korteNaam;
+}
+
+export function homeDeurRegel(deur: HomeDeur, lang: Lang): string | undefined {
+  const line = (lang === "en" && deur.regelEn) || deur.regel;
+  return line?.trim() || undefined;
+}
+
+export function homeDeurTekst(deur: HomeDeur, lang: Lang): string | undefined {
+  const body = (lang === "en" && deur.tekstEn) || deur.tekst;
+  return body?.trim() || undefined;
+}
+
 /** Wide group photo of the whole team (Site-instellingen → Groepsfoto team). `url` is a
  * Sanity CDN URL when Julie uploaded one; undefined means "use the local fallback asset". */
 export interface Teamfoto {
@@ -306,6 +338,9 @@ export interface SiteSettings {
   };
   partnerband: PartnerbandSettings;
   homePijlers: HomePijlers;
+  homeDeurenTitel: string;
+  homeDeurenTitelEn?: string;
+  homeDeuren: HomeDeur[];
   /** Default share image (og:image) for pages without their own; undefined = /og-default.jpg. */
   ogAfbeelding?: string;
   /** Google Search Console "HTML tag" verification token (content attribute only). */
@@ -755,6 +790,8 @@ async function loadSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
     `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, googleReviewsFeed, partnerband,
       homePijlers{ kine{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, training{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, mpc{ ..., "foto": foto${CMS_FOTO_PROJECTION} } },
+      homeDeurenTitel, homeDeurenTitelEn,
+      homeDeuren[]{ korteNaam, korteNaamEn, regel, regelEn, tekst, tekstEn, href, "foto": foto${CMS_FOTO_PROJECTION} },
       teamfoto{ "url": afbeelding.asset->url, alt, bijschrift, "hotspot": afbeelding.hotspot{ x, y } },
       "ogAfbeelding": ogAfbeelding.asset->url }`,
   );
@@ -824,10 +861,40 @@ async function loadSiteSettings(): Promise<SiteSettings> {
       training: mergePijler("training", settings?.homePijlers?.training),
       mpc: mergePijler("mpc", settings?.homePijlers?.mpc),
     },
+    homeDeurenTitel: settings?.homeDeurenTitel || seedSettings.homeDeurenTitel || "Eén praktijk, drie wegen",
+    homeDeurenTitelEn: settings?.homeDeurenTitelEn || seedSettings.homeDeurenTitelEn,
+    homeDeuren: mergeHomeDeuren(settings?.homeDeuren),
     ogAfbeelding: settings?.ogAfbeelding || undefined,
     // Lives under Analytics in the Studio (same tab as the GA4 id), top-level here.
     googleSiteVerification: (settings?.analytics?.googleSiteVerification as string | undefined)?.trim() || undefined,
   };
+}
+
+const seedDeuren = (seedSettings.homeDeuren ?? []) as HomeDeur[];
+
+function mergeHomeDeuren(
+  fromSanity?: Array<Partial<HomeDeur> & { foto?: Parameters<typeof toCmsFoto>[0] }>,
+): HomeDeur[] {
+  const rows = fromSanity?.length
+    ? fromSanity
+    : seedDeuren;
+  return rows
+    .map((row) => {
+      const korteNaam = row.korteNaam?.trim();
+      const href = row.href?.trim();
+      if (!korteNaam || !href) return null;
+      return {
+        korteNaam,
+        korteNaamEn: row.korteNaamEn?.trim() || undefined,
+        regel: row.regel?.trim() || undefined,
+        regelEn: row.regelEn?.trim() || undefined,
+        tekst: row.tekst?.trim() || undefined,
+        tekstEn: row.tekstEn?.trim() || undefined,
+        href,
+        foto: toCmsFoto(row.foto),
+      } satisfies HomeDeur;
+    })
+    .filter((row): row is HomeDeur => row !== null);
 }
 
 // Until Julie fills in "Homepage — drie pijlers" in Sanity, the seed copy
@@ -938,6 +1005,22 @@ function normalizeVerwijsopties(items: Partial<VerwijsOptie>[] | undefined): Ver
     }));
 }
 
+/** New defaults from the seed (e.g. Sportcentrum Olympia) still show if the CMS list is an older copy. */
+function withSeedVerwijsopties(
+  live: VerwijsOptie[],
+  seed: Partial<VerwijsOptie>[] | undefined,
+): VerwijsOptie[] {
+  const extras = normalizeVerwijsopties(seed).filter(
+    (opt) => !live.some((item) => item.label.toLowerCase() === opt.label.toLowerCase()),
+  );
+  if (!extras.length) return live;
+  const andere = live.findIndex((item) => /^andere$/i.test(item.label));
+  if (andere >= 0) return [...live.slice(0, andere), ...extras, ...live.slice(andere)];
+  const club = live.findIndex((item) => /sportclub/i.test(item.label));
+  if (club >= 0) return [...live.slice(0, club + 1), ...extras, ...live.slice(club + 1)];
+  return [...live, ...extras];
+}
+
 export async function getPagina(key: PaginaKey): Promise<Pagina> {
   return once(`pagina:${key}`, () => loadPagina(key));
 }
@@ -991,7 +1074,10 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
     legeTekstEn: pick("legeTekstEn"),
     ctaTekst: pick("ctaTekst"),
     ctaTekstEn: pick("ctaTekstEn"),
-    verwijsopties: normalizeVerwijsopties(row?.verwijsopties?.length ? row.verwijsopties : seed.verwijsopties),
+    verwijsopties: withSeedVerwijsopties(
+      normalizeVerwijsopties(row?.verwijsopties?.length ? row.verwijsopties : seed.verwijsopties),
+      seed.verwijsopties,
+    ),
     seoTitle: pick("seoTitle"),
     seoDescription: pick("seoDescription"),
     seoTitleEn: pick("seoTitleEn"),

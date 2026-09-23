@@ -10,6 +10,10 @@ services:
         value: "true" # flip to "false" only after Movenda confirms go-live on movenda.be
       - key: PUBLIC_SITE_URL
         value: https://movenda-preview.onrender.com
+      - key: PUBLIC_THEME
+        value: current
+      - key: PUBLIC_HOST_MODE
+        value: full
     headers:
       - path: /*
         name: X-Robots-Tag
@@ -155,3 +159,79 @@ services:
       - type: redirect
         source: /prices
         destination: /prijzen
+
+  # MPC-only host (this week). Same repo/Sanity as the QR preview.
+  # PUBLIC_NOINDEX stays true until Friday 25 Sep 2026 + explicit OK. Do not flip in this file.
+  - type: web
+    name: movenda-mpc
+    runtime: static
+    buildCommand: cd web && npm install && npm run build
+    staticPublishPath: web/dist
+    autoDeploy: true
+    envVars:
+      - key: PUBLIC_NOINDEX
+        value: "true"
+      - key: PUBLIC_SITE_URL
+        value: https://movenda-mpc.onrender.com
+      - key: PUBLIC_THEME
+        value: current
+      - key: PUBLIC_HOST_MODE
+        value: mpc
+      - key: PUBLIC_MOVENDA_URL
+        value: https://www.movenda.be
+    headers:
+      - path: /*
+        name: X-Robots-Tag
+        value: "noindex, nofollow"
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+    routes:
+      - type: redirect
+        source: /performance
+        destination: /mpc/performance-training
+      - type: redirect
+        source: /vison
+        destination: /mpc/visie
+      - type: redirect
+        source: /sportrehab
+        destination: /mpc/sportrevalidatie
+      - type: redirect
+        source: /sgt
+        destination: /mpc/groepslessen
+      - type: redirect
+        source: /boxing1
+        destination: /mpc/boxing
+      - type: redirect
+        source: /boxing2
+        destination: /mpc/boxing
+
+  # LAB/Brick share URL. noindex. Flip PUBLIC_THEME=lab on movenda-mpc later, after OK.
+  - type: web
+    name: movenda-lab
+    runtime: static
+    buildCommand: cd web && npm install && npm run build
+    staticPublishPath: web/dist
+    autoDeploy: true
+    envVars:
+      - key: PUBLIC_NOINDEX
+        value: "true"
+      - key: PUBLIC_SITE_URL
+        value: https://movenda-lab.onrender.com
+      - key: PUBLIC_THEME
+        value: lab
+      - key: PUBLIC_HOST_MODE
+        value: full
+    headers:
+      - path: /*
+        name: X-Robots-Tag
+        value: "noindex, nofollow"
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin

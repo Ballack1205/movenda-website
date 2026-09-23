@@ -4,6 +4,7 @@ import { getLocatieBySlug } from "../../lib/content";
 
 const locatie = (await getLocatieBySlug("olympia"))!;
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
+import SectionKicker from "../../components/SectionKicker.astro";
 ---
 
 <Layout
@@ -15,7 +16,8 @@ const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda
   noindex
 >
   <section class="mx-auto max-w-xl px-4 py-16">
-    <h1 class="text-3xl font-bold">Welcome to Movenda</h1>
+    <SectionKicker n={1} />
+        <h1 class="text-3xl font-bold">Welcome to Movenda</h1>
     <p class="mt-2 text-lg font-medium text-brand-primary">Tell us how we can help.</p>
     <p class="mt-2 text-sm text-brand-muted">
       We'll get back to you as soon as possible. Or call {locatie.telefoon}.

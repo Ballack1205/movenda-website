@@ -1,6 +1,10 @@
 ---
 import { getImage } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
+import MpcHome from "../../components/MpcHome.astro";
+import { MPC_HOST, THEME } from "../../lib/site";
+import LabCover from "../../components/LabCover.astro";
+import LabStrip from "../../components/LabStrip.astro";
 import GoogleReviewBadge from "../../components/GoogleReviewBadge.astro";
 import SocialLinks from "../../components/SocialLinks.astro";
 import BookingButton from "../../components/BookingButton.astro";
@@ -23,6 +27,10 @@ import {
   getLocaties,
   getPagina,
   homePijlerDiensten,
+  homeDeurNaam,
+  homeDeurRegel,
+  homeDeurTekst,
+  localizeInternalHref,
   paginaAlineas,
   paginaTekst,
   teamCounts,
@@ -82,7 +90,26 @@ const heroLinks = heroPreload
 const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team);
 const heroIntro = paginaAlineas(pagina, "en", { kinesisten: kinesistenCount, trainers: trainerCount });
 const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
+const deurFallback = {
+  "/kinesitherapie": kineHero,
+  "/training": trainingSecondary,
+  "/mpc": mpcHero,
+} as const;
+const labDeuren = settings.homeDeuren.map((deur, i) => ({
+  n: i + 1,
+  href: localizeInternalHref(deur.href, "en"),
+  title: homeDeurNaam(deur, "en"),
+  line: homeDeurRegel(deur, "en"),
+  body: homeDeurTekst(deur, "en"),
+  foto: deur.foto,
+  fallback: deurFallback[deur.href as keyof typeof deurFallback] ?? homeHero,
+  alt: homeDeurNaam(deur, "en"),
+}));
 ---
+
+{MPC_HOST ? (
+  <MpcHome lang="en" path="/en" altPath="/" />
+) : (
 
 <Layout
   title={paginaTekst(pagina, "seoTitle", "en") || "Physiotherapy & personal training Hasselt | Movenda"}
@@ -92,6 +119,27 @@ const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
   lang="en"
   extraLinks={heroLinks}
 >
+  {THEME === "lab" && (
+      <LabCover
+        pagina={pagina}
+        fallback={homeHero}
+        alt="A Movenda trainer coaching a client during a session"
+        shout="Movenda"
+        line="Move. Recover. Perform."
+        nextLabel="Continue"
+      />
+  )}
+  <div class:list={[THEME === "lab" && "lab-sheet"]}>
+  {THEME === "lab" ? (
+    <>
+      <section id="lab-next" class="lab-intro" data-reveal>
+        <h2 class="lab-shout lab-intro__title">{settings.homeDeurenTitelEn || settings.homeDeurenTitel}</h2>
+        <p>{heroIntro.join(" ")}</p>
+        <a href="/en/contact" class="lab-intro__cta">Contact us</a>
+      </section>
+      <LabStrip items={labDeuren} />
+    </>
+  ) : (
   <section class="hero relative overflow-hidden">
     <div
       class="mx-auto grid max-w-6xl gap-8 px-4 pt-8 pb-6 sm:pb-10 lg:max-w-none lg:grid-cols-[1fr_minmax(0,36rem)_minmax(0,36rem)_1fr] lg:gap-0 lg:px-0 lg:pt-0 lg:pb-0"
@@ -211,19 +259,20 @@ const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
       to { transform: none; }
     }
   </style>
+  )}
 
-  <PartnerBand
+  {THEME !== "lab" && <PartnerBand
     partners={partners}
     title={partnerBandTitle(settings.partnerband.titel, "en")}
     snelheid={settings.partnerband.snelheid}
     animatie={settings.partnerband.animatie}
-  />
+  />}
 
-  {settings.slogans.home && (
+  {THEME !== "lab" && settings.slogans.home && (
     <SloganBanner quote={settings.slogans.home} image={homeSquats} foto={pagina.bannerFoto} />
   )}
 
-  <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">
+  {THEME !== "lab" && <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">
     <HomePijler
       pijler={settings.homePijlers.kine}
       diensten={homePijlerDiensten("kine", alleDiensten)}
@@ -255,7 +304,7 @@ const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
       afspraakHref={afspraakHref}
       lang="en"
     />
-  </section>
+  </section>}
 
   <section class="mx-auto grid max-w-6xl gap-4 px-4 pt-2 pb-10 sm:grid-cols-2 sm:gap-6 sm:py-16">
     <a
@@ -313,4 +362,6 @@ const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
   <InstagramFeed settings={settings} lang="en" />
 
   <NewsletterBlock settings={settings} lang="en" />
+  </div>
 </Layout>
+)}

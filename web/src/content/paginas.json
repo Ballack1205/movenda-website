@@ -127,6 +127,7 @@
       { "label": "Familie", "labelEn": "Family", "vervolg": "geen" },
       { "label": "Vrienden", "labelEn": "Friends", "vervolg": "geen" },
       { "label": "Sportclub, trainer of coach", "labelEn": "Sports club, trainer or coach", "vervolg": "club" },
+      { "label": "Sportcentrum Olympia", "labelEn": "Olympia sports centre", "vervolg": "geen" },
       { "label": "Google / Google Maps", "labelEn": "Google / Google Maps", "vervolg": "geen" },
       { "label": "Instagram", "labelEn": "Instagram", "vervolg": "geen" },
       { "label": "Facebook", "labelEn": "Facebook", "vervolg": "geen" },

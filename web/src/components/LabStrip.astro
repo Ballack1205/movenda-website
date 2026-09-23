@@ -1,0 +1,49 @@
+---
+// Three-up magazine strip (LAB 01–03 / Brick club cards). Photos from Sanity.
+import type { ImageMetadata } from "astro";
+import CmsFoto from "./CmsFoto.astro";
+import type { CmsFoto as CmsFotoType } from "../lib/content";
+
+interface Item {
+  n: number;
+  href: string;
+  title: string;
+  line?: string;
+  body?: string;
+  foto?: CmsFotoType;
+  fallback: ImageMetadata;
+  alt: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="lab-strip" data-reveal>
+  <div class="lab-strip__grid" style={`--doors: ${items.length}`}>
+    {items.map((item) => (
+      <a href={item.href} class:list={["lab-strip__card", item.body && "lab-strip__card--copy"]}>
+        <CmsFoto
+          foto={item.foto}
+          fallback={item.fallback}
+          alt={item.alt}
+          width={900}
+          height={1200}
+          class="lab-strip__photo"
+        />
+        <span class="lab-strip__index" aria-hidden="true">{String(item.n).padStart(2, "0")}</span>
+        {item.body && <span class="lab-strip__body">{item.body}</span>}
+        <span class="lab-strip__copy">
+          <span class="lab-strip__meta">
+            <span class="lab-shout lab-strip__title">{item.title}</span>
+            {item.line && <span class="lab-strip__line">{item.line}</span>}
+          </span>
+          <span class="lab-strip__arrow" aria-hidden="true">↗</span>
+        </span>
+      </a>
+    ))}
+  </div>
+</section>

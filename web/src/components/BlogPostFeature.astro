@@ -3,6 +3,7 @@ import type { BlogPost } from "../lib/content";
 import { blogPhotoSrc } from "../lib/images";
 import { blogTagLabel, formatBlogDate } from "../lib/blog";
 import { withLang, type Lang } from "../lib/i18n";
+import { THEME } from "../lib/site";
 
 interface Props {
   post: BlogPost;
@@ -14,13 +15,14 @@ const contain = post.coverFit === "contain";
 const tag = post.tags?.[0];
 const titel = lang === "en" ? post.titelEn || post.titel : post.titel;
 const excerpt = lang === "en" ? post.excerptEn || post.excerpt : post.excerpt;
+const lab = THEME === "lab";
 ---
 
 <a href={withLang(`/blog/${post.slug}`, lang)} class="group grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
   {post.cover && (
     <div
       class:list={[
-        "overflow-hidden rounded-3xl shadow-xl",
+        lab ? "overflow-hidden rounded-[2px]" : "overflow-hidden rounded-3xl shadow-xl",
         contain ? "bg-white" : "bg-brand-header/10",
       ]}
     >

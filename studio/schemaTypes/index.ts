@@ -4,6 +4,7 @@ import dienst from "./dienst";
 import siteSettings from "./siteSettings";
 import googleReviewInfo from "./googleReviewInfo";
 import homePijler from "./homePijler";
+import homeDeur from "./homeDeur";
 import faq from "./faq";
 import blogPost from "./blogPost";
 import vacature from "./vacature";
@@ -29,6 +30,7 @@ export const schemaTypes = [
   siteSettings,
   googleReviewInfo,
   homePijler,
+  homeDeur,
   faq,
   blogPost,
   vacature,

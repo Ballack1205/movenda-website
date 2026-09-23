@@ -7,12 +7,13 @@ import "@fontsource-variable/bricolage-grotesque/opsz.css";
 import "@fontsource-variable/instrument-sans";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import LabMotion from "../components/LabMotion.astro";
 import Analytics from "../components/Analytics.astro";
 import PromoPopup from "../components/PromoPopup.astro";
 import { getActivePopup, getLocaties, getSiteSettings } from "../lib/content";
 import { ogImageSrc, type OgShape } from "../lib/images";
 import { baseGraph, toGraph, type JsonLdNode } from "../lib/schema";
-import { NOINDEX, absoluteUrl } from "../lib/site";
+import { MPC_HOST, NOINDEX, THEME, absoluteUrl } from "../lib/site";
 
 export interface ArticleMeta {
   publishedTime: string;
@@ -87,7 +88,8 @@ const ogFallback = settings.ogAfbeelding || "/og-default.jpg";
 const usesPageImage = !!ogImage && ogImage !== "/og-default.jpg";
 const og = ogImageSrc(usesPageImage ? ogImage! : ogFallback, usesPageImage ? ogImageShape : "wide");
 const ogImageUrl = absoluteUrl(og.url);
-const siteName = brand === "mpc" ? "Movenda Performance Centre" : "Movenda";
+const chromeBrand = MPC_HOST ? "mpc" : brand;
+const siteName = chromeBrand === "mpc" ? "Movenda Performance Centre" : "Movenda";
 const ogLocale = lang === "en" ? "en_GB" : "nl_BE";
 const ogLocaleAlt = lang === "en" ? "nl_BE" : "en_GB";
 
@@ -110,10 +112,18 @@ const headLinks = [
 // whatever the page passes in (Person, Service, BreadcrumbList, ...), deduped
 // by @id so a page may pass a richer version of a shared node.
 const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
+
+// Lab-only: Newsreader (display) + Instrument Sans width axis. PUBLIC_THEME is
+// a build env, so the QR / navy hosts do not ship these files.
+if (THEME === "lab") {
+  await import("@fontsource-variable/newsreader/opsz.css");
+  await import("@fontsource-variable/newsreader/opsz-italic.css");
+  await import("@fontsource-variable/instrument-sans/wdth.css");
+}
 ---
 
 <!doctype html>
-<html lang={lang === "en" ? "en" : "nl-BE"} data-brand={brand}>
+<html lang={lang === "en" ? "en" : "nl-BE"} data-brand={chromeBrand} data-theme={THEME}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -167,12 +177,13 @@ const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
     <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
   </head>
   <body class="flex min-h-screen flex-col bg-brand-bg text-brand-text">
-    <Header brand={brand} lang={lang} path={path} altPath={altPath} />
+    <Header brand={chromeBrand} lang={lang} path={path} altPath={altPath} />
     <main class="flex-1">
       <slot />
     </main>
-    <Footer brand={brand} lang={lang} />
+    <Footer brand={chromeBrand} lang={lang} />
     <PromoPopup popup={popup} lang={lang} />
     <Analytics lang={lang} />
+    {THEME === "lab" && <LabMotion />}
   </body>
 </html>

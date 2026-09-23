@@ -15,6 +15,7 @@ const jsonLd = [
   ]),
   ...(shown.length > 0 ? [faqPageSchema(shown, "/en/faq")] : []),
 ];
+import SectionKicker from "../../components/SectionKicker.astro";
 ---
 
 <Layout
@@ -26,7 +27,8 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-3xl px-4 py-12">
-    <h1 class="text-3xl font-bold">Frequently asked questions</h1>
+    <SectionKicker n={1} />
+        <h1 class="text-3xl font-bold">Frequently asked questions</h1>
     <p class="mt-2 text-brand-muted">
       Can't find your question? Email us at{" "}
       <a href={`mailto:${settings.email}`} class="font-semibold text-brand-primary hover:underline">

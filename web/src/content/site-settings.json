@@ -70,6 +70,31 @@
     "prijzenKine": "The greatest WEALTH is HEALTH.",
     "prijzenPt": "Sweat is fat crying"
   },
+  "homeDeurenTitel": "Eén praktijk, drie wegen",
+  "homeDeurenTitelEn": "One practice, three paths",
+  "homeDeuren": [
+    {
+      "korteNaam": "Kine",
+      "korteNaamEn": "Physio",
+      "regel": "Olympia",
+      "regelEn": "Olympia",
+      "href": "/kinesitherapie"
+    },
+    {
+      "korteNaam": "Training",
+      "korteNaamEn": "Training",
+      "regel": "Olympia",
+      "regelEn": "Olympia",
+      "href": "/training"
+    },
+    {
+      "korteNaam": "Performance",
+      "korteNaamEn": "Performance",
+      "regel": "Kuringen",
+      "regelEn": "Kuringen",
+      "href": "/mpc"
+    }
+  ],
   "homePijlers": {
     "kine": {
       "titel": "Kinesitherapie in Hasselt",

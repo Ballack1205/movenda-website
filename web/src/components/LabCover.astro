@@ -1,0 +1,42 @@
+---
+// Full-viewport cover in the LAB / Brick language: the photo is the statement.
+// Centered condensed shout + Newsreader line. No body copy, no CTAs (header has those).
+import type { ImageMetadata } from "astro";
+import type { Pagina } from "../lib/content";
+import HeroVideo from "./HeroVideo.astro";
+
+interface Props {
+  pagina: Pick<Pagina, "foto" | "fotoHotspot" | "fotoAlt" | "heroVideo">;
+  fallback: ImageMetadata;
+  alt: string;
+  shout: string;
+  line: string;
+  nextHref?: string;
+  nextLabel?: string;
+}
+
+const { pagina, fallback, alt, shout, line, nextHref = "#lab-next", nextLabel = "Verder" } = Astro.props;
+---
+
+<section class="lab-cover">
+  <div class="lab-cover__media" aria-hidden="true">
+    <HeroVideo
+      pagina={pagina}
+      fallback={fallback}
+      alt=""
+      width={1920}
+      height={1200}
+      class="absolute inset-0 h-full w-full object-cover object-[center_32%]"
+      priority
+      flush
+    />
+  </div>
+  <div class="lab-cover__veil" aria-hidden="true"></div>
+  <h1 class="lab-cover__copy">
+    <span class="lab-shout lab-cover__shout">{shout}</span>
+    <span class="lab-cover__line">{line}</span>
+  </h1>
+  <a class="lab-cover__arrow" href={nextHref} aria-label={nextLabel}>
+    <span aria-hidden="true">↓</span>
+  </a>
+</section>

@@ -1,0 +1,20 @@
+---
+// Numbered kicker + H1 + optional lead. SectionKicker is a no-op on the navy theme.
+import SectionKicker from "./SectionKicker.astro";
+
+interface Props {
+  n?: number;
+  kicker?: string;
+  title: string;
+  lead?: string;
+}
+
+const { n, kicker, title, lead } = Astro.props;
+---
+
+<header class="page-intro">
+  {n != null && <SectionKicker n={n} />}
+  {kicker && <p class="section-kicker">{kicker}</p>}
+  <h1>{title}</h1>
+  {lead && <p class="page-intro__lead mt-4 max-w-2xl text-pretty text-lg text-brand-muted">{lead}</p>}
+</header>

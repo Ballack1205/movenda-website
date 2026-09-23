@@ -3,6 +3,7 @@ import type { BlogPost } from "../lib/content";
 import { blogPhotoSrc } from "../lib/images";
 import { blogTagLabel, formatBlogDate } from "../lib/blog";
 import { withLang, type Lang } from "../lib/i18n";
+import { THEME } from "../lib/site";
 
 interface Props {
   post: BlogPost;
@@ -14,11 +15,15 @@ const contain = post.coverFit === "contain";
 const tag = post.tags?.[0];
 const titel = lang === "en" ? post.titelEn || post.titel : post.titel;
 const excerpt = lang === "en" ? post.excerptEn || post.excerpt : post.excerpt;
+const lab = THEME === "lab";
 ---
 
 <a
   href={withLang(`/blog/${post.slug}`, lang)}
-  class="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary"
+  class:list={[
+    "group flex min-w-0 flex-col overflow-hidden border border-brand-border bg-brand-surface transition",
+    lab ? "lab-card rounded-[2px] hover:border-brand-text" : "rounded-2xl hover:border-brand-primary",
+  ]}
 >
   {post.cover && (
     <div class:list={["overflow-hidden", contain ? "bg-white" : "bg-brand-header/10"]}>

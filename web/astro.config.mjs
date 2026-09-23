@@ -7,6 +7,7 @@ import sitemap from "@astrojs/sitemap";
 // URL locally. Flip PUBLIC_NOINDEX to "false" only after go-live.
 // src/lib/site.ts reads the same variables for canonical/JSON-LD/robots.
 const site = process.env.PUBLIC_SITE_URL || "https://movenda-preview.onrender.com";
+const hostMode = process.env.PUBLIC_HOST_MODE === "mpc";
 
 const SANITY_PROJECT = process.env.PUBLIC_SANITY_PROJECT_ID || "k73l2by8";
 const SANITY_DATASET = process.env.PUBLIC_SANITY_DATASET || "production";
@@ -83,7 +84,19 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (url) => !SITEMAP_EXCLUDE.has(new URL(url).pathname.replace(/\/$/, "") || "/"),
+      filter: (url) => {
+        const path = new URL(url).pathname.replace(/\/$/, "") || "/";
+        if (SITEMAP_EXCLUDE.has(path)) return false;
+        if (!hostMode) return true;
+        if (path === "/" || path === "/en") return true;
+        if (path.startsWith("/mpc") || path.startsWith("/en/mpc")) return true;
+        if (path === "/contact" || path === "/en/contact") return true;
+        if (path === "/team" || path.startsWith("/team/")) return true;
+        if (path === "/en/team" || path.startsWith("/en/team/")) return true;
+        if (path === "/locaties/mpc" || path === "/en/locaties/mpc") return true;
+        if (path === "/privacy" || path === "/en/privacy") return true;
+        return false;
+      },
       // hreflang alternates in the sitemap. Only emitted for paths that exist
       // in both /… and /en/… (the integration checks the real URL list).
       i18n: { defaultLocale: "nl", locales: { nl: "nl-BE", en: "en" } },

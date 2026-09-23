@@ -27,6 +27,7 @@ const jsonLd = [
     { name: "Prijzen", path: "/prijzen" },
   ]),
 ];
+import SectionKicker from "../components/SectionKicker.astro";
 ---
 
 <Layout
@@ -37,7 +38,8 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-4xl px-4 py-12">
-    <h1 class="text-3xl font-bold">Tarieven &amp; terugbetaling</h1>
+    <SectionKicker n={1} />
+        <h1 class="text-3xl font-bold">Tarieven &amp; terugbetaling</h1>
     {info.intro && <p class="mt-3 max-w-2xl text-brand-muted">{info.intro}</p>}
     {info.basishonorarium && (
       <p class="mt-2 max-w-2xl text-brand-muted">

@@ -1,0 +1,67 @@
+---
+// Magazine cover for PUBLIC_THEME=lab. Reuses HeroVideo so Julie's Sanity
+// still + optional clip stay the LCP. Current/navy pages do not import this.
+import type { ImageMetadata } from "astro";
+import type { Pagina } from "../lib/content";
+import HeroVideo from "./HeroVideo.astro";
+
+interface Cta {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  pagina: Pick<Pagina, "foto" | "fotoHotspot" | "fotoAlt" | "heroVideo">;
+  fallback: ImageMetadata;
+  alt: string;
+  kicker?: string;
+  title: string;
+  slogan?: string;
+  alineas?: string[];
+  primary: Cta;
+  secondary?: Cta;
+}
+
+const { pagina, fallback, alt, kicker, title, slogan, alineas = [], primary, secondary } = Astro.props;
+---
+
+<section class="editorial-hero relative isolate min-h-[min(88vh,46rem)] overflow-hidden">
+  <HeroVideo
+    pagina={pagina}
+    fallback={fallback}
+    alt={alt}
+    width={1600}
+    height={1000}
+    class="absolute inset-0 h-full w-full object-cover object-[center_32%]"
+    priority
+    flush
+  />
+  <div class="editorial-hero__scrim pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="relative z-10 mx-auto flex min-h-[min(88vh,46rem)] max-w-6xl flex-col justify-end px-4 pb-12 pt-28 md:pb-16">
+    {kicker && <p class="section-kicker !text-[color:var(--on-photo)]">{kicker}</p>}
+    <h1 class="max-w-4xl text-display text-[color:var(--on-photo)]">{title}</h1>
+    {slogan && <p class="mt-3 max-w-xl text-lg font-medium text-[color:var(--on-photo)]/90">{slogan}</p>}
+    {alineas.map((tekst) => (
+      <p class="mt-4 max-w-xl text-[1.0625rem] leading-relaxed text-[color:var(--on-photo)]/85">{tekst}</p>
+    ))}
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        href={primary.href}
+        class="inline-flex min-h-11 items-center rounded-[2px] bg-[color:var(--on-photo)] px-6 py-3 text-sm font-semibold text-[color:var(--brand-text)] transition hover:opacity-90"
+      >
+        {primary.label}
+      </a>
+      {secondary && (
+        <a
+          href={secondary.href}
+          class="inline-flex min-h-11 items-center rounded-[2px] border border-[color:var(--on-photo)]/55 px-6 py-3 text-sm font-semibold text-[color:var(--on-photo)] transition hover:bg-white/10"
+        >
+          {secondary.label}
+        </a>
+      )}
+    </div>
+    <div class="editorial-hero__meta mt-8">
+      <slot />
+    </div>
+  </div>
+</section>

@@ -26,6 +26,7 @@ const jsonLd = [
     { name: "Groepslessen", path: "/mpc/groepslessen" },
   ]),
 ];
+import SectionKicker from "../../components/SectionKicker.astro";
 ---
 
 <Layout
@@ -38,7 +39,8 @@ const jsonLd = [
 >
   <section class="mx-auto max-w-6xl px-4 py-12">
     <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">MPC</p>
-    <h1 class="mt-2 text-3xl font-bold">Groepslessen</h1>
+    <SectionKicker n={1} />
+        <h1 class="mt-2 text-3xl font-bold">Groepslessen</h1>
     <p class="mt-3 max-w-2xl text-brand-muted">
       Kleine groepen, maximaal 8 personen, begeleid door een coach. Eerste running-les is gratis;
       PowerPlus heeft een gratis proefles. {locatie.verdiepingNote}

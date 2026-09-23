@@ -1,0 +1,46 @@
+---
+// Quiet motion for the lab theme: ken-burns lives in CSS; this only reveals
+// [data-reveal] blocks on scroll. No GSAP. Honors prefers-reduced-motion.
+---
+
+<script>
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const nodes = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  const reveal = (el: HTMLElement) => el.classList.add("is-in");
+  if (reduce) {
+    nodes.forEach(reveal);
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          reveal(entry.target as HTMLElement);
+          io.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.01, rootMargin: "0px 0px -8% 0px" },
+    );
+    // Paint the hidden state first so adding .is-in actually transitions.
+    requestAnimationFrame(() => {
+      nodes.forEach((el) => io.observe(el));
+    });
+  }
+
+  const sheet = document.querySelector(".lab-sheet");
+  const cover = document.querySelector(".lab-cover");
+  if (sheet) {
+    const update = () => {
+      document.body.classList.toggle("lab-past-cover", sheet.getBoundingClientRect().top < 80);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+  } else if (cover) {
+    const coverIo = new IntersectionObserver(
+      ([entry]) => {
+        document.body.classList.toggle("lab-past-cover", !entry.isIntersecting);
+      },
+      { threshold: 0.08 },
+    );
+    coverIo.observe(cover);
+  }
+</script>

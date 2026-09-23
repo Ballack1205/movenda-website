@@ -20,6 +20,7 @@ import {
   type SiteSettings,
   type SportaanbodItem,
 } from "./content";
+import { movendaHomeHref } from "./site";
 
 export type Brand = "movenda" | "mpc";
 export type Lang = "nl" | "en";
@@ -143,7 +144,10 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
               { href: "/en/mpc#faq", label: "FAQ" },
             ],
           },
-          { href: "/en", label: "Movenda", emphasize: true },
+          (() => {
+            const href = movendaHomeHref("en");
+            return { href, label: "Movenda", emphasize: true, external: /^https?:/.test(href) };
+          })(),
           ...contactItem,
         ],
         cta,
@@ -187,7 +191,10 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
             { href: "/mpc#faq", label: "Veelgestelde vragen" },
           ],
         },
-        { href: "/", label: "Movenda", emphasize: true },
+        (() => {
+          const href = movendaHomeHref("nl");
+          return { href, label: "Movenda", emphasize: true, external: /^https?:/.test(href) };
+        })(),
         ...contactItem,
       ],
       cta,

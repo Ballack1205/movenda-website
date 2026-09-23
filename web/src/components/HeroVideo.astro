@@ -21,9 +21,11 @@ export interface Props {
   /** Classes for the box (aspect ratio, rounding, shadow). Photo and clip share them. */
   class?: string;
   priority?: boolean;
+  /** Lab magazine covers: no card radius or drop shadow on the video wrapper. */
+  flush?: boolean;
 }
 
-const { pagina, fallback, alt, width, height, class: className = "", priority } = Astro.props;
+const { pagina, fallback, alt, width, height, class: className = "", priority, flush } = Astro.props;
 const video = pagina.heroVideo;
 const type = video?.toLowerCase().endsWith(".webm") ? "video/webm" : "video/mp4";
 const posterSrc = pagina.foto ? `${pagina.foto}?w=1080&fit=max&auto=format` : undefined;
@@ -35,7 +37,7 @@ const cropClass = className.replace(/\bobject-top\b/g, "object-[center_32%]");
 ---
 
 {video ? (
-  <div class="hero-video relative overflow-hidden md:rounded-3xl md:shadow-xl">
+  <div class:list={["hero-video relative overflow-hidden", flush ? "absolute inset-0 h-full w-full" : "md:rounded-3xl md:shadow-xl"]}>
     {posterSrc ? (
       <img
         src={posterSrc}

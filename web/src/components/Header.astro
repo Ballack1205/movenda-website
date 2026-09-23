@@ -7,6 +7,7 @@
 //            → desktop nav from `lg` (1024). iPad portrait gets the grouped panel.
 // Nav structure lives in src/lib/nav.ts; dropdown contents come from the CMS.
 import { getNavModel, isActiveItem, isCurrentPath } from "../lib/nav";
+import { mpcHomePath, movendaHomeHref, THEME } from "../lib/site";
 
 export interface Props {
   brand?: "movenda" | "mpc";
@@ -18,6 +19,9 @@ export interface Props {
 
 const { brand = "movenda", lang = "nl", path = "/", altPath } = Astro.props;
 const { items, cta, phone, contact } = await getNavModel(brand, lang);
+const lab = THEME === "lab";
+const logoHref = brand === "mpc" ? mpcHomePath(lang) : movendaHomeHref(lang);
+const logoExternal = /^https?:/.test(logoHref);
 
 const langSwitchHref = lang === "en" ? altPath || "/" : altPath || "/en";
 // `md:` for Movenda, `lg:` for MPC — everything that flips between bar and panel uses these.
@@ -47,15 +51,43 @@ const groups = items.filter((i) => i.children && i.children.length > 0);
 const plain = items.filter((i) => !i.children || i.children.length === 0);
 ---
 
-<header class:list={["relative z-40 bg-brand-header text-white", stickyMobile]} data-header data-desktop-min={desktopMinWidth}>
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 xl:gap-6">
+<header
+  class:list={[
+    "relative z-40",
+    lab ? "border-b border-brand-border bg-brand-bg text-brand-text" : "bg-brand-header text-white",
+    stickyMobile,
+  ]}
+  data-header
+  data-desktop-min={desktopMinWidth}
+>
+  <div class="relative z-50 mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 xl:gap-6">
     <a
-      href={lang === "en" ? (brand === "mpc" ? "/en/mpc" : "/en") : brand === "mpc" ? "/mpc" : "/"}
+      href={logoHref}
+      data-logo
       class="flex shrink-0 items-center gap-2"
       aria-label={t.brandName}
+      target={logoExternal ? "_blank" : undefined}
+      rel={logoExternal ? "noopener noreferrer" : undefined}
     >
       {brand === "mpc" ? (
         <img src="/brand/logo-mpc.png" alt="MPC" width="40" height="40" class="h-10 w-10" />
+      ) : lab ? (
+        <>
+          <img
+            src="/brand/logo-wordmark-on-light.png"
+            alt="Movenda"
+            width="140"
+            height="30"
+            class="logo-on-light h-6 w-auto xl:h-7"
+          />
+          <img
+            src="/brand/logo-wordmark-on-dark.png"
+            alt=""
+            width="140"
+            height="30"
+            class="logo-on-dark hidden h-6 w-auto xl:h-7"
+          />
+        </>
       ) : (
         <img src="/brand/logo-wordmark.png" alt="Movenda" width="140" height="30" class="h-6 w-auto xl:h-7" />
       )}
@@ -70,13 +102,31 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
           const active = isActiveItem(item, path);
           const base = [
             "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-1.5 transition xl:px-3",
-            item.emphasize ? "font-bold text-white" : "text-white/80 hover:text-white",
-            active ? "bg-white/10 text-white" : "hover:bg-white/10",
+            lab
+              ? item.emphasize
+                ? "font-bold text-brand-text"
+                : "text-brand-text/80 hover:text-brand-text"
+              : item.emphasize
+                ? "font-bold text-white"
+                : "text-white/80 hover:text-white",
+            lab
+              ? active
+                ? "bg-black/5 text-brand-text"
+                : "hover:bg-black/5"
+              : active
+                ? "bg-white/10 text-white"
+                : "hover:bg-white/10",
           ];
           if (!item.children || item.children.length === 0) {
             return (
               <li>
-                <a href={item.href} class:list={base} aria-current={isCurrentPath(item.href, path) ? "page" : undefined}>
+                <a
+                  href={item.href}
+                  class:list={base}
+                  aria-current={isCurrentPath(item.href, path) ? "page" : undefined}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
+                >
                   {item.label}
                 </a>
               </li>
@@ -159,8 +209,13 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     <div class="flex shrink-0 items-center gap-2 sm:gap-3">
       <a
         href={langSwitchHref}
-        class="rounded-full border border-white/30 px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white hover:text-white"
+        class:list={[
+          "inline-flex items-center rounded-full border border-white/30 px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white hover:text-white",
+          lab && "min-h-11",
+          lab && (desktop === "lg" ? "max-lg:hidden" : "max-md:hidden"),
+        ]}
         aria-label={t.langSwitch}
+        data-lab-bar-extra
       >
         {lang === "en" ? "NL" : "EN"}
       </a>
@@ -168,15 +223,21 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
         href={cta.href}
         target={cta.external ? "_blank" : undefined}
         rel={cta.external ? "noopener noreferrer" : undefined}
-        class="hidden whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-brand-header transition hover:bg-white/90 min-[360px]:inline-flex xl:px-3.5 xl:text-sm"
+        class:list={[
+          "hidden whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-brand-header transition hover:bg-white/90 min-[360px]:inline-flex xl:px-3.5 xl:text-sm",
+          lab && "min-h-11 items-center",
+          lab && (desktop === "lg" ? "max-lg:!hidden lg:!inline-flex" : "max-md:!hidden md:!inline-flex"),
+        ]}
         data-cta={cta === contact ? "contact" : "booking"}
+        data-lab-bar-extra
       >
         {cta.label}
       </a>
       <button
         type="button"
         class:list={[
-          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white transition hover:border-white",
+          "inline-flex items-center justify-center rounded-full border border-white/30 text-white transition hover:border-white",
+          lab ? "h-11 w-11" : "h-9 w-9",
           hideDesktop,
         ]}
         aria-label={t.openMenu}
@@ -196,7 +257,45 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     </div>
   </div>
 
-  {/* Phone / tablet panel: overlays the page, grouped in columns, phone + CTA at the bottom. */}
+  {lab ? (
+  <nav
+    id="mobile-nav"
+    class:list={[
+      "lab-menu fixed inset-0 top-0 z-30 hidden overflow-y-auto pt-[5.5rem]",
+      hideDesktop,
+    ]}
+    aria-label={lang === "en" ? "Menu" : "Menu"}
+    data-mobile-nav
+  >
+    <div class="mx-auto flex min-h-[calc(100dvh-5.5rem)] max-w-lg flex-col px-5 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <ol class="flex flex-col gap-1">
+        {items.map((item, i) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isCurrentPath(item.href, path) ? "page" : undefined}
+              target={item.external ? "_blank" : undefined}
+              rel={item.external ? "noopener noreferrer" : undefined}
+              class="lab-menu__item"
+            >
+              <span class="lab-menu__index" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+              <span class="lab-menu__label">{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+      <div class="mt-auto flex flex-col gap-3 border-t border-brand-border pt-8">
+        <a href={cta.href} class="lab-menu__cta" data-cta={cta === contact ? "contact" : "booking"}>
+          {cta.label}
+        </a>
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+          <a href={langSwitchHref}>{lang === "en" ? "Nederlands" : "English"}</a>
+          {phone && <a href={telHref(phone)}>{phone}</a>}
+        </div>
+      </div>
+    </div>
+  </nav>
+  ) : (
   <nav
     id="mobile-nav"
     class:list={[
@@ -269,6 +368,8 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
                 <a
                   href={item.href}
                   aria-current={isCurrentPath(item.href, path) ? "page" : undefined}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
                   class:list={[
                     "flex items-center justify-between rounded-lg px-2 py-2 font-heading text-base text-white transition hover:bg-white/10",
                     item.emphasize ? "font-bold" : "font-semibold",
@@ -309,6 +410,7 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
       </div>
     </div>
   </nav>
+  )}
 </header>
 
 <script>

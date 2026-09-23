@@ -40,6 +40,7 @@ const jsonLd = [
 ];
 
 const title = `${lid.voornaam} ${lid.naam} | ${rolKort(rol)} Hasselt | Movenda`;
+import SectionKicker from "../../../components/SectionKicker.astro";
 ---
 
 <Layout
@@ -73,6 +74,7 @@ const title = `${lid.voornaam} ${lid.naam} | ${rolKort(rol)} Hasselt | Movenda`;
         )}
       </div>
       <div>
+        <SectionKicker n={1} />
         <h1 class="text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
         <p class="mt-1 text-lg font-medium text-brand-primary">{rol}</p>
         <p class="mt-2 text-sm text-brand-muted">{locatieKorteNamen(lid.locaties, locaties).join(" · ")}</p>

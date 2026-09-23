@@ -209,6 +209,30 @@ export default defineType({
       options: { collapsible: true, collapsed: true },
     }),
     defineField({
+      name: "homeDeurenTitel",
+      title: "Kop boven de fotodeuren",
+      type: "string",
+      group: "homepage",
+      description: "Bv. 'Eén praktijk, drie wegen'. Schrijf de zin zelf — zo vermijden we rare meervouden als er een deur bijkomt.",
+      initialValue: "Eén praktijk, drie wegen",
+    }),
+    defineField({
+      name: "homeDeurenTitelEn",
+      title: "Kop boven de fotodeuren (EN)",
+      type: "string",
+      group: "homepage",
+    }),
+    defineField({
+      name: "homeDeuren",
+      title: "Homepage — fotodeuren (lab)",
+      description:
+        "De grote foto's halverwege de lab-homepage. Sleep om te herschikken. Voeg er een toe als er een rubriek bijkomt (dan worden het er 4). Houd het klein: meer dan vijf deuren wordt onoverzichtelijk.",
+      type: "array",
+      group: "homepage",
+      of: [{ type: "homeDeur" }],
+      validation: (rule) => rule.max(6),
+    }),
+    defineField({
       name: "partnerband",
       title: "Partnerbalk",
       description: "De bewegende logobalk. De partners zelf beheer je onder 'Partners & logo's'.",

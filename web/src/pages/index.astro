@@ -1,6 +1,10 @@
 ---
 import { getImage } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
+import MpcHome from "../components/MpcHome.astro";
+import { MPC_HOST, THEME } from "../lib/site";
+import LabCover from "../components/LabCover.astro";
+import LabStrip from "../components/LabStrip.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import SocialLinks from "../components/SocialLinks.astro";
 import BookingButton from "../components/BookingButton.astro";
@@ -23,6 +27,10 @@ import {
   getLocaties,
   getPagina,
   homePijlerDiensten,
+  homeDeurNaam,
+  homeDeurRegel,
+  homeDeurTekst,
+  localizeInternalHref,
   paginaAlineas,
   teamCounts,
 } from "../lib/content";
@@ -82,8 +90,27 @@ const heroLinks = heroPreload
 
 const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team);
 const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, trainers: trainerCount });
+const deurFallback = {
+  "/kinesitherapie": kineHero,
+  "/training": trainingSecondary,
+  "/mpc": mpcHero,
+} as const;
+const labDeuren = settings.homeDeuren.map((deur, i) => ({
+  n: i + 1,
+  href: localizeInternalHref(deur.href, "nl"),
+  title: homeDeurNaam(deur, "nl"),
+  line: homeDeurRegel(deur, "nl"),
+  body: homeDeurTekst(deur, "nl"),
+  foto: deur.foto,
+  fallback: deurFallback[deur.href as keyof typeof deurFallback] ?? homeHero,
+  alt: homeDeurNaam(deur, "nl"),
+}));
 
 ---
+
+{MPC_HOST ? (
+  <MpcHome lang="nl" path="/" altPath="/en" />
+) : (
 
 <Layout
   title={pagina.seoTitle || "Kinesitherapie & personal training Hasselt | Movenda"}
@@ -92,12 +119,27 @@ const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, tra
   altPath="/en"
   extraLinks={heroLinks}
 >
-  {/*
-    Hero — editorial, asymmetric. Breakout grid: [gutter | copy 32rem | photo 40rem + gutter].
-    The photo bleeds to the right viewport edge with no radius/shadow; the copy sits in a
-    narrower column so the composition is deliberately off-centre. A small kine detail shot
-    overlaps the photo's bottom-left corner (xl+) to show both pillars without a stats row.
-  */}
+  {THEME === "lab" && (
+      <LabCover
+        pagina={pagina}
+        fallback={homeHero}
+        alt="Trainer van Movenda begeleidt een klant tijdens een training"
+        shout="Movenda"
+        line="Bewegen. Herstellen. Presteren."
+        nextLabel="Verder"
+      />
+  )}
+  <div class:list={[THEME === "lab" && "lab-sheet"]}>
+  {THEME === "lab" ? (
+    <>
+      <section id="lab-next" class="lab-intro" data-reveal>
+        <h2 class="lab-shout lab-intro__title">{settings.homeDeurenTitel}</h2>
+        <p>{heroIntro.join(" ")}</p>
+        <a href="/contact" class="lab-intro__cta">Contacteer ons</a>
+      </section>
+      <LabStrip items={labDeuren} />
+    </>
+  ) : (
   <section class="hero relative overflow-hidden">
     <div
       class="mx-auto grid max-w-6xl gap-8 px-4 pt-8 pb-6 sm:pb-10 lg:max-w-none lg:grid-cols-[1fr_minmax(0,36rem)_minmax(0,36rem)_1fr] lg:gap-0 lg:px-0 lg:pt-0 lg:pb-0"
@@ -222,19 +264,20 @@ const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, tra
       to { transform: none; }
     }
   </style>
+  )}
 
-  <PartnerBand
+  {THEME !== "lab" && <PartnerBand
     partners={partners}
     title={settings.partnerband.titel}
     snelheid={settings.partnerband.snelheid}
     animatie={settings.partnerband.animatie}
-  />
+  />}
 
-  {settings.slogans.home && (
+  {THEME !== "lab" && settings.slogans.home && (
     <SloganBanner quote={settings.slogans.home} image={homeSquats} foto={pagina.bannerFoto} />
   )}
 
-  <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">
+  {THEME !== "lab" && <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">
     <HomePijler
       pijler={settings.homePijlers.kine}
       diensten={homePijlerDiensten("kine", alleDiensten)}
@@ -263,7 +306,7 @@ const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, tra
       aanbodLabel="Ontdek het Performance Centre"
       afspraakHref={afspraakHref}
     />
-  </section>
+  </section>}
 
   {/* On phones this follows the MPC pijler directly, so keep the gap tight and the cards compact. */}
   <section class="mx-auto grid max-w-6xl gap-4 px-4 pt-2 pb-10 sm:grid-cols-2 sm:gap-6 sm:py-16">
@@ -330,4 +373,6 @@ const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, tra
   <InstagramFeed settings={settings} />
 
   <NewsletterBlock settings={settings} />
+  </div>
 </Layout>
+)}

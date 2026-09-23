@@ -20,6 +20,7 @@ const jsonLd = [
     { name: "Over ons", path: "/over" },
   ]),
 ];
+import SectionKicker from "../components/SectionKicker.astro";
 ---
 
 <Layout
@@ -31,7 +32,8 @@ const jsonLd = [
 >
   <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 lg:grid-cols-2">
     <div>
-      <h1 class="text-3xl font-bold">{pagina.titel}</h1>
+      <SectionKicker n={1} />
+        <h1 class="text-3xl font-bold">{pagina.titel}</h1>
       {alineas.map((tekst) => (
         <p class="mt-4 text-brand-muted">{tekst}</p>
       ))}

@@ -1,6 +1,7 @@
 ---
 import { getLocaties, getSiteSettings } from "../lib/content";
 import { byAppointment, locatieType, weekday } from "../lib/i18n";
+import { MPC_HOST, MOVENDA_PUBLIC_URL, movendaHomeHref, mpcHomePath, NOINDEX, THEME } from "../lib/site";
 
 export interface Props {
   brand?: "movenda" | "mpc";
@@ -8,6 +9,7 @@ export interface Props {
 }
 
 const { brand = "movenda", lang = "nl" } = Astro.props;
+const lab = THEME === "lab";
 const locaties = await getLocaties();
 const settings = await getSiteSettings();
 const year = new Date().getFullYear();
@@ -25,7 +27,12 @@ const sharedNote =
     : null;
 
 // Location mark: the "M" for Movenda / Olympia, the MPC mark for the Performance Centre.
-const markFor = (slug: string) => (slug === "mpc" ? "/brand/logo-mpc.png" : "/brand/logo-m.png");
+const markFor = (slug: string) =>
+  slug === "mpc"
+    ? "/brand/logo-mpc.png"
+    : lab
+      ? "/brand/logo-m-on-dark.png"
+      : "/brand/logo-m.png";
 const shortName = (naam: string) => naam.replace(/^Movenda\s*/i, "");
 
 const t = {
@@ -40,8 +47,29 @@ const privacyHref = lang === "en" ? "/en/privacy" : "/privacy";
 // Only offer "change my cookie choice" when there is a consent-gated tool (GA4) to change it for.
 const showCookieLink = settings.analytics.enabled && !!settings.analytics.ga4Id;
 
-const navLinks =
-  lang === "en"
+const brandHome = movendaHomeHref(lang);
+const mpcHome = mpcHomePath(lang);
+const navLinks = MPC_HOST
+  ? lang === "en"
+    ? [
+        { href: mpcHome, label: "MPC" },
+        { href: "/en/team", label: "Team" },
+        { href: "/en/mpc/prijzen", label: "Prices" },
+        { href: "/en/mpc/groepslessen", label: "Group classes" },
+        { href: "/en/mpc/visie", label: "Vision" },
+        { href: "/en/contact", label: "Contact" },
+        { href: MOVENDA_PUBLIC_URL, label: "Movenda", external: true },
+      ]
+    : [
+        { href: mpcHome, label: "MPC" },
+        { href: "/team", label: "Team" },
+        { href: "/mpc/prijzen", label: "Prijzen" },
+        { href: "/mpc/groepslessen", label: "Groepslessen" },
+        { href: "/mpc/visie", label: "Visie" },
+        { href: "/contact", label: "Contact" },
+        { href: MOVENDA_PUBLIC_URL, label: "Movenda", external: true },
+      ]
+  : lang === "en"
     ? [
         { href: "/en/over", label: "About us" },
         { href: "/en/team", label: "Team" },
@@ -85,7 +113,7 @@ const socialClass =
   "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/80 transition hover:border-white/40 hover:bg-white/10 hover:text-white";
 ---
 
-<footer class="bg-brand-footer text-white/80">
+<footer class:list={["bg-brand-footer text-white/80", lab && "lab-footer"]}>
   <!--
     Three columns: brand (wordmark, general contact, nav, socials) + one column per location.
     On md+ the location columns are subgrids with 3 rows (name, contact, hours) so equal info
@@ -93,8 +121,20 @@ const socialClass =
   -->
   <div class:list={["mx-auto grid max-w-6xl gap-10 px-4 py-12 md:gap-x-10 md:gap-y-0", shown.length > 1 ? "md:grid-cols-3" : "md:grid-cols-2"]}>
     <section class="flex flex-col text-sm md:row-span-3" aria-label="Movenda">
-      <a href={lang === "en" ? "/en" : "/"} class="self-start" aria-label="Movenda">
-        <img src="/brand/logo-wordmark.png" alt="Movenda" width="130" height="28" class="h-7 w-auto" />
+      <a
+        href={brandHome}
+        class="self-start"
+        aria-label="Movenda"
+        target={/^https?:/.test(brandHome) ? "_blank" : undefined}
+        rel={/^https?:/.test(brandHome) ? "noopener noreferrer" : undefined}
+      >
+        <img
+          src={lab ? "/brand/logo-wordmark-on-dark.png" : "/brand/logo-wordmark.png"}
+          alt="Movenda"
+          width="130"
+          height="28"
+          class="h-7 w-auto"
+        />
       </a>
       <p class="mt-4 max-w-xs">
         {lang === "en"
@@ -131,7 +171,14 @@ const socialClass =
 
       <nav class="mt-6 grid max-w-xs grid-cols-2 gap-x-6 gap-y-2" aria-label="Footer">
         {navLinks.map((l) => (
-          <a href={l.href} class="hover:text-white">{l.label}</a>
+          <a
+            href={l.href}
+            class="hover:text-white"
+            target={"external" in l && l.external ? "_blank" : undefined}
+            rel={"external" in l && l.external ? "noopener noreferrer" : undefined}
+          >
+            {l.label}
+          </a>
         ))}
       </nav>
 
@@ -268,9 +315,17 @@ const socialClass =
           <a href={privacyHref + "#cookies"} data-consent-open class="hover:text-white">{t.cookies}</a>
         )}
         <span class="text-white/70">
-          {lang === "en"
-            ? "Preview in development — not the live movenda.be site"
-            : "Preview in ontwikkeling — niet de live site van movenda.be"}
+          {MPC_HOST
+            ? lang === "en"
+              ? NOINDEX
+                ? "Performance Centre — not listed on Google yet"
+                : "Movenda Performance Centre"
+              : NOINDEX
+                ? "Performance Centre — nog niet vindbaar via Google"
+                : "Movenda Performance Centre"
+            : lang === "en"
+              ? "Preview in development — not the live movenda.be site"
+              : "Preview in ontwikkeling — niet de live site van movenda.be"}
         </span>
       </p>
     </div>
