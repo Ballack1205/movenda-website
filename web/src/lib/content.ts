@@ -288,6 +288,39 @@ export function homeDeurTekst(deur: HomeDeur, lang: Lang): string | undefined {
   return body?.trim() || undefined;
 }
 
+/** Copy and proof numbers for the brief homepage. Numbers stay editable. */
+export interface HomeBrief {
+  merkKicker: string;
+  merkTitel: string;
+  merkTekst: string;
+  merkStatement: string;
+  merkCta: string;
+  partnersKicker: string;
+  partnersCta: string;
+  aanbodKicker: string;
+  aanbodTekst: string;
+  locatiesTitel: string;
+  hasseltProfiel: string;
+  kuringenProfiel: string;
+  teamKicker: string;
+  teamTitel: string;
+  teamTekst: string;
+  teamCta: string;
+  reviewsTitel: string;
+  reviewsCta: string;
+  insightsKicker: string;
+  insightsTitel: string;
+  insightsTekst: string;
+  insightsCta: string;
+  instagramTitel: string;
+  instagramCta: string;
+  slotTitel: string;
+  slotTekst: string;
+  slotAfspraak: string;
+  slotContact: string;
+  bewijs: { kinesisten: string; trainers: string; locaties: string; jaren: string };
+}
+
 /** Wide group photo of the whole team (Site-instellingen → Groepsfoto team). `url` is a
  * Sanity CDN URL when Julie uploaded one; undefined means "use the local fallback asset". */
 export interface Teamfoto {
@@ -341,6 +374,9 @@ export interface SiteSettings {
   homeDeurenTitel: string;
   homeDeurenTitelEn?: string;
   homeDeuren: HomeDeur[];
+  /** Five offer doors on the brief homepage. Julie edits the sentences. */
+  homeAanbod: HomeDeur[];
+  homeBrief: HomeBrief;
   /** Default share image (og:image) for pages without their own; undefined = /og-default.jpg. */
   ogAfbeelding?: string;
   /** Google Search Console "HTML tag" verification token (content attribute only). */
@@ -792,6 +828,8 @@ async function loadSiteSettings(): Promise<SiteSettings> {
       homePijlers{ kine{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, training{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, mpc{ ..., "foto": foto${CMS_FOTO_PROJECTION} } },
       homeDeurenTitel, homeDeurenTitelEn,
       homeDeuren[]{ korteNaam, korteNaamEn, regel, regelEn, tekst, tekstEn, href, "foto": foto${CMS_FOTO_PROJECTION} },
+      homeAanbod[]{ korteNaam, korteNaamEn, regel, regelEn, tekst, tekstEn, href, "foto": foto${CMS_FOTO_PROJECTION} },
+      homeBrief,
       teamfoto{ "url": afbeelding.asset->url, alt, bijschrift, "hotspot": afbeelding.hotspot{ x, y } },
       "ogAfbeelding": ogAfbeelding.asset->url }`,
   );
@@ -863,7 +901,9 @@ async function loadSiteSettings(): Promise<SiteSettings> {
     },
     homeDeurenTitel: settings?.homeDeurenTitel || seedSettings.homeDeurenTitel || "Eén praktijk, drie wegen",
     homeDeurenTitelEn: settings?.homeDeurenTitelEn || seedSettings.homeDeurenTitelEn,
-    homeDeuren: mergeHomeDeuren(settings?.homeDeuren),
+    homeDeuren: mergeHomeDeuren(settings?.homeDeuren, seedDeuren),
+    homeAanbod: mergeHomeDeuren(settings?.homeAanbod, seedAanbod),
+    homeBrief: mergeHomeBrief(settings?.homeBrief),
     ogAfbeelding: settings?.ogAfbeelding || undefined,
     // Lives under Analytics in the Studio (same tab as the GA4 id), top-level here.
     googleSiteVerification: (settings?.analytics?.googleSiteVerification as string | undefined)?.trim() || undefined,
@@ -871,13 +911,55 @@ async function loadSiteSettings(): Promise<SiteSettings> {
 }
 
 const seedDeuren = (seedSettings.homeDeuren ?? []) as HomeDeur[];
+const seedAanbod = (seedSettings.homeAanbod ?? []) as HomeDeur[];
+const seedBrief = seedSettings.homeBrief as HomeBrief;
+
+function mergeHomeBrief(fromSanity?: Partial<HomeBrief> | null): HomeBrief {
+  const bewijs = fromSanity?.bewijs;
+  const text = (value: string | undefined, fallback: string) => value?.trim() || fallback;
+  return {
+    merkKicker: text(fromSanity?.merkKicker, seedBrief.merkKicker),
+    merkTitel: text(fromSanity?.merkTitel, seedBrief.merkTitel),
+    merkTekst: text(fromSanity?.merkTekst, seedBrief.merkTekst),
+    merkStatement: text(fromSanity?.merkStatement, seedBrief.merkStatement),
+    merkCta: text(fromSanity?.merkCta, seedBrief.merkCta),
+    partnersKicker: text(fromSanity?.partnersKicker, seedBrief.partnersKicker),
+    partnersCta: text(fromSanity?.partnersCta, seedBrief.partnersCta),
+    aanbodKicker: text(fromSanity?.aanbodKicker, seedBrief.aanbodKicker),
+    aanbodTekst: text(fromSanity?.aanbodTekst, seedBrief.aanbodTekst),
+    locatiesTitel: text(fromSanity?.locatiesTitel, seedBrief.locatiesTitel),
+    hasseltProfiel: text(fromSanity?.hasseltProfiel, seedBrief.hasseltProfiel),
+    kuringenProfiel: text(fromSanity?.kuringenProfiel, seedBrief.kuringenProfiel),
+    teamKicker: text(fromSanity?.teamKicker, seedBrief.teamKicker),
+    teamTitel: text(fromSanity?.teamTitel, seedBrief.teamTitel),
+    teamTekst: text(fromSanity?.teamTekst, seedBrief.teamTekst),
+    teamCta: text(fromSanity?.teamCta, seedBrief.teamCta),
+    reviewsTitel: text(fromSanity?.reviewsTitel, seedBrief.reviewsTitel),
+    reviewsCta: text(fromSanity?.reviewsCta, seedBrief.reviewsCta),
+    insightsKicker: text(fromSanity?.insightsKicker, seedBrief.insightsKicker),
+    insightsTitel: text(fromSanity?.insightsTitel, seedBrief.insightsTitel),
+    insightsTekst: text(fromSanity?.insightsTekst, seedBrief.insightsTekst),
+    insightsCta: text(fromSanity?.insightsCta, seedBrief.insightsCta),
+    instagramTitel: text(fromSanity?.instagramTitel, seedBrief.instagramTitel),
+    instagramCta: text(fromSanity?.instagramCta, seedBrief.instagramCta),
+    slotTitel: text(fromSanity?.slotTitel, seedBrief.slotTitel),
+    slotTekst: text(fromSanity?.slotTekst, seedBrief.slotTekst),
+    slotAfspraak: text(fromSanity?.slotAfspraak, seedBrief.slotAfspraak),
+    slotContact: text(fromSanity?.slotContact, seedBrief.slotContact),
+    bewijs: {
+      kinesisten: text(bewijs?.kinesisten, seedBrief.bewijs.kinesisten),
+      trainers: text(bewijs?.trainers, seedBrief.bewijs.trainers),
+      locaties: text(bewijs?.locaties, seedBrief.bewijs.locaties),
+      jaren: text(bewijs?.jaren, seedBrief.bewijs.jaren),
+    },
+  };
+}
 
 function mergeHomeDeuren(
-  fromSanity?: Array<Partial<HomeDeur> & { foto?: Parameters<typeof toCmsFoto>[0] }>,
+  fromSanity: Array<Partial<HomeDeur> & { foto?: Parameters<typeof toCmsFoto>[0] }> | undefined,
+  seedRows: HomeDeur[],
 ): HomeDeur[] {
-  const rows = fromSanity?.length
-    ? fromSanity
-    : seedDeuren;
+  const rows = fromSanity?.length ? fromSanity : seedRows;
   return rows
     .map((row) => {
       const korteNaam = row.korteNaam?.trim();

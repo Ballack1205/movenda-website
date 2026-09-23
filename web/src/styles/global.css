@@ -290,6 +290,19 @@ html[data-theme="lab"] .lab-sheet {
   background: var(--brand-bg);
 }
 
+html[data-theme="lab"] .lab-sheet--ink {
+  background: #0e1726;
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .lab-sheet--ink .lab-intro__title,
+html[data-theme="lab"] .lab-sheet--ink .lab-intro p,
+html[data-theme="lab"] .lab-sheet--ink .lab-intro__cta,
+html[data-theme="lab"] .lab-sheet--ink .brief-kicker,
+html[data-theme="lab"] .lab-sheet--ink .brief-statement {
+  color: #f4f7fb;
+}
+
 html[data-theme="lab"] .lab-cover__media,
 html[data-theme="lab"] .lab-cover__media .hero-video {
   position: absolute;
@@ -410,6 +423,10 @@ html[data-theme="lab"] .lab-strip__grid {
     min-height: 0;
     height: auto;
     aspect-ratio: auto;
+  }
+
+  html[data-theme="lab"] .lab-strip__card--lead {
+    flex-grow: 1.45;
   }
 }
 
@@ -932,5 +949,332 @@ html[data-theme="lab"] input[type="submit"] {
   html[data-theme="lab"] .lab-card img,
   html[data-theme="lab"] .lab-card picture {
     width: 100%;
+  }
+}
+
+html[data-theme="lab"] .lab-mega {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1.25rem 1.5rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+  background: var(--brand-surface);
+  color: var(--brand-text);
+  border: 1px solid var(--brand-border);
+}
+
+html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) [data-nav-panel] .lab-mega {
+  background: #161513;
+  color: var(--on-photo);
+  border-color: rgb(239 237 230 / 0.15);
+}
+
+html[data-theme="lab"] .lab-mega__title {
+  font-weight: 650;
+  text-decoration: none;
+}
+
+html[data-theme="lab"] .lab-mega__label {
+  margin-top: 0.85rem;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+html[data-theme="lab"] .lab-mega__link {
+  display: block;
+  padding: 0.28rem 0;
+  font-size: 0.9rem;
+  text-decoration: none;
+  opacity: 0.88;
+}
+
+html[data-theme="lab"] .lab-mega__link:hover,
+html[data-theme="lab"] .lab-mega__link.is-current,
+html[data-theme="lab"] .lab-mega__title:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+html[data-theme="lab"] [data-header] [data-cta]:hover,
+html[data-theme="lab"] [data-header] [data-cta]:focus-visible {
+  background-color: var(--brand-text);
+  color: var(--brand-bg);
+}
+
+html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) [data-header] [data-cta]:hover,
+html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) [data-header] [data-cta]:focus-visible {
+  background: var(--on-photo);
+  color: #161513;
+}
+
+html[data-theme="lab"] .lab-menu__item {
+  cursor: pointer;
+  list-style: none;
+}
+
+html[data-theme="lab"] .lab-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+html[data-theme="lab"] .lab-menu__sub {
+  display: grid;
+  gap: 0.85rem;
+  padding: 0 0 1rem 3.25rem;
+}
+
+html[data-theme="lab"] .lab-menu__sub a {
+  display: block;
+  padding: 0.2rem 0;
+  text-decoration: none;
+}
+
+html[data-theme="lab"] .lab-menu__heading {
+  margin-top: 0.7rem;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+html[data-theme="lab"] .brief-kicker {
+  margin-bottom: 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+html[data-theme="lab"] .brief-statement {
+  margin-top: 1.5rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 1rem + 1.8vw, 2.4rem);
+  font-style: italic;
+}
+
+html[data-theme="lab"] .brief-block {
+  padding: 4.5rem 0;
+}
+
+html[data-theme="lab"] .brief-title {
+  max-width: 18ch;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 1.2rem + 2.4vw, 3.4rem);
+  font-weight: 450;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+html[data-theme="lab"] .brief-lead {
+  max-width: 42rem;
+  margin-top: 1rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+html[data-theme="lab"] .brief-textlink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  margin-top: 1.25rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+
+html[data-theme="lab"] .brief-proof {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 1rem;
+  max-width: 72rem;
+  margin: 2.5rem auto 0;
+  padding: 0 1.25rem;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  html[data-theme="lab"] .brief-proof {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+html[data-theme="lab"] .brief-proof__value {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: clamp(2.2rem, 1.4rem + 2vw, 3.4rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+html[data-theme="lab"] .brief-proof__label {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+}
+
+html[data-theme="lab"] .brief-locs {
+  padding: 1rem 1.25rem 4rem;
+}
+
+html[data-theme="lab"] .brief-locs__title {
+  max-width: 72rem;
+  margin: 0 auto 1.25rem;
+}
+
+html[data-theme="lab"] .brief-locs__grid {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  html[data-theme="lab"] .brief-locs__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+html[data-theme="lab"] .brief-loc {
+  position: relative;
+  display: flex;
+  min-height: 28rem;
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
+}
+
+html[data-theme="lab"] .brief-loc--light {
+  background: #f7f1e6;
+  color: #161513;
+}
+
+html[data-theme="lab"] .brief-loc--dark {
+  background: #0e1726;
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .brief-loc__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+html[data-theme="lab"] .brief-loc--light .brief-loc__photo {
+  opacity: 0.28;
+}
+
+html[data-theme="lab"] .brief-loc__veil {
+  position: absolute;
+  inset: 0;
+  background: rgb(8 14 24 / 0.55);
+}
+
+html[data-theme="lab"] .brief-loc__copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  padding: 1.75rem;
+}
+
+html[data-theme="lab"] .brief-loc__name {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 1.2rem + 1.4vw, 2.6rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+html[data-theme="lab"] .brief-reviews {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  html[data-theme="lab"] .brief-reviews {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+html[data-theme="lab"] .brief-reviews p {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+
+html[data-theme="lab"] .brief-reviews footer {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+html[data-theme="lab"] .brief-slot {
+  background: #0e1726;
+  color: #f4f7fb;
+  padding: 5rem 1.25rem;
+}
+
+html[data-theme="lab"] .brief-slot .brief-title,
+html[data-theme="lab"] .brief-slot .brief-lead {
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .brief-slot__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+html[data-theme="lab"] .brief-slot__button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0.7rem 1.15rem;
+  background: #f4f7fb;
+  color: #0e1726;
+  font-weight: 650;
+  cursor: pointer;
+  list-style: none;
+}
+
+html[data-theme="lab"] .brief-slot__ghost {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid rgb(244 247 251 / 0.45);
+  color: #f4f7fb;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+html[data-theme="lab"] .brief-book__choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.6rem;
+}
+
+html[data-theme="lab"] .brief-book__choices a {
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] summary.brief-slot__button::-webkit-details-marker {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="lab"] .lab-cover {
+    position: relative;
+    height: auto;
+    min-height: 70dvh;
   }
 }

@@ -26,7 +26,7 @@
     });
   }
 
-  const sheet = document.querySelector(".lab-sheet");
+  const sheet = document.querySelector("[data-lab-light]") || document.querySelector(".lab-sheet");
   const cover = document.querySelector(".lab-cover");
   if (sheet) {
     const update = () => {

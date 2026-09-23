@@ -9,8 +9,8 @@ interface Props {
   pagina: Pick<Pagina, "foto" | "fotoHotspot" | "fotoAlt" | "heroVideo">;
   fallback: ImageMetadata;
   alt: string;
-  shout: string;
-  line: string;
+  shout?: string;
+  line?: string;
   nextHref?: string;
   nextLabel?: string;
 }
@@ -32,10 +32,12 @@ const { pagina, fallback, alt, shout, line, nextHref = "#lab-next", nextLabel = 
     />
   </div>
   <div class="lab-cover__veil" aria-hidden="true"></div>
-  <h1 class="lab-cover__copy">
-    <span class="lab-shout lab-cover__shout">{shout}</span>
-    <span class="lab-cover__line">{line}</span>
-  </h1>
+  {(shout || line) && (
+    <h1 class="lab-cover__copy">
+      {shout && <span class="lab-shout lab-cover__shout">{shout}</span>}
+      {line && <span class="lab-cover__line">{line}</span>}
+    </h1>
+  )}
   <a class="lab-cover__arrow" href={nextHref} aria-label={nextLabel}>
     <span aria-hidden="true">↓</span>
   </a>

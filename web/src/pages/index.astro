@@ -3,8 +3,7 @@ import { getImage } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
 import MpcHome from "../components/MpcHome.astro";
 import { MPC_HOST, THEME } from "../lib/site";
-import LabCover from "../components/LabCover.astro";
-import LabStrip from "../components/LabStrip.astro";
+import BriefHome from "../components/BriefHome.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import SocialLinks from "../components/SocialLinks.astro";
 import BookingButton from "../components/BookingButton.astro";
@@ -27,10 +26,6 @@ import {
   getLocaties,
   getPagina,
   homePijlerDiensten,
-  homeDeurNaam,
-  homeDeurRegel,
-  homeDeurTekst,
-  localizeInternalHref,
   paginaAlineas,
   teamCounts,
 } from "../lib/content";
@@ -90,22 +85,6 @@ const heroLinks = heroPreload
 
 const { kinesisten: kinesistenCount, trainers: trainerCount } = teamCounts(team);
 const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, trainers: trainerCount });
-const deurFallback = {
-  "/kinesitherapie": kineHero,
-  "/training": trainingSecondary,
-  "/mpc": mpcHero,
-} as const;
-const labDeuren = settings.homeDeuren.map((deur, i) => ({
-  n: i + 1,
-  href: localizeInternalHref(deur.href, "nl"),
-  title: homeDeurNaam(deur, "nl"),
-  line: homeDeurRegel(deur, "nl"),
-  body: homeDeurTekst(deur, "nl"),
-  foto: deur.foto,
-  fallback: deurFallback[deur.href as keyof typeof deurFallback] ?? homeHero,
-  alt: homeDeurNaam(deur, "nl"),
-}));
-
 ---
 
 {MPC_HOST ? (
@@ -119,27 +98,16 @@ const labDeuren = settings.homeDeuren.map((deur, i) => ({
   altPath="/en"
   extraLinks={heroLinks}
 >
-  {THEME === "lab" && (
-      <LabCover
-        pagina={pagina}
-        fallback={homeHero}
-        alt="Trainer van Movenda begeleidt een klant tijdens een training"
-        shout="Movenda"
-        line="Bewegen. Herstellen. Presteren."
-        nextLabel="Verder"
-      />
-  )}
-  <div class:list={[THEME === "lab" && "lab-sheet"]}>
   {THEME === "lab" ? (
-    <>
-      <section id="lab-next" class="lab-intro" data-reveal>
-        <h2 class="lab-shout lab-intro__title">{settings.homeDeurenTitel}</h2>
-        <p>{heroIntro.join(" ")}</p>
-        <a href="/contact" class="lab-intro__cta">Contacteer ons</a>
-      </section>
-      <LabStrip items={labDeuren} />
-    </>
+    <BriefHome
+      pagina={pagina}
+      settings={settings}
+      partners={partners}
+      team={team}
+      getuigenissen={getuigenissen}
+    />
   ) : (
+  <div>
   <section class="hero relative overflow-hidden">
     <div
       class="mx-auto grid max-w-6xl gap-8 px-4 pt-8 pb-6 sm:pb-10 lg:max-w-none lg:grid-cols-[1fr_minmax(0,36rem)_minmax(0,36rem)_1fr] lg:gap-0 lg:px-0 lg:pt-0 lg:pb-0"
@@ -264,7 +232,6 @@ const labDeuren = settings.homeDeuren.map((deur, i) => ({
       to { transform: none; }
     }
   </style>
-  )}
 
   {THEME !== "lab" && <PartnerBand
     partners={partners}
@@ -374,5 +341,6 @@ const labDeuren = settings.homeDeuren.map((deur, i) => ({
 
   <NewsletterBlock settings={settings} />
   </div>
+  )}
 </Layout>
 )}

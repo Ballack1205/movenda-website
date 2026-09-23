@@ -14,13 +14,14 @@ import {
   getLocaties,
   getSiteSettings,
   getSportaanbod,
+  localizeInternalHref,
   type Dienst,
   type DienstCategorie,
   type Locatie,
   type SiteSettings,
   type SportaanbodItem,
 } from "./content";
-import { movendaHomeHref } from "./site";
+import { movendaHomeHref, THEME } from "./site";
 
 export type Brand = "movenda" | "mpc";
 export type Lang = "nl" | "en";
@@ -29,6 +30,14 @@ export interface NavLink {
   href: string;
   label: string;
   external?: boolean;
+  /** Column label inside a mega menu. Not a link. */
+  heading?: boolean;
+}
+
+export interface NavGroup {
+  label: string;
+  href: string;
+  children: NavLink[];
 }
 
 export interface NavItem extends NavLink {
@@ -36,6 +45,12 @@ export interface NavItem extends NavLink {
   emphasize?: boolean;
   /** Dropdown entries. The first entry should be the overview page. */
   children?: NavLink[];
+  /** Wide menu: one column per domain. Lab/brief header only. */
+  groups?: NavGroup[];
+  /** Lab/brief header: sits left of the logo. */
+  side?: "start";
+  /** Lab/brief header: the strong Afspraak control. */
+  button?: boolean;
 }
 
 export type NavCta = NavLink;
@@ -80,6 +95,150 @@ function dienstLinks(diensten: Dienst[], categorie: DienstCategorie | DienstCate
     .map((d) => ({ href: dienstHref(d, lang), label: dienstMenuLabel(d, lang) }));
 }
 
+function linksBySlugs(
+  diensten: Dienst[],
+  picks: { slug: string; categorie: DienstCategorie; label?: string }[],
+  lang: Lang,
+): NavLink[] {
+  return picks.flatMap((pick) => {
+    const dienst = diensten.find((d) => d.slug === pick.slug && d.categorie === pick.categorie);
+    if (!dienst || dienst.toonInMenu === false) return [];
+    return [{ href: dienstHref(dienst, lang), label: pick.label || dienstMenuLabel(dienst, lang) }];
+  });
+}
+
+/** Julie's header (lab/brief). Only pages that already exist. Rehab is one URL. */
+function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contact: NavLink): NavModel {
+  const p = (href: string) => localizeInternalHref(href, lang);
+  const en = lang === "en";
+  const rehabHref = p("/mpc/sportrevalidatie");
+  const kine: NavLink[] = [
+    ...linksBySlugs(
+      diensten,
+      [
+        { slug: "manuele-therapie", categorie: "kine" },
+        { slug: "oefentherapie", categorie: "kine" },
+      ],
+      lang,
+    ),
+    { href: rehabHref, label: en ? "Sports physiotherapy and rehab" : "Sportkinesitherapie en revalidatie" },
+    ...linksBySlugs(
+      diensten,
+      [
+        { slug: "pre-en-postnatale-kinesitherapie", categorie: "kine" },
+        { slug: "lymfedrainage", categorie: "kine" },
+        { slug: "acupunctuur", categorie: "kine" },
+        { slug: "dry-needling", categorie: "kine" },
+        { slug: "cupping", categorie: "kine" },
+        { slug: "auriculotherapie", categorie: "kine" },
+        { slug: "cardiovasculaire-revalidatie", categorie: "kine" },
+        { slug: "taping", categorie: "kine" },
+      ],
+      lang,
+    ),
+  ];
+  const train = linksBySlugs(
+    diensten,
+    [
+      { slug: "performance-training", categorie: "mpc-training" },
+      { slug: "personal-training", categorie: "mpc-training" },
+      { slug: "duotraining", categorie: "mpc-training" },
+      { slug: "pre-en-postnatale-training", categorie: "training" },
+    ],
+    lang,
+  );
+  const test = linksBySlugs(
+    diensten,
+    [
+      { slug: "sportspecifieke-screening", categorie: "training" },
+      { slug: "data-analyse", categorie: "mpc-training" },
+      { slug: "inspanningstesten", categorie: "training" },
+    ],
+    lang,
+  );
+  const gx = [
+    ...linksBySlugs(
+      diensten,
+      [
+        { slug: "full-body", categorie: "mpc-groep" },
+        { slug: "hiit", categorie: "mpc-groep" },
+        { slug: "powerplus", categorie: "mpc-groep" },
+        { slug: "boxing", categorie: "mpc-groep" },
+        { slug: "skifit", categorie: "mpc-groep" },
+        { slug: "kleine-groepstraining", categorie: "mpc-groep" },
+      ],
+      lang,
+    ),
+    { href: p("/mpc/groepslessen"), label: en ? "Timetable" : "Lessenrooster" },
+  ];
+  const bookingOn = settings.booking.enabled && !!settings.booking.url;
+  const afspraak: NavItem = bookingOn
+    ? {
+        href: settings.booking.url,
+        label: en ? "Book" : "Afspraak",
+        external: true,
+        button: true,
+      }
+    : {
+        href: contact.href,
+        label: en ? "Book" : "Afspraak",
+        button: true,
+        children: [
+          {
+            href: `${contact.href}?locatie=Movenda Olympia`,
+            label: "Movenda Hasselt",
+          },
+          {
+            href: `${contact.href}?locatie=Movenda Performance Centre`,
+            label: "Performance Centre Kuringen",
+          },
+        ],
+      };
+
+  return {
+    items: [
+      {
+        href: p("/kinesitherapie"),
+        label: en ? "Offer" : "Aanbod",
+        side: "start",
+        groups: [
+          { label: en ? "Physiotherapy" : "Kinesitherapie", href: p("/kinesitherapie"), children: kine },
+          {
+            label: "Performance",
+            href: p("/mpc"),
+            children: [
+              { href: "", label: "Train", heading: true },
+              ...train,
+              { href: "", label: en ? "Test and analysis" : "Test en analyse", heading: true },
+              ...test,
+              { href: rehabHref, label: en ? "Rehab" : "Revalidatie" },
+            ],
+          },
+          { label: "GX", href: p("/mpc/groepslessen"), children: gx },
+          { label: "B2B", href: p("/mpc/corporate-coaching"), children: [] },
+          { label: "Olympia", href: p("/locaties/olympia"), children: [] },
+        ],
+      },
+      {
+        href: p("/over"),
+        label: en ? "About us" : "Over ons",
+        children: [
+          { href: p("/over"), label: en ? "Our story" : "Ons verhaal" },
+          { href: p("/mpc/visie"), label: en ? "Our vision" : "Onze visie" },
+          { href: p("/team"), label: "Team" },
+          { href: p("/prijzen"), label: en ? "Prices" : "Prijzen" },
+          { href: p("/faq"), label: "FAQ" },
+          { href: p("/jobs"), label: en ? "Jobs" : "Vacatures" },
+        ],
+      },
+      contact,
+      afspraak,
+    ],
+    cta: afspraak,
+    contact,
+  };
+}
+
 function sportaanbodLinks(items: SportaanbodItem[], lang: Lang = "nl"): NavLink[] {
   return items
     .filter((item): item is SportaanbodItem & { link: string } => !!item.link)
@@ -105,6 +264,11 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
       : contact;
   // When booking is the CTA, Contact goes back into the list as a plain link.
   const contactItem: NavItem[] = cta === contact ? [] : [contact];
+
+  if (THEME === "lab") {
+    const model = briefNav(diensten, settings, lang, contact);
+    return { ...model, phone };
+  }
 
   if (brand === "mpc") {
     if (lang === "en") {
@@ -302,5 +466,10 @@ export function isCurrentPath(href: string, path: string): boolean {
 /** Active if the item itself or one of its children matches the current page. */
 export function isActiveItem(item: NavItem, path: string): boolean {
   if (isCurrentPath(item.href, path)) return true;
-  return (item.children || []).some((child) => isCurrentPath(child.href, path));
+  if ((item.children || []).some((child) => !child.heading && isCurrentPath(child.href, path))) return true;
+  return (item.groups || []).some(
+    (group) =>
+      isCurrentPath(group.href, path) ||
+      group.children.some((child) => !child.heading && isCurrentPath(child.href, path)),
+  );
 }

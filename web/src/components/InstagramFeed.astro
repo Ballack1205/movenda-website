@@ -10,13 +10,14 @@ import SocialLinks from "./SocialLinks.astro";
 interface Props {
   settings: SiteSettings;
   lang?: "nl" | "en";
+  title?: string;
 }
 
-const { settings, lang = "nl" } = Astro.props;
+const { settings, lang = "nl", title } = Astro.props;
 const feed = settings.instagramFeed;
 const widgetId = feed.widgetId?.trim();
 const show = feed.enabled && !!widgetId;
-const heading = lang === "en" ? "Follow us" : feed.titel || "Volg ons";
+const heading = title || (lang === "en" ? "Follow us" : feed.titel || "Volg ons");
 const fallbackLabel = lang === "en" ? "Open our Instagram" : "Open onze Instagram";
 ---
 

@@ -209,7 +209,7 @@ services:
         source: /boxing2
         destination: /mpc/boxing
 
-  # LAB/Brick share URL. noindex. Flip PUBLIC_THEME=lab on movenda-mpc later, after OK.
+  # LAB/Brick share URL. noindex. Stays on branch archive/lab-look. Do not point this at brief.
   - type: web
     name: movenda-lab
     runtime: static
@@ -221,6 +221,34 @@ services:
         value: "true"
       - key: PUBLIC_SITE_URL
         value: https://movenda-lab.onrender.com
+      - key: PUBLIC_THEME
+        value: lab
+      - key: PUBLIC_HOST_MODE
+        value: full
+    headers:
+      - path: /*
+        name: X-Robots-Tag
+        value: "noindex, nofollow"
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+  # Julie's spec on the LAB shell. noindex. Tracks branch brief. Does not replace movenda-lab.
+  - type: web
+    name: movenda-brief
+    runtime: static
+    branch: brief
+    buildCommand: cd web && npm install && npm run build
+    staticPublishPath: web/dist
+    autoDeploy: true
+    envVars:
+      - key: PUBLIC_NOINDEX
+        value: "true"
+      - key: PUBLIC_SITE_URL
+        value: https://movenda-brief.onrender.com
       - key: PUBLIC_THEME
         value: lab
       - key: PUBLIC_HOST_MODE

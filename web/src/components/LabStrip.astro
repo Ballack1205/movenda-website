@@ -10,6 +10,8 @@ interface Item {
   title: string;
   line?: string;
   body?: string;
+  /** Wider at rest. Kinesitherapie and Performance on the brief homepage. */
+  lead?: boolean;
   foto?: CmsFotoType;
   fallback: ImageMetadata;
   alt: string;
@@ -25,7 +27,7 @@ const { items } = Astro.props;
 <section class="lab-strip" data-reveal>
   <div class="lab-strip__grid" style={`--doors: ${items.length}`}>
     {items.map((item) => (
-      <a href={item.href} class:list={["lab-strip__card", item.body && "lab-strip__card--copy"]}>
+      <a href={item.href} class:list={["lab-strip__card", item.body && "lab-strip__card--copy", item.lead && "lab-strip__card--lead"]}>
         <CmsFoto
           foto={item.foto}
           fallback={item.fallback}

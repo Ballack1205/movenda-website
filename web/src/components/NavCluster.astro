@@ -1,0 +1,154 @@
+---
+import { isActiveItem, isCurrentPath, type NavItem } from "../lib/nav";
+
+interface Props {
+  items: NavItem[];
+  path: string;
+  lab: boolean;
+  externalLabel: string;
+  align?: "start" | "end";
+}
+
+const { items, path, lab, externalLabel, align = "start" } = Astro.props;
+
+const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+const linkClass = (item: NavItem, active: boolean) => [
+  "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-1.5 transition xl:px-3",
+  item.button ? "px-3.5 font-semibold" : "",
+  lab
+    ? item.emphasize
+      ? "font-bold text-brand-text"
+      : "text-brand-text/80 hover:text-brand-text"
+    : item.emphasize
+      ? "font-bold text-white"
+      : "text-white/80 hover:text-white",
+  item.button
+    ? ""
+    : lab
+      ? active
+        ? "bg-black/5 text-brand-text"
+        : "hover:bg-black/5"
+      : active
+        ? "bg-white/10 text-white"
+        : "hover:bg-white/10",
+];
+---
+
+<ul class:list={["flex items-center gap-0.5 xl:gap-2", align === "end" && "justify-end"]}>
+  {
+    items.map((item) => {
+      const active = isActiveItem(item, path);
+      const base = linkClass(item, active);
+      const menu = (item.groups && item.groups.length > 0) || (item.children && item.children.length > 0);
+      if (!menu) {
+        return (
+          <li>
+            <a
+              href={item.href}
+              class:list={base}
+              data-cta={item.button ? "booking" : undefined}
+              aria-current={isCurrentPath(item.href, path) ? "page" : undefined}
+              target={item.external ? "_blank" : undefined}
+              rel={item.external ? "noopener noreferrer" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        );
+      }
+      const id = `nav-${slug(item.label)}`;
+      const mega = !!item.groups?.length;
+      return (
+        <li class="relative" data-nav-group>
+          <button
+            type="button"
+            class:list={[...base, "group"]}
+            data-cta={item.button ? "booking" : undefined}
+            aria-expanded="false"
+            aria-controls={id}
+            aria-current={active ? "true" : undefined}
+            data-nav-trigger
+          >
+            {item.label}
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              class="transition-transform duration-200 group-aria-expanded:rotate-180"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+          <div
+            id={id}
+            class:list={[
+              "absolute top-full z-20 hidden pt-3",
+              mega ? "left-0 w-[min(72rem,calc(100vw-2rem))]" : "left-0 w-64",
+              align === "end" && !mega ? "right-0 left-auto" : "",
+            ]}
+            data-nav-panel
+          >
+            {mega ? (
+              <div class="lab-mega">
+                {item.groups!.map((group) => (
+                  <div>
+                    <a href={group.href} class="lab-mega__title">
+                      {group.label}
+                    </a>
+                    {group.children.length > 0 && (
+                      <ul class="mt-2 space-y-0.5">
+                        {group.children.map((child) => (
+                          <li>
+                            {child.heading ? (
+                              <p class="lab-mega__label">{child.label}</p>
+                            ) : (
+                              <a
+                                href={child.href}
+                                aria-current={isCurrentPath(child.href, path) ? "page" : undefined}
+                                class:list={["lab-mega__link", isCurrentPath(child.href, path) && "is-current"]}
+                              >
+                                {child.label}
+                              </a>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <ul class="rounded-xl border border-white/10 bg-brand-header p-2 shadow-xl">
+                {item.children!.map((child, index) => (
+                  <li class:list={[index === 0 ? "mb-1 border-b border-white/10 pb-1" : ""]}>
+                    <a
+                      href={child.href}
+                      target={child.external ? "_blank" : undefined}
+                      rel={child.external ? "noopener noreferrer" : undefined}
+                      aria-current={isCurrentPath(child.href, path) ? "page" : undefined}
+                      class:list={[
+                        "flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm transition hover:bg-white/10 hover:text-white",
+                        index === 0 ? "font-semibold text-white" : "text-white/80",
+                        isCurrentPath(child.href, path) ? "bg-white/10 text-white" : "",
+                      ]}
+                    >
+                      <span>{child.label}</span>
+                      {child.external && <span class="sr-only">{externalLabel}</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </li>
+      );
+    })
+  }
+</ul>

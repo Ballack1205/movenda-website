@@ -95,6 +95,74 @@
       "href": "/mpc"
     }
   ],
+  "homeAanbod": [
+    {
+      "korteNaam": "Kinesitherapie",
+      "regel": "Ontdek kinesitherapie",
+      "tekst": "Gespecialiseerde kinesitherapie en actieve revalidatie, afgestemd op jouw lichaam, jouw klacht en jouw herstel.",
+      "href": "/kinesitherapie"
+    },
+    {
+      "korteNaam": "Performance",
+      "regel": "Ontdek performance",
+      "tekst": "Doelgerichte training, testing en data voor sporters die hun fysieke capaciteiten en prestaties willen verbeteren.",
+      "href": "/mpc"
+    },
+    {
+      "korteNaam": "GX",
+      "regel": "Ontdek GX",
+      "tekst": "Kwalitatieve groepstraining met professionele begeleiding, persoonlijke aandacht en maximaal acht deelnemers.",
+      "href": "/mpc/groepslessen"
+    },
+    {
+      "korteNaam": "B2B",
+      "regel": "Ontdek B2B",
+      "tekst": "Maatwerktrajecten die beweging en gezondheid duurzaam verankeren binnen jouw organisatie.",
+      "href": "/mpc/corporate-coaching"
+    },
+    {
+      "korteNaam": "Olympia",
+      "regel": "Ontdek Olympia",
+      "tekst": "Ontdek het aanbod van Sportpraktijk Movenda binnen Sportcentrum Olympia in Hasselt.",
+      "href": "/locaties/olympia"
+    }
+  ],
+  "homeBrief": {
+    "merkKicker": "Over Sportpraktijk Movenda",
+    "merkTitel": "Een sportpraktijk gebouwd rond beweging.",
+    "merkTekst": "Sportpraktijk Movenda brengt kinesitherapie, training en performance samen. Met gespecialiseerde expertise, persoonlijke begeleiding en objectieve inzichten helpen we je herstellen, sterker bewegen en duurzaam presteren.\n\nIedereen start ergens anders. Met pijn of een blessure. Na een operatie. Met de wens om opnieuw te bewegen. Met een sportief doel. Of met de ambitie om beter te presteren.\n\nWe onderzoeken waar je staat, bepalen waar je naartoe wilt en bouwen een persoonlijk traject dat met je evolueert.",
+    "merkStatement": "Together we move.",
+    "merkCta": "Ontdek Sportpraktijk Movenda",
+    "partnersKicker": "Trusted in the field.",
+    "partnersCta": "Ontdek onze partners",
+    "aanbodKicker": "Ontdek ons aanbod.",
+    "aanbodTekst": "Verschillende doelen vragen om verschillende vormen van begeleiding. Ontdek waar jouw traject begint.",
+    "locatiesTitel": "Eén sportpraktijk. Twee locaties.",
+    "hasseltProfiel": "Kinesitherapie · actieve revalidatie · training",
+    "kuringenProfiel": "Performance · testing · training · GX · sportkinesitherapie en revalidatie",
+    "teamKicker": "One team. Different expertise.",
+    "teamTitel": "De juiste expertise voor jouw traject.",
+    "teamTekst": "Ons team bestaat uit kinesitherapeuten, coaches en performance specialisten met verschillende achtergronden en expertises. Door kennis te delen en gericht samen te werken, kunnen we je begeleiden tijdens iedere fase van jouw traject.",
+    "teamCta": "Ontmoet ons team",
+    "reviewsTitel": "Ervaringen die voor zich spreken.",
+    "reviewsCta": "Bekijk onze Google Reviews",
+    "insightsKicker": "Insights",
+    "insightsTitel": "Kennis die je verder brengt.",
+    "insightsTekst": "Inzichten over bewegen, herstel, training, gezondheid en performance van het team van Sportpraktijk Movenda.",
+    "insightsCta": "Bekijk alle Insights",
+    "instagramTitel": "Beweging in beeld.",
+    "instagramCta": "Volg ons op Instagram",
+    "slotTitel": "Klaar voor je volgende stap?",
+    "slotTekst": "Of je nu wilt herstellen, opnieuw wilt bewegen, sterker wilt worden of beter wilt presteren: we helpen je graag bepalen welk traject bij jou past.",
+    "slotAfspraak": "Plan je afspraak",
+    "slotContact": "Contacteer ons",
+    "bewijs": {
+      "kinesisten": "13",
+      "trainers": "5",
+      "locaties": "2",
+      "jaren": "10+"
+    }
+  },
   "homePijlers": {
     "kine": {
       "titel": "Kinesitherapie in Hasselt",

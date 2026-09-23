@@ -165,6 +165,9 @@ import SectionKicker from "../../components/SectionKicker.astro";
 <script define:vars={{ apiUrl: contactApiUrl }} is:inline>
   const form = document.querySelector("[data-contact-form]");
   const status = document.querySelector("[data-contact-status]");
+  const locatie = new URLSearchParams(location.search).get("locatie");
+  const locatieVeld = form?.querySelector("select[name=locatie]");
+  if (locatie && locatieVeld) locatieVeld.value = locatie;
 
   const mapBox = document.querySelector("[data-map]");
   mapBox?.querySelector("[data-map-load]")?.addEventListener("click", () => {

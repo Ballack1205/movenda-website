@@ -43,7 +43,7 @@ Movenda can be shown two noindex URLs at the same time. One repo, no second copy
 |---|---|---|
 | Navy site (QR in the offer) | `main` → `movenda-preview.onrender.com`, `PUBLIC_THEME=current` | Do not restyle. |
 | LAB look | Branch `archive/lab-look`. URL: `https://movenda-lab.onrender.com` (`PUBLIC_THEME=lab`, noindex). Local: `git switch archive/lab-look`, then `npm run dev:lab --workspace web`. | Keep this URL on this branch. Do not overwrite it with the spec. |
-| Movenda's spec | Not started. When the doc is in the repo: new branch **from `archive/lab-look`** (keep the LAB shell, change what the spec asks). New static site `movenda-brief` at `https://movenda-brief.onrender.com`. Same Sanity. | Do not create that service before the doc is here. Do not attach a `movenda.be` subdomain. Both links can be sent together. |
+| Movenda's spec | Branch `brief`, from `archive/lab-look`. URL: `https://movenda-brief.onrender.com` (`PUBLIC_THEME=lab`, noindex). Friday slice: her header and homepage tone. Inner pages stay as they are. | Do not commit this on `archive/lab-look`. Do not attach a `movenda.be` subdomain. Both links can be sent together. |
 
 `movenda-mpc` stays `PUBLIC_THEME=current` on `main`. Do not point it at `archive/lab-look`.
 
@@ -52,6 +52,18 @@ Movenda can be shown two noindex URLs at the same time. One repo, no second copy
 **Index flip (not before Friday 25 Sep 2026):** `PUBLIC_NOINDEX=false` on `movenda-mpc` and remove `X-Robots-Tag`. Only after Jonas confirms that day. No automatic flip.
 
 **Theme switch:** superseded 2026-09-23. Do not set `PUBLIC_THEME=lab` on `movenda-mpc`. The LAB look stays on `movenda-lab` / `archive/lab-look`. The spec continues from that branch onto `movenda-brief`, so both URLs stay up. QR preview stays `current`.
+
+### Friday walkthrough (brief, 2026-09-23)
+
+Julie asked for the header from her document and the tone of voice. The other pages she will write herself. This host shows that slice only. Open points to confirm with her:
+
+- Insights on the homepage, or not. She wrote “is dit nodig?”. The block is on the brief homepage so she can see it. It is not in the header.
+- Proof numbers are hers: 13 kinesitherapeuten, 5 personal trainers, 2 locaties, 10+ jaar. She edits them under Site-instellingen → Homepage → bewijsstrook. The team text already on the site says 12 kinesisten and 8 trainers. Do not silently replace her figures.
+- Prijzen per location and per colleague. She marked this with question marks. The prices page is linked, not rebuilt.
+- Rehab’s canonical page is still `/mpc/sportrevalidatie`. Performance → Revalidatie and the kinesitherapie menu both open that one page. Whether it later moves under Kinesitherapie is a go-live decision, not a second URL.
+- Booking tool, a general phone number, and which GX lessons are public. Running and MXGP stay out of the menu. Boxing 1 on 1, Monitoring/Whoop, Core, Algemene kinesitherapie, Bekkenbodemtherapie and Barefoot have no page yet, so they are not in the menu.
+- Partners and algemene voorwaarden stay out of the menu and the footer until those pages exist. The homepage partner band links to `/over` for now.
+- Afspraak opens a choice, Movenda Hasselt or Performance Centre Kuringen, then `/contact`. A real scheduler URL still uses `siteSettings.booking`.
 
 **Later cutover of www.movenda.be:** `PUBLIC_HOST_MODE=full`, `PUBLIC_SITE_URL=https://www.movenda.be` (or `https://movenda.be`), attach apex + www to the same service, `PUBLIC_NOINDEX=false`. Then 301 `mpc.movenda.be/*` → `https://www.movenda.be/mpc/*`. Squarespace can be cancelled after a watch period. Do **not** move `movenda.be` DNS until that meeting.
 

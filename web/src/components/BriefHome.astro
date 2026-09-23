@@ -1,0 +1,235 @@
+---
+// Brief homepage: Julie's section order on the lab motion (silent cover, sheet, doors).
+import type { ImageMetadata } from "astro";
+import LabCover from "./LabCover.astro";
+import LabStrip from "./LabStrip.astro";
+import PartnerBand from "./PartnerBand.astro";
+import TeamCarousel from "./TeamCarousel.astro";
+import InstagramFeed from "./InstagramFeed.astro";
+import BlogPostCard from "./BlogPostCard.astro";
+import {
+  getBlogPosts,
+  getLocaties,
+  homeDeurNaam,
+  homeDeurRegel,
+  homeDeurTekst,
+  localizeInternalHref,
+  type Getuigenis,
+  type Pagina,
+  type Partner,
+  type SiteSettings,
+  type Teamlid,
+} from "../lib/content";
+import homeHero from "../assets/marketing/home-hero.jpg";
+import mpcHero from "../assets/marketing/mpc-hero.jpg";
+import homeSquats from "../assets/marketing/home-squats.jpg";
+import kineHero from "../assets/marketing/kine-hero.jpg";
+import trainingSecondary from "../assets/marketing/training-secondary.jpg";
+
+interface Props {
+  pagina: Pagina;
+  settings: SiteSettings;
+  partners: Partner[];
+  team: Teamlid[];
+  getuigenissen: Getuigenis[];
+}
+
+const { pagina, settings, partners, team, getuigenissen } = Astro.props;
+const brief = settings.homeBrief;
+const posts = (await getBlogPosts()).slice(0, 3);
+const locaties = await getLocaties();
+const hasselt = locaties.find((loc) => loc.slug === "olympia");
+const kuringen = locaties.find((loc) => loc.slug === "mpc");
+const reviews = getuigenissen.slice(0, 3);
+const bookingOn = settings.booking.enabled && !!settings.booking.url;
+const googleUrl = settings.googleReviews.olympia?.reviewUrl;
+const instagram = settings.socials.instagram;
+
+const deurFallback: Record<string, ImageMetadata> = {
+  "/kinesitherapie": kineHero,
+  "/mpc": mpcHero,
+  "/mpc/groepslessen": homeSquats,
+  "/mpc/corporate-coaching": trainingSecondary,
+  "/locaties/olympia": homeHero,
+};
+
+const deuren = settings.homeAanbod.map((deur, i) => ({
+  n: i + 1,
+  href: localizeInternalHref(deur.href, "nl"),
+  title: homeDeurNaam(deur, "nl"),
+  line: homeDeurRegel(deur, "nl"),
+  body: homeDeurTekst(deur, "nl"),
+  lead: deur.href === "/kinesitherapie" || deur.href === "/mpc",
+  foto: deur.foto,
+  fallback: deurFallback[deur.href] ?? homeHero,
+  alt: homeDeurNaam(deur, "nl"),
+}));
+
+const proof = [
+  { value: brief.bewijs.kinesisten, label: "kinesitherapeuten" },
+  { value: brief.bewijs.trainers, label: "personal trainers" },
+  { value: brief.bewijs.locaties, label: "locaties" },
+  { value: brief.bewijs.jaren, label: "jaar ervaring" },
+];
+
+const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).filter(Boolean);
+---
+
+<LabCover
+  pagina={pagina}
+  fallback={homeHero}
+  alt="Trainer van Movenda begeleidt een klant tijdens een training"
+  nextLabel="Verder"
+/>
+
+<div class="lab-sheet lab-sheet--ink">
+  <section id="lab-next" class="lab-intro" data-reveal>
+    <p class="brief-kicker">{brief.merkKicker}</p>
+    <h1 class="lab-shout lab-intro__title">{brief.merkTitel}</h1>
+    {paragraphs.map((part) => <p>{part}</p>)}
+    <p class="brief-statement">{brief.merkStatement}</p>
+    <a href="#aanbod" class="lab-intro__cta">{brief.merkCta}</a>
+  </section>
+</div>
+
+<div class="lab-sheet" data-lab-light>
+  <section class="brief-block" data-reveal>
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="brief-kicker">{brief.partnersKicker}</p>
+    </div>
+    <PartnerBand
+      partners={partners}
+      title={settings.partnerband.titel}
+      snelheid={settings.partnerband.snelheid}
+      animatie={settings.partnerband.animatie}
+    />
+    <div class="mx-auto max-w-6xl px-4">
+      <a href="/over" class="brief-textlink">{brief.partnersCta}</a>
+    </div>
+    <ul class="brief-proof">
+      {proof.map((item) => (
+        <li>
+          <span class="brief-proof__value">{item.value}</span>
+          <span class="brief-proof__label">{item.label}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section id="aanbod" class="brief-block" data-reveal>
+    <div class="mx-auto max-w-6xl px-4 pb-6">
+      <h2 class="brief-title">{brief.aanbodKicker}</h2>
+      <p class="brief-lead">{brief.aanbodTekst}</p>
+    </div>
+    <LabStrip items={deuren} />
+  </section>
+
+  <section class="brief-locs" data-reveal>
+    <h2 class="brief-title brief-locs__title">{brief.locatiesTitel}</h2>
+    <div class="brief-locs__grid">
+      {hasselt && (
+        <a class="brief-loc brief-loc--light" href="/locaties/olympia">
+          {hasselt.foto && <img src={hasselt.foto} alt="" class="brief-loc__photo" />}
+          <span class="brief-loc__copy">
+            <span class="brief-loc__name">Movenda Hasselt</span>
+            <span class="brief-loc__address">{hasselt.adres}</span>
+            <span class="brief-loc__profile">{brief.hasseltProfiel}</span>
+            <span class="brief-textlink">Ontdek Movenda Hasselt</span>
+          </span>
+        </a>
+      )}
+      {kuringen && (
+        <a class="brief-loc brief-loc--dark" href="/locaties/mpc">
+          <img src={mpcHero.src} alt="" class="brief-loc__photo" />
+          <span class="brief-loc__veil" aria-hidden="true"></span>
+          <span class="brief-loc__copy">
+            <span class="brief-loc__name">Performance Centre Kuringen</span>
+            <span class="brief-loc__address">{kuringen.adres}</span>
+            <span class="brief-loc__profile">{brief.kuringenProfiel}</span>
+            <span class="brief-textlink">Ontdek Performance Centre Kuringen</span>
+          </span>
+        </a>
+      )}
+    </div>
+  </section>
+
+  <section class="brief-block" data-reveal>
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="brief-kicker">{brief.teamKicker}</p>
+      <h2 class="brief-title">{brief.teamTitel}</h2>
+      <p class="brief-lead">{brief.teamTekst}</p>
+      <div class="mt-8">
+        <TeamCarousel team={team} />
+      </div>
+      <a href="/team" class="brief-textlink">{brief.teamCta}</a>
+    </div>
+  </section>
+
+  {reviews.length > 0 && (
+    <section class="brief-block" data-reveal>
+      <div class="mx-auto max-w-6xl px-4">
+        <h2 class="brief-title">{brief.reviewsTitel}</h2>
+        <ul class="brief-reviews">
+          {reviews.map((item) => (
+            <li>
+              <blockquote>
+                <p>{item.tekst}</p>
+                <footer>
+                  {item.naam}
+                  {item.rol ? <span> · {item.rol}</span> : null}
+                </footer>
+              </blockquote>
+            </li>
+          ))}
+        </ul>
+        {googleUrl && (
+          <a href={googleUrl} class="brief-textlink" target="_blank" rel="noopener noreferrer">{brief.reviewsCta}</a>
+        )}
+      </div>
+    </section>
+  )}
+
+  <section class="brief-block" data-reveal>
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="brief-kicker">{brief.insightsKicker}</p>
+      <h2 class="brief-title">{brief.insightsTitel}</h2>
+      <p class="brief-lead">{brief.insightsTekst}</p>
+      {posts.length > 0 && (
+        <ul class="mt-8 grid gap-6 md:grid-cols-3">
+          {posts.map((post) => (
+            <li>
+              <BlogPostCard post={post} />
+            </li>
+          ))}
+        </ul>
+      )}
+      <a href="/blog" class="brief-textlink">{brief.insightsCta}</a>
+    </div>
+  </section>
+
+  <InstagramFeed settings={settings} title={brief.instagramTitel} />
+  {instagram && (
+    <p class="mx-auto max-w-6xl px-4 pb-10 text-center">
+      <a href={instagram} class="brief-textlink" target="_blank" rel="noopener noreferrer">{brief.instagramCta}</a>
+    </p>
+  )}
+
+  <section class="brief-slot" data-reveal>
+    <h2 class="brief-title">{brief.slotTitel}</h2>
+    <p class="brief-lead">{brief.slotTekst}</p>
+    <div class="brief-slot__actions">
+      {bookingOn ? (
+        <a class="brief-slot__button" href={settings.booking.url} target="_blank" rel="noopener noreferrer">{brief.slotAfspraak}</a>
+      ) : (
+        <details class="brief-book">
+          <summary class="brief-slot__button">{brief.slotAfspraak}</summary>
+          <div class="brief-book__choices">
+            <a href="/contact?locatie=Movenda Olympia">Movenda Hasselt</a>
+            <a href="/contact?locatie=Movenda Performance Centre">Performance Centre Kuringen</a>
+          </div>
+        </details>
+      )}
+      <a class="brief-slot__ghost" href="/contact">{brief.slotContact}</a>
+    </div>
+  </section>
+</div>
