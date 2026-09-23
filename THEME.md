@@ -2,7 +2,7 @@
 
 **Audience:** Jonas / implementer. Julie does not edit this.  
 **Date:** 21 September 2026  
-**Status:** frozen 2026-09-23. This look lives on git branch `archive/lab-look` and `https://movenda-lab.onrender.com`. Movenda's written spec is a different design — do not keep building it here. See `DECISIONS.md`.  
+**Status:** showable at `https://movenda-lab.onrender.com` (branch `archive/lab-look`). Movenda's written spec continues from this look on a new branch and a second URL, so this address stays the LAB version. See `DECISIONS.md`.  
 **Switch already in code:** `PUBLIC_THEME=current|lab` in [`web/src/lib/site.ts`](web/src/lib/site.ts). Navy QR preview stays `current`.
 
 This is a layout system we own. Julie still edits records in Sanity (team, hours, prices, photos, copy). No visual page builder.

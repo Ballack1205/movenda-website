@@ -35,15 +35,15 @@ The site is static: visitors never hit Sanity. The Free 250k **live API** quota 
 
 Switches live in `web/src/lib/site.ts`: `PUBLIC_THEME`, `PUBLIC_HOST_MODE`, `PUBLIC_NOINDEX`, `PUBLIC_SITE_URL`, `PUBLIC_MOVENDA_URL`.
 
-### LAB look frozen; Movenda spec is a separate host (2026-09-23)
+### LAB stays online; the spec continues from that look (2026-09-23)
 
-Movenda sent a written spec for the new site. That spec is not the LAB/Brick exploration. One repo, no second copy of `web/`, no DNS change on `movenda.be`.
+Movenda can be shown two noindex URLs at the same time. One repo, no second copy of `web/`, no DNS change on `movenda.be`.
 
 | What | Where | Rule |
 |---|---|---|
 | Navy site (QR in the offer) | `main` → `movenda-preview.onrender.com`, `PUBLIC_THEME=current` | Do not restyle. |
-| LAB look we built | Branch `archive/lab-look`. Local: `git switch archive/lab-look`, then `npm run dev:lab --workspace web`. URL: `https://movenda-lab.onrender.com` (Render service tracks that branch, `PUBLIC_THEME=lab`, noindex) | Frozen backup. Do not build the spec on this branch. |
-| Movenda's spec | Not started. When the doc is in the repo: new branch from `main`, new theme value, new static site `movenda-brief` at `https://movenda-brief.onrender.com`. Same Sanity. | Do not create that service before the doc is here. Do not attach a `movenda.be` subdomain. |
+| LAB look | Branch `archive/lab-look`. URL: `https://movenda-lab.onrender.com` (`PUBLIC_THEME=lab`, noindex). Local: `git switch archive/lab-look`, then `npm run dev:lab --workspace web`. | Keep this URL on this branch. Do not overwrite it with the spec. |
+| Movenda's spec | Not started. When the doc is in the repo: new branch **from `archive/lab-look`** (keep the LAB shell, change what the spec asks). New static site `movenda-brief` at `https://movenda-brief.onrender.com`. Same Sanity. | Do not create that service before the doc is here. Do not attach a `movenda.be` subdomain. Both links can be sent together. |
 
 `movenda-mpc` stays `PUBLIC_THEME=current` on `main`. Do not point it at `archive/lab-look`.
 
@@ -51,7 +51,7 @@ Movenda sent a written spec for the new site. That spec is not the LAB/Brick exp
 
 **Index flip (not before Friday 25 Sep 2026):** `PUBLIC_NOINDEX=false` on `movenda-mpc` and remove `X-Robots-Tag`. Only after Jonas confirms that day. No automatic flip.
 
-**Theme switch:** superseded 2026-09-23. Do not set `PUBLIC_THEME=lab` on `movenda-mpc`. The LAB look stays on `movenda-lab` / `archive/lab-look`. The next look follows Movenda's written spec, on its own branch and host. QR preview stays `current`.
+**Theme switch:** superseded 2026-09-23. Do not set `PUBLIC_THEME=lab` on `movenda-mpc`. The LAB look stays on `movenda-lab` / `archive/lab-look`. The spec continues from that branch onto `movenda-brief`, so both URLs stay up. QR preview stays `current`.
 
 **Later cutover of www.movenda.be:** `PUBLIC_HOST_MODE=full`, `PUBLIC_SITE_URL=https://www.movenda.be` (or `https://movenda.be`), attach apex + www to the same service, `PUBLIC_NOINDEX=false`. Then 301 `mpc.movenda.be/*` → `https://www.movenda.be/mpc/*`. Squarespace can be cancelled after a watch period. Do **not** move `movenda.be` DNS until that meeting.
 
