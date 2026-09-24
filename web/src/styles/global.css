@@ -923,8 +923,8 @@ html[data-theme="lab"] input[type="submit"] {
   }
 
   html[data-theme="lab"] .lab-strip__card {
-    min-height: 0;
-    aspect-ratio: 16 / 10;
+    min-height: 20rem;
+    aspect-ratio: auto;
   }
 
   html[data-theme="lab"] .lab-strip__title {
@@ -933,13 +933,10 @@ html[data-theme="lab"] input[type="submit"] {
 
   html[data-theme="lab"] .lab-strip__body {
     top: auto;
-    bottom: 3.7rem;
+    bottom: 5rem;
     max-width: none;
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    font-size: 0.92rem;
+    font-size: 0.98rem;
+    line-height: 1.35;
   }
 
   html[data-theme="lab"] .lab-card {
@@ -1165,7 +1162,14 @@ html[data-theme="lab"] .brief-loc__photo {
 }
 
 html[data-theme="lab"] .brief-loc--light .brief-loc__photo {
-  opacity: 0.28;
+  opacity: 0.78;
+}
+
+html[data-theme="lab"] .brief-loc--light::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(247 241 230 / 0.18) 0%, rgb(247 241 230 / 0.55) 100%);
+  content: "";
 }
 
 html[data-theme="lab"] .brief-loc__veil {
