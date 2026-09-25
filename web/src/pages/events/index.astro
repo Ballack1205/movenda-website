@@ -1,0 +1,66 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getEvents } from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+import SectionKicker from "../../components/SectionKicker.astro";
+
+const events = await getEvents();
+const today = new Date().toISOString().slice(0, 10);
+const upcoming = events.filter((event) => event.datum >= today);
+const past = events.filter((event) => event.datum < today);
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Events", path: "/events" },
+  ]),
+];
+---
+
+<Layout
+  title="Events | Movenda"
+  description="Komende en afgelopen events van Sportpraktijk Movenda en het Performance Centre."
+  path="/events"
+  altPath="/en/events"
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-3xl px-4 py-12">
+    <SectionKicker n={1} />
+    <h1 class="text-3xl font-bold">Events</h1>
+    <p class="mt-3 text-brand-muted">Komende momenten staan bovenaan. Afgelopen events blijven staan.</p>
+
+    {events.length === 0 && (
+      <p class="mt-8 text-brand-muted">Er staan nog geen events online. Nieuwe events verschijnen hier zodra ze gepubliceerd zijn.</p>
+    )}
+
+    {upcoming.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Komend</h2>
+        <ul class="mt-4 space-y-6">
+          {upcoming.map((event) => (
+            <li>
+              <p class="text-sm text-brand-muted">{event.datum}{event.locatie ? ` · ${event.locatie}` : ""}</p>
+              <h3 class="text-lg font-semibold">{event.titel}</h3>
+              {event.tekst && <p class="mt-1 text-brand-muted">{event.tekst}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {past.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Afgelopen</h2>
+        <ul class="mt-4 space-y-6">
+          {past.map((event) => (
+            <li>
+              <p class="text-sm text-brand-muted">{event.datum}{event.locatie ? ` · ${event.locatie}` : ""}</p>
+              <h3 class="text-lg font-semibold">{event.titel}</h3>
+              {event.tekst && <p class="mt-1 text-brand-muted">{event.tekst}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </section>
+</Layout>

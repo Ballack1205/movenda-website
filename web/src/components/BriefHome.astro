@@ -7,15 +7,16 @@ import PartnerBand from "./PartnerBand.astro";
 import TeamCarousel from "./TeamCarousel.astro";
 import InstagramFeed from "./InstagramFeed.astro";
 import BlogPostCard from "./BlogPostCard.astro";
+import GoogleReviewsFeed from "./GoogleReviewsFeed.astro";
 import {
   getBlogPosts,
+  getEvents,
   getLocaties,
   teamCounts,
   homeDeurNaam,
   homeDeurRegel,
   homeDeurTekst,
   localizeInternalHref,
-  type Getuigenis,
   type Pagina,
   type Partner,
   type SiteSettings,
@@ -32,20 +33,21 @@ interface Props {
   settings: SiteSettings;
   partners: Partner[];
   team: Teamlid[];
-  getuigenissen: Getuigenis[];
 }
 
-const { pagina, settings, partners, team, getuigenissen } = Astro.props;
+const { pagina, settings, partners, team } = Astro.props;
 const brief = settings.homeBrief;
-const posts = (await getBlogPosts()).slice(0, 3);
+const posts = await getBlogPosts();
+const today = new Date().toISOString().slice(0, 10);
+const homeEvents = (await getEvents())
+  .filter((event) => event.tonenOpHome)
+  .sort((a, b) => (a.datum >= today ? (b.datum >= today ? a.datum.localeCompare(b.datum) : -1) : 1))
+  .slice(0, 3);
 const locaties = await getLocaties();
 const hasselt = locaties.find((loc) => loc.slug === "olympia");
 const kuringen = locaties.find((loc) => loc.slug === "mpc");
-const reviews = getuigenissen.slice(0, 3);
 const bookingOn = settings.booking.enabled && !!settings.booking.url;
-const googleUrl = settings.googleReviews.olympia?.reviewUrl;
-const instagram = settings.socials.instagram;
-
+const insightsKicker = brief.insightsKicker === "Insights" ? "Insights/Blog" : brief.insightsKicker;
 const deurFallback: Record<string, ImageMetadata> = {
   "/kinesitherapie": kineHero,
   "/mpc": mpcHero,
@@ -167,54 +169,49 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
     </div>
   </section>
 
-  {reviews.length > 0 && (
+  {homeEvents.length > 0 && (
     <section class="brief-block" data-reveal>
       <div class="mx-auto max-w-6xl px-4">
-        <h2 class="brief-title">{brief.reviewsTitel}</h2>
-        <ul class="brief-reviews">
-          {reviews.map((item) => (
+        <p class="brief-kicker">Events</p>
+        <ul class="brief-insights">
+          {homeEvents.map((event) => (
             <li>
-              <blockquote>
-                <p>{item.tekst}</p>
-                <footer>
-                  {item.naam}
-                  {item.rol ? <span> · {item.rol}</span> : null}
-                </footer>
-              </blockquote>
+              <a href="/events">{event.datum} — {event.titel}</a>
             </li>
           ))}
         </ul>
-        {googleUrl && (
-          <a href={googleUrl} class="brief-textlink" target="_blank" rel="noopener noreferrer">{brief.reviewsCta}</a>
-        )}
+        <a href="/events" class="brief-textlink">Alle events</a>
       </div>
     </section>
   )}
 
+  <GoogleReviewsFeed settings={settings} />
+
   <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
-      <p class="brief-kicker">{brief.insightsKicker}</p>
+      <p class="brief-kicker">{insightsKicker}</p>
       <h2 class="brief-title">{brief.insightsTitel}</h2>
       <p class="brief-lead">{brief.insightsTekst}</p>
       {posts.length > 0 && (
-        <ul class="mt-8 grid gap-6 md:grid-cols-3">
-          {posts.map((post) => (
-            <li>
-              <BlogPostCard post={post} />
-            </li>
-          ))}
-        </ul>
+        <div class="relative mt-6" data-team-carousel>
+          <div class="absolute -top-12 right-0 hidden gap-2 md:flex" data-carousel-controls hidden>
+            <button type="button" data-carousel-prev aria-label="Vorige posts" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand-border bg-white text-brand-text">‹</button>
+            <button type="button" data-carousel-next aria-label="Volgende posts" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand-border bg-white text-brand-text">›</button>
+          </div>
+          <ul class="team-strip -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2" data-carousel-track aria-label="Insights/Blog">
+            {posts.map((post) => (
+              <li class="flex w-[18rem] shrink-0 snap-start sm:w-[22rem]">
+                <BlogPostCard post={post} />
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
-      <a href="/blog" class="brief-textlink">{brief.insightsCta}</a>
+      <a href="/blog" class="brief-textlink">{brief.insightsCta === "Bekijk alle Insights" ? "Bekijk Insights/Blog" : brief.insightsCta}</a>
     </div>
   </section>
 
   <InstagramFeed settings={settings} title={brief.instagramTitel} />
-  {instagram && (
-    <p class="mx-auto max-w-6xl px-4 pb-10 text-center">
-      <a href={instagram} class="brief-textlink" target="_blank" rel="noopener noreferrer">{brief.instagramCta}</a>
-    </p>
-  )}
 
   <section class="brief-slot" data-reveal>
     <h2 class="brief-title">{brief.slotTitel}</h2>
@@ -226,8 +223,8 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
         <details class="brief-book">
           <summary class="brief-slot__button">{brief.slotAfspraak}</summary>
           <div class="brief-book__choices">
-            <a href="/contact?locatie=Movenda Olympia">Movenda Hasselt</a>
-            <a href="/contact?locatie=Movenda Performance Centre">Performance Centre Kuringen</a>
+            <a href="/contact?locatie=Movenda — Kuringersteenweg">Movenda — Kuringersteenweg</a>
+            <a href="/contact?locatie=Performance Centre — Lammerweg">Performance Centre — Lammerweg</a>
           </div>
         </details>
       )}

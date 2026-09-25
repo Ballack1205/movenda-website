@@ -19,10 +19,12 @@ import keuzehulpTag from "./keuzehulpTag";
 import specialisatie from "./specialisatie";
 import pagina from "./pagina";
 import cmsFoto from "./cmsFoto";
+import event from "./event";
 
 export const schemaTypes = [
   pagina,
   cmsFoto,
+  event,
   teamlid,
   specialisatie,
   locatie,

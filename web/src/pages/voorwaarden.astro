@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getLocaties, getSiteSettings } from "../lib/content";
+import { breadcrumbSchema } from "../lib/schema";
+
+const locaties = await getLocaties();
+const settings = await getSiteSettings();
+const info = settings.prijzenInfo;
+---
+
+<Layout
+  title="Algemene voorwaarden | Movenda"
+  description="Concept algemene voorwaarden van Movenda en het Performance Centre. Nog na te lezen."
+  path="/voorwaarden"
+  jsonLd={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Algemene voorwaarden", path: "/voorwaarden" }])]}
+>
+  <article class="mx-auto max-w-3xl px-4 py-12">
+    <p class="text-sm font-semibold uppercase tracking-wide">Concept</p>
+    <h1 class="mt-2 text-3xl font-bold">Algemene voorwaarden</h1>
+    <p class="mt-4 text-brand-muted">
+      Dit is een concept voor de twee praktijken. Laat het nalezen door de boekhouder of jurist voor het live gaat.
+    </p>
+    <h2 class="mt-8 text-xl font-semibold">Wie</h2>
+    <ul class="mt-3 space-y-2 text-brand-muted">
+      {locaties.map((locatie) => (
+        <li>{locatie.slug === "mpc" ? "Performance Centre" : "Movenda"} — {locatie.adres} — BTW {locatie.btw}</li>
+      ))}
+    </ul>
+    <h2 class="mt-8 text-xl font-semibold">Afspraken</h2>
+    <p class="mt-3 text-brand-muted">We werken enkel op afspraak. Een sessie duurt ongeveer 30 minuten, inclusief administratie en omkleden, tenzij anders afgesproken.</p>
+    {info.annulatiebeleid && (
+      <>
+        <h2 class="mt-8 text-xl font-semibold">Annuleren</h2>
+        <p class="mt-3 text-brand-muted">{info.annulatiebeleid}</p>
+      </>
+    )}
+    <h2 class="mt-8 text-xl font-semibold">Tarieven en terugbetaling</h2>
+    <p class="mt-3 text-brand-muted">
+      De tarieven staan op de prijspagina en kunnen per therapeut verschillen. Je krijgt een getuigschrift en vraagt de terugbetaling zelf aan bij je ziekenfonds.
+    </p>
+    <p class="mt-6 text-sm text-brand-muted">Zie ook de <a class="underline" href="/privacy">privacyverklaring</a>.</p>
+  </article>
+</Layout>

@@ -80,7 +80,7 @@ export default defineType({
       group: "inhoud",
       initialValue: true,
       description:
-        "Uit = de pagina blijft bestaan en vindbaar, maar staat niet in het uitklapmenu bovenaan (bv. bij een tijdelijk aanbod of een te lange lijst).",
+        "Uit = de pagina blijft bestaan, maar verdwijnt uit het menu én uit de prijslijst. Zo pauzer je een rubriek (bv. acupunctuur) zonder de pagina te wissen.",
     }),
     defineField({
       name: "menuLabel",

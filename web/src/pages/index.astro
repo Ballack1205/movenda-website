@@ -44,7 +44,7 @@ const alleDiensten = {
 };
 const afspraakHref =
   settings.booking.enabled && settings.booking.url ? settings.booking.url : "/contact";
-const partners = await getPartners("movenda");
+const partners = await getPartners();
 const getuigenissen = await getGetuigenissen("olympia");
 
 // Photo label: "Olympia · Hasselt | Performance Centre · Kuringen". Names and towns come from the
@@ -104,7 +104,6 @@ const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, tra
       settings={settings}
       partners={partners}
       team={team}
-      getuigenissen={getuigenissen}
     />
   ) : (
   <div>

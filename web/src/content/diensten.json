@@ -2,14 +2,14 @@
   {
     "slug": "manuele-therapie",
     "categorie": "kine",
-    "titel": "Manuele therapie Hasselt",
+    "titel": "Manuele therapie",
     "titelEn": "Manual therapy Hasselt",
-    "intro": "Hands-on technieken om gewrichten en spieren te mobiliseren bij rug-, nek- en gewrichtsklachten.",
-    "slogan": "",
-    "body": "Ben je op zoek naar verlichting van jouw spier- en gewrichtsklachten? Onze ervaren manueel therapeuten in Hasselt staan voor je klaar.\n\nErvaart u pijn of beperkingen? Ons team van manuele therapeuten kan u helpen. We gebruiken technieken om spier- en peesletsels te herstellen, gewrichtsklachten te verminderen, pre- en postoperatieve revalidaties vlot te laten verlopen, sportblessures te behandelen en problemen met uw wervelkolom op te lossen. Daarnaast stellen we een persoonlijk oefenprogramma op voor een duurzaam resultaat.\n\nJe kan terecht bij het volledige team van kinesisten voor manuele therapie.",
+    "intro": "Manuele therapie richt zich op gewrichten, spieren en zenuwstructuren die pijnlijk, stijf of beperkt aanvoelen.",
+    "slogan": "Meer bewegingsvrijheid. Een actieve volgende stap.",
+    "body": "Manuele therapie richt zich op gewrichten, spieren en zenuwstructuren die pijnlijk, stijf of beperkt aanvoelen. We onderzoeken niet alleen waar je de klacht ervaart, maar ook welke bewegingen en lichaamsregio’s ermee samenhangen. De behandeling is nooit een doel op zich: ze creëert ruimte om opnieuw actief en met vertrouwen te bewegen.\n\nVoor wie: nek-, rug- of gewrichtsklachten, spier- en peesklachten, bewegingsbeperkingen na een blessure of periode van inactiviteit, sporters die opnieuw vrij willen bewegen, begeleiding voor en na een operatie, klachten ter hoogte van de wervelkolom.\n\nZo werken we: intake en onderzoek van het volledige lichaam, gerichte manuele technieken, gecombineerd met individuele oefentherapie, en regelmatige evaluatie.\n\nElke behandeling duurt ongeveer 30 minuten, inclusief administratie en omkleden. Locatie: Sportpraktijk Movenda Hasselt. Verdere sportrevalidatie kan in het Performance Centre Kuringen.\n\nTarieven staan op de pagina Prijzen en terugbetaling.",
     "bodyEn": "Looking for relief from muscle and joint complaints? Our experienced manual therapists in Hasselt are ready to help.\n\nIn pain or restricted in how you move? Our manual-therapy team can help. We use hands-on techniques to restore muscle and tendon injuries, reduce joint complaints, keep pre- and post-operative rehabilitation on track, treat sports injuries and resolve problems with the spine. We also draw up a personal exercise programme for a lasting result.\n\nYou can see the full physiotherapy team for manual therapy.",
     "ctaLabel": "Maak een afspraak",
-    "ctaUrl": "/contact",
+    "ctaUrl": "/contact?behandeling=Manuele therapie",
     "gekoppeldeTeamleden": [
       "andres-ruttens",
       "josje-bazelmans",
@@ -19,7 +19,7 @@
       "maarten-bernaerts"
     ],
     "volgorde": 1,
-    "seoTitle": "Manuele therapie Hasselt | Movenda",
+    "seoTitle": "Manuele therapie | Movenda",
     "seoDescription": "Manuele therapie bij Movenda Hasselt voor rug-, nek- en gewrichtsklachten. Behandeling op maat door ervaren manueel therapeuten.",
     "seoTitleEn": "Manual therapy Hasselt | Movenda",
     "seoDescriptionEn": "Manual therapy at Movenda Hasselt for back, neck and joint complaints. Tailored treatment by experienced manual therapists."
@@ -644,5 +644,50 @@
     "seoDescription": "MPC Corporate Coaching: op maat voor bedrijven. Gezondere, actievere werkvloer. Prijs op aanvraag.",
     "seoTitleEn": "Corporate coaching | Movenda Performance Centre",
     "seoDescriptionEn": "MPC Corporate Coaching: tailored for companies. A healthier, more active workplace. Price on request."
+  },
+  {
+    "slug": "algemene-kinesitherapie",
+    "categorie": "kine",
+    "titel": "Algemene kinesitherapie",
+    "intro": "Begrijp je klacht. Herwin je beweging. Bouw verder.",
+    "slogan": "Begrijp je klacht. Herwin je beweging. Bouw verder.",
+    "body": "Algemene kinesitherapie helpt je bij pijn, letsels en bewegingsproblemen die je dagelijkse leven, werk of sport beperken. We starten met een gesprek en een klinisch onderzoek van het volledige lichaam. Daarna combineren we de behandelvormen die voor jouw situatie relevant zijn.\n\nElke behandeling duurt ongeveer 30 minuten. Locatie: Sportpraktijk Movenda Hasselt.\n\nTarieven staan op de pagina Prijzen en terugbetaling.",
+    "ctaLabel": "Plan je eerste afspraak",
+    "ctaUrl": "/contact?behandeling=Algemene kinesitherapie",
+    "gekoppeldeTeamleden": [],
+    "volgorde": 3,
+    "toonInMenu": true,
+    "seoTitle": "Algemene kinesitherapie | Movenda",
+    "seoDescription": "Algemene kinesitherapie bij Movenda in Hasselt: onderzoek, behandeling en actieve opbouw op maat van je klacht."
+  },
+  {
+    "slug": "bekkenbodemtherapie",
+    "categorie": "kine",
+    "titel": "Bekkenbodemtherapie",
+    "intro": "Gerichte begeleiding bij klachten van de bekkenbodem.",
+    "slogan": "Gerichte begeleiding bij klachten van de bekkenbodem.",
+    "body": "Bekkenbodemtherapie begeleidt klachten die samenhangen met de bekkenbodem, voor en na een zwangerschap of los daarvan. We starten met een gesprek en een onderzoek, en bouwen oefeningen op die bij jouw situatie passen.\n\nElke behandeling duurt ongeveer 30 minuten. Locatie: Sportpraktijk Movenda Hasselt.\n\nTarieven staan op de pagina Prijzen en terugbetaling.",
+    "ctaLabel": "Bespreek bekkenbodemtherapie",
+    "ctaUrl": "/contact?behandeling=Bekkenbodemtherapie",
+    "gekoppeldeTeamleden": [],
+    "volgorde": 6,
+    "toonInMenu": true,
+    "seoTitle": "Bekkenbodemtherapie | Movenda",
+    "seoDescription": "Bekkenbodemtherapie bij Movenda in Hasselt, afgestemd op jouw klacht en traject."
+  },
+  {
+    "slug": "barefoot",
+    "categorie": "kine",
+    "titel": "Barefoot",
+    "intro": "Sterke voeten. Een stevige basis voor beweging.",
+    "slogan": "Sterke voeten. Een stevige basis voor beweging.",
+    "body": "Barefoot begeleiding vertrekt vanuit de functie van je voeten in staan, stappen, lopen en sporten. We onderzoeken mobiliteit, kracht, controle en de manier waarop je voeten belasting opvangen. Daarna bouwen we gericht op.\n\nElke behandeling duurt ongeveer 30 minuten. Locatie en therapeut worden nog bevestigd.\n\nTarieven staan op de pagina Prijzen en terugbetaling.",
+    "ctaLabel": "Ontdek barefoot begeleiding",
+    "ctaUrl": "/contact?behandeling=Barefoot",
+    "gekoppeldeTeamleden": [],
+    "volgorde": 14,
+    "toonInMenu": true,
+    "seoTitle": "Barefoot | Movenda",
+    "seoDescription": "Barefoot begeleiding bij Movenda: voetkracht, controle en een geleidelijke opbouw."
   }
 ]

@@ -118,6 +118,7 @@ function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contac
       [
         { slug: "manuele-therapie", categorie: "kine" },
         { slug: "oefentherapie", categorie: "kine" },
+        { slug: "algemene-kinesitherapie", categorie: "kine" },
       ],
       lang,
     ),
@@ -126,6 +127,7 @@ function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contac
       diensten,
       [
         { slug: "pre-en-postnatale-kinesitherapie", categorie: "kine" },
+        { slug: "bekkenbodemtherapie", categorie: "kine" },
         { slug: "lymfedrainage", categorie: "kine" },
         { slug: "acupunctuur", categorie: "kine" },
         { slug: "dry-needling", categorie: "kine" },
@@ -133,6 +135,7 @@ function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contac
         { slug: "auriculotherapie", categorie: "kine" },
         { slug: "cardiovasculaire-revalidatie", categorie: "kine" },
         { slug: "taping", categorie: "kine" },
+        { slug: "barefoot", categorie: "kine" },
       ],
       lang,
     ),
@@ -185,12 +188,12 @@ function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contac
         button: true,
         children: [
           {
-            href: `${contact.href}?locatie=Movenda Olympia`,
-            label: "Movenda Hasselt",
+            href: `${contact.href}?locatie=Movenda — Kuringersteenweg`,
+            label: "Movenda — Kuringersteenweg",
           },
           {
-            href: `${contact.href}?locatie=Movenda Performance Centre`,
-            label: "Performance Centre Kuringen",
+            href: `${contact.href}?locatie=Performance Centre — Lammerweg`,
+            label: "Performance Centre — Lammerweg",
           },
         ],
       };
@@ -216,7 +219,14 @@ function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contac
           },
           { label: "GX", href: p("/mpc/groepslessen"), children: gx },
           { label: "B2B", href: p("/mpc/corporate-coaching"), children: [] },
-          { label: "Olympia", href: p("/locaties/olympia"), children: [] },
+          {
+            label: "Hasselt",
+            href: p("/locaties/olympia"),
+            children: [
+              { href: p("/kine-abonnement"), label: en ? "Physio membership" : "Kiné-abonnement" },
+              { href: p("/locaties/olympia"), label: en ? "About this location" : "Over deze locatie" },
+            ],
+          },
         ],
       },
       {
@@ -226,6 +236,7 @@ function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contac
           { href: p("/over"), label: en ? "Our story" : "Ons verhaal" },
           { href: p("/mpc/visie"), label: en ? "Our vision" : "Onze visie" },
           { href: p("/team"), label: "Team" },
+          { href: p("/events"), label: "Events" },
           { href: p("/prijzen"), label: en ? "Prices" : "Prijzen" },
           { href: p("/faq"), label: "FAQ" },
           { href: p("/jobs"), label: en ? "Jobs" : "Vacatures" },

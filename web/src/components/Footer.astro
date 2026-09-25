@@ -1,7 +1,7 @@
 ---
 import { getLocaties, getSiteSettings } from "../lib/content";
 import { byAppointment, locatieType, weekday } from "../lib/i18n";
-import { MPC_HOST, MOVENDA_PUBLIC_URL, movendaHomeHref, mpcHomePath, NOINDEX, THEME } from "../lib/site";
+import { MPC_HOST, MOVENDA_PUBLIC_URL, movendaHomeHref, mpcHomePath, THEME } from "../lib/site";
 
 export interface Props {
   brand?: "movenda" | "mpc";
@@ -34,6 +34,8 @@ const markFor = (slug: string) =>
       ? "/brand/logo-m-on-dark.png"
       : "/brand/logo-m.png";
 const shortName = (naam: string) => naam.replace(/^Movenda\s*/i, "");
+const placeName = (locatie: { slug: string; naam: string }) =>
+  locatie.slug === "mpc" ? "Performance Centre" : locatie.slug === "olympia" ? "Movenda" : shortName(locatie.naam);
 
 const t = {
   hours: lang === "en" ? "Opening hours" : "Openingsuren",
@@ -74,7 +76,7 @@ const navLinks = MPC_HOST
         { href: "/en/over", label: "About us" },
         { href: "/en/team", label: "Team" },
         { href: brand === "mpc" ? "/en/mpc/prijzen" : "/en/prijzen", label: "Prices" },
-        { href: "/en/blog", label: "Blog" },
+        { href: "/en/blog", label: lab ? "Insights/Blog" : "Blog" },
         { href: "/en/faq", label: "FAQ" },
         { href: "/en/jobs", label: "Jobs" },
         { href: "/en/mpc", label: "MPC" },
@@ -84,7 +86,7 @@ const navLinks = MPC_HOST
         { href: "/over", label: "Over ons" },
         { href: "/team", label: "Team" },
         { href: brand === "mpc" ? "/mpc/prijzen" : "/prijzen", label: "Prijzen" },
-        { href: "/blog", label: "Blog" },
+        { href: "/blog", label: lab ? "Insights/Blog" : "Blog" },
         { href: "/faq", label: "FAQ" },
         { href: "/jobs", label: "Vacatures" },
         { href: "/mpc", label: "MPC" },
@@ -114,72 +116,6 @@ const socialClass =
 ---
 
 <footer class:list={["bg-brand-footer text-white/80", lab && "lab-footer"]}>
-  {lab && !MPC_HOST ? (
-    <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 text-sm sm:grid-cols-2 lg:grid-cols-3">
-      <nav aria-label={lang === "en" ? "Offer" : "Aanbod"}>
-        <p class={labelClass}>{lang === "en" ? "Offer" : "Aanbod"}</p>
-        <ul class="mt-3 space-y-2">
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/kinesitherapie" : "/kinesitherapie"}>{lang === "en" ? "Physiotherapy" : "Kinesitherapie"}</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/mpc" : "/mpc"}>Performance</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/mpc/groepslessen" : "/mpc/groepslessen"}>GX</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/mpc/corporate-coaching" : "/mpc/corporate-coaching"}>B2B</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/locaties/olympia" : "/locaties/olympia"}>Olympia</a></li>
-        </ul>
-      </nav>
-      <nav aria-label="Sportpraktijk Movenda">
-        <p class={labelClass}>Sportpraktijk Movenda</p>
-        <ul class="mt-3 space-y-2">
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/over" : "/over"}>{lang === "en" ? "Our story" : "Ons verhaal"}</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/mpc/visie" : "/mpc/visie"}>{lang === "en" ? "Our vision" : "Onze visie"}</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/team" : "/team"}>Team</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/prijzen" : "/prijzen"}>{lang === "en" ? "Prices" : "Prijzen"}</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/faq" : "/faq"}>FAQ</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/jobs" : "/jobs"}>{lang === "en" ? "Jobs" : "Vacatures"}</a></li>
-        </ul>
-      </nav>
-      <nav aria-label="Info">
-        <p class={labelClass}>Info</p>
-        <ul class="mt-3 space-y-2">
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/blog" : "/blog"}>Insights</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/contact" : "/contact"}>Contact</a></li>
-          <li><a class="hover:text-white" href={lang === "en" ? "/en/contact" : "/contact"}>{lang === "en" ? "Book" : "Afspraak"}</a></li>
-        </ul>
-      </nav>
-      <nav aria-label={lang === "en" ? "Locations" : "Locaties"}>
-        <p class={labelClass}>{lang === "en" ? "Locations" : "Locaties"}</p>
-        <ul class="mt-3 space-y-3">
-          {ordered.map((loc) => (
-            <li>
-              <a class="hover:text-white" href={`${lang === "en" ? "/en" : ""}/locaties/${loc.slug}`}>
-                {loc.slug === "olympia" ? "Movenda Hasselt" : loc.slug === "mpc" ? "Performance Centre Kuringen" : loc.naam}
-              </a>
-              <p class="mt-0.5 text-white/70">{loc.adres}</p>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div>
-        <p class={labelClass}>{lang === "en" ? "Reviews and social" : "Reviews en social"}</p>
-        <ul class="mt-3 space-y-2">
-          {settings.googleReviews.olympia?.reviewUrl && (
-            <li><a class="hover:text-white" href={settings.googleReviews.olympia.reviewUrl} target="_blank" rel="noopener noreferrer">Google Reviews</a></li>
-          )}
-          {socials.map((s) => (
-            <li><a class="hover:text-white" href={s.href} target="_blank" rel="noopener noreferrer">{s.label}</a></li>
-          ))}
-        </ul>
-      </div>
-      <nav aria-label={lang === "en" ? "Legal" : "Juridisch"}>
-        <p class={labelClass}>{lang === "en" ? "Legal" : "Juridisch"}</p>
-        <ul class="mt-3 space-y-2">
-          <li><a class="hover:text-white" href={privacyHref}>{t.privacy}</a></li>
-          {showCookieLink && (
-            <li><a class="hover:text-white" href={privacyHref + "#cookies"} data-consent-open>{t.cookies}</a></li>
-          )}
-        </ul>
-      </nav>
-    </div>
-  ) : (
   <div class:list={["mx-auto grid max-w-6xl gap-10 px-4 py-12 md:gap-x-10 md:gap-y-0", shown.length > 1 ? "md:grid-cols-3" : "md:grid-cols-2"]}>
     <section class="flex flex-col text-sm md:row-span-3" aria-label="Movenda">
       <a
@@ -243,12 +179,12 @@ const socialClass =
         ))}
       </nav>
 
-      {socials.length > 0 && (
+      {(socials.length > 0 || settings.googleReviews.olympia?.reviewUrl) && (
         <div class="mt-auto pt-8">
           <p class={labelClass}>{t.follow}</p>
           <div class="mt-2 flex gap-2">
             {socials.map((s) => (
-              <a href={s.href} target="_blank" rel="noopener" class={socialClass} aria-label={`${brand === "mpc" ? "Movenda Performance Centre" : "Movenda"} ${lang === "en" ? "on" : "op"} ${s.label}`}>
+              <a href={s.href} target="_blank" rel="noopener" class={socialClass} aria-label={`${brand === "mpc" ? "Performance Centre" : "Movenda"} ${lang === "en" ? "on" : "op"} ${s.label}`}>
                 {s.kind === "instagram" && (
                   <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="5" />
@@ -269,6 +205,11 @@ const socialClass =
               </a>
             ))}
           </div>
+          {settings.googleReviews.olympia?.reviewUrl && (
+            <a class="mt-3 inline-block text-sm hover:text-white" href={settings.googleReviews.olympia.reviewUrl} target="_blank" rel="noopener noreferrer">
+              Google Reviews
+            </a>
+          )}
         </div>
       )}
     </section>
@@ -279,7 +220,7 @@ const socialClass =
           <img src={markFor(locatie.slug)} alt="" width="40" height="40" class="h-10 w-10 shrink-0" />
           <div>
             <h3 id={`footer-${locatie.slug}`} class="font-heading text-base font-semibold leading-tight text-white">
-              {locatie.naam}
+              {placeName(locatie)}
             </h3>
             <p class="mt-0.5 text-xs uppercase tracking-wide text-white/70">{locatieType(locatie.type, lang)}</p>
           </div>
@@ -361,34 +302,25 @@ const socialClass =
       </section>
     ))}
   </div>
-  )}
 
   <div class="border-t border-white/10 px-4 py-5">
     <div class="mx-auto flex max-w-6xl flex-col gap-2 text-xs text-white/75 md:flex-row md:items-center md:justify-between">
       <p>
         © {year} Movenda
         {shown.map((l) => (
-          <span class="tabular-nums"> · {shortName(l.naam)} {t.vat} {l.btw}</span>
+          <span class="tabular-nums">
+            {" · "}
+            {l.slug === "mpc" ? `${placeName(l)} ` : ""}
+            {t.vat} {l.btw}
+          </span>
         ))}
       </p>
       <p class="flex flex-wrap items-center gap-x-4 gap-y-1">
         <a href={privacyHref} class="hover:text-white">{t.privacy}</a>
+        <a href={lang === "en" ? "/en/voorwaarden" : "/voorwaarden"} class="hover:text-white">{lang === "en" ? "Terms" : "Voorwaarden"}</a>
         {showCookieLink && (
           <a href={privacyHref + "#cookies"} data-consent-open class="hover:text-white">{t.cookies}</a>
         )}
-        <span class="text-white/70">
-          {MPC_HOST
-            ? lang === "en"
-              ? NOINDEX
-                ? "Performance Centre — not listed on Google yet"
-                : "Movenda Performance Centre"
-              : NOINDEX
-                ? "Performance Centre — nog niet vindbaar via Google"
-                : "Movenda Performance Centre"
-            : lang === "en"
-              ? "Preview in development — not the live movenda.be site"
-              : "Preview in ontwikkeling — niet de live site van movenda.be"}
-        </span>
       </p>
     </div>
   </div>

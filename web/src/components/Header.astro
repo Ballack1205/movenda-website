@@ -84,13 +84,17 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     ]}
   >
     {brief && (
-      <div class="min-w-0">
+      <div class:list={["hidden min-w-0 items-center gap-4", showDesktop]}>
         <nav
-          class:list={["hidden min-w-0 text-[13px] font-medium xl:text-sm", showDesktop]}
+          class="min-w-0 text-[13px] font-medium xl:text-sm"
           aria-label={lang === "en" ? "Offer" : "Aanbod"}
         >
           <NavCluster items={leftItems} path={path} lab={lab} externalLabel={t.external} />
         </nav>
+        <form action={lang === "en" ? "/en/zoeken" : "/zoeken"} method="get" role="search" class="shrink-0">
+          <label class="sr-only" for="site-search">{lang === "en" ? "Search" : "Zoeken"}</label>
+          <input id="site-search" name="q" type="search" placeholder={lang === "en" ? "Search" : "Zoeken"} class="w-28 border-b border-current bg-transparent px-1 py-1 text-sm outline-none placeholder:text-current/60" />
+        </form>
       </div>
     )}
     <a
@@ -312,6 +316,10 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     data-mobile-nav
   >
     <div class="mx-auto flex min-h-[calc(100dvh-5.5rem)] max-w-lg flex-col px-5 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <form action={lang === "en" ? "/en/zoeken" : "/zoeken"} method="get" role="search" class="mb-6">
+        <label class="sr-only" for="site-search-mobile">{lang === "en" ? "Search" : "Zoeken"}</label>
+        <input id="site-search-mobile" name="q" type="search" placeholder={lang === "en" ? "Search" : "Zoeken"} class="w-full border-b border-current bg-transparent px-1 py-2 text-lg outline-none" />
+      </form>
       <ol class="flex flex-col gap-1">
         {items.map((item, i) => {
           const nested = (item.groups && item.groups.length > 0) || (item.children && item.children.length > 0);

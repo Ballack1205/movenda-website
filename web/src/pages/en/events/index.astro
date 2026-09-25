@@ -1,0 +1,47 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getEvents } from "../../../lib/content";
+import { breadcrumbSchema } from "../../../lib/schema";
+
+const events = await getEvents();
+const today = new Date().toISOString().slice(0, 10);
+const upcoming = events.filter((event) => event.datum >= today);
+const past = events.filter((event) => event.datum < today);
+---
+
+<Layout
+  title="Events | Movenda"
+  description="Upcoming and past events at Movenda and the Performance Centre."
+  path="/en/events"
+  altPath="/events"
+  jsonLd={[breadcrumbSchema([{ name: "Home", path: "/en" }, { name: "Events", path: "/en/events" }])]}
+>
+  <section class="mx-auto max-w-3xl px-4 py-12">
+    <h1 class="text-3xl font-bold">Events</h1>
+    {events.length === 0 && <p class="mt-8 text-brand-muted">No events published yet.</p>}
+    {upcoming.length > 0 && (
+      <ul class="mt-8 space-y-6">
+        {upcoming.map((event) => (
+          <li>
+            <p class="text-sm text-brand-muted">{event.datum}</p>
+            <h2 class="text-lg font-semibold">{event.titelEn || event.titel}</h2>
+            {(event.tekstEn || event.tekst) && <p class="mt-1 text-brand-muted">{event.tekstEn || event.tekst}</p>}
+          </li>
+        ))}
+      </ul>
+    )}
+    {past.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Past</h2>
+        <ul class="mt-4 space-y-6">
+          {past.map((event) => (
+            <li>
+              <p class="text-sm text-brand-muted">{event.datum}</p>
+              <h3 class="text-lg font-semibold">{event.titelEn || event.titel}</h3>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </section>
+</Layout>

@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { breadcrumbSchema } from "../lib/schema";
+---
+
+<Layout
+  title="DDH Ready | Movenda"
+  description="DDH Ready bij Movenda. Foto’s voeg je toe in Sanity op deze pagina."
+  path="/ddh-ready"
+  jsonLd={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "DDH Ready", path: "/ddh-ready" }])]}
+>
+  <section class="mx-auto max-w-3xl px-4 py-16">
+    <h1 class="text-4xl font-bold">DDH Ready</h1>
+    <p class="mt-4 text-brand-muted">
+      Deze pagina volgt de bestaande DDH Ready-pagina. Extra foto’s upload je in Sanity bij deze pagina, niet via mail.
+    </p>
+  </section>
+</Layout>

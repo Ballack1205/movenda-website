@@ -27,10 +27,21 @@
   }
 
   const sheet = document.querySelector("[data-lab-light]") || document.querySelector(".lab-sheet");
+  const ink = document.querySelector(".lab-sheet--ink");
   const cover = document.querySelector(".lab-cover");
+  const arrow = document.querySelector<HTMLElement>(".lab-cover__arrow");
   if (sheet) {
     const update = () => {
-      document.body.classList.toggle("lab-past-cover", sheet.getBoundingClientRect().top < 80);
+      const header = document.querySelector<HTMLElement>("[data-header]");
+      const edge = header?.getBoundingClientRect().height ?? 80;
+      const past = sheet.getBoundingClientRect().top < edge;
+      document.body.classList.toggle("lab-past-cover", past);
+      const inkTop = ink?.getBoundingClientRect().top ?? edge + 1;
+      document.body.classList.toggle("lab-header-blur", !past && inkTop < edge);
+      if (arrow && !reduce) {
+        const shift = Math.min(window.scrollY * 0.45, window.innerHeight * 0.42);
+        arrow.style.setProperty("--arrow-shift", `${-shift}px`);
+      }
     };
     update();
     window.addEventListener("scroll", update, { passive: true });

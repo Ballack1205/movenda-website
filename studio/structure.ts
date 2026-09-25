@@ -99,6 +99,7 @@ export const deskStructure: StructureResolver = (S) =>
 
       S.documentTypeListItem("faq").title("FAQ").icon(HelpCircleIcon),
       S.documentTypeListItem("getuigenis").title("Getuigenissen").icon(CommentIcon),
+      S.documentTypeListItem("event").title("Events").icon(CalendarIcon),
       S.listItem()
         .title("Blogposts")
         .icon(ComposeIcon)

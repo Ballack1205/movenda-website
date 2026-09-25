@@ -76,15 +76,15 @@
     {
       "korteNaam": "Kine",
       "korteNaamEn": "Physio",
-      "regel": "Olympia",
-      "regelEn": "Olympia",
+      "regel": "Hasselt",
+      "regelEn": "Hasselt",
       "href": "/kinesitherapie"
     },
     {
       "korteNaam": "Training",
       "korteNaamEn": "Training",
-      "regel": "Olympia",
-      "regelEn": "Olympia",
+      "regel": "Hasselt",
+      "regelEn": "Hasselt",
       "href": "/training"
     },
     {
@@ -121,9 +121,9 @@
       "href": "/mpc/corporate-coaching"
     },
     {
-      "korteNaam": "Olympia",
-      "regel": "Ontdek Olympia",
-      "tekst": "Ontdek het aanbod van Sportpraktijk Movenda binnen Sportcentrum Olympia in Hasselt.",
+      "korteNaam": "Hasselt",
+      "regel": "Ontdek Hasselt",
+      "tekst": "Ontdek het aanbod van Sportpraktijk Movenda aan de Kuringersteenweg in Hasselt.",
       "href": "/locaties/olympia"
     }
   ],
@@ -146,10 +146,10 @@
     "teamCta": "Ontmoet ons team",
     "reviewsTitel": "Ervaringen die voor zich spreken.",
     "reviewsCta": "Bekijk onze Google Reviews",
-    "insightsKicker": "Insights",
+    "insightsKicker": "Insights/Blog",
     "insightsTitel": "Kennis die je verder brengt.",
     "insightsTekst": "Inzichten over bewegen, herstel, training, gezondheid en performance van het team van Sportpraktijk Movenda.",
-    "insightsCta": "Bekijk alle Insights",
+    "insightsCta": "Bekijk Insights/Blog",
     "instagramTitel": "Beweging in beeld.",
     "instagramCta": "Volg ons op Instagram",
     "slotTitel": "Klaar voor je volgende stap?",

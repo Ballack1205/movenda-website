@@ -99,6 +99,19 @@ import SectionKicker from "../../components/SectionKicker.astro";
       </div>
     )}
 
+    <form class="mt-12 max-w-xl space-y-3" data-groep-form>
+      <h2 class="text-xl font-bold">Inschrijven</h2>
+      <p class="text-sm text-brand-muted">Zonder betaling. Je aanvraag komt bij ons binnen per mail.</p>
+      <input class="w-full rounded-lg border border-brand-border px-4 py-3" name="naam" placeholder="Naam" required />
+      <input class="w-full rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="E-mail" required />
+      <input class="w-full rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Telefoon" />
+      <input class="w-full rounded-lg border border-brand-border px-4 py-3" name="les" placeholder="Les" required />
+      <textarea class="w-full rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="3" placeholder="Bericht"></textarea>
+      <input class="hidden" name="website" tabindex="-1" autocomplete="off" />
+      <button class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white" type="submit">Verstuur</button>
+      <p class="hidden text-sm" data-groep-status></p>
+    </form>
+
     <h2 class="mt-12 text-xl font-bold">Programma's</h2>
     <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {groep.map((dienst) => (
@@ -107,3 +120,28 @@ import SectionKicker from "../../components/SectionKicker.astro";
     </div>
   </section>
 </Layout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-groep-form]");
+  const status = document.querySelector<HTMLElement>("[data-groep-status]");
+  const api = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!form || !status) return;
+    const data = Object.fromEntries(new FormData(form).entries());
+    status.classList.remove("hidden");
+    status.textContent = "Bezig…";
+    try {
+      const res = await fetch(`${api}/api/groepslessen`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("send");
+      form.reset();
+      status.textContent = "Verstuurd. We nemen contact op.";
+    } catch {
+      status.textContent = "Versturen lukte niet. Mail ons gerust rechtstreeks.";
+    }
+  });
+</script>

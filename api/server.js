@@ -5,7 +5,8 @@ import { createServer } from "node:http";
 
 const PORT = process.env.PORT || 10000;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "info@movenda.be";
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "julie@movenda.be";
+const JULIE_EMAIL = "julie@movenda.be";
 const CONTACT_FROM = process.env.CONTACT_FROM || "Movenda website <onboarding@resend.dev>";
 const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID || "";
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "https://movenda-preview.onrender.com")
@@ -61,21 +62,34 @@ async function sendContactEmail(data) {
     eventNaam,
   } = data;
 
-  const html = `
-    <h2>Nieuw contactformulier — movenda.be preview</h2>
-    <p><strong>Naam:</strong> ${escapeHtml(naam)}</p>
-    <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
-    ${optionalLine("Telefoon", telefoon)}
-    ${optionalLine("Locatie", locatie)}
-    ${optionalLine("Waarvoor", waarvoor)}
-    ${optionalLine("Voorschrift", voorschrift)}
-    ${optionalLine("Hoe gevonden", hoeGevonden)}
-    ${optionalLine("Detail", hoeGevondenDetail)}
-    ${optionalLine("Club", clubNaam)}
-    ${optionalLine("Event", eventNaam)}
-    <p><strong>Bericht:</strong></p>
-    <p>${escapeHtml(bericht).replace(/\n/g, "<br/>")}</p>
-  `;
+  const hoe = [hoeGevonden, hoeGevondenDetail, clubNaam, eventNaam].filter(Boolean).join(" — ");
+  const text = [
+    "Sent via form submission from Movenda",
+    "",
+    `: ${naam}`,
+    "",
+    `Email: ${email || ""}`,
+    "",
+    `Telefoon: ${telefoon || ""}`,
+    "",
+    locatie ? `Vestiging: ${locatie}` : "",
+    "",
+    `Waarvoor wil je langskomen?: ${waarvoor || ""}`,
+    "",
+    `Heb je een voorschrift van je arts?: ${voorschrift || ""}`,
+    "",
+    `Hoe ben je bij ons terecht gekomen? : ${hoe}`,
+    "",
+    "Jouw vraag of bericht:",
+    bericht || "",
+  ]
+    .filter((line) => line !== "")
+    .join("\n");
+
+  const html = text
+    .split("\n")
+    .map((line) => `<p>${escapeHtml(line) || "&nbsp;"}</p>`)
+    .join("");
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -85,11 +99,11 @@ async function sendContactEmail(data) {
     },
     body: JSON.stringify({
       from: CONTACT_FROM,
-      to: [CONTACT_TO_EMAIL],
+      to: Array.from(new Set([CONTACT_TO_EMAIL, JULIE_EMAIL])),
       reply_to: email,
-      subject: `Nieuw contactformulier van ${naam}`,
+      subject: "Form Submission - Contactpagina website",
       html,
-      text: `Naam: ${naam}\nE-mail: ${email}\n${telefoon ? `Telefoon: ${telefoon}\n` : ""}${locatie ? `Locatie: ${locatie}\n` : ""}${waarvoor ? `Waarvoor: ${waarvoor}\n` : ""}\nBericht:\n${bericht}`,
+      text,
     }),
   });
 
@@ -275,6 +289,65 @@ const server = createServer(async (req, res) => {
       json(res, origin, 200, { ok: true });
     } catch (err) {
       console.error("Popup signup failed:", err);
+      json(res, origin, 502, { error: "send_failed" });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && req.url === "/api/groepslessen") {
+    let data;
+    try {
+      data = JSON.parse(await readBody(req));
+    } catch {
+      json(res, origin, 400, { error: "invalid_json" });
+      return;
+    }
+    if (data.website) {
+      json(res, origin, 200, { ok: true });
+      return;
+    }
+    if (!data.naam || !isValidEmail(data.email) || !data.les) {
+      json(res, origin, 400, { error: "invalid_input" });
+      return;
+    }
+    if (!RESEND_API_KEY) {
+      json(res, origin, 500, { error: "server_not_configured" });
+      return;
+    }
+    const text = [
+      "Sent via form submission from Movenda",
+      "",
+      `: ${data.naam}`,
+      "",
+      `Email: ${data.email}`,
+      "",
+      `Telefoon: ${data.telefoon || ""}`,
+      "",
+      `Les: ${data.les}`,
+      "",
+      "Bericht:",
+      data.bericht || "",
+    ].join("\n");
+    try {
+      const mail = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: CONTACT_FROM,
+          to: Array.from(new Set([data.coachEmail, JULIE_EMAIL].filter(isValidEmail))),
+          reply_to: data.email,
+          subject: "Form Submission - Groepslessen",
+          text,
+          html: text.split("\n").map((line) => `<p>${escapeHtml(line) || "&nbsp;"}</p>`).join(""),
+        }),
+      });
+      if (!mail.ok) throw new Error(await mail.text());
+      json(res, origin, 200, { ok: true });
+    } catch (err) {
+      console.error("Group signup failed:", err);
       json(res, origin, 502, { error: "send_failed" });
     }
     return;

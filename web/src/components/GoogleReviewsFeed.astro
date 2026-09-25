@@ -46,7 +46,7 @@ const fallbackLabel = lang === "en" ? "Read our Google reviews" : "Lees onze Goo
   // the gap above and below this block ends up equal (symmetric). See the
   // matching comment in InstagramFeed.astro.
   show && (
-    <section class="google-reviews-feed scroll-mt-24 px-4 pb-4 pt-0 sm:pb-6" aria-labelledby="google-reviews-heading">
+    <section class="google-reviews-feed scroll-mt-24 px-4 pb-0 pt-0" aria-labelledby="google-reviews-heading">
       <div class="mx-auto max-w-6xl">
         <h2 id="google-reviews-heading" class="sr-only">
           {heading}
@@ -59,7 +59,7 @@ const fallbackLabel = lang === "en" ? "Read our Google reviews" : "Lees onze Goo
         </div>
         */}
 
-        <div class="google-reviews-widget min-h-[22rem]">
+        <div class="google-reviews-widget">
           <div class={`elfsight-app-${widgetId}`} data-elfsight-app-lazy></div>
         </div>
 

@@ -26,8 +26,8 @@ const { items } = Astro.props;
 
 <section class="lab-strip" data-reveal>
   <div class="lab-strip__grid" style={`--doors: ${items.length}`}>
-    {items.map((item) => (
-      <a href={item.href} class:list={["lab-strip__card", item.body && "lab-strip__card--copy", item.lead && "lab-strip__card--lead"]}>
+    {items.map((item, index) => (
+      <a href={item.href} class:list={["lab-strip__card", item.body && "lab-strip__card--copy", item.lead && "lab-strip__card--lead", index % 2 === 1 && "lab-strip__card--alt"]}>
         <CmsFoto
           foto={item.foto}
           fallback={item.fallback}

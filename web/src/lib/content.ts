@@ -719,7 +719,10 @@ function normalizeTeamlid(row: Teamlid): Teamlid {
       (s): s is Specialisatie => Boolean(s && s.id && s.naam),
     ),
     locaties: row.locaties || [],
-    disciplines: row.disciplines || [],
+    disciplines:
+      row.slug === "koen-daniels" && !(row.disciplines || []).includes("kine")
+        ? [...(row.disciplines || []), "kine" as Discipline]
+        : row.disciplines || [],
   };
 }
 
@@ -758,7 +761,12 @@ export async function getLocatieBySlug(slug: LocatieSlug): Promise<Locatie | und
 export async function getDiensten(): Promise<Dienst[]> {
   return once("diensten", async () => {
     const rows = await sanity.fetch(`*[_type == "dienst"] | order(volgorde asc) ${dienstProjection}`);
-    return (rows || []).map(normalizeDienst);
+    const live = (rows || []).map(normalizeDienst);
+    const keys = new Set(live.map((d: Dienst) => `${d.categorie}:${d.slug}`));
+    const extra = (seedDiensten as Dienst[])
+      .filter((d) => !keys.has(`${d.categorie}:${d.slug}`))
+      .map((d) => normalizeDienst({ ...d, galerij: d.galerij || [], gekoppeldeTeamleden: d.gekoppeldeTeamleden || [] }));
+    return [...live, ...extra];
   });
 }
 
@@ -809,6 +817,7 @@ function normalizeDienst(row: Dienst): Dienst {
   const fromSeed = seedDienstByKey.get(`${row.categorie}:${row.slug}`);
   return {
     ...row,
+    body: pickFullerEn(row.body, (fromSeed as { body?: string } | undefined)?.body) || row.body,
     bodyEn: pickFullerEn(row.bodyEn, fromSeed?.bodyEn),
     seoTitleEn: row.seoTitleEn || fromSeed?.seoTitleEn,
     seoDescriptionEn: row.seoDescriptionEn || fromSeed?.seoDescriptionEn,
@@ -1500,6 +1509,30 @@ function normalizeBlogPost(row: BlogPost): BlogPost {
     bodyEn,
     ...resolveBlogMedia(row.slug, row),
   };
+}
+
+export interface SiteEvent {
+  slug: string;
+  titel: string;
+  titelEn?: string;
+  datum: string;
+  locatie?: string;
+  foto?: string;
+  tekst?: string;
+  tekstEn?: string;
+  tonenOpHome: boolean;
+}
+
+export async function getEvents(): Promise<SiteEvent[]> {
+  return once("events", async () => {
+    const rows = await sanity.fetch(
+      `*[_type == "event" && actief != false] | order(datum desc) {
+        "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, tonenOpHome,
+        "foto": foto.asset->url
+      }`,
+    );
+    return (rows || []).filter((row: SiteEvent) => row.slug && row.titel && row.datum);
+  });
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {

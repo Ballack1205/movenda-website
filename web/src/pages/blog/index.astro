@@ -36,6 +36,10 @@ const jsonLd = [
     <h1 class="mt-2 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
       Tips van onze kinesisten en trainers
     </h1>
+    <form action="/zoeken" method="get" role="search" class="mt-6 max-w-md">
+      <label class="sr-only" for="blog-search">Zoeken</label>
+      <input id="blog-search" name="q" type="search" placeholder="Zoeken" class="w-full border-b border-brand-border bg-transparent px-1 py-2 text-lg outline-none" />
+    </form>
     <p class="mt-4 max-w-2xl text-lg text-brand-muted">
       Praktische inzichten over blessurepreventie, herstel en training — recht uit de praktijk in
       Hasselt.

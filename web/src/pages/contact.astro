@@ -30,17 +30,10 @@ import SectionKicker from "../components/SectionKicker.astro";
   altPath="/en/contact"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <SectionKicker n={1} />
-        <h1 class="text-3xl font-bold">{pagina.titel}</h1>
-    {paginaAlineas(pagina).map((tekst) => (
-      <p class="mt-2 max-w-2xl text-brand-muted">{tekst}</p>
-    ))}
-
-    <div class="mt-10 grid items-stretch gap-8 sm:grid-cols-2">
-      {locaties.map((locatie) => (
-        <div class="flex flex-col rounded-2xl border border-brand-border bg-brand-surface p-6">
-          <h2 class="text-lg font-semibold text-brand-primary">{locatie.naam}</h2>
+  <section class="grid min-h-[70vh] md:grid-cols-2">
+    {locaties.map((locatie) => (
+        <div class="flex min-h-[24rem] flex-col justify-end border-brand-border p-8 md:border-r md:p-12 md:last:border-r-0">
+          <h2 class="text-3xl font-semibold">{locatie.slug === "mpc" ? "Performance Centre — Lammerweg" : "Movenda — Kuringersteenweg"}</h2>
           <p class="mt-2 text-sm text-brand-muted">{locatie.adres}</p>
           {locatie.urenNote && <p class="mt-1 text-xs text-brand-muted">{locatie.urenNote}</p>}
           <ul class="mt-3 space-y-1 text-sm text-brand-muted">
@@ -74,7 +67,6 @@ import SectionKicker from "../components/SectionKicker.astro";
           </div>
         </div>
       ))}
-    </div>
 
     <!--
       Click-to-load map: the Google Maps iframe sets Google cookies as soon
@@ -131,8 +123,8 @@ import SectionKicker from "../components/SectionKicker.astro";
         <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Telefoon" required />
         <select class="rounded-lg border border-brand-border px-4 py-3" name="locatie">
           <option value="">Voor welke vestiging?</option>
-          <option value="Movenda Olympia">Movenda — Olympia</option>
-          <option value="Movenda Performance Centre">Movenda Performance Centre</option>
+          <option value="Movenda — Kuringersteenweg">Movenda — Kuringersteenweg</option>
+          <option value="Performance Centre — Lammerweg">Performance Centre — Lammerweg</option>
         </select>
       </div>
       <ContactVerwijsVraag opties={pagina.verwijsopties} />
