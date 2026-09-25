@@ -10,6 +10,7 @@ import BlogPostCard from "./BlogPostCard.astro";
 import {
   getBlogPosts,
   getLocaties,
+  teamCounts,
   homeDeurNaam,
   homeDeurRegel,
   homeDeurTekst,
@@ -65,10 +66,11 @@ const deuren = settings.homeAanbod.map((deur, i) => ({
   alt: homeDeurNaam(deur, "nl"),
 }));
 
+const counts = teamCounts(team);
 const proof = [
-  { value: brief.bewijs.kinesisten, label: "kinesitherapeuten" },
-  { value: brief.bewijs.trainers, label: "personal trainers" },
-  { value: brief.bewijs.locaties, label: "locaties" },
+  { value: String(counts.kinesisten), label: "kinesitherapeuten" },
+  { value: String(counts.trainers), label: "personal trainers" },
+  { value: String(locaties.length), label: "locaties" },
   { value: brief.bewijs.jaren, label: "jaar ervaring" },
 ];
 

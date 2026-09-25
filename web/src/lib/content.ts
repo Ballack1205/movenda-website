@@ -318,7 +318,7 @@ export interface HomeBrief {
   slotTekst: string;
   slotAfspraak: string;
   slotContact: string;
-  bewijs: { kinesisten: string; trainers: string; locaties: string; jaren: string };
+  bewijs: { jaren: string };
 }
 
 /** Wide group photo of the whole team (Site-instellingen → Groepsfoto team). `url` is a
@@ -655,7 +655,7 @@ export async function getTeamledenByLocatie(locatie: LocatieSlug): Promise<Teaml
 export const isKinesist = (lid: Teamlid) => lid.disciplines.includes("kine");
 export const isTrainer = (lid: Teamlid) => lid.disciplines.includes("pt");
 
-/** { kinesisten, trainers } for "Met 13 kinesisten en 8 trainers en coaches …". */
+/** Counts from Teamlid.disciplines ("Telt mee als"). Someone ticked as both counts in both. */
 export function teamCounts(team: Teamlid[]): { kinesisten: number; trainers: number } {
   return {
     kinesisten: team.filter(isKinesist).length,
@@ -915,7 +915,6 @@ const seedAanbod = (seedSettings.homeAanbod ?? []) as HomeDeur[];
 const seedBrief = seedSettings.homeBrief as HomeBrief;
 
 function mergeHomeBrief(fromSanity?: Partial<HomeBrief> | null): HomeBrief {
-  const bewijs = fromSanity?.bewijs;
   const text = (value: string | undefined, fallback: string) => value?.trim() || fallback;
   return {
     merkKicker: text(fromSanity?.merkKicker, seedBrief.merkKicker),
@@ -947,10 +946,7 @@ function mergeHomeBrief(fromSanity?: Partial<HomeBrief> | null): HomeBrief {
     slotAfspraak: text(fromSanity?.slotAfspraak, seedBrief.slotAfspraak),
     slotContact: text(fromSanity?.slotContact, seedBrief.slotContact),
     bewijs: {
-      kinesisten: text(bewijs?.kinesisten, seedBrief.bewijs.kinesisten),
-      trainers: text(bewijs?.trainers, seedBrief.bewijs.trainers),
-      locaties: text(bewijs?.locaties, seedBrief.bewijs.locaties),
-      jaren: text(bewijs?.jaren, seedBrief.bewijs.jaren),
+      jaren: text(fromSanity?.bewijs?.jaren, seedBrief.bewijs.jaren),
     },
   };
 }

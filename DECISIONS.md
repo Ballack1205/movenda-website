@@ -58,8 +58,8 @@ Movenda can be shown two noindex URLs at the same time. One repo, no second copy
 Julie asked for the header from her document and the tone of voice. The other pages she will write herself. This host shows that slice only. Open points to confirm with her:
 
 - Insights on the homepage, or not. She wrote “is dit nodig?”. The block is on the brief homepage so she can see it. It is not in the header.
-- Proof numbers are hers: 13 kinesitherapeuten, 5 personal trainers, 2 locaties, 10+ jaar. She edits them under Site-instellingen → Homepage → bewijsstrook. The team text already on the site says 12 kinesisten and 8 trainers. Do not silently replace her figures.
-- Prijzen per location and per colleague. She marked this with question marks. The prices page is linked, not rebuilt.
+- Proof counts follow Sanity (2026-09-24). Kinesitherapeuten and trainers are `teamCounts()` from Teamlid “Telt mee als”. Locations are the number of locatie records. “10+” stays the one editorial field, Site-instellingen → Homepage → bewijsstrook → jaar ervaring. Do not keep a second handwritten 13 / 5.
+- Prices follow Sanity. `/prijzen` reads prijsitems plus each colleague’s `tariefKine`, `tariefPt` (Olympia) and `tariefPerformance` / `tariefPtMpc` (Performance Centre). The prices page is linked, not rewritten.
 - Rehab’s canonical page is still `/mpc/sportrevalidatie`. Performance → Revalidatie and the kinesitherapie menu both open that one page. Whether it later moves under Kinesitherapie is a go-live decision, not a second URL.
 - Booking tool, a general phone number, and which GX lessons are public. Running and MXGP stay out of the menu. Boxing 1 on 1, Monitoring/Whoop, Core, Algemene kinesitherapie, Bekkenbodemtherapie and Barefoot have no page yet, so they are not in the menu.
 - Partners and algemene voorwaarden stay out of the menu and the footer until those pages exist. The homepage partner band links to `/over` for now.

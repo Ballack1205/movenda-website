@@ -245,7 +245,7 @@ export default defineType({
     defineField({
       name: "homeBrief",
       title: "Homepage — teksten (brief)",
-      description: "Merkintro, bewijscijfers en de korte titels op de brief-homepage. Julie past dit aan zonder de layout.",
+      description: "Merkintro en de korte titels op de brief-homepage. De aantallen in de strook komen uit Team en Locaties.",
       type: "object",
       group: "homepage",
       options: { collapsible: true, collapsed: true },
@@ -281,11 +281,9 @@ export default defineType({
         defineField({
           name: "bewijs",
           title: "Bewijsstrook",
+          description: "Kinesitherapeuten, trainers en locaties worden geteld uit Team (Telt mee als) en Locaties. Alleen het ervaringscijfer staat hier.",
           type: "object",
           fields: [
-            defineField({ name: "kinesisten", title: "Kinesitherapeuten", type: "string", initialValue: "13" }),
-            defineField({ name: "trainers", title: "Personal trainers", type: "string", initialValue: "5" }),
-            defineField({ name: "locaties", title: "Locaties", type: "string", initialValue: "2" }),
             defineField({ name: "jaren", title: "Jaar ervaring", type: "string", initialValue: "10+" }),
           ],
         }),
