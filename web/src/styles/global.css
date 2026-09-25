@@ -926,15 +926,25 @@ html[data-theme="lab"] .newsletter button[type="submit"] {
 html[data-theme="lab"] input[type="checkbox"],
 html[data-theme="lab"] input[type="radio"] {
   appearance: none;
-  display: inline-grid;
+  display: grid;
+  flex: 0 0 1.15rem;
   width: 1.15rem;
   height: 1.15rem;
-  margin: 0 0.4rem 0 0;
+  min-height: 0;
+  margin: 0;
   place-content: center;
   border: 1.5px solid currentColor;
   border-radius: 2px;
   background: transparent;
-  vertical-align: -0.15rem;
+}
+
+html[data-theme="lab"] input[type="checkbox"]::before,
+html[data-theme="lab"] input[type="radio"]::before {
+  width: 0.55rem;
+  height: 0.55rem;
+  background: currentColor;
+  content: "";
+  opacity: 0;
 }
 
 html[data-theme="lab"] input[type="radio"] {
@@ -943,10 +953,7 @@ html[data-theme="lab"] input[type="radio"] {
 
 html[data-theme="lab"] input[type="checkbox"]:checked::before,
 html[data-theme="lab"] input[type="radio"]:checked::before {
-  width: 0.55rem;
-  height: 0.55rem;
-  background: currentColor;
-  content: "";
+  opacity: 1;
 }
 
 html[data-theme="lab"] input[type="radio"]:checked::before {
@@ -976,7 +983,7 @@ html[data-theme="lab"] .page-intro__lead {
   line-height: 1.35;
 }
 
-html[data-theme="lab"] input,
+html[data-theme="lab"] input:not([type="checkbox"]):not([type="radio"]),
 html[data-theme="lab"] textarea,
 html[data-theme="lab"] select {
   font-size: 1rem;
@@ -1170,6 +1177,10 @@ html[data-theme="lab"] .brief-title {
   font-weight: 450;
   letter-spacing: -0.03em;
   line-height: 1.05;
+}
+
+html[data-theme="lab"] .brief-title--wide {
+  max-width: none;
 }
 
 html[data-theme="lab"] .brief-lead {

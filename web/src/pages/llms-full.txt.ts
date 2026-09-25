@@ -81,8 +81,8 @@ export const GET: APIRoute = async () => {
     .join("\n\n");
 
   const prijsLabels: Record<PrijsCategorie, string> = {
-    kine: "Physiotherapy (Movenda Olympia)",
-    training: "Training (Movenda Olympia)",
+    kine: "Physiotherapy (Movenda)",
+    training: "Training (Movenda)",
     "mpc-training": "Movenda Performance Centre — training",
     "mpc-rehab": "Movenda Performance Centre — sports rehabilitation",
     "mpc-groep": "Movenda Performance Centre — group classes",
@@ -146,7 +146,7 @@ export const GET: APIRoute = async () => {
     `> Generated from the practice's CMS on ${new Date().toISOString().slice(0, 10)}.`,
     "",
     section("Locations", locatieText),
-    section("Services — Movenda Olympia (physiotherapy & training, Hasselt)", olympiaDiensten.map((d) => dienstBlock(d, prijzen)).join("\n\n")),
+    section("Services — Movenda (physiotherapy & training, Hasselt)", olympiaDiensten.map((d) => dienstBlock(d, prijzen)).join("\n\n")),
     section("Services — Movenda Performance Centre (Kuringen)", mpcDiensten.map((d) => dienstBlock(d, prijzen)).join("\n\n")),
     section("Prices", `${prijsText}\n\n${terugbetaling}\n\nFull price pages: ${SITE_URL}/prijzen and ${SITE_URL}/mpc/prijzen`),
     section("Team", teamText),

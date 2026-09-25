@@ -39,7 +39,7 @@ const jsonLd = [
         <ul class="mt-4 space-y-6">
           {upcoming.map((event) => (
             <li>
-              <p class="text-sm text-brand-muted">{event.datum}{event.locatie ? ` · ${event.locatie}` : ""}</p>
+              <p class="text-sm text-brand-muted">{event.slug === "dwars-door-hasselt" ? "Datum volgt" : event.datum}{event.locatie ? ` · ${event.locatie}` : ""}</p>
               <h3 class="text-lg font-semibold">{event.titel}</h3>
               {event.tekst && <p class="mt-1 text-brand-muted">{event.tekst}</p>}
             </li>
@@ -54,7 +54,7 @@ const jsonLd = [
         <ul class="mt-4 space-y-6">
           {past.map((event) => (
             <li>
-              <p class="text-sm text-brand-muted">{event.datum}{event.locatie ? ` · ${event.locatie}` : ""}</p>
+              <p class="text-sm text-brand-muted">{event.slug === "dwars-door-hasselt" ? "Datum volgt" : event.datum}{event.locatie ? ` · ${event.locatie}` : ""}</p>
               <h3 class="text-lg font-semibold">{event.titel}</h3>
               {event.tekst && <p class="mt-1 text-brand-muted">{event.tekst}</p>}
             </li>

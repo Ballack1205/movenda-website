@@ -23,7 +23,7 @@ const past = events.filter((event) => event.datum < today);
       <ul class="mt-8 space-y-6">
         {upcoming.map((event) => (
           <li>
-            <p class="text-sm text-brand-muted">{event.datum}</p>
+            <p class="text-sm text-brand-muted">{event.slug === "dwars-door-hasselt" ? "Date to follow" : event.datum}</p>
             <h2 class="text-lg font-semibold">{event.titelEn || event.titel}</h2>
             {(event.tekstEn || event.tekst) && <p class="mt-1 text-brand-muted">{event.tekstEn || event.tekst}</p>}
           </li>
@@ -36,7 +36,7 @@ const past = events.filter((event) => event.datum < today);
         <ul class="mt-4 space-y-6">
           {past.map((event) => (
             <li>
-              <p class="text-sm text-brand-muted">{event.datum}</p>
+              <p class="text-sm text-brand-muted">{event.slug === "dwars-door-hasselt" ? "Date to follow" : event.datum}</p>
               <h3 class="text-lg font-semibold">{event.titelEn || event.titel}</h3>
             </li>
           ))}

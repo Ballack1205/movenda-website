@@ -1,8 +1,8 @@
 [
   {
     "slug": "olympia",
-    "naam": "Movenda Olympia",
-    "korteNaam": "Olympia",
+    "naam": "Movenda",
+    "korteNaam": "Movenda",
     "brand": "movenda",
     "type": "Kinesitherapie & personal training",
     "adres": "Kuringersteenweg 242, 3500 Hasselt",
@@ -53,6 +53,7 @@
     "btw": "BE 0803.487.226",
     "iban": "BE43 7330 7357 1601",
     "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Movenda+Performance+Centre+Lammerweg+33+Kuringen",
+    "foto": "/locaties/mpc-ingang.jpg",
     "rpr": "PRP Antwerpen, afdeling Hasselt",
     "bic": "KREDBEBB",
     "instagram": "https://www.instagram.com/movenda_performance_centre/",

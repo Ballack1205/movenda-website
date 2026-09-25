@@ -115,7 +115,7 @@ import SectionKicker from "../../components/SectionKicker.astro";
     {olympia && (
       <Routebeschrijving
         locatie={olympia}
-        title="First visit to Movenda — Olympia?"
+        title="First visit to Movenda?"
         lang="en"
         class="mt-8"
       />
@@ -172,7 +172,7 @@ import SectionKicker from "../../components/SectionKicker.astro";
   const mapBox = document.querySelector("[data-map]");
   mapBox?.querySelector("[data-map-load]")?.addEventListener("click", () => {
     const iframe = document.createElement("iframe");
-    iframe.title = "Map of Movenda Olympia";
+    iframe.title = "Map of Movenda";
     iframe.src = mapBox.dataset.mapSrc;
     iframe.className = "h-72 w-full";
     iframe.setAttribute("loading", "lazy");

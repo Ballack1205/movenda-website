@@ -11,7 +11,8 @@ const locaties = (await getLocaties()).sort((a, b) =>
 const pagina = await getPagina("contact");
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
 const olympia = locaties.find((l) => l.slug === "olympia");
-const mapEmbedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(olympia?.adres || "Kuringersteenweg 242 Hasselt")}&z=15&output=embed`;
+const mapSrc = (adres: string) =>
+  `https://maps.google.com/maps?q=${encodeURIComponent(adres)}&z=15&output=embed`;
 
 
 const jsonLd = [
@@ -32,7 +33,17 @@ import SectionKicker from "../components/SectionKicker.astro";
 >
   <section class="grid min-h-[70vh] md:grid-cols-2">
     {locaties.map((locatie) => (
-        <div class="flex min-h-[24rem] flex-col justify-end border-brand-border p-8 md:border-r md:p-12 md:last:border-r-0">
+        <div class="flex min-h-[24rem] flex-col border-brand-border md:border-r md:last:border-r-0">
+          {locatie.foto && (
+            <img
+              src={locatie.foto}
+              alt={locatie.slug === "mpc" ? "Ingang van Performance Centre aan de Lammerweg" : "Ingang van Movenda aan de Kuringersteenweg"}
+              width="1600"
+              height="1067"
+              class="aspect-[16/10] w-full object-cover object-[center_30%]"
+            />
+          )}
+          <div class="flex flex-1 flex-col justify-end p-8 md:p-12">
           <h2 class="text-3xl font-semibold">{locatie.slug === "mpc" ? "Performance Centre — Lammerweg" : "Movenda — Kuringersteenweg"}</h2>
           <p class="mt-2 text-sm text-brand-muted">{locatie.adres}</p>
           {locatie.urenNote && <p class="mt-1 text-xs text-brand-muted">{locatie.urenNote}</p>}
@@ -65,51 +76,24 @@ import SectionKicker from "../components/SectionKicker.astro";
               <a href={locatie.instagram} class="mt-2 inline-block text-xs font-semibold text-brand-primary hover:underline" target="_blank" rel="noopener">Instagram</a>
             )}
           </div>
+          </div>
+          <iframe
+            title={`Kaart ${locatie.slug === "mpc" ? "Performance Centre" : "Movenda"}`}
+            src={mapSrc(locatie.adres)}
+            class="h-72 w-full border-0"
+            loading="eager"
+            referrerpolicy="no-referrer-when-downgrade"
+          />
         </div>
       ))}
+  </section>
 
-    <!--
-      Click-to-load map: the Google Maps iframe sets Google cookies as soon
-      as it loads, which would need consent. Loading it only on an explicit
-      click keeps the page cookie-free by default (see /privacy#cookies).
-    -->
-    {olympia?.mapsUrl && (
-      <div
-        class="mt-8 flex h-72 flex-col items-center justify-center gap-3 rounded-2xl border border-brand-border bg-brand-surface p-6 text-center"
-        data-map
-        data-map-src={mapEmbedSrc}
-      >
-        <svg class="h-8 w-8 text-brand-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 21s-6-5.4-6-11a6 6 0 1 1 12 0c0 5.6-6 11-6 11z" />
-          <circle cx="12" cy="10" r="2.5" />
-        </svg>
-        <p class="text-sm font-semibold">{olympia.naam}</p>
-        <p class="-mt-2 text-sm text-brand-muted">{olympia.adres}</p>
-        <div class="mt-1 flex flex-wrap justify-center gap-2">
-          <button
-            type="button"
-            data-map-load
-            class="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-primary-dark"
-          >
-            Kaart tonen
-          </button>
-          <a
-            href={olympia.mapsUrl}
-            target="_blank"
-            rel="noopener"
-            class="rounded-full border border-brand-border px-4 py-2 text-sm font-semibold text-brand-text transition hover:bg-brand-bg"
-          >
-            Route in Google Maps
-          </a>
-        </div>
-        <p class="text-xs text-brand-muted">De kaart van Google laadt pas na je klik.</p>
-      </div>
-    )}
+  <section class="px-4 py-12 md:px-12">
 
     {olympia && (
       <Routebeschrijving
         locatie={olympia}
-        title="Eerste keer bij Movenda — Olympia?"
+        title="Eerste keer bij Movenda?"
         class="mt-8"
       />
     )}
@@ -130,19 +114,19 @@ import SectionKicker from "../components/SectionKicker.astro";
       <ContactVerwijsVraag opties={pagina.verwijsopties} />
       <fieldset class="rounded-lg border border-brand-border px-4 py-3">
         <legend class="px-1 text-sm font-semibold">Waarvoor wil je langskomen?</legend>
-        <div class="mt-2 flex flex-wrap gap-4 text-sm">
-          <label><input type="checkbox" name="waarvoor" value="Kinesitherapie" /> Kinesitherapie</label>
-          <label><input type="checkbox" name="waarvoor" value="Personal Training" /> Personal Training</label>
-          <label><input type="checkbox" name="waarvoor" value="Andere" /> Andere</label>
+        <div class="mt-3 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="waarvoor" value="Kinesitherapie" /> Kinesitherapie</label>
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="waarvoor" value="Personal Training" /> Personal Training</label>
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="waarvoor" value="Andere" /> Andere</label>
         </div>
       </fieldset>
       <fieldset class="rounded-lg border border-brand-border px-4 py-3">
         <legend class="px-1 text-sm font-semibold">Heb je een voorschrift van je arts?</legend>
         <p class="text-xs text-brand-muted">Enkel van toepassing voor kinesitherapie</p>
-        <div class="mt-2 flex flex-wrap gap-4 text-sm">
-          <label><input type="radio" name="voorschrift" value="Ja" /> Ja</label>
-          <label><input type="radio" name="voorschrift" value="Nee" /> Nee</label>
-          <label><input type="radio" name="voorschrift" value="Niet van toepassing" /> Niet van toepassing</label>
+        <div class="mt-3 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+          <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Ja" /> Ja</label>
+          <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Nee" /> Nee</label>
+          <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Niet van toepassing" /> Niet van toepassing</label>
         </div>
       </fieldset>
       <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Jouw vraag of bericht" required minlength="5"></textarea>
@@ -161,20 +145,6 @@ import SectionKicker from "../components/SectionKicker.astro";
   const locatie = new URLSearchParams(location.search).get("locatie");
   const locatieVeld = form?.querySelector("select[name=locatie]");
   if (locatie && locatieVeld) locatieVeld.value = locatie;
-
-  // Click-to-load Google Maps (see comment on the [data-map] element).
-  const mapBox = document.querySelector("[data-map]");
-  mapBox?.querySelector("[data-map-load]")?.addEventListener("click", () => {
-    const iframe = document.createElement("iframe");
-    iframe.title = "Kaart Movenda Olympia";
-    iframe.src = mapBox.dataset.mapSrc;
-    iframe.className = "h-72 w-full";
-    iframe.setAttribute("loading", "lazy");
-    iframe.setAttribute("referrerpolicy", "no-referrer-when-downgrade");
-    mapBox.replaceChildren(iframe);
-    mapBox.className = "mt-8 h-72 overflow-hidden rounded-2xl border border-brand-border";
-    window.mvTrack?.("map_load");
-  });
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();

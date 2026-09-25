@@ -732,13 +732,23 @@ export function keuzehulpTagLabel(tag: Pick<KeuzehulpTag, "label" | "labelEn">, 
 
 const locatieFotoFallback: Record<string, string> = {
   olympia: "/locaties/olympia-ingang.jpg",
+  mpc: "/locaties/mpc-ingang.jpg",
 };
 
 function normalizeLocatie(row: Locatie): Locatie {
+  const foto = row.foto || locatieFotoFallback[row.slug];
+  // Public names are Movenda (Kuringersteenweg) and Performance Centre (Lammerweg).
+  // The slug stays "olympia" so existing URLs and CMS records keep working.
+  if (row.slug === "olympia") {
+    return { ...row, naam: "Movenda", korteNaam: "Movenda", foto };
+  }
+  if (row.slug === "mpc") {
+    return { ...row, korteNaam: "Performance Centre", foto };
+  }
   return {
     ...row,
     korteNaam: row.korteNaam || row.naam.replace(/^Movenda\s+/i, ""),
-    foto: row.foto || locatieFotoFallback[row.slug],
+    foto,
   };
 }
 
@@ -1523,6 +1533,17 @@ export interface SiteEvent {
   tonenOpHome: boolean;
 }
 
+const PLACEHOLDER_EVENT: SiteEvent = {
+  slug: "dwars-door-hasselt",
+  titel: "Dwars door Hasselt",
+  titelEn: "Dwars door Hasselt",
+  datum: "2027-03-01",
+  locatie: "Hasselt",
+  tekst: "Datum volgt. We zijn erbij.",
+  tekstEn: "Date to follow. We'll be there.",
+  tonenOpHome: true,
+};
+
 export async function getEvents(): Promise<SiteEvent[]> {
   return once("events", async () => {
     const rows = await sanity.fetch(
@@ -1531,7 +1552,8 @@ export async function getEvents(): Promise<SiteEvent[]> {
         "foto": foto.asset->url
       }`,
     );
-    return (rows || []).filter((row: SiteEvent) => row.slug && row.titel && row.datum);
+    const live = (rows || []).filter((row: SiteEvent) => row.slug && row.titel && row.datum);
+    return live.length > 0 ? live : [PLACEHOLDER_EVENT];
   });
 }
 

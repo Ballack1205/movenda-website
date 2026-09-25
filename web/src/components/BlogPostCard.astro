@@ -8,9 +8,11 @@ import { THEME } from "../lib/site";
 interface Props {
   post: BlogPost;
   lang?: Lang;
+  /** Small photo beside the title, for the homepage strip. */
+  thumb?: boolean;
 }
 
-const { post, lang = "nl" } = Astro.props;
+const { post, lang = "nl", thumb = false } = Astro.props;
 const contain = post.coverFit === "contain";
 const tag = post.tags?.[0];
 const titel = lang === "en" ? post.titelEn || post.titel : post.titel;
@@ -21,35 +23,40 @@ const lab = THEME === "lab";
 <a
   href={withLang(`/blog/${post.slug}`, lang)}
   class:list={[
-    "group flex h-full min-w-0 w-full flex-col overflow-hidden border border-brand-border bg-brand-surface transition",
+    "group flex h-full min-w-0 w-full overflow-hidden border border-brand-border bg-brand-surface transition",
+    thumb ? "flex-row items-stretch" : "flex-col",
     lab ? "lab-card rounded-[2px] hover:border-brand-text" : "rounded-2xl hover:border-brand-primary",
   ]}
 >
   {post.cover && (
-    <div class:list={["overflow-hidden", contain ? "bg-white" : "bg-brand-header/10"]}>
+    <div class:list={["shrink-0 overflow-hidden", thumb ? "w-24" : "", contain && !thumb ? "bg-white" : "bg-brand-header/10"]}>
       <img
         src={blogPhotoSrc(post.cover, "card")}
-        alt={titel}
-        width="900"
-        height="560"
+        alt=""
+        width={thumb ? 192 : 900}
+        height={thumb ? 192 : 560}
         loading="lazy"
         decoding="async"
         class:list={[
-          "aspect-[16/10] w-full transition duration-500 group-hover:scale-[1.03]",
-          contain ? "object-contain p-5" : "object-cover object-top",
+          thumb
+            ? "h-full w-24 object-cover"
+            : "aspect-[16/10] w-full transition duration-500 group-hover:scale-[1.03]",
+          !thumb && (contain ? "object-contain p-5" : "object-cover object-top"),
         ]}
       />
     </div>
   )}
-  <div class="flex flex-1 flex-col p-5">
+  <div class:list={["flex flex-1 flex-col", thumb ? "justify-center p-4" : "p-5"]}>
     <p class="text-xs font-semibold uppercase tracking-wide text-brand-muted">
       {tag ? `${blogTagLabel(tag, lang)} · ` : ""}
       {formatBlogDate(post.publicatiedatum, lang)}
     </p>
-    <h2 class="mt-2 text-pretty text-lg font-semibold">{titel}</h2>
-    {excerpt && <p class="mt-2 line-clamp-3 text-sm text-brand-muted">{excerpt}</p>}
-    <span class="mt-4 inline-block text-sm font-semibold text-brand-primary">
-      {lang === "en" ? "Read more →" : "Meer lezen →"}
-    </span>
+    <h2 class:list={["mt-2 text-pretty font-semibold", thumb ? "line-clamp-3 text-base leading-snug" : "text-lg"]}>{titel}</h2>
+    {excerpt && !thumb && <p class="mt-2 line-clamp-3 text-sm text-brand-muted">{excerpt}</p>}
+    {!thumb && (
+      <span class="mt-4 inline-block text-sm font-semibold text-brand-primary">
+        {lang === "en" ? "Read more →" : "Meer lezen →"}
+      </span>
+    )}
   </div>
 </a>
