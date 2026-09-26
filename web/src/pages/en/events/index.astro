@@ -5,6 +5,11 @@ import { breadcrumbSchema } from "../../../lib/schema";
 
 const events = await getEvents();
 const today = new Date().toISOString().slice(0, 10);
+const eventWhen = (datum: string) => {
+  const date = new Date(`${datum}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return datum;
+  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(date);
+};
 const upcoming = events.filter((event) => event.datum >= today);
 const past = events.filter((event) => event.datum < today);
 ---
@@ -23,7 +28,7 @@ const past = events.filter((event) => event.datum < today);
       <ul class="mt-8 space-y-6">
         {upcoming.map((event) => (
           <li>
-            <p class="text-sm text-brand-muted">{event.slug === "dwars-door-hasselt" ? "Date to follow" : event.datum}</p>
+            <p class="text-sm text-brand-muted">{eventWhen(event.datum)}{event.locatie ? ` · ${event.locatie}` : ""}</p>
             <h2 class="text-lg font-semibold">{event.titelEn || event.titel}</h2>
             {(event.tekstEn || event.tekst) && <p class="mt-1 text-brand-muted">{event.tekstEn || event.tekst}</p>}
           </li>
@@ -36,7 +41,7 @@ const past = events.filter((event) => event.datum < today);
         <ul class="mt-4 space-y-6">
           {past.map((event) => (
             <li>
-              <p class="text-sm text-brand-muted">{event.slug === "dwars-door-hasselt" ? "Date to follow" : event.datum}</p>
+              <p class="text-sm text-brand-muted">{eventWhen(event.datum)}{event.locatie ? ` · ${event.locatie}` : ""}</p>
               <h3 class="text-lg font-semibold">{event.titelEn || event.titel}</h3>
             </li>
           ))}

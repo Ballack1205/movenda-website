@@ -244,7 +244,7 @@
   },
   "googleReviewsFeed": {
     "enabled": true,
-    "titel": "Wat klanten zeggen op Google",
+    "titel": "Google Reviews",
     "widgetId": "4574da10-a0e4-4c28-9f62-93e57d02ef76"
   },
   "nieuwsbrief": {

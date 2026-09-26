@@ -22,44 +22,19 @@ const widgetId = feed.widgetId?.trim();
 const show = feed.enabled && !!widgetId;
 const olympiaReviews = settings.googleReviews.olympia;
 
-const heading = lang === "en" ? "What our customers say" : feed.titel || "Wat klanten zeggen op Google";
+const heading = feed.titel || "Google Reviews";
 const fallbackLabel = lang === "en" ? "Read our Google reviews" : "Lees onze Google reviews";
 ---
 
 {
-  // The Elfsight "Google Reviews" app renders its own built-in title
-  // ("What Our Customers Say"), editable in the Elfsight dashboard
-  // (Design → Header) — Julie/founder handle that on their end, not here.
-  //
-  // Our own NL/EN kicker + heading are hidden for now (commented out below,
-  // not deleted) so we don't stack two titles on top of each other. An
-  // sr-only heading keeps the section properly labelled for screen readers
-  // in the meantime. Once the Elfsight title is switched off, uncomment the
-  // block below (and restore a top margin on .google-reviews-widget) to
-  // bring the visible NL/EN heading back.
-  //
-  // No top padding on the section below: the previous section (getuigenissen
-  // carousel) already ends with its own bottom padding, so this sits right
-  // up against it — that's what pulls "What Our Customers Say" higher up the
-  // page. The bottom padding is kept smaller than Instagram's old top
-  // padding so that (this pb) + (Instagram's pt) == (getuigenissen's pb) —
-  // the gap above and below this block ends up equal (symmetric). See the
-  // matching comment in InstagramFeed.astro.
   show && (
     <section class="google-reviews-feed scroll-mt-24 px-4 pb-0" aria-labelledby="google-reviews-heading">
       <div class="mx-auto max-w-6xl">
-        <h2 id="google-reviews-heading" class="sr-only">
+        <h2 id="google-reviews-heading" class="brief-kicker">
           {heading}
         </h2>
 
-        {/*
-        <div class="flex flex-col items-center text-center">
-          <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">Google reviews</p>
-          <h2 class="mt-1 text-2xl font-bold sm:text-3xl">{heading}</h2>
-        </div>
-        */}
-
-        <div class="google-reviews-widget">
+        <div class="google-reviews-widget mt-6">
           <div class={`elfsight-app-${widgetId}`} data-elfsight-app-lazy></div>
         </div>
         <script is:inline>

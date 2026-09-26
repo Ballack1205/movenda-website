@@ -43,6 +43,15 @@ const homeEvents = (await getEvents())
   .filter((event) => event.tonenOpHome)
   .sort((a, b) => (a.datum >= today ? (b.datum >= today ? a.datum.localeCompare(b.datum) : -1) : 1))
   .slice(0, 3);
+
+const eventWhen = (event: { datum: string }) => {
+  const date = new Date(`${event.datum}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return event.datum;
+  return new Intl.DateTimeFormat("nl-BE", { day: "numeric", month: "long", year: "numeric" }).format(date);
+};
+
+const eventPhoto = (foto: string) =>
+  foto.startsWith("/") ? foto : `${foto}?w=480&h=320&fit=crop&auto=format`;
 const locaties = await getLocaties();
 const hasselt = locaties.find((loc) => loc.slug === "olympia");
 const kuringen = locaties.find((loc) => loc.slug === "mpc");
@@ -185,13 +194,19 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
   <section class="brief-block brief-block--flush" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
       <p class="brief-kicker">Events</p>
-      <ul class="brief-insights">
+      <ul class="brief-events">
         {homeEvents.map((event) => (
           <li>
-            <a href="/events">
-              {event.slug === "dwars-door-hasselt" ? "Datum volgt" : event.datum}
-              {" — "}
-              {event.titel}
+            <a class="brief-event" href="/events">
+              {event.foto && (
+                <img class="brief-event__photo" src={eventPhoto(event.foto)} alt="" width="240" height="160" loading="lazy" />
+              )}
+              <span class="brief-event__copy">
+                <span class="brief-event__when">{eventWhen(event)}{event.locatie ? ` · ${event.locatie}` : ""}</span>
+                <span class="brief-event__title">{event.titel}</span>
+                {event.tekst && <span class="brief-event__text">{event.tekst}</span>}
+              </span>
+              <span class="brief-event__go" aria-hidden="true">→</span>
             </a>
           </li>
         ))}

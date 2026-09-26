@@ -938,7 +938,7 @@ async function loadSiteSettings(): Promise<SiteSettings> {
       titel:
         settings?.googleReviewsFeed?.titel ||
         seedSettings.googleReviewsFeed?.titel ||
-        "Wat klanten zeggen op Google",
+        "Google Reviews",
       widgetId:
         settings?.googleReviewsFeed?.widgetId ||
         seedSettings.googleReviewsFeed?.widgetId ||
@@ -1575,10 +1575,10 @@ const PLACEHOLDER_EVENT: SiteEvent = {
   slug: "dwars-door-hasselt",
   titel: "Dwars door Hasselt",
   titelEn: "Dwars door Hasselt",
-  datum: "2027-03-01",
+  datum: "2026-10-11",
   locatie: "Hasselt",
-  tekst: "Datum volgt. We zijn erbij.",
-  tekstEn: "Date to follow. We'll be there.",
+  tekst: "We zijn erbij.",
+  tekstEn: "We'll be there.",
   tonenOpHome: true,
 };
 

@@ -4,16 +4,18 @@ import SectionKicker from "./SectionKicker.astro";
 
 interface Props {
   n?: number;
+  /** Pass when this intro is one block in a numbered series. */
+  series?: boolean;
   kicker?: string;
   title: string;
   lead?: string;
 }
 
-const { n, kicker, title, lead } = Astro.props;
+const { n, series = false, kicker, title, lead } = Astro.props;
 ---
 
 <header class="page-intro">
-  {n != null && <SectionKicker n={n} />}
+  {n != null && <SectionKicker n={n} series={series} />}
   {kicker && <p class="section-kicker">{kicker}</p>}
   <h1>{title}</h1>
   {lead && <p class="page-intro__lead mt-4 max-w-2xl text-pretty text-lg text-brand-muted">{lead}</p>}

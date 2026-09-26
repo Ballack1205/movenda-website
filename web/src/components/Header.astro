@@ -116,7 +116,7 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     <a
       href={logoHref}
       data-logo
-      class:list={["flex shrink-0 items-center gap-2", brief && "justify-self-center"]}
+      class:list={["flex shrink-0 items-center gap-2", brief && "col-start-2 justify-self-center"]}
       aria-label={t.brandName}
       target={logoExternal ? "_blank" : undefined}
       rel={logoExternal ? "noopener noreferrer" : undefined}
@@ -260,7 +260,7 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     </nav>
     )}
 
-    <div class:list={["flex shrink-0 items-center gap-2 sm:gap-3", brief && "justify-self-end"]}>
+    <div class:list={["flex shrink-0 items-center gap-2 sm:gap-3", brief && "col-start-3 justify-self-end"]}>
       {brief && (
         <nav
           class:list={["hidden text-[13px] font-medium xl:text-sm", showDesktop]}

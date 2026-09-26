@@ -3,11 +3,13 @@ import { THEME } from "../lib/site";
 
 interface Props {
   n: number;
+  /** Only a sequence (01, 02, 03) gets a number. A lone block stays unnumbered. */
+  series?: boolean;
 }
 
-const { n } = Astro.props;
+const { n, series = false } = Astro.props;
 ---
 
-{THEME === "lab" && (
+{THEME === "lab" && series && (
   <p class="section-kicker" aria-hidden="true">{String(n).padStart(2, "0")}</p>
 )}

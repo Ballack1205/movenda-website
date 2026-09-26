@@ -101,13 +101,24 @@ const ctaUrl = localizeHref(dienst.ctaUrl, lang);
 // topped up with posts that mention it. Internal links dienst ↔ blog are what make the blog
 // count for the ranking of the treatment pages.
 const posts = await getBlogPostsVoorDienst(dienst, 3);
+const heroSrc = manueel
+  ? "/marketing/manuele-therapie.jpg"
+  : dienst.afbeelding
+    ? dienstPhotoSrc(dienst.afbeelding, "hero")
+    : "";
 
 ---
 
 <article class="pb-16">
   <header class="dienst-hero">
-    {dienst.afbeelding && (
-      <img src={dienstPhotoSrc(dienst.afbeelding, "hero")} alt="" width="1600" height="900" />
+    {heroSrc && (
+      <img
+        src={heroSrc}
+        alt={manueel ? (lang === "en" ? "A therapist treats a back with manual therapy" : "Therapeut behandelt een rug met manuele therapie") : ""}
+        width={manueel ? 2200 : 1600}
+        height={manueel ? 1467 : 900}
+        class:list={[manueel && "dienst-hero__bw"]}
+      />
     )}
     <div class="dienst-hero__copy">
       <a href={backHref} class="text-sm font-medium">{backLabel}</a>
@@ -247,6 +258,10 @@ const posts = await getBlogPostsVoorDienst(dienst, 3);
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .dienst-hero__bw {
+    object-position: center 62%;
   }
 
   .dienst-hero::after {
