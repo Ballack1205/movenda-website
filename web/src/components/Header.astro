@@ -321,15 +321,13 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
         <input id="site-search-mobile" name="q" type="search" placeholder={lang === "en" ? "Search" : "Zoeken"} class="w-full border-b border-current bg-transparent px-1 py-2 text-lg outline-none" />
       </form>
       <ol class="flex flex-col gap-1">
-        {items.map((item, i) => {
+        {items.map((item) => {
           const nested = (item.groups && item.groups.length > 0) || (item.children && item.children.length > 0);
-          const index = String(i + 1).padStart(2, "0");
           return (
             <li>
               {nested ? (
                 <details>
                   <summary class="lab-menu__item">
-                    <span class="lab-menu__index" aria-hidden="true">{index}</span>
                     <span class="lab-menu__label">{item.label}</span>
                   </summary>
                   <div class="lab-menu__sub">
@@ -358,7 +356,6 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
                   rel={item.external ? "noopener noreferrer" : undefined}
                   class:list={["lab-menu__item", item.button && "lab-menu__item--cta"]}
                 >
-                  <span class="lab-menu__index" aria-hidden="true">{index}</span>
                   <span class="lab-menu__label">{item.label}</span>
                 </a>
               )}

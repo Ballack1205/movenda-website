@@ -31,7 +31,7 @@ const markFor = (slug: string) =>
   slug === "mpc"
     ? "/brand/logo-mpc.png"
     : lab
-      ? "/brand/logo-m-on-dark.png"
+      ? "/brand/logo-m-mark.png"
       : "/brand/logo-m.png";
 const shortName = (naam: string) => naam.replace(/^Movenda\s*/i, "");
 const placeName = (locatie: { slug: string; naam: string }) =>
@@ -73,23 +73,23 @@ const navLinks = MPC_HOST
       ]
   : lang === "en"
     ? [
+        { href: "/en/kinesitherapie", label: "Services" },
         { href: "/en/over", label: "About us" },
-        { href: "/en/team", label: "Team" },
         { href: brand === "mpc" ? "/en/mpc/prijzen" : "/en/prijzen", label: "Prices" },
-        { href: "/en/blog", label: lab ? "Insights/Blog" : "Blog" },
         { href: "/en/faq", label: "FAQ" },
+        { href: "/en/team", label: "Team" },
+        { href: "/en/blog", label: lab ? "Insights/Blog" : "Blog" },
         { href: "/en/jobs", label: "Jobs" },
-        { href: "/en/mpc", label: "MPC" },
         { href: "/en/contact", label: "Contact" },
       ]
     : [
+        { href: "/kinesitherapie", label: "Aanbod" },
         { href: "/over", label: "Over ons" },
-        { href: "/team", label: "Team" },
         { href: brand === "mpc" ? "/mpc/prijzen" : "/prijzen", label: "Prijzen" },
-        { href: "/blog", label: lab ? "Insights/Blog" : "Blog" },
         { href: "/faq", label: "FAQ" },
+        { href: "/team", label: "Team" },
+        { href: "/blog", label: lab ? "Insights/Blog" : "Blog" },
         { href: "/jobs", label: "Vacatures" },
-        { href: "/mpc", label: "MPC" },
         { href: "/contact", label: "Contact" },
       ];
 
@@ -112,7 +112,7 @@ const iconClass = "mt-0.5 h-4 w-4 shrink-0 text-white/50";
 // Small uppercase labels on the deep-blue footer: white/50 measured 3.5:1, white/70 is 5.3:1 (WCAG AA ≥ 4.5).
 const labelClass = "text-xs font-semibold uppercase tracking-wide text-white/70";
 const socialClass =
-  "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/80 transition hover:border-white/40 hover:bg-white/10 hover:text-white";
+  "inline-flex items-center justify-center p-1 text-white/80 transition hover:text-white";
 ---
 
 <footer class:list={["bg-brand-footer text-white/80", lab && "lab-footer"]}>
@@ -126,21 +126,21 @@ const socialClass =
         rel={/^https?:/.test(brandHome) ? "noopener noreferrer" : undefined}
       >
         <img
-          src={lab ? "/brand/logo-wordmark-on-dark.png" : "/brand/logo-wordmark.png"}
+          src={lab ? "/brand/logo-m-mark.png" : "/brand/logo-wordmark.png"}
           alt="Movenda"
-          width="130"
-          height="28"
-          class="h-7 w-auto"
+          width={lab ? 64 : 130}
+          height={lab ? 64 : 28}
+          class={lab ? "h-14 w-auto" : "h-7 w-auto"}
         />
       </a>
       <p class="mt-4 max-w-xs">
         {lang === "en"
           ? brand === "mpc"
             ? "Part of Movenda — physiotherapy & personal training in Hasselt, Belgium."
-            : "Physiotherapy, personal training & performance in Hasselt, Belgium."
+            : "Physiotherapy, personal and performance training."
           : brand === "mpc"
             ? "Onderdeel van Movenda, kinesitherapie & personal training in Hasselt."
-            : "Kinesitherapie, personal training & performance in Hasselt."}
+            : "Kinesitherapie, personal- en performance training"}
       </p>
 
       {(sharedEmail || sharedNote) && (
@@ -186,19 +186,19 @@ const socialClass =
             {socials.map((s) => (
               <a href={s.href} target="_blank" rel="noopener" class={socialClass} aria-label={`${brand === "mpc" ? "Performance Centre" : "Movenda"} ${lang === "en" ? "on" : "op"} ${s.label}`}>
                 {s.kind === "instagram" && (
-                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="5" />
                     <circle cx="12" cy="12" r="4" />
                     <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
                   </svg>
                 )}
                 {s.kind === "facebook" && (
-                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.8v3h2.6V21h3.1z" />
                   </svg>
                 )}
                 {s.kind === "linkedin" && (
-                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M6.5 8.5H3.5V20h3V8.5zM5 4a1.75 1.75 0 1 0 0 3.5A1.75 1.75 0 0 0 5 4zM20.5 13.2c0-3.2-1.7-4.9-4.1-4.9-1.6 0-2.6.9-3 1.6V8.5h-3V20h3v-6c0-1.6.6-2.7 2-2.7 1.3 0 1.8 1 1.8 2.7v6h3.3v-6.8z" />
                   </svg>
                 )}

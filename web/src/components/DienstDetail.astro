@@ -3,7 +3,6 @@ import { getBlogPostsVoorDienst, type Dienst, type Locatie, type Teamlid } from 
 import { dienstPhotoSrc, teamPhotoSrc } from "../lib/images";
 import { localizeHref, withLang } from "../lib/i18n";
 import BlogPostCard from "./BlogPostCard.astro";
-import SectionKicker from "./SectionKicker.astro";
 
 interface Props {
   dienst: Dienst;
@@ -17,11 +16,51 @@ interface Props {
 const { dienst, team, locatie, backHref, backLabel, lang = "nl" } = Astro.props;
 const rawTitel = lang === "en" ? dienst.titelEn || dienst.titel : dienst.titel;
 const titel = rawTitel.replace(/\s+(in\s+)?Hasselt$/i, "");
+function zinCase(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed || trimmed !== trimmed.toLocaleUpperCase("nl")) return trimmed;
+  const lower = trimmed.toLocaleLowerCase("nl");
+  return lower.replace(/(^|[.!?]\s+)(\p{L})/gu, (_lead, lead: string, letter: string) => lead + letter.toLocaleUpperCase("nl"));
+}
+const slogan = zinCase(dienst.slogan || "");
 const body = lang === "en" ? dienst.bodyEn || dienst.body : dienst.body;
-const paragraphs = (body || "").split(/\n\n+/).filter(Boolean);
+const manueel = dienst.slug === "manuele-therapie";
+const listLabel = /^(Voor wie|Zo werken we|Who it's for|How we work)\s*:\s*/i;
+const intro: string[] = [];
+const lists: { title: string; items: string[] }[] = [];
+for (const raw of (body || "").split(/\n\n+/).map((p) => p.trim()).filter(Boolean)) {
+  if (/^(elke behandeling duurt|each (treatment|session) lasts)/i.test(raw)) continue;
+  const match = raw.match(listLabel);
+  if (!match) {
+    intro.push(raw);
+    continue;
+  }
+  lists.push({
+    title: match[1],
+    items: raw
+      .slice(match[0].length)
+      .split(/(?<!-),\s+/)
+      .map((item) => item.replace(/^en\s+/i, "").replace(/\.$/, "").trim())
+      .filter(Boolean),
+  });
+}
+const duurInBody = (body || "").split(/\n\n+/).find((p) => /^(elke behandeling duurt|each (treatment|session) lasts)/i.test(p.trim()));
+const showPraktisch = manueel || Boolean(duurInBody);
+const duurTekst = manueel
+  ? lang === "en"
+    ? "Each treatment lasts about 30 minutes, including administration and changing. Extra independent practice time is possible when it fits the programme."
+    : "Elke behandeling duurt +/- 30 minuten, inclusief administratie en omkleden. Aanvullende zelfstandige oefentijd is mogelijk wanneer dit binnen je traject past."
+  : (duurInBody || "").replace(/\s*Locatie:[\s\S]*$/i, "").trim();
+const locatieLinks = [
+  { href: withLang("/locaties/olympia", lang), label: "Sportpraktijk Movenda Hasselt" },
+  { href: withLang("/locaties/mpc", lang), label: "Performance Centre Kuringen" },
+].filter((link) => manueel || (duurInBody || "").includes(link.label.split(" ").slice(-1)[0]!));
 const dutchCta = /afspraak|contacteer|boek/i.test(dienst.ctaLabel || "");
-const ctaLabel =
-  lang === "en"
+const ctaLabel = manueel
+  ? lang === "en"
+    ? "Book an appointment for manual therapy"
+    : "Plan je afspraak voor manuele therapie"
+  : lang === "en"
     ? dienst.ctaLabel && !dutchCta
       ? dienst.ctaLabel
       : "Contact us"
@@ -35,31 +74,52 @@ const posts = await getBlogPostsVoorDienst(dienst, 3);
 ---
 
 <article class="pb-16">
-  <header class="mx-auto max-w-6xl px-4 py-10">
-    <a href={backHref} class="text-sm font-medium text-brand-primary">{backLabel}</a>
-    <SectionKicker n={1} />
-    <h1 class="mt-4 text-4xl font-bold sm:text-6xl">{titel}</h1>
-    {dienst.slogan && <p class="mt-3 text-lg font-medium text-brand-primary">{dienst.slogan}</p>}
+  <header class="dienst-hero">
+    {dienst.afbeelding && (
+      <img src={dienstPhotoSrc(dienst.afbeelding, "hero")} alt="" width="1600" height="900" />
+    )}
+    <div class="dienst-hero__copy">
+      <a href={backHref} class="text-sm font-medium">{backLabel}</a>
+      <h1 class="mt-4">{titel}</h1>
+      {slogan && <p>{slogan}</p>}
+    </div>
   </header>
 
-  {dienst.afbeelding && (
-    <img
-      src={dienstPhotoSrc(dienst.afbeelding, "hero")}
-      alt=""
-      width="1600"
-      height="900"
-      class="aspect-[16/7] w-full object-cover"
-    />
-  )}
-
-  <div class="mx-auto max-w-3xl px-4">
-
-  <div class="mt-8 space-y-4 leading-relaxed text-brand-muted">
-    {paragraphs.map((p) => (
+  <div class="dienst-copy mx-auto max-w-3xl px-4">
+    {intro.map((p) => (
       <p>{p}</p>
     ))}
-  </div>
-
+    {lists.map((list) => (
+      <section>
+        <h2>{list.title}</h2>
+        <ul>
+          {list.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </section>
+    ))}
+    {showPraktisch && (
+      <section>
+        <h2>{lang === "en" ? "Practical" : "Praktisch"}</h2>
+        {duurTekst && (
+          <>
+            <h3>{lang === "en" ? "Duration" : "Duur"}</h3>
+            <p>{duurTekst}</p>
+          </>
+        )}
+        {locatieLinks.length > 0 && (
+          <>
+            <h3>{lang === "en" ? "Location" : "Locatie"}</h3>
+            <ul>
+              {locatieLinks.map((link) => (
+                <li><a href={link.href}>{link.label}</a></li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
+    )}
   </div>
 
   {dienst.galerij.length > 0 && (
@@ -123,3 +183,95 @@ const posts = await getBlogPostsVoorDienst(dienst, 3);
   )}
   </div>
 </article>
+
+<style>
+  .dienst-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 72vh;
+    color: #f4f7fb;
+    background: #161513;
+  }
+
+  .dienst-hero img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .dienst-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgb(14 16 18 / 0.78), rgb(14 16 18 / 0.12) 58%);
+  }
+
+  .dienst-hero__copy {
+    position: relative;
+    z-index: 1;
+    width: min(72rem, 100%);
+    margin-inline: auto;
+    padding: 7.5rem 1.25rem 2.75rem;
+  }
+
+  .dienst-hero a {
+    color: inherit;
+  }
+
+  .dienst-hero h1 {
+    max-width: 16ch;
+    font-size: clamp(2.6rem, 1.5rem + 3.4vw, 4.75rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .dienst-hero p {
+    max-width: 28rem;
+    margin-top: 0.85rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .dienst-copy {
+    padding-top: 2.5rem;
+  }
+
+  .dienst-copy > p,
+  .dienst-copy li {
+    margin-top: 0.85rem;
+    line-height: 1.65;
+    color: var(--brand-muted);
+  }
+
+  .dienst-copy h2 {
+    margin-top: 2.25rem;
+    font-size: 1.45rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: var(--brand-text);
+  }
+
+  .dienst-copy h3 {
+    margin-top: 1.15rem;
+    font-size: 1rem;
+    font-weight: 650;
+    color: var(--brand-text);
+  }
+
+  .dienst-copy ul {
+    margin-top: 0.35rem;
+    padding-left: 1.15rem;
+    list-style: disc;
+  }
+
+  .dienst-copy a {
+    color: var(--brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+</style>

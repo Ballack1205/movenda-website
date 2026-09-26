@@ -108,7 +108,7 @@ function linksBySlugs(
 }
 
 /** Julie's header (lab/brief). Only pages that already exist. Rehab is one URL. */
-function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contact: NavLink): NavModel {
+function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
   const p = (href: string) => localizeInternalHref(href, lang);
   const en = lang === "en";
   const rehabHref = p("/mpc/sportrevalidatie");
@@ -174,29 +174,12 @@ function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contac
     ),
     { href: p("/mpc/groepslessen"), label: en ? "Timetable" : "Lessenrooster" },
   ];
-  const bookingOn = settings.booking.enabled && !!settings.booking.url;
-  const afspraak: NavItem = bookingOn
-    ? {
-        href: settings.booking.url,
-        label: en ? "Book" : "Afspraak",
-        external: true,
-        button: true,
-      }
-    : {
-        href: contact.href,
-        label: en ? "Book" : "Afspraak",
-        button: true,
-        children: [
-          {
-            href: `${contact.href}?locatie=Movenda — Kuringersteenweg`,
-            label: "Movenda — Kuringersteenweg",
-          },
-          {
-            href: `${contact.href}?locatie=Performance Centre — Lammerweg`,
-            label: "Performance Centre — Lammerweg",
-          },
-        ],
-      };
+  const keuzehulp = `${p("/team")}#keuzehulp`;
+  const afspraak: NavItem = {
+    href: keuzehulp,
+    label: en ? "Book" : "Afspraak",
+    button: true,
+  };
 
   return {
     items: [
@@ -228,6 +211,10 @@ function briefNav(diensten: Dienst[], settings: SiteSettings, lang: Lang, contac
             ],
           },
         ],
+      },
+      {
+        href: p("/team"),
+        label: "Team",
       },
       {
         href: p("/over"),
@@ -277,7 +264,7 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
   const contactItem: NavItem[] = cta === contact ? [] : [contact];
 
   if (THEME === "lab") {
-    const model = briefNav(diensten, settings, lang, contact);
+    const model = briefNav(diensten, lang, contact);
     return { ...model, phone };
   }
 

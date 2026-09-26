@@ -4,7 +4,6 @@ import type { ImageMetadata } from "astro";
 import LabCover from "./LabCover.astro";
 import LabStrip from "./LabStrip.astro";
 import PartnerBand from "./PartnerBand.astro";
-import TeamCarousel from "./TeamCarousel.astro";
 import InstagramFeed from "./InstagramFeed.astro";
 import BlogPostCard from "./BlogPostCard.astro";
 import GoogleReviewsFeed from "./GoogleReviewsFeed.astro";
@@ -22,6 +21,7 @@ import {
   type SiteSettings,
   type Teamlid,
 } from "../lib/content";
+import { teamPhotoSrc } from "../lib/images";
 import homeHero from "../assets/marketing/home-hero.jpg";
 import mpcHero from "../assets/marketing/mpc-hero.jpg";
 import homeSquats from "../assets/marketing/home-squats.jpg";
@@ -46,7 +46,6 @@ const homeEvents = (await getEvents())
 const locaties = await getLocaties();
 const hasselt = locaties.find((loc) => loc.slug === "olympia");
 const kuringen = locaties.find((loc) => loc.slug === "mpc");
-const bookingOn = settings.booking.enabled && !!settings.booking.url;
 const insightsKicker = brief.insightsKicker === "Insights" ? "Insights/Blog" : brief.insightsKicker;
 const deurFallback: Record<string, ImageMetadata> = {
   "/kinesitherapie": kineHero,
@@ -59,7 +58,7 @@ const deurFallback: Record<string, ImageMetadata> = {
 const deuren = settings.homeAanbod.map((deur, i) => ({
   n: i + 1,
   href: localizeInternalHref(deur.href, "nl"),
-  title: homeDeurNaam(deur, "nl"),
+  title: deur.href.endsWith("/locaties/olympia") ? "Olympia" : homeDeurNaam(deur, "nl"),
   line: homeDeurRegel(deur, "nl"),
   body: homeDeurTekst(deur, "nl"),
   lead: deur.href === "/kinesitherapie" || deur.href === "/mpc",
@@ -98,9 +97,6 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 
 <div class="lab-sheet" data-lab-light>
   <section class="brief-block" data-reveal>
-    <div class="mx-auto max-w-6xl px-4">
-      <p class="brief-kicker">{brief.partnersKicker}</p>
-    </div>
     <PartnerBand
       partners={partners}
       title={settings.partnerband.titel}
@@ -108,7 +104,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       animatie={settings.partnerband.animatie}
     />
     <div class="mx-auto max-w-6xl px-4">
-      <a href="/over" class="brief-textlink">{brief.partnersCta}</a>
+      <a href="/over#partners" class="brief-textlink">{brief.partnersCta}</a>
     </div>
     <ul class="brief-proof">
       {proof.map((item) => (
@@ -119,17 +115,22 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       ))}
     </ul>
   </section>
+</div>
 
+<div class="lab-sheet lab-sheet--ink">
   <section id="aanbod" class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4 pb-6">
-      <h2 class="brief-title">{brief.aanbodKicker}</h2>
-      <p class="brief-lead">{brief.aanbodTekst}</p>
+      <h2 class="brief-title brief-title--wide">{brief.aanbodKicker.replace(/\.$/, "")}</h2>
+      <p class="brief-lead brief-lead--wide">{brief.aanbodTekst}</p>
     </div>
-    <LabStrip items={deuren} />
   </section>
+</div>
 
+<LabStrip items={deuren} />
+
+<div class="lab-sheet lab-sheet--ink">
   <section class="brief-locs" data-reveal>
-    <h2 class="brief-title brief-locs__title">{brief.locatiesTitel}</h2>
+    <h2 class="brief-title brief-title--wide brief-locs__title">Eén praktijk, twee locaties!</h2>
     <div class="brief-locs__grid">
       {hasselt && (
         <a class="brief-loc brief-loc--light" href="/locaties/olympia">
@@ -137,7 +138,6 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
           <span class="brief-loc__copy">
             <span class="brief-loc__name">Movenda Hasselt</span>
             <span class="brief-loc__address">{hasselt.adres}</span>
-            <span class="brief-loc__profile">{brief.hasseltProfiel}</span>
             <span class="brief-textlink">Ontdek Movenda Hasselt</span>
           </span>
         </a>
@@ -149,7 +149,6 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
           <span class="brief-loc__copy">
             <span class="brief-loc__name">Performance Centre Kuringen</span>
             <span class="brief-loc__address">{kuringen.adres}</span>
-            <span class="brief-loc__profile">{brief.kuringenProfiel}</span>
             <span class="brief-textlink">Ontdek Performance Centre Kuringen</span>
           </span>
         </a>
@@ -160,11 +159,25 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
   <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
       <p class="brief-kicker">{brief.teamKicker}</p>
-      <h2 class="brief-title">{brief.teamTitel}</h2>
-      <p class="brief-lead">{brief.teamTekst}</p>
-      <div class="mt-8">
-        <TeamCarousel team={team} />
-      </div>
+      <h2 class="brief-title brief-title--wide">{brief.teamTitel}</h2>
+      <p class="brief-lead brief-lead--wide">{brief.teamTekst}</p>
+      <ul class="brief-team">
+        {team.map((lid) => (
+          <li>
+            <a href={`/team/${lid.slug}`}>
+              <span class="brief-team__photo">
+                {lid.foto ? (
+                  <img src={teamPhotoSrc(lid.foto, "card")} alt="" width="240" height="320" loading="lazy" />
+                ) : (
+                  <span class="brief-team__initials">{lid.voornaam[0]}{lid.naam[0]}</span>
+                )}
+              </span>
+              <span class="brief-team__name">{lid.voornaam} {lid.naam}</span>
+              <span class="brief-team__role">{lid.rol}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
       <a href="/team" class="brief-textlink">{brief.teamCta}</a>
     </div>
   </section>
@@ -186,14 +199,16 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       <a href="/events" class="brief-textlink">Alle events</a>
     </div>
   </section>
+</div>
 
+<div class="lab-sheet" data-lab-light>
   <GoogleReviewsFeed settings={settings} />
 
   <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
       <p class="brief-kicker">{insightsKicker}</p>
       <h2 class="brief-title brief-title--wide">{brief.insightsTitel}</h2>
-      <p class="brief-lead">{brief.insightsTekst}</p>
+      <p class="brief-lead brief-lead--wide">{brief.insightsTekst}</p>
       {posts.length > 0 && (
         <div class="relative mt-6" data-team-carousel>
           <div class="absolute -top-12 right-0 hidden gap-2 md:flex" data-carousel-controls hidden>
@@ -212,24 +227,16 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       <a href="/blog" class="brief-textlink">{brief.insightsCta === "Bekijk alle Insights" ? "Bekijk Insights/Blog" : brief.insightsCta}</a>
     </div>
   </section>
+</div>
 
-  <InstagramFeed settings={settings} title={brief.instagramTitel} />
+<div class="lab-sheet lab-sheet--ink">
+  <InstagramFeed settings={settings} title="Follow us" />
 
   <section class="brief-slot" data-reveal>
     <h2 class="brief-title">{brief.slotTitel}</h2>
     <p class="brief-lead">{brief.slotTekst}</p>
     <div class="brief-slot__actions">
-      {bookingOn ? (
-        <a class="brief-slot__button" href={settings.booking.url} target="_blank" rel="noopener noreferrer">{brief.slotAfspraak}</a>
-      ) : (
-        <details class="brief-book">
-          <summary class="brief-slot__button">{brief.slotAfspraak}</summary>
-          <div class="brief-book__choices">
-            <a href="/contact?locatie=Movenda — Kuringersteenweg">Movenda — Kuringersteenweg</a>
-            <a href="/contact?locatie=Performance Centre — Lammerweg">Performance Centre — Lammerweg</a>
-          </div>
-        </details>
-      )}
+      <a class="brief-slot__button" href="/team#keuzehulp">{brief.slotAfspraak}</a>
       <a class="brief-slot__ghost" href="/contact">{brief.slotContact}</a>
     </div>
   </section>

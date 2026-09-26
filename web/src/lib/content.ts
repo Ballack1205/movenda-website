@@ -653,6 +653,16 @@ export async function getTeamledenByLocatie(locatie: LocatieSlug): Promise<Teaml
 // not guessed from the role text. One definition, used by the homepage counts and the /team
 // filter so they can never disagree.
 export const isKinesist = (lid: Teamlid) => lid.disciplines.includes("kine");
+
+/** Manual therapy shows every physiotherapist except these four. */
+const MANUELE_UITZONDERING = new Set(["arne-daniels", "tanse-vanheusden", "an-janssen", "jana-albrechts"]);
+
+export function teamVoorDienst(dienst: Pick<Dienst, "slug" | "gekoppeldeTeamleden">, team: Teamlid[]): Teamlid[] {
+  if (dienst.slug === "manuele-therapie") {
+    return team.filter((lid) => isKinesist(lid) && !MANUELE_UITZONDERING.has(lid.slug));
+  }
+  return team.filter((lid) => dienst.gekoppeldeTeamleden.includes(lid.slug));
+}
 export const isTrainer = (lid: Teamlid) => lid.disciplines.includes("pt");
 
 /** Counts from Teamlid.disciplines ("Telt mee als"). Someone ticked as both counts in both. */
@@ -822,18 +832,24 @@ function pickFullerEn(cms?: string, seed?: string): string | undefined {
   return live;
 }
 
+function withoutTarieven(text?: string): string | undefined {
+  if (!text) return text;
+  return text.replace(/\n*Tarieven staan[^\n]*/gi, "").replace(/\n*Fees are on the[^\n]*/gi, "").trim();
+}
+
 function normalizeDienst(row: Dienst): Dienst {
   const fallback = dienstCoverFallback[row.slug];
   const fromSeed = seedDienstByKey.get(`${row.categorie}:${row.slug}`);
   return {
     ...row,
-    body: pickFullerEn(row.body, (fromSeed as { body?: string } | undefined)?.body) || row.body,
-    bodyEn: pickFullerEn(row.bodyEn, fromSeed?.bodyEn),
+    body: withoutTarieven(pickFullerEn(row.body, (fromSeed as { body?: string } | undefined)?.body) || row.body) || row.body,
+    bodyEn: withoutTarieven(pickFullerEn(row.bodyEn, fromSeed?.bodyEn)),
     seoTitleEn: row.seoTitleEn || fromSeed?.seoTitleEn,
     seoDescriptionEn: row.seoDescriptionEn || fromSeed?.seoDescriptionEn,
     afbeelding: row.afbeelding || fallback,
     galerij: row.galerij?.length ? row.galerij : fallback ? [fallback] : [],
     gekoppeldeTeamleden: row.gekoppeldeTeamleden || [],
+    slogan: row.slogan?.trim() || (fromSeed as { slogan?: string } | undefined)?.slogan,
   };
 }
 
@@ -1387,6 +1403,7 @@ export async function getPartners(tonenOp?: "movenda" | "mpc"): Promise<Partner[
 async function loadPartners(): Promise<Partner[]> {
   // Partners seeded before the "actief" toggle existed have no such field;
   // missing counts as active so nothing silently drops out of the band.
+  const hidden = /tenkie|vkm[\s-]*godsheide/i;
   const rows: Partner[] = await sanity.fetch(
     `*[_type == "partner" && actief != false] | order(volgorde asc) {
       "slug": _id,
@@ -1395,7 +1412,7 @@ async function loadPartners(): Promise<Partner[]> {
       "logo": logo.asset->url
     }`,
   );
-  return rows || [];
+  return (rows || []).filter((partner) => !hidden.test(partner.naam) && !hidden.test(partner.slug));
 }
 
 export async function getLesrooster(): Promise<LesroosterItem[]> {

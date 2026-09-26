@@ -299,7 +299,13 @@ html[data-theme="lab"] .lab-sheet--ink .lab-intro__title,
 html[data-theme="lab"] .lab-sheet--ink .lab-intro p,
 html[data-theme="lab"] .lab-sheet--ink .lab-intro__cta,
 html[data-theme="lab"] .lab-sheet--ink .brief-kicker,
-html[data-theme="lab"] .lab-sheet--ink .brief-statement {
+html[data-theme="lab"] .lab-sheet--ink .brief-statement,
+html[data-theme="lab"] .lab-sheet--ink .brief-title,
+html[data-theme="lab"] .lab-sheet--ink .brief-lead,
+html[data-theme="lab"] .lab-sheet--ink .brief-textlink,
+html[data-theme="lab"] .lab-sheet--ink .brief-insights a,
+html[data-theme="lab"] .lab-sheet--ink .brief-team__name,
+html[data-theme="lab"] .lab-sheet--ink .instagram-feed h2 {
   color: #f4f7fb;
 }
 
@@ -378,7 +384,7 @@ html[data-theme="lab"] body.lab-past-cover .lab-cover__arrow {
 
 html[data-theme="lab"] .lab-intro {
   margin: 0 auto;
-  max-width: 44rem;
+  max-width: 72rem;
   padding: 5.5rem 1.25rem 2.5rem;
   scroll-margin-top: 5rem;
 }
@@ -402,14 +408,17 @@ html[data-theme="lab"] .lab-intro__cta {
 
 html[data-theme="lab"] .lab-intro p {
   font-family: var(--font-heading);
-  font-size: clamp(1.05rem, 0.95rem + 0.35vw, 1.2rem);
+  font-size: clamp(0.98rem, 0.9rem + 0.22vw, 1.08rem);
   font-weight: 400;
   letter-spacing: -0.01em;
   line-height: 1.45;
 }
 
 html[data-theme="lab"] .lab-strip {
-  padding: 0;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  background: #0e1726;
 }
 
 html[data-theme="lab"] .lab-strip__grid {
@@ -420,6 +429,7 @@ html[data-theme="lab"] .lab-strip__grid {
 @media (min-width: 768px) {
   html[data-theme="lab"] .lab-strip__grid {
     display: flex;
+    gap: 0;
     height: 68vh;
     overflow: hidden;
   }
@@ -521,13 +531,14 @@ html[data-theme="lab"] .lab-strip__body {
   z-index: 1;
   max-width: 28ch;
   padding: 0.55rem 0.7rem;
-  background: rgb(22 21 19 / 0.38);
+  background: rgb(22 21 19 / 0.45);
   font-family: var(--font-heading);
   font-size: 1.05rem;
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.35;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 html[data-theme="lab"] .lab-strip__card--alt .lab-strip__copy {
@@ -542,7 +553,7 @@ html[data-theme="lab"] .lab-strip__card--alt .lab-strip__body {
 }
 
 /* Header floats over the cover, like LAB / Brick. */
-html[data-theme="lab"] body:has(.lab-cover) [data-header] {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] {
   position: fixed;
   inset-inline: 0;
   top: 0;
@@ -556,28 +567,28 @@ html[data-theme="lab"] body:has(.lab-cover) [data-header] {
     color 0.35s ease;
 }
 
-html[data-theme="lab"] body:has(.lab-cover) [data-header] a,
-html[data-theme="lab"] body:has(.lab-cover) [data-header] button,
-html[data-theme="lab"] body:has(.lab-cover) [data-header] input {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] a,
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] button,
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] input {
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body:has(.lab-cover) [data-header] input::placeholder {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] input::placeholder {
   color: color-mix(in srgb, var(--on-photo) 72%, transparent);
 }
 
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) [data-menu-toggle] {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) [data-menu-toggle] {
   border-color: rgb(239 237 230 / 0.35);
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body:has(.lab-cover) [data-header] [data-cta] {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] [data-cta] {
   background: var(--on-photo);
   color: #161513;
 }
 
-html[data-theme="lab"] body:has(.lab-cover) [data-header] a:not([data-logo]):hover,
-html[data-theme="lab"] body:has(.lab-cover) [data-header] button:hover {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] a:not([data-logo]):hover,
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] button:hover {
   background-color: rgb(239 237 230 / 0.1);
 }
 
@@ -585,28 +596,28 @@ html[data-theme="lab"] .logo-on-dark {
   display: none;
 }
 
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) .logo-on-light {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) .logo-on-light {
   display: none;
 }
 
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) .logo-on-dark {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) .logo-on-dark {
   display: block;
 }
 
-html[data-theme="lab"] body:has(.lab-cover) [data-header] [data-mobile-nav],
-html[data-theme="lab"] body:has(.lab-cover) [data-header] [data-nav-panel] ul {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] [data-mobile-nav],
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] [data-nav-panel] ul {
   background: #161513;
   border-color: rgb(239 237 230 / 0.15);
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):has(.lab-cover) [data-header] {
+html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):has(.lab-cover, .dienst-hero) [data-header] {
   background: transparent;
   border-bottom-color: transparent;
   color: #f4f7fb;
 }
 
-html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):has(.lab-cover) [data-header]::before {
+html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):has(.lab-cover, .dienst-hero) [data-header]::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -619,40 +630,40 @@ html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):has(.lab-cover)
   mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] {
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] {
   background: var(--brand-bg);
   border-bottom-color: transparent;
   color: var(--brand-text);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] a,
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] button,
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] input {
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] a,
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] button,
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] input {
   color: var(--brand-text);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] input::placeholder {
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] input::placeholder {
   color: color-mix(in srgb, var(--brand-text) 62%, transparent);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-menu-toggle] {
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-menu-toggle] {
   border-color: var(--brand-border);
   color: var(--brand-text);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] [data-cta] {
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] [data-cta] {
   background: var(--brand-text);
   color: var(--brand-bg);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] a:not([data-logo]):hover,
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] button:hover {
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] a:not([data-logo]):hover,
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] button:hover {
   background-color: rgb(22 21 19 / 0.06);
 }
 
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] [data-mobile-nav],
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover) [data-header] [data-nav-panel] ul {
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] [data-mobile-nav],
+html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero) [data-header] [data-nav-panel] ul {
   background: var(--brand-surface);
   border-color: var(--brand-border);
   color: var(--brand-text);
@@ -703,22 +714,18 @@ html[data-theme="lab"] [data-reveal].is-in {
 
     html[data-theme="lab"] .lab-strip__grid:is(:hover, :focus-within) .lab-strip__card {
       flex-grow: 0.88;
-      opacity: 0.55;
     }
 
     html[data-theme="lab"] .lab-strip__grid:is(:hover, :focus-within) .lab-strip__card:is(:hover, :focus, :focus-visible) {
       flex-grow: 1.45;
-      opacity: 1;
     }
 
     html[data-theme="lab"] .lab-strip__grid:has(.lab-strip__card--copy:is(:hover, :focus, :focus-visible)) .lab-strip__card {
       flex-grow: 0.72;
-      opacity: 0.48;
     }
 
     html[data-theme="lab"] .lab-strip__grid:is(:hover, :focus-within) .lab-strip__card--copy:is(:hover, :focus, :focus-visible) {
       flex-grow: 2.55;
-      opacity: 1;
     }
 
     html[data-theme="lab"] .lab-strip__arrow,
@@ -732,6 +739,12 @@ html[data-theme="lab"] [data-reveal].is-in {
 
     html[data-theme="lab"] .lab-strip__card:is(:hover, :focus, :focus-visible) .lab-strip__arrow,
     html[data-theme="lab"] .lab-strip__card:is(:hover, :focus, :focus-visible) .lab-strip__body {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Blurb stays readable at the top of every door, not only while hovering. */
+    html[data-theme="lab"] .lab-strip__body {
       opacity: 1;
       transform: none;
     }
@@ -827,22 +840,22 @@ html[data-theme="lab"] .lab-menu__cta {
   font-weight: 600;
 }
 
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) .lab-menu {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) .lab-menu {
   background: #161513;
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) .lab-menu__item,
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) .lab-menu a {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) .lab-menu__item,
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) .lab-menu a {
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) .lab-menu__cta {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) .lab-menu__cta {
   background: var(--on-photo);
   color: #161513;
 }
 
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) .lab-menu {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) .lab-menu {
   border-color: rgb(239 237 230 / 0.15);
 }
 
@@ -1073,7 +1086,7 @@ html[data-theme="lab"] .lab-mega {
   border: 1px solid var(--brand-border);
 }
 
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) [data-nav-panel] .lab-mega {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) [data-nav-panel] .lab-mega {
   background: #161513;
   color: var(--on-photo);
   border-color: rgb(239 237 230 / 0.15);
@@ -1115,8 +1128,8 @@ html[data-theme="lab"] [data-header] [data-cta]:focus-visible {
   color: var(--brand-bg);
 }
 
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) [data-header] [data-cta]:hover,
-html[data-theme="lab"] body:has(.lab-cover):not(.lab-past-cover) [data-header] [data-cta]:focus-visible {
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) [data-header] [data-cta]:hover,
+html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):not(.lab-past-cover) [data-header] [data-cta]:focus-visible {
   background: var(--on-photo);
   color: #161513;
 }
@@ -1190,6 +1203,10 @@ html[data-theme="lab"] .brief-lead {
   line-height: 1.5;
 }
 
+html[data-theme="lab"] .brief-lead.brief-lead--wide {
+  max-width: none;
+}
+
 html[data-theme="lab"] .brief-textlink {
   display: inline-flex;
   min-height: 44px;
@@ -1231,19 +1248,87 @@ html[data-theme="lab"] .brief-proof__label {
 }
 
 html[data-theme="lab"] .brief-locs {
-  padding: 0.5rem 1.25rem 2rem;
+  padding: 0.5rem 0 0;
 }
 
 html[data-theme="lab"] .brief-locs__title {
   max-width: 72rem;
   margin: 0 auto 1.25rem;
+  padding: 0 1.25rem;
+}
+
+html[data-theme="lab"] .brief-team {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 0.75rem;
+  margin-top: 2rem;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  html[data-theme="lab"] .brief-team {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  html[data-theme="lab"] .brief-team {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+html[data-theme="lab"] .brief-team a {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+html[data-theme="lab"] .brief-team__photo {
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #1c1916;
+}
+
+html[data-theme="lab"] .brief-team__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+html[data-theme="lab"] .brief-team__name {
+  display: block;
+  margin-top: 0.55rem;
+  font-size: 0.92rem;
+  font-weight: 650;
+}
+
+html[data-theme="lab"] .brief-team__role,
+html[data-theme="lab"] .lab-sheet--ink .brief-team__role {
+  display: block;
+  margin-top: 0.15rem;
+  color: rgb(244 247 251 / 0.62);
+  font-size: 0.75rem;
+}
+
+html[data-theme="lab"] .brief-team__initials {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-weight: 650;
+}
+
+html[data-theme="lab"] .lab-sheet--ink .instagram-feed {
+  color: #f4f7fb;
 }
 
 html[data-theme="lab"] .brief-locs__grid {
   display: grid;
-  gap: 0.75rem;
-  max-width: 72rem;
-  margin: 0 auto;
+  gap: 0;
+  max-width: none;
+  margin: 0;
 }
 
 @media (min-width: 768px) {
