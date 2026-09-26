@@ -9,7 +9,6 @@ import GetuigenisCarousel from "./GetuigenisCarousel.astro";
 import HeroVideo from "./HeroVideo.astro";
 import LabCover from "./LabCover.astro";
 import LabStrip from "./LabStrip.astro";
-import SectionKicker from "./SectionKicker.astro";
 import { THEME } from "../lib/site";
 import {
   getDienstenByCategorie,
@@ -89,15 +88,6 @@ const partnerTitle = en
   ? partnerBandTitle(settings.partnerband.titelMpc, "en")
   : settings.partnerband.titelMpc;
 const lab = THEME === "lab";
-const numberedBlocks = [
-  !lab && "pillars",
-  "training",
-  "rehab",
-  "groep",
-  faqs.length > 0 && "faq",
-].filter((id): id is string => Boolean(id));
-const numberedSeries = numberedBlocks.length > 1;
-const sectionNumber = (id: string) => numberedBlocks.indexOf(id) + 1;
 const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Performance Centre trainingsruimte";
 ---
 
@@ -120,7 +110,7 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
         nextLabel={en ? "Continue" : "Verder"}
       />
   )}
-  <div class:list={[lab && "lab-sheet"]}>
+  <div class:list={[lab && "lab-sheet lab-sheet--ink"]}>
   {lab ? (
     <>
       <section id="lab-next" class="lab-intro" data-reveal>
@@ -199,7 +189,6 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
   )}
 
   {!lab && <section class="mx-auto max-w-6xl px-4 pb-8">
-    <SectionKicker n={sectionNumber("pillars")} series={numberedSeries} />
     <h2 class="text-2xl font-bold">{en ? "Three pillars" : "Drie pijlers"}</h2>
     <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {pillars.map((p) => (
@@ -221,9 +210,10 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
       ))}
     </div>
   </section>}
+  </div>
 
+  <div class:list={[lab && "lab-sheet"]} data-lab-light={lab ? true : undefined}>
   <section id="training" class="mx-auto max-w-6xl px-4 py-10">
-    <SectionKicker n={sectionNumber("training")} series={numberedSeries} />
     <h2 class="text-2xl font-bold">Training</h2>
     <div class="mt-6 grid gap-4 sm:grid-cols-2">
       {training.map((dienst) => (
@@ -231,11 +221,12 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
       ))}
     </div>
   </section>
+  </div>
 
+  <div class:list={[lab && "lab-sheet lab-sheet--ink"]}>
   <section id="sportrevalidatie" class="mx-auto max-w-6xl px-4 py-10">
     <div class="grid items-start gap-6 xl:grid-cols-3">
       <div class="min-w-0 xl:col-span-2">
-        <SectionKicker n={sectionNumber("rehab")} series={numberedSeries} />
         <h2 class="text-2xl font-bold">{en ? "Sports rehabilitation" : "Sportrevalidatie"}</h2>
         <div class="mt-6 grid gap-4 sm:grid-cols-2">
           {rehab.map((dienst) => (
@@ -253,9 +244,10 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
       />
     </div>
   </section>
+  </div>
 
+  <div class:list={[lab && "lab-sheet"]}>
   <section class="mx-auto max-w-6xl px-4 py-10">
-    <SectionKicker n={sectionNumber("groep")} series={numberedSeries} />
     <h2 class="text-2xl font-bold">{en ? "Group classes" : "Groepslessen"}</h2>
     <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {groep.map((dienst) => (
@@ -267,11 +259,17 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
     </a>
   </section>
 
+  </div>
+
+  <div class:list={[lab && "lab-sheet lab-sheet--ink"]}>
   <GetuigenisCarousel
     items={getuigenissen}
     title={en ? "What our athletes say" : "Wat onze atleten zeggen"}
     lang={lang}
   />
+  </div>
+
+  <div class:list={[lab && "lab-sheet"]}>
 
   {!lab && partners.length > 0 && (
     <PartnerBand
@@ -284,7 +282,6 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
 
   {faqs.length > 0 && (
     <section id="faq" class="mx-auto max-w-3xl px-4 py-16">
-      <SectionKicker n={sectionNumber("faq")} series={numberedSeries} />
       <h2 class="text-2xl font-bold">{en ? "FAQ" : "Veelgestelde vragen"}</h2>
       <div class="mt-6 divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
         {faqs.map((faq) => {

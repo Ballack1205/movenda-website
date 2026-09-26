@@ -260,6 +260,16 @@ html[data-theme="lab"] .lab-card {
   box-shadow: none;
 }
 
+html[data-theme="lab"] .lab-sheet--ink .lab-card,
+html[data-theme="lab"] .lab-sheet--ink [data-quote-carousel] article {
+  color: var(--brand-text);
+}
+
+html[data-theme="lab"] .lab-sheet--ink [data-quote-carousel] h2,
+html[data-theme="lab"] .lab-sheet--ink [data-quote-carousel] > .flex p {
+  color: #f4f7fb;
+}
+
 html[data-theme="lab"] .consent,
 html[data-theme="lab"] .promo-dialog {
   border-radius: 0.125rem;
@@ -298,6 +308,7 @@ html[data-theme="lab"] .lab-sheet--ink {
 html[data-theme="lab"] .lab-sheet--ink .lab-intro__title,
 html[data-theme="lab"] .lab-sheet--ink .lab-intro p,
 html[data-theme="lab"] .lab-sheet--ink .lab-intro__cta,
+html[data-theme="lab"] .lab-sheet--ink .section-kicker,
 html[data-theme="lab"] .lab-sheet--ink .brief-kicker,
 html[data-theme="lab"] .lab-sheet--ink .brief-statement,
 html[data-theme="lab"] .lab-sheet--ink .brief-title,
