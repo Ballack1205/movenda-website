@@ -1,42 +1,5 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { dienstHref, getBlogPosts, getDiensten, getEvents, getTeamleden } from "../lib/content";
-
-const diensten = await getDiensten();
-const team = await getTeamleden();
-const posts = await getBlogPosts();
-const events = await getEvents();
-
-const items = [
-  { title: "Kinesitherapie", href: "/kinesitherapie", text: "behandelingen hasselt" },
-  { title: "Performance Centre", href: "/mpc", text: "training kuringen lammerweg" },
-  { title: "Prijzen", href: "/prijzen", text: "tarieven terugbetaling" },
-  { title: "Team", href: "/team", text: "therapeuten specialisten" },
-  { title: "Contact", href: "/contact", text: "afspraak mail telefoon" },
-  { title: "Events", href: "/events", text: "agenda" },
-  { title: "Insights/Blog", href: "/blog", text: "artikels" },
-  { title: "Kiné-abonnement", href: "/kine-abonnement", text: "zelfstandig oefenen hasselt" },
-  ...diensten.filter((d) => d.toonInMenu !== false).map((d) => ({
-    title: d.titel,
-    href: dienstHref(d),
-    text: `${d.intro || ""} ${d.slogan || ""}`,
-  })),
-  ...team.map((lid) => ({
-    title: `${lid.voornaam} ${lid.naam}`,
-    href: `/team/${lid.slug}`,
-    text: lid.rol,
-  })),
-  ...posts.map((post) => ({
-    title: post.titel,
-    href: `/blog/${post.slug}`,
-    text: post.excerpt || "",
-  })),
-  ...events.map((event) => ({
-    title: event.titel,
-    href: "/events",
-    text: `${event.datum} ${event.locatie || ""} ${event.tekst || ""}`,
-  })),
-];
 ---
 
 <Layout title="Zoeken | Movenda" description="Zoek op de website van Movenda." path="/zoeken">
@@ -44,27 +7,8 @@ const items = [
     <h1 class="text-3xl font-bold">Zoeken</h1>
     <form action="/zoeken" method="get" role="search" class="mt-6">
       <label class="sr-only" for="q">Zoeken</label>
-      <input id="q" name="q" type="search" placeholder="Zoeken" class="w-full border-b border-brand-border bg-transparent px-1 py-2 text-lg outline-none" />
+      <input id="q" name="q" type="search" autocomplete="off" placeholder="Zoeken" class="w-full border-b border-brand-border bg-transparent px-1 py-2 text-lg outline-none" />
     </form>
-    <ul id="zoek-results" class="mt-8 space-y-4"></ul>
+    <ul id="zoek-results" class="mt-6"></ul>
   </section>
 </Layout>
-
-<script define:vars={{ items }} is:inline>
-  const input = document.getElementById("q");
-  const list = document.getElementById("zoek-results");
-  const params = new URLSearchParams(location.search);
-  if (params.get("q")) input.value = params.get("q");
-  const render = () => {
-    const q = input.value.trim().toLowerCase();
-    const hits = q
-      ? items.filter((item) => `${item.title} ${item.text}`.toLowerCase().includes(q)).slice(0, 24)
-      : [];
-    list.innerHTML = hits
-      .map((item) => `<li><a class="text-lg font-semibold underline" href="${item.href}">${item.title}</a></li>`)
-      .join("");
-    if (q && hits.length === 0) list.innerHTML = "<li>Geen resultaten.</li>";
-  };
-  input.addEventListener("input", render);
-  render();
-</script>

@@ -1,12 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import {
-  getDiensten,
+  getPrijzenByCategorie,
   getSiteSettings,
   getTeamleden,
-  formatEuro,
-  dienstMenuLabel,
-  type Dienst,
+  prijsNaam,
+  type Prijsitem,
   type Teamlid,
 } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
@@ -14,45 +13,18 @@ import { breadcrumbSchema } from "../lib/schema";
 const settings = await getSiteSettings();
 const info = settings.prijzenInfo;
 const team = await getTeamleden();
-const diensten = await getDiensten();
+const kine = await getPrijzenByCategorie("kine");
+const training = await getPrijzenByCategorie("training");
 
-const aanbod: { slug: string; categorie: Dienst["categorie"] }[] = [
-  { slug: "manuele-therapie", categorie: "kine" },
-  { slug: "oefentherapie", categorie: "kine" },
-  { slug: "algemene-kinesitherapie", categorie: "kine" },
-  { slug: "sportrevalidatie", categorie: "mpc-rehab" },
-  { slug: "pre-en-postnatale-kinesitherapie", categorie: "kine" },
-  { slug: "bekkenbodemtherapie", categorie: "kine" },
-  { slug: "lymfedrainage", categorie: "kine" },
-  { slug: "acupunctuur", categorie: "kine" },
-  { slug: "dry-needling", categorie: "kine" },
-  { slug: "cupping", categorie: "kine" },
-  { slug: "auriculotherapie", categorie: "kine" },
-  { slug: "cardiovasculaire-revalidatie", categorie: "kine" },
-  { slug: "taping", categorie: "kine" },
-  { slug: "barefoot", categorie: "kine" },
-  { slug: "performance-training", categorie: "mpc-training" },
-  { slug: "personal-training", categorie: "mpc-training" },
-  { slug: "personal-training", categorie: "training" },
-  { slug: "duotraining", categorie: "mpc-training" },
-  { slug: "duotraining", categorie: "training" },
-];
+const byNaam = (a: Teamlid, b: Teamlid) =>
+  a.naam.localeCompare(b.naam, "nl") || a.voornaam.localeCompare(b.voornaam, "nl");
+const kineTeam = team.filter((lid) => lid.tariefKine).sort(byNaam);
+const ptTeam = team.filter((lid) => lid.tariefPt).sort(byNaam);
 
-function tariefFor(dienst: Dienst, lid: Teamlid): string | undefined {
-  if (dienst.categorie === "kine") return formatEuro(lid.tariefKine);
-  if (dienst.categorie === "training") return formatEuro(lid.tariefPt);
-  return formatEuro(lid.tariefPerformance || lid.tariefPtMpc);
+function startprijs(item: Prijsitem): string {
+  if (item.opAanvraag) return "Op aanvraag";
+  return item.vanaf ? `Vanaf €${item.bedrag}` : `€${item.bedrag}`;
 }
-
-const rubrieken = aanbod.flatMap((pick) => {
-  const dienst = diensten.find((d) => d.slug === pick.slug && d.categorie === pick.categorie);
-  if (!dienst || dienst.toonInMenu === false) return [];
-  const matched = team.filter((lid) =>
-    lid.specialisaties.some((s) => s.dienst?.slug === dienst.slug && s.dienst.categorie === dienst.categorie),
-  );
-  const mensen = matched.filter((lid) => tariefFor(dienst, lid));
-  return [{ dienst, mensen }];
-});
 
 const jsonLd = [
   breadcrumbSchema([
@@ -60,7 +32,6 @@ const jsonLd = [
     { name: "Prijzen", path: "/prijzen" },
   ]),
 ];
-import SectionKicker from "../components/SectionKicker.astro";
 ---
 
 <Layout
@@ -70,17 +41,53 @@ import SectionKicker from "../components/SectionKicker.astro";
   altPath="/en/prijzen"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <SectionKicker n={1} />
-        <h1 class="text-3xl font-bold">Tarieven &amp; terugbetaling</h1>
-    {info.intro && <p class="mt-3 max-w-2xl text-brand-muted">{info.intro}</p>}
+  <section class="mx-auto max-w-3xl px-4 pb-16 pt-8">
+    <h1>Tarieven &amp; terugbetaling</h1>
+    {info.intro && <p class="mt-4 max-w-2xl text-brand-muted">{info.intro}</p>}
     {info.basishonorarium && (
-      <p class="mt-2 max-w-2xl text-brand-muted">
+      <p class="mt-3 max-w-2xl text-brand-muted">
         Ons basishonorarium is <strong>€{info.basishonorarium}</strong>. Het exacte tarief hangt
         af van de behandelende therapeut, specialisatie en ervaring.
       </p>
     )}
-    <div class="mt-8 rounded-2xl border border-brand-border bg-brand-surface p-6">
+
+    {kine.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Kinesitherapie</h2>
+        <ul class="mt-3 border-t border-brand-border">
+          {kine.map((item) => (
+            <li class="flex items-baseline justify-between gap-6 border-b border-brand-border py-3">
+              <span>{prijsNaam(item)}</span>
+              <span class="shrink-0 font-semibold">{startprijs(item)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {training.length > 0 && (
+      <div class="mt-10">
+        <h2 class="text-xl font-semibold">Personal training</h2>
+        <ul class="mt-3 border-t border-brand-border">
+          {training.map((item) => (
+            <li class="flex items-baseline justify-between gap-6 border-b border-brand-border py-3">
+              <span>
+                {prijsNaam(item)}
+                {item.notitie && <span class="mt-0.5 block text-sm text-brand-muted">{item.notitie}</span>}
+              </span>
+              <span class="shrink-0 font-semibold">{startprijs(item)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <p class="mt-8 text-sm text-brand-muted">
+      Tarieven van het Performance Centre staan op de
+      <a href="/mpc/prijzen" class="underline underline-offset-4">prijzenpagina van het centre</a>.
+    </p>
+
+    <div class="mt-12 border-t border-brand-border pt-8">
       <h2 class="text-xl font-semibold">Terugbetaling</h2>
       <p class="mt-2 text-sm text-brand-muted">
         Je ontvangt na elke sessie een getuigschrift voor verstrekte hulp. Daarmee vraag je zelf
@@ -100,59 +107,55 @@ import SectionKicker from "../components/SectionKicker.astro";
           </div>
         )}
       </div>
-      {info.nomenclatuur && info.nomenclatuur.length > 0 && (
-        <div class="mt-6 overflow-x-auto">
-          <table class="w-full text-left text-sm">
-            <thead class="text-brand-muted">
-              <tr>
-                <th class="py-2 pr-4 font-medium">Categorie</th>
-                <th class="py-2 pr-4 font-medium">Omschrijving</th>
-                <th class="py-2 text-right font-medium">Ereloon</th>
-              </tr>
-            </thead>
-            <tbody>
-              {info.nomenclatuur.map((n) => (
-                <tr class="border-t border-brand-border">
-                  <td class="py-2 pr-4">{n.categorie}</td>
-                  <td class="py-2 pr-4">{n.omschrijving}</td>
-                  <td class="py-2 text-right">{n.bedrag}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
       {info.voorwaarden && <p class="mt-4 text-xs text-brand-muted">{info.voorwaarden}</p>}
       {info.annulatiebeleid && (
         <p class="mt-4 text-sm text-brand-muted"><strong>Annulatie:</strong> {info.annulatiebeleid}</p>
       )}
     </div>
 
-    <div class="mt-12 space-y-10">
-      {rubrieken.map(({ dienst, mensen }) => (
-        <section>
-          <h2 class="text-xl font-semibold">{dienstMenuLabel(dienst)}</h2>
-          {mensen.length > 0 ? (
-            <div class="mt-3 divide-y divide-brand-border border-y border-brand-border">
-              {mensen.map((lid) => (
+    {(kineTeam.length > 0 || ptTeam.length > 0) && (
+      <div class="mt-14">
+        <h2 class="text-xl font-semibold">Tarieven per therapeut</h2>
+        <p class="mt-2 text-sm text-brand-muted">Het bedrag van jouw sessie hangt af van wie je behandelt.</p>
+
+        {kineTeam.length > 0 && (
+          <div class="mt-8">
+            <h3 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Kinesitherapie</h3>
+            <div class="mt-2 divide-y divide-brand-border border-y border-brand-border">
+              {kineTeam.map((lid) => (
                 <details class="group">
                   <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-2 text-sm [&::-webkit-details-marker]:hidden">
                     <span>{lid.voornaam} {lid.naam}</span>
                     <span class="text-brand-muted" aria-hidden="true">+</span>
                   </summary>
-                  <p class="pb-3 text-sm text-brand-muted">
-                    {dienst.categorie === "kine" ? "Hasselt" : dienst.categorie === "training" ? "Hasselt" : "Performance Centre"}
-                    {" "}
-                    <span class="font-medium text-brand-text">{tariefFor(dienst, lid)}</span>
+                  <p class="pb-3 text-sm">
+                    <span class="font-medium">€{lid.tariefKine} / 30 min</span>
                   </p>
                 </details>
               ))}
             </div>
-          ) : (
-            <p class="mt-2 text-sm text-brand-muted">Tarief op aanvraag bij de therapeut.</p>
-          )}
-        </section>
-      ))}
-    </div>
+          </div>
+        )}
+
+        {ptTeam.length > 0 && (
+          <div class="mt-8">
+            <h3 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Personal training</h3>
+            <div class="mt-2 divide-y divide-brand-border border-y border-brand-border">
+              {ptTeam.map((lid) => (
+                <details class="group">
+                  <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-2 text-sm [&::-webkit-details-marker]:hidden">
+                    <span>{lid.voornaam} {lid.naam}</span>
+                    <span class="text-brand-muted" aria-hidden="true">+</span>
+                  </summary>
+                  <p class="pb-3 text-sm">
+                    <span class="font-medium">€{lid.tariefPt} / 60 min</span>
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    )}
   </section>
 </Layout>

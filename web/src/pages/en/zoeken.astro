@@ -3,8 +3,12 @@ import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout title="Search | Movenda" description="Search the Movenda website." path="/en/zoeken" altPath="/zoeken">
-  <section class="mx-auto max-w-3xl px-4 py-16">
+  <section class="mx-auto max-w-3xl px-4 py-12">
     <h1 class="text-3xl font-bold">Search</h1>
-    <p class="mt-4 text-brand-muted"><a class="underline" href="/zoeken">Search the Dutch site</a></p>
+    <form action="/en/zoeken" method="get" role="search" class="mt-6">
+      <label class="sr-only" for="q">Search</label>
+      <input id="q" name="q" type="search" autocomplete="off" placeholder="Search" class="w-full border-b border-brand-border bg-transparent px-1 py-2 text-lg outline-none" />
+    </form>
+    <ul id="zoek-results" class="mt-6"></ul>
   </section>
 </Layout>

@@ -6,7 +6,9 @@
 //   MPC:     7 items with long Dutch labels (Sportrevalidatie, Groepslessen) ≈ 800px
 //            → desktop nav from `lg` (1024). iPad portrait gets the grouped panel.
 // Nav structure lives in src/lib/nav.ts; dropdown contents come from the CMS.
+import { getBlogPosts, getDiensten, getEvents, getTeamleden } from "../lib/content";
 import { getNavModel, isActiveItem, isCurrentPath } from "../lib/nav";
+import { buildSearchIndex } from "../lib/search-index";
 import NavCluster from "./NavCluster.astro";
 import { mpcHomePath, movendaHomeHref, THEME } from "../lib/site";
 
@@ -60,6 +62,18 @@ const t = {
 
 const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 const telHref = (nr: string) => `tel:${nr.replace(/\s+/g, "")}`;
+const searchItems = buildSearchIndex({
+  lang,
+  diensten: await getDiensten(),
+  team: await getTeamleden(),
+  posts: await getBlogPosts(),
+  events: await getEvents(),
+});
+const searchJson = JSON.stringify(searchItems).replace(/</g, "\\u003c");
+const searchLabels =
+  lang === "en"
+    ? { page: "Page", dienst: "Treatment", team: "Team", blog: "Article", event: "Event", empty: "No results", hint: "Type at least 3 letters" }
+    : { page: "Pagina", dienst: "Behandeling", team: "Team", blog: "Artikel", event: "Event", empty: "Geen resultaten", hint: "Typ minstens 3 letters" };
 
 // Groups (items with children) drive the panel columns; plain links are pooled in one list.
 const groups = items.filter((i) => i.children && i.children.length > 0);
@@ -73,6 +87,7 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     stickyMobile,
   ]}
   data-header
+  data-lang={lang}
   data-desktop-min={desktopMinWidth}
 >
   <div
@@ -91,9 +106,10 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
         >
           <NavCluster items={leftItems} path={path} lab={lab} externalLabel={t.external} />
         </nav>
-        <form action={lang === "en" ? "/en/zoeken" : "/zoeken"} method="get" role="search" class="shrink-0">
+        <form action={lang === "en" ? "/en/zoeken" : "/zoeken"} method="get" role="search" class="relative shrink-0" data-site-search>
           <label class="sr-only" for="site-search">{lang === "en" ? "Search" : "Zoeken"}</label>
-          <input id="site-search" name="q" type="search" placeholder={lang === "en" ? "Search" : "Zoeken"} class="w-28 border-b border-current bg-transparent px-1 py-1 text-sm outline-none placeholder:text-current/60" />
+          <input id="site-search" name="q" type="search" autocomplete="off" placeholder={lang === "en" ? "Search" : "Zoeken"} aria-autocomplete="list" aria-controls="site-search-list" aria-expanded="false" class="w-36 border-b border-current bg-transparent px-1 py-1 text-sm outline-none placeholder:text-current/60" />
+          <ul id="site-search-list" data-search-list hidden class="search-suggest" role="listbox"></ul>
         </form>
       </div>
     )}
@@ -316,9 +332,10 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     data-mobile-nav
   >
     <div class="mx-auto flex min-h-[calc(100dvh-5.5rem)] max-w-lg flex-col px-5 pb-[max(2rem,env(safe-area-inset-bottom))]">
-      <form action={lang === "en" ? "/en/zoeken" : "/zoeken"} method="get" role="search" class="mb-6">
+      <form action={lang === "en" ? "/en/zoeken" : "/zoeken"} method="get" role="search" class="relative mb-6" data-site-search>
         <label class="sr-only" for="site-search-mobile">{lang === "en" ? "Search" : "Zoeken"}</label>
-        <input id="site-search-mobile" name="q" type="search" placeholder={lang === "en" ? "Search" : "Zoeken"} class="w-full border-b border-current bg-transparent px-1 py-2 text-lg outline-none" />
+        <input id="site-search-mobile" name="q" type="search" autocomplete="off" placeholder={lang === "en" ? "Search" : "Zoeken"} aria-autocomplete="list" aria-controls="site-search-list-mobile" aria-expanded="false" class="w-full border-b border-current bg-transparent px-1 py-2 text-lg outline-none" />
+        <ul id="site-search-list-mobile" data-search-list hidden class="search-suggest search-suggest--wide" role="listbox"></ul>
       </form>
       <ol class="flex flex-col gap-1">
         {items.map((item) => {
@@ -498,9 +515,12 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     </div>
   </nav>
   )}
+  <script type="application/json" id="site-search-index" set:html={searchJson} />
+  <script type="application/json" id="site-search-labels" set:html={JSON.stringify(searchLabels)} />
 </header>
 
 <script>
+  import { rankSearch, type SearchItem } from "../lib/search";
   const header = document.querySelector<HTMLElement>("[data-header]");
 
   // --- Desktop dropdowns -------------------------------------------------
@@ -645,4 +665,156 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
       if (isOpen(g) && !g.contains(target)) setOpen(g, false);
     });
   });
+
+  // Live suggestions from 3 letters. Enter opens the highlighted result.
+  const indexNode = document.getElementById("site-search-index");
+  const labelNode = document.getElementById("site-search-labels");
+  if (indexNode && labelNode) {
+    const items = JSON.parse(indexNode.textContent || "[]") as SearchItem[];
+    const labels = JSON.parse(labelNode.textContent || "{}") as Record<string, string>;
+    const kindLabel = (kind: SearchItem["kind"]) => labels[kind] || "";
+
+    const option = (hit: SearchItem, id: string, selected: boolean) => {
+      const link = document.createElement("a");
+      link.href = hit.href;
+      link.id = id;
+      link.setAttribute("role", "option");
+      if (selected) link.setAttribute("aria-selected", "true");
+      const kind = document.createElement("span");
+      kind.className = "search-suggest__kind";
+      kind.textContent = kindLabel(hit.kind);
+      const title = document.createElement("span");
+      title.className = "search-suggest__title";
+      title.textContent = hit.title;
+      link.append(kind, title);
+      return link;
+    };
+
+    document.querySelectorAll<HTMLFormElement>("[data-site-search]").forEach((form) => {
+      const input = form.querySelector<HTMLInputElement>("input[type='search']");
+      const list = form.querySelector<HTMLElement>("[data-search-list]");
+      if (!input || !list) return;
+      let hits: SearchItem[] = [];
+      let active = 0;
+
+      const close = () => {
+        hits = [];
+        list.hidden = true;
+        list.replaceChildren();
+        input.setAttribute("aria-expanded", "false");
+        input.removeAttribute("aria-activedescendant");
+      };
+
+      const show = (query: string, keepActive = false) => {
+        if (query.trim().length < 3) {
+          close();
+          return;
+        }
+        hits = rankSearch(items, query, 7);
+        if (!keepActive) active = 0;
+        if (active >= hits.length) active = 0;
+        list.replaceChildren();
+        if (hits.length === 0) {
+          const empty = document.createElement("li");
+          empty.className = "search-suggest__empty";
+          empty.textContent = labels.empty || "";
+          list.append(empty);
+        } else {
+          hits.forEach((hit, index) => {
+            const item = document.createElement("li");
+            item.append(option(hit, `${list.id}-opt-${index}`, index === active));
+            list.append(item);
+          });
+          const current = list.querySelector<HTMLAnchorElement>("[aria-selected='true']");
+          if (current) input.setAttribute("aria-activedescendant", current.id);
+        }
+        list.hidden = false;
+        input.setAttribute("aria-expanded", "true");
+      };
+
+      input.addEventListener("input", () => show(input.value));
+      input.addEventListener("focus", () => {
+        if (input.value.trim().length >= 3) show(input.value);
+      });
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !list.hidden) {
+          event.stopPropagation();
+          close();
+          return;
+        }
+        if (list.hidden || hits.length === 0) return;
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          active = event.key === "ArrowDown" ? (active + 1) % hits.length : (active - 1 + hits.length) % hits.length;
+          show(input.value, true);
+          return;
+        }
+        if (event.key === "Enter") {
+          event.preventDefault();
+          const href = hits[active]?.href;
+          if (href) window.location.href = href;
+        }
+      });
+      form.addEventListener("submit", (event) => {
+        const href = hits[active]?.href || hits[0]?.href;
+        if (!href) return;
+        event.preventDefault();
+        window.location.href = href;
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (!form.contains(event.target as Node)) close();
+      });
+    });
+
+    const pageInput = document.querySelector<HTMLInputElement>("#q");
+    const pageList = document.querySelector<HTMLElement>("#zoek-results");
+    if (pageInput && pageList) {
+      const renderPage = () => {
+        const query = pageInput.value.trim();
+        pageList.replaceChildren();
+        if (!query) return;
+        if (query.length < 3) {
+          const hint = document.createElement("li");
+          hint.className = "search-page__hint";
+          hint.textContent = labels.hint || "";
+          pageList.append(hint);
+          return;
+        }
+        const hits = rankSearch(items, query, 12);
+        if (hits.length === 0) {
+          const empty = document.createElement("li");
+          empty.className = "search-page__hint";
+          empty.textContent = labels.empty || "";
+          pageList.append(empty);
+          return;
+        }
+        hits.forEach((hit) => {
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = hit.href;
+          link.className = "search-page__hit";
+          const kind = document.createElement("span");
+          kind.className = "search-suggest__kind";
+          kind.textContent = kindLabel(hit.kind);
+          const title = document.createElement("span");
+          title.className = "search-page__title";
+          title.textContent = hit.title;
+          link.append(kind, title);
+          item.append(link);
+          pageList.append(item);
+        });
+      };
+      const params = new URLSearchParams(location.search);
+      if (params.get("q")) pageInput.value = params.get("q") || "";
+      pageInput.addEventListener("input", () => {
+        const next = new URL(location.href);
+        const value = pageInput.value.trim();
+        if (value) next.searchParams.set("q", value);
+        else next.searchParams.delete("q");
+        history.replaceState(null, "", `${next.pathname}${next.search}`);
+        renderPage();
+      });
+      renderPage();
+    }
+  }
 </script>
