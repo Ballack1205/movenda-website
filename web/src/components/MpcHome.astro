@@ -212,7 +212,7 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
   </section>}
   </div>
 
-  <div class:list={[lab && "lab-sheet"]} data-lab-light={lab ? true : undefined}>
+  <div class:list={[lab && "lab-sheet lab-sheet--ink"]}>
   <section id="training" class="mx-auto max-w-6xl px-4 py-10">
     <h2 class="text-2xl font-bold">Training</h2>
     <div class="mt-6 grid gap-4 sm:grid-cols-2">
@@ -246,7 +246,7 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
   </section>
   </div>
 
-  <div class:list={[lab && "lab-sheet"]}>
+  <div class:list={[lab && "lab-sheet lab-sheet--ink"]}>
   <section class="mx-auto max-w-6xl px-4 py-10">
     <h2 class="text-2xl font-bold">{en ? "Group classes" : "Groepslessen"}</h2>
     <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -254,7 +254,7 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
         <DienstCard dienst={dienst} lang={lang} />
       ))}
     </div>
-    <a href={groepHref} class="mt-6 inline-block font-semibold text-brand-primary hover:underline">
+    <a href={groepHref} class="brief-textlink mt-6 inline-block font-semibold text-brand-primary hover:underline">
       {en ? "See the timetable →" : "Bekijk het lesrooster →"}
     </a>
   </section>
@@ -269,7 +269,7 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
   />
   </div>
 
-  <div class:list={[lab && "lab-sheet"]}>
+  <div class:list={[lab && "lab-sheet"]} data-lab-light={lab ? true : undefined}>
 
   {!lab && partners.length > 0 && (
     <PartnerBand
