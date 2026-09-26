@@ -1183,6 +1183,14 @@ html[data-theme="lab"] .brief-block {
   padding: 2.25rem 0;
 }
 
+html[data-theme="lab"] .brief-block--flush {
+  padding-bottom: 0;
+}
+
+html[data-theme="lab"] .google-reviews-feed {
+  padding-top: 4rem;
+}
+
 html[data-theme="lab"] .brief-title {
   max-width: 18ch;
   font-family: var(--font-heading);
@@ -1248,12 +1256,16 @@ html[data-theme="lab"] .brief-proof__label {
 }
 
 html[data-theme="lab"] .brief-locs {
-  padding: 0.5rem 0 0;
+  padding: 3.75rem 0 0;
+}
+
+html[data-theme="lab"] .brief-locs + .brief-block {
+  padding-top: 3.75rem;
 }
 
 html[data-theme="lab"] .brief-locs__title {
   max-width: 72rem;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 2rem;
   padding: 0 1.25rem;
 }
 
@@ -1425,6 +1437,7 @@ html[data-theme="lab"] .brief-reviews footer {
 html[data-theme="lab"] .brief-slot {
   background: #3a3936;
   color: #f4f7fb;
+  margin-top: 2rem;
   padding: 3rem 1.25rem;
 }
 

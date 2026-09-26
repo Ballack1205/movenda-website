@@ -338,7 +338,13 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
                           child.heading ? (
                             <p class="lab-menu__heading">{child.label}</p>
                           ) : (
-                            <a href={child.href}>{child.label}</a>
+                            <a
+                              href={child.href}
+                              target={child.external ? "_blank" : undefined}
+                              rel={child.external ? "noopener noreferrer" : undefined}
+                            >
+                              {child.label}
+                            </a>
                           ),
                         )}
                       </div>

@@ -147,9 +147,11 @@ export interface Dienst {
   titelEn?: string;
   intro: string;
   slogan?: string;
+  sloganEn?: string;
   body: string;
   bodyEn?: string;
   ctaLabel?: string;
+  ctaLabelEn?: string;
   ctaUrl?: string;
   seoTitle: string;
   seoDescription: string;
@@ -815,11 +817,7 @@ const dienstCoverFallback: Record<string, string> = {
   running: "/dienst-covers/running.jpg",
 };
 
-const seedDienstByKey = new Map(
-  (seedDiensten as Pick<Dienst, "slug" | "categorie" | "bodyEn" | "seoTitleEn" | "seoDescriptionEn">[]).map(
-    (d) => [`${d.categorie}:${d.slug}`, d],
-  ),
-);
+const seedDienstByKey = new Map((seedDiensten as Dienst[]).map((d) => [`${d.categorie}:${d.slug}`, d]));
 
 /** Prefer Julie's CMS English when it is complete; if Sanity still has the
  * short summary from the first EN pass, use the full seed translation. */
@@ -840,16 +838,39 @@ function withoutTarieven(text?: string): string | undefined {
 function normalizeDienst(row: Dienst): Dienst {
   const fallback = dienstCoverFallback[row.slug];
   const fromSeed = seedDienstByKey.get(`${row.categorie}:${row.slug}`);
+  const seedBody = fromSeed?.body;
+  const chosenBody = pickFullerEn(row.body, seedBody);
+  const seedWon = Boolean(seedBody?.trim() && chosenBody === seedBody.trim());
+  const fromDocument = seedWon && fromSeed
+    ? {
+        titel: fromSeed.titel,
+        titelEn: fromSeed.titelEn,
+        intro: fromSeed.intro,
+        slogan: fromSeed.slogan,
+        sloganEn: fromSeed.sloganEn,
+        ctaLabel: fromSeed.ctaLabel,
+        ctaLabelEn: fromSeed.ctaLabelEn,
+        ctaUrl: fromSeed.ctaUrl,
+        menuLabel: fromSeed.menuLabel,
+        menuLabelEn: fromSeed.menuLabelEn,
+        seoTitle: fromSeed.seoTitle,
+        seoDescription: fromSeed.seoDescription,
+        seoTitleEn: fromSeed.seoTitleEn,
+        seoDescriptionEn: fromSeed.seoDescriptionEn,
+      }
+    : {};
   return {
     ...row,
-    body: withoutTarieven(pickFullerEn(row.body, (fromSeed as { body?: string } | undefined)?.body) || row.body) || row.body,
+    ...fromDocument,
+    body: withoutTarieven(chosenBody || row.body) || row.body,
     bodyEn: withoutTarieven(pickFullerEn(row.bodyEn, fromSeed?.bodyEn)),
-    seoTitleEn: row.seoTitleEn || fromSeed?.seoTitleEn,
-    seoDescriptionEn: row.seoDescriptionEn || fromSeed?.seoDescriptionEn,
+    seoTitleEn: (seedWon ? fromSeed?.seoTitleEn : undefined) || row.seoTitleEn || fromSeed?.seoTitleEn,
+    seoDescriptionEn: (seedWon ? fromSeed?.seoDescriptionEn : undefined) || row.seoDescriptionEn || fromSeed?.seoDescriptionEn,
     afbeelding: row.afbeelding || fallback,
     galerij: row.galerij?.length ? row.galerij : fallback ? [fallback] : [],
     gekoppeldeTeamleden: row.gekoppeldeTeamleden || [],
-    slogan: row.slogan?.trim() || (fromSeed as { slogan?: string } | undefined)?.slogan,
+    slogan: (seedWon ? fromSeed?.slogan : undefined) || row.slogan?.trim() || fromSeed?.slogan,
+    sloganEn: (seedWon ? fromSeed?.sloganEn : undefined) || row.sloganEn || fromSeed?.sloganEn,
   };
 }
 

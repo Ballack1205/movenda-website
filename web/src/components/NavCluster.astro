@@ -111,10 +111,13 @@ const linkClass = (item: NavItem, active: boolean) => [
                             ) : (
                               <a
                                 href={child.href}
+                                target={child.external ? "_blank" : undefined}
+                                rel={child.external ? "noopener noreferrer" : undefined}
                                 aria-current={isCurrentPath(child.href, path) ? "page" : undefined}
                                 class:list={["lab-mega__link", isCurrentPath(child.href, path) && "is-current"]}
                               >
                                 {child.label}
+                                {child.external && <span class="sr-only"> {externalLabel}</span>}
                               </a>
                             )}
                           </li>

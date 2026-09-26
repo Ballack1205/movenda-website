@@ -122,7 +122,8 @@
     },
     {
       "korteNaam": "Olympia",
-      "regel": "Ontdek Hasselt",
+      "regel": "Ontdek Olympia",
+      "regelEn": "Discover Olympia",
       "tekst": "Ontdek het aanbod van Sportpraktijk Movenda aan de Kuringersteenweg in Hasselt.",
       "href": "/locaties/olympia"
     }

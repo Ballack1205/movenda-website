@@ -143,9 +143,10 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
   const train = linksBySlugs(
     diensten,
     [
-      { slug: "performance-training", categorie: "mpc-training" },
+      { slug: "performance-training", categorie: "mpc-training", label: en ? "Performance coaching" : "Performance Coaching" },
       { slug: "personal-training", categorie: "mpc-training" },
-      { slug: "duotraining", categorie: "mpc-training" },
+      { slug: "duotraining", categorie: "mpc-training", label: en ? "Duo training" : "Duo Training" },
+      { slug: "boxing-1-on-1", categorie: "mpc-training", label: "Boxing 1-on-1" },
       { slug: "pre-en-postnatale-training", categorie: "training" },
     ],
     lang,
@@ -153,9 +154,12 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
   const test = linksBySlugs(
     diensten,
     [
-      { slug: "sportspecifieke-screening", categorie: "training" },
-      { slug: "data-analyse", categorie: "mpc-training" },
+      { slug: "sportspecifieke-screening", categorie: "training", label: en ? "Performance screening" : "Performance Screening" },
       { slug: "inspanningstesten", categorie: "training" },
+      { slug: "loopanalyse-ontracx", categorie: "mpc-training", label: "Loopanalyse met OnTracx" },
+      { slug: "vald-screening", categorie: "mpc-training", label: "VALD Screening" },
+      { slug: "data-analyse", categorie: "mpc-training", label: "Data Analysis" },
+      { slug: "monitoring-whoop", categorie: "mpc-training", label: "Monitoring met Whoop" },
     ],
     lang,
   );
@@ -203,11 +207,15 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
           { label: "GX", href: p("/mpc/groepslessen"), children: gx },
           { label: "B2B", href: p("/mpc/corporate-coaching"), children: [] },
           {
-            label: "Hasselt",
+            label: "Olympia",
             href: p("/locaties/olympia"),
             children: [
               { href: p("/kine-abonnement"), label: en ? "Physio membership" : "Kiné-abonnement" },
-              { href: p("/locaties/olympia"), label: en ? "About this location" : "Over deze locatie" },
+              {
+                href: "https://www.oly.be",
+                label: en ? "About this location" : "Over deze locatie",
+                external: true,
+              },
             ],
           },
         ],

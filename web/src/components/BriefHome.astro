@@ -59,7 +59,7 @@ const deuren = settings.homeAanbod.map((deur, i) => ({
   n: i + 1,
   href: localizeInternalHref(deur.href, "nl"),
   title: deur.href.endsWith("/locaties/olympia") ? "Olympia" : homeDeurNaam(deur, "nl"),
-  line: homeDeurRegel(deur, "nl"),
+  line: deur.href.endsWith("/locaties/olympia") ? "Ontdek Olympia" : homeDeurRegel(deur, "nl"),
   body: homeDeurTekst(deur, "nl"),
   lead: deur.href === "/kinesitherapie" || deur.href === "/mpc",
   foto: deur.foto,
@@ -182,7 +182,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
     </div>
   </section>
 
-  <section class="brief-block" data-reveal>
+  <section class="brief-block brief-block--flush" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
       <p class="brief-kicker">Events</p>
       <ul class="brief-insights">

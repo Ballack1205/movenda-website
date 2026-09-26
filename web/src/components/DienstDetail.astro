@@ -22,48 +22,79 @@ function zinCase(text: string): string {
   const lower = trimmed.toLocaleLowerCase("nl");
   return lower.replace(/(^|[.!?]\s+)(\p{L})/gu, (_lead, lead: string, letter: string) => lead + letter.toLocaleUpperCase("nl"));
 }
-const slogan = zinCase(dienst.slogan || "");
+const slogan = zinCase((lang === "en" ? dienst.sloganEn || dienst.slogan : dienst.slogan) || "");
 const body = lang === "en" ? dienst.bodyEn || dienst.body : dienst.body;
 const manueel = dienst.slug === "manuele-therapie";
-const listLabel = /^(Voor wie|Zo werken we|Who it's for|How we work)\s*:\s*/i;
+const listLabel = /^(Voor wie|Zo werken we|Who it's for|How we work)\s*:?\s*/i;
+const expectLabel = /^(Wat je mag verwachten|What to expect)\s*:?\s*/i;
+const duurStart = /^(elke behandeling duurt|each (treatment|session) lasts)/i;
+const duurLabel = /^(Duur|Duration)\s*:?\s*/i;
+const locLabel = /^(Locatie|Location)\s*:?\s*/i;
+const relatedLabel = /^(Gerelateerd|Related)\s*:?\s*/i;
 const intro: string[] = [];
 const lists: { title: string; items: string[] }[] = [];
+let verwacht: { title: string; text: string } | undefined;
+let duurTekst = "";
+let locatieTekst = "";
+const related: { label: string; href: string }[] = [];
+const listItems = (rest: string) => {
+  const parts = rest.includes("\n") ? rest.split(/\n+/) : rest.split(/(?<!-),\s+/);
+  return parts.map((item) => item.replace(/^en\s+/i, "").replace(/\.$/, "").trim()).filter(Boolean);
+};
 for (const raw of (body || "").split(/\n\n+/).map((p) => p.trim()).filter(Boolean)) {
-  if (/^(elke behandeling duurt|each (treatment|session) lasts)/i.test(raw)) continue;
+  if (duurStart.test(raw)) {
+    duurTekst = raw.replace(/\s*Locatie:[\s\S]*$/i, "").trim();
+    const loc = raw.match(/\bLocatie:\s*([\s\S]*)$/i);
+    if (loc) locatieTekst = loc[1].trim();
+    continue;
+  }
+  if (duurLabel.test(raw)) {
+    duurTekst = raw.replace(duurLabel, "").trim();
+    continue;
+  }
+  if (locLabel.test(raw)) {
+    locatieTekst = raw.replace(locLabel, "").trim();
+    continue;
+  }
+  const expected = raw.match(expectLabel);
+  if (expected) {
+    verwacht = { title: expected[1], text: raw.slice(expected[0].length).trim() };
+    continue;
+  }
+  if (relatedLabel.test(raw)) {
+    for (const line of raw.replace(relatedLabel, "").split(/\n+/)) {
+      const [label, href] = line.split("|").map((part) => part.trim());
+      if (label && href) related.push({ label, href: localizeHref(href, lang) });
+    }
+    continue;
+  }
   const match = raw.match(listLabel);
   if (!match) {
     intro.push(raw);
     continue;
   }
-  lists.push({
-    title: match[1],
-    items: raw
-      .slice(match[0].length)
-      .split(/(?<!-),\s+/)
-      .map((item) => item.replace(/^en\s+/i, "").replace(/\.$/, "").trim())
-      .filter(Boolean),
-  });
+  lists.push({ title: match[1], items: listItems(raw.slice(match[0].length)) });
 }
-const duurInBody = (body || "").split(/\n\n+/).find((p) => /^(elke behandeling duurt|each (treatment|session) lasts)/i.test(p.trim()));
-const showPraktisch = manueel || Boolean(duurInBody);
-const duurTekst = manueel
-  ? lang === "en"
+if (manueel) {
+  duurTekst = lang === "en"
     ? "Each treatment lasts about 30 minutes, including administration and changing. Extra independent practice time is possible when it fits the programme."
-    : "Elke behandeling duurt +/- 30 minuten, inclusief administratie en omkleden. Aanvullende zelfstandige oefentijd is mogelijk wanneer dit binnen je traject past."
-  : (duurInBody || "").replace(/\s*Locatie:[\s\S]*$/i, "").trim();
-const locatieLinks = [
-  { href: withLang("/locaties/olympia", lang), label: "Sportpraktijk Movenda Hasselt" },
-  { href: withLang("/locaties/mpc", lang), label: "Performance Centre Kuringen" },
-].filter((link) => manueel || (duurInBody || "").includes(link.label.split(" ").slice(-1)[0]!));
+    : "Elke behandeling duurt +/- 30 minuten, inclusief administratie en omkleden. Aanvullende zelfstandige oefentijd is mogelijk wanneer dit binnen je traject past.";
+}
+const knownLocaties = [
+  { href: withLang("/locaties/olympia", lang), label: "Sportpraktijk Movenda Hasselt", test: /hasselt/i },
+  { href: withLang("/locaties/mpc", lang), label: "Performance Centre Kuringen", test: /kuringen|performance\s*cent(?:re|er)/i },
+];
+const locatieLinks = manueel && !locatieTekst
+  ? knownLocaties
+  : knownLocaties.filter((link) => link.test.test(locatieTekst));
+const showPraktisch = manueel || Boolean(duurTekst) || locatieLinks.length > 0;
 const dutchCta = /afspraak|contacteer|boek/i.test(dienst.ctaLabel || "");
 const ctaLabel = manueel
   ? lang === "en"
     ? "Book an appointment for manual therapy"
     : "Plan je afspraak voor manuele therapie"
   : lang === "en"
-    ? dienst.ctaLabel && !dutchCta
-      ? dienst.ctaLabel
-      : "Contact us"
+    ? dienst.ctaLabelEn || (dienst.ctaLabel && !dutchCta ? dienst.ctaLabel : "Contact us")
     : dienst.ctaLabel || "Maak een afspraak";
 const ctaUrl = localizeHref(dienst.ctaUrl, lang);
 // "Lees ook": articles Julie linked to this dienst (Blogpost → "Gaat over deze behandelingen"),
@@ -99,6 +130,12 @@ const posts = await getBlogPostsVoorDienst(dienst, 3);
         </ul>
       </section>
     ))}
+    {verwacht && (
+      <section>
+        <h2>{verwacht.title}</h2>
+        <p>{verwacht.text}</p>
+      </section>
+    )}
     {showPraktisch && (
       <section>
         <h2>{lang === "en" ? "Practical" : "Praktisch"}</h2>
@@ -113,6 +150,16 @@ const posts = await getBlogPostsVoorDienst(dienst, 3);
             <h3>{lang === "en" ? "Location" : "Locatie"}</h3>
             <ul>
               {locatieLinks.map((link) => (
+                <li><a href={link.href}>{link.label}</a></li>
+              ))}
+            </ul>
+          </>
+        )}
+        {related.length > 0 && (
+          <>
+            <h3>{lang === "en" ? "Related" : "Gerelateerd"}</h3>
+            <ul>
+              {related.map((link) => (
                 <li><a href={link.href}>{link.label}</a></li>
               ))}
             </ul>

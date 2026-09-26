@@ -4,19 +4,34 @@ import { breadcrumbSchema } from "../lib/schema";
 ---
 
 <Layout
-  title="Kiné-abonnement | Movenda Hasselt"
-  description="Zelfstandig oefenen bij Movenda aan de Kuringersteenweg in Hasselt."
+  title="Kiné-fitnessabonnement | Movenda Hasselt"
+  description="Met een lopende revalidatie bij Movenda oefen je voor €40 per maand verder in de fitnessruimte van Olympia Hasselt. De Milon Cirkel is niet inbegrepen."
   path="/kine-abonnement"
   jsonLd={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Kiné-abonnement", path: "/kine-abonnement" }])]}
 >
-  <section class="mx-auto max-w-2xl px-4 py-16">
-    <h1 class="text-3xl font-bold">Kiné-abonnement</h1>
-    <p class="mt-4 text-brand-muted">
-      Na een behandeling kun je, wanneer dat in je traject past, zelfstandig verder oefenen in de praktijk aan de Kuringersteenweg.
-      Het tarief staat op de prijspagina, niet op de behandelpagina’s.
+  <section class="mx-auto grid max-w-6xl items-start gap-10 px-4 py-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(16rem,26rem)]">
+    <div>
+    <p class="brief-kicker">Kiné-abonnement</p>
+    <h1 class="brief-title brief-title--wide">Revalideer verder, ook buiten je kine sessies.</h1>
+    <p class="brief-lead brief-lead--wide">
+      Daarom bieden we, in samenwerking met
+      <a href="https://www.oly.be" class="underline underline-offset-4" target="_blank" rel="noopener noreferrer">Olympia Hasselt</a>,
+      een kine-fitnessabonnement aan voor mensen met een lopende revalidatie.
     </p>
-    <p class="mt-6">
-      <a class="font-semibold underline" href="/prijzen">Prijzen en terugbetaling</a>
+    <p class="brief-lead brief-lead--wide">
+      Voor €40 per maand krijg je toegang tot de volledige fitnessruimte van Olympia Hasselt, zodat je ook buiten je kinesitherapiebehandelingen verder kan werken aan je herstel.
+      De Milon Cirkel is niet inbegrepen.
     </p>
+    <p class="brief-lead">Vraag dit speciale abonnement aan via jouw therapeut.</p>
+    <p class="brief-kicker mt-10">Meer info?</p>
+    <a class="brief-textlink" href="mailto:info@movenda.be">info@movenda.be</a>
+    </div>
+    <img
+      src="/marketing/kine-fitness-abo.jpg"
+      alt="Kine-fitnessabonnement van Olympia en Movenda, 40 euro per maand"
+      width="987"
+      height="1400"
+      class="mx-auto h-auto w-full max-w-md"
+    />
   </section>
 </Layout>

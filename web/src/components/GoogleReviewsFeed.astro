@@ -46,7 +46,7 @@ const fallbackLabel = lang === "en" ? "Read our Google reviews" : "Lees onze Goo
   // the gap above and below this block ends up equal (symmetric). See the
   // matching comment in InstagramFeed.astro.
   show && (
-    <section class="google-reviews-feed scroll-mt-24 px-4 pb-0 pt-0" aria-labelledby="google-reviews-heading">
+    <section class="google-reviews-feed scroll-mt-24 px-4 pb-0" aria-labelledby="google-reviews-heading">
       <div class="mx-auto max-w-6xl">
         <h2 id="google-reviews-heading" class="sr-only">
           {heading}
@@ -62,6 +62,64 @@ const fallbackLabel = lang === "en" ? "Read our Google reviews" : "Lees onze Goo
         <div class="google-reviews-widget">
           <div class={`elfsight-app-${widgetId}`} data-elfsight-app-lazy></div>
         </div>
+        <script is:inline>
+          // Elfsight resizes the card to each review as the slide starts, so the
+          // box pops and the page below shifts. Pin the track to the tallest
+          // review and only animate the horizontal move.
+          (function () {
+            var root = document.currentScript && document.currentScript.previousElementSibling;
+            if (!root) return;
+            var styleEl = null;
+            var locked = 0;
+
+            function contentHeight(slide) {
+              var card = slide.querySelector(".es-review-background-container");
+              var inner = slide.querySelector(".es-review-align-container");
+              if (!card || !inner) return slide.scrollHeight;
+              var cs = getComputedStyle(card);
+              var pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+              var border = parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
+              return Math.ceil(inner.offsetHeight + pad + border);
+            }
+
+            function settle() {
+              var host = root.querySelector(".es-embed-root");
+              var shadow = host && host.shadowRoot;
+              var swiperEl = shadow && shadow.querySelector(".swiper");
+              var swiper = swiperEl && swiperEl.swiper;
+              if (!swiper) return false;
+              var slides = shadow.querySelectorAll(".swiper-slide");
+              if (!slides.length) return false;
+              var max = 0;
+              for (var i = 0; i < slides.length; i++) max = Math.max(max, contentHeight(slides[i]));
+              if (max < 80) return false;
+              swiper.params.autoHeight = false;
+              swiper.params.speed = 640;
+              if (max <= locked + 1 && styleEl && styleEl.parentNode === shadow) return true;
+              locked = max;
+              if (!styleEl || styleEl.parentNode !== shadow) {
+                styleEl = document.createElement("style");
+                shadow.appendChild(styleEl);
+              }
+              styleEl.textContent =
+                ".swiper,.swiper-wrapper,.swiper-slide{height:" + max + "px !important;min-height:" + max + "px !important;}" +
+                ".swiper-wrapper{transition-property:transform !important;transition-timing-function:cubic-bezier(0.22,1,0.36,1) !important;}" +
+                ".es-carousel-item,.es-review-container,.es-review-background-container{height:100% !important;box-sizing:border-box;}";
+              return true;
+            }
+
+            var tries = 0;
+            var boot = function () {
+              if (!settle() && tries++ < 40) setTimeout(boot, 250);
+            };
+            boot();
+            var n = 0;
+            var keep = setInterval(function () {
+              settle();
+              if (++n > 24) clearInterval(keep);
+            }, 500);
+          })();
+        </script>
 
         <noscript>
           {olympiaReviews?.reviewUrl && (
