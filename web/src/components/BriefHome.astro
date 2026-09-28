@@ -22,11 +22,13 @@ import {
   type Teamlid,
 } from "../lib/content";
 import { teamPhotoSrc } from "../lib/images";
-import homeHero from "../assets/marketing/home-hero.jpg";
-import mpcHero from "../assets/marketing/mpc-hero.jpg";
-import homeSquats from "../assets/marketing/home-squats.jpg";
+import homeCover from "../assets/marketing/home-cover.jpg";
+import homeOlympia from "../assets/marketing/home-olympia.jpg";
+import homePerformance from "../assets/marketing/home-performance.jpg";
+import homePerformance2 from "../assets/marketing/home-performance-2.jpg";
+import homeGx from "../assets/marketing/home-gx.jpg";
+import homeB2b from "../assets/marketing/home-b2b.jpg";
 import kineHero from "../assets/marketing/kine-hero.jpg";
-import trainingSecondary from "../assets/marketing/training-secondary.jpg";
 
 interface Props {
   pagina: Pagina;
@@ -58,10 +60,10 @@ const kuringen = locaties.find((loc) => loc.slug === "mpc");
 const insightsKicker = brief.insightsKicker === "Insights" ? "Insights/Blog" : brief.insightsKicker;
 const deurFallback: Record<string, ImageMetadata> = {
   "/kinesitherapie": kineHero,
-  "/mpc": mpcHero,
-  "/mpc/groepslessen": homeSquats,
-  "/mpc/corporate-coaching": trainingSecondary,
-  "/locaties/olympia": homeHero,
+  "/mpc": homePerformance,
+  "/mpc/groepslessen": homeGx,
+  "/mpc/corporate-coaching": homeB2b,
+  "/locaties/olympia": homeOlympia,
 };
 
 const deuren = settings.homeAanbod.map((deur, i) => ({
@@ -72,7 +74,7 @@ const deuren = settings.homeAanbod.map((deur, i) => ({
   body: homeDeurTekst(deur, "nl"),
   lead: deur.href === "/kinesitherapie" || deur.href === "/mpc",
   foto: deur.foto,
-  fallback: deurFallback[deur.href] ?? homeHero,
+  fallback: deurFallback[deur.href] ?? homeCover,
   alt: homeDeurNaam(deur, "nl"),
 }));
 
@@ -89,7 +91,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 
 <LabCover
   pagina={pagina}
-  fallback={homeHero}
+  fallback={homeCover}
   alt="Trainer van Movenda begeleidt een klant tijdens een training"
   nextLabel="Verder"
 />
@@ -153,7 +155,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       )}
       {kuringen && (
         <a class="brief-loc brief-loc--dark" href="/locaties/mpc">
-          <img src={mpcHero.src} alt="" class="brief-loc__photo" />
+          <img src={homePerformance2.src} alt="" class="brief-loc__photo" />
           <span class="brief-loc__veil" aria-hidden="true"></span>
           <span class="brief-loc__copy">
             <span class="brief-loc__name">Performance Centre Kuringen</span>
