@@ -13,7 +13,6 @@ import {
   getLocaties,
   teamCounts,
   homeDeurNaam,
-  homeDeurRegel,
   homeDeurTekst,
   localizeInternalHref,
   type Pagina,
@@ -25,7 +24,7 @@ import { teamPhotoSrc } from "../lib/images";
 import homeCover from "../assets/marketing/home-cover.jpg";
 import homeOlympia from "../assets/marketing/home-olympia.jpg";
 import homePerformance from "../assets/marketing/home-performance.jpg";
-import mpcHero from "../assets/marketing/mpc-hero.jpg";
+import homePerformance2 from "../assets/marketing/home-performance-2.jpg";
 import homeGx from "../assets/marketing/home-gx.jpg";
 import homeB2b from "../assets/marketing/home-b2b.jpg";
 import kineHero from "../assets/marketing/kine-hero.jpg";
@@ -70,7 +69,6 @@ const deuren = settings.homeAanbod.map((deur, i) => ({
   n: i + 1,
   href: localizeInternalHref(deur.href, "nl"),
   title: deur.href.endsWith("/locaties/olympia") ? "Olympia" : homeDeurNaam(deur, "nl"),
-  line: deur.href.endsWith("/locaties/olympia") ? "Ontdek Olympia" : homeDeurRegel(deur, "nl"),
   body: homeDeurTekst(deur, "nl"),
   lead: deur.href === "/kinesitherapie" || deur.href === "/mpc",
   foto: deur.foto,
@@ -94,6 +92,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
   fallback={homeCover}
   alt="Trainer van Movenda begeleidt een klant tijdens een training"
   nextLabel="Verder"
+  crop="object-[center_78%]"
 />
 
 <div class="lab-sheet lab-sheet--ink">
@@ -149,18 +148,16 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
           <span class="brief-loc__copy">
             <span class="brief-loc__name">Movenda Hasselt</span>
             <span class="brief-loc__address">{hasselt.adres}</span>
-            <span class="brief-textlink">Ontdek Movenda Hasselt</span>
           </span>
         </a>
       )}
       {kuringen && (
         <a class="brief-loc brief-loc--dark" href="/locaties/mpc">
-          <img src={mpcHero.src} alt="" class="brief-loc__photo" />
+          <img src={homePerformance2.src} alt="" class="brief-loc__photo" />
           <span class="brief-loc__veil" aria-hidden="true"></span>
           <span class="brief-loc__copy">
             <span class="brief-loc__name">Performance Centre Kuringen</span>
             <span class="brief-loc__address">{kuringen.adres}</span>
-            <span class="brief-textlink">Ontdek Performance Centre Kuringen</span>
           </span>
         </a>
       )}

@@ -8,3 +8,8 @@ dist/
 *.log
 .sanity/
 .lighthouseci/
+
+# Local client notes, not the site
+/OFFERTE.md
+/OFFERTE.pdf
+/Meeting-*.pdf

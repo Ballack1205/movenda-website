@@ -13,9 +13,20 @@ interface Props {
   line?: string;
   nextHref?: string;
   nextLabel?: string;
+  /** object-position utility. Default keeps other covers; the homepage aims lower in the photo so the shirt text stays in frame. */
+  crop?: string;
 }
 
-const { pagina, fallback, alt, shout, line, nextHref = "#lab-next", nextLabel = "Verder" } = Astro.props;
+const {
+  pagina,
+  fallback,
+  alt,
+  shout,
+  line,
+  nextHref = "#lab-next",
+  nextLabel = "Verder",
+  crop = "object-[center_32%]",
+} = Astro.props;
 ---
 
 <section class="lab-cover">
@@ -26,7 +37,7 @@ const { pagina, fallback, alt, shout, line, nextHref = "#lab-next", nextLabel = 
       alt=""
       width={1920}
       height={1200}
-      class="absolute inset-0 h-full w-full object-cover object-[center_32%]"
+      class={`absolute inset-0 h-full w-full object-cover ${crop}`}
       priority
       flush
     />
@@ -38,7 +49,9 @@ const { pagina, fallback, alt, shout, line, nextHref = "#lab-next", nextLabel = 
       {line && <span class="lab-cover__line">{line}</span>}
     </h1>
   )}
+  {/* Scroll arrow stays out until someone explicitly asks for it again.
   <a class="lab-cover__arrow" href={nextHref} aria-label={nextLabel}>
     <span aria-hidden="true">↓</span>
   </a>
+  */}
 </section>

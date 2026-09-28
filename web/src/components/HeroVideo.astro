@@ -53,7 +53,7 @@ const cropClass = className.replace(/\bobject-top\b/g, "object-[center_32%]");
       <Image src={fallback} alt={posterAlt} width={width} height={height} class={cropClass} priority={priority} />
     )}
     <video
-      class={`hero-video__clip absolute inset-0 h-full w-full object-cover object-[center_32%] ${cropClass}`}
+      class={`hero-video__clip absolute inset-0 h-full w-full object-cover ${cropClass}`}
       muted
       loop
       playsinline
