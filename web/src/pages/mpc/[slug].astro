@@ -18,6 +18,11 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
+// 25 sep kinesitherapie-master wins over the older MPC copies of these three.
+const canonicalKine = new Set(["dry-needling", "cupping", "taping"]);
+if (slug && canonicalKine.has(slug)) {
+  return Astro.redirect(`/kinesitherapie/${slug}`);
+}
 const dienst = await getDienstBySlug(slug!, "mpc");
 
 if (!dienst) {

@@ -104,7 +104,9 @@ export function buildSearchIndex(input: {
     const rank = (categorie: string) => (categorie === "mpc-training" || categorie === "mpc-groep" || categorie === "mpc-rehab" ? 0 : 1);
     return rank(a.categorie) - rank(b.categorie);
   });
+  const canonicalOnKine = new Set(["dry-needling", "cupping", "taping"]);
   for (const dienst of ordered) {
+    if (dienst.categorie === "mpc-rehab" && canonicalOnKine.has(dienst.slug)) continue;
     if (seen.has(dienst.slug)) continue;
     seen.add(dienst.slug);
     const title = titleOf(dienst, lang);

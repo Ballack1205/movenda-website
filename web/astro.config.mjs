@@ -14,7 +14,17 @@ const SANITY_DATASET = process.env.PUBLIC_SANITY_DATASET || "production";
 
 // Pages that must never be in the sitemap (they are also noindex):
 // post-contact / QR landing pages.
-const SITEMAP_EXCLUDE = new Set(["/welkom", "/en/welkom"]);
+const SITEMAP_EXCLUDE = new Set([
+  "/welkom",
+  "/en/welkom",
+  // Older MPC copies. The 25 Sep kinesitherapie master is the canonical page.
+  "/mpc/dry-needling",
+  "/mpc/cupping",
+  "/mpc/taping",
+  "/en/mpc/dry-needling",
+  "/en/mpc/cupping",
+  "/en/mpc/taping",
+]);
 
 /**
  * path → last Sanity update (ISO) for CMS-backed routes, so the sitemap

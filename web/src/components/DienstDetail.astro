@@ -25,7 +25,7 @@ function zinCase(text: string): string {
 const slogan = zinCase((lang === "en" ? dienst.sloganEn || dienst.slogan : dienst.slogan) || "");
 const body = lang === "en" ? dienst.bodyEn || dienst.body : dienst.body;
 const manueel = dienst.slug === "manuele-therapie";
-const listLabel = /^(Voor wie|Zo werken we|Who it's for|How we work)\s*:?\s*/i;
+const listLabel = /^(Voor wie|Zo werken we|Zo ziet de les eruit|Who it's for|How we work|What a session looks like)\s*:?\s*/i;
 const expectLabel = /^(Wat je mag verwachten|What to expect)\s*:?\s*/i;
 const duurStart = /^(elke behandeling duurt|each (treatment|session) lasts)/i;
 const duurLabel = /^(Duur|Duration)\s*:?\s*/i;
@@ -222,6 +222,11 @@ const heroSrc = manueel
     <a href={ctaUrl} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
       {ctaLabel}
     </a>
+    {dienst.categorie === "mpc-groep" && dienst.slug !== "corporate-coaching" && (
+      <a href={localizeHref("/mpc/groepslessen#inschrijven", lang)} class="text-sm font-semibold text-brand-primary hover:underline">
+        {lang === "en" ? "Book a trial class" : "Boek een proefles"}
+      </a>
+    )}
     <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="text-sm font-semibold text-brand-primary hover:underline">
       {locatie.telefoon}
     </a>

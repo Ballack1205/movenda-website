@@ -39,7 +39,9 @@ const { lang = "nl", path, altPath } = Astro.props;
 const en = lang === "en";
 
 const training = await getDienstenByCategorie("mpc-training");
-const rehab = await getDienstenByCategorie("mpc-rehab");
+const rehab = (await getDienstenByCategorie("mpc-rehab")).filter(
+  (d) => !["dry-needling", "cupping", "taping"].includes(d.slug),
+);
 const groep = await getDienstenByCategorie("mpc-groep");
 const locatie = (await getLocatieBySlug("mpc"))!;
 const partners = await getPartners("mpc");

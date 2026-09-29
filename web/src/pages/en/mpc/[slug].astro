@@ -20,6 +20,10 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
+const canonicalKine = new Set(["dry-needling", "cupping", "taping"]);
+if (slug && canonicalKine.has(slug)) {
+  return Astro.redirect(`/en/kinesitherapie/${slug}`);
+}
 const dienst = await getDienstBySlug(slug!, "mpc");
 
 if (!dienst) {
