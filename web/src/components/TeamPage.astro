@@ -13,6 +13,7 @@ import {
   specialisatieNaam,
 } from "../lib/content";
 import TeamGroupPhoto from "./TeamGroupPhoto.astro";
+import Verwijskompas from "./Verwijskompas.astro";
 import { teamPhotoSrc } from "../lib/images";
 import { THEME } from "../lib/site";
 import { breadcrumbNode, teamListNode } from "../lib/schema";
@@ -145,7 +146,7 @@ const filters = [
           </button>
         ))}
       </div>
-      {toonKeuzehulp && (
+      {(lang === "nl" || toonKeuzehulp) && (
         <button
           type="button"
           data-open-keuzehulp
@@ -154,7 +155,7 @@ const filters = [
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" />
           </svg>
-          {khTitel}
+          {lang === "nl" ? "Vind je collega" : khTitel}
         </button>
       )}
     </div>
@@ -237,7 +238,7 @@ const filters = [
     </p>
   </section>
 
-  {toonKeuzehulp && (
+  {lang === "nl" ? <Verwijskompas /> : toonKeuzehulp && (
     <dialog
       data-keuzehulp
       aria-labelledby="keuzehulp-titel"
