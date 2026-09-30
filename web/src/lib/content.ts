@@ -1115,7 +1115,7 @@ function mergeHomeDeuren(
 ): HomeDeur[] {
   const rows = fromSanity?.length ? fromSanity : seedRows;
   return rows
-    .map((row) => {
+    .map((row): HomeDeur | null => {
       const korteNaam = row.korteNaam?.trim();
       const href = row.href?.trim();
       if (!korteNaam || !href) return null;
@@ -1128,7 +1128,7 @@ function mergeHomeDeuren(
         tekstEn: row.tekstEn?.trim() || undefined,
         href: (rewriteMpcHref(href) || href).replace(/\/performance\/corporate-coaching$/, "/b2b"),
         foto: toCmsFoto(row.foto),
-      } satisfies HomeDeur;
+      };
     })
     .filter((row): row is HomeDeur => row !== null);
 }

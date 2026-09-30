@@ -235,18 +235,18 @@ const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, tra
     }
   </style>
 
-  {THEME !== "lab" && <PartnerBand
+  <PartnerBand
     partners={partners}
     title={settings.partnerband.titel}
     snelheid={settings.partnerband.snelheid}
     animatie={settings.partnerband.animatie}
-  />}
+  />
 
-  {THEME !== "lab" && settings.slogans.home && (
+  {settings.slogans.home && (
     <SloganBanner quote={settings.slogans.home} image={homeSquats} foto={pagina.bannerFoto} />
   )}
 
-  {THEME !== "lab" && <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">
+  <section class="mx-auto max-w-6xl divide-y divide-brand-border px-4 py-4">
     <HomePijler
       pijler={settings.homePijlers.kine}
       diensten={homePijlerDiensten("kine", alleDiensten)}
@@ -275,7 +275,7 @@ const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, tra
       aanbodLabel="Ontdek het Performance Centre"
       afspraakHref={afspraakHref}
     />
-  </section>}
+  </section>
 
   {/* On phones this follows the MPC pijler directly, so keep the gap tight and the cards compact. */}
   <section class="mx-auto grid max-w-6xl gap-4 px-4 pt-2 pb-10 sm:grid-cols-2 sm:gap-6 sm:py-16">
