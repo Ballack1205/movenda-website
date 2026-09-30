@@ -52,6 +52,8 @@ export default defineType({
       title: "Fotogalerij",
       type: "array",
       group: "inhoud",
+      description:
+        "De fotostrook onderaan de dienstpagina. Slepen = volgorde. Foto weghalen: ⋯ → Verwijderen. Een foto die al bij een andere dienst staat: Toevoegen → kies uit mediabibliotheek. Leeg = de hoofdafbeelding.",
       of: [{ type: "image", options: { hotspot: true } }],
     }),
     defineField({ name: "ctaLabel", title: "CTA-tekst", type: "string", group: "inhoud" }),
