@@ -35,9 +35,9 @@ const logoSrc = (logo: string, height: number) =>
 {
   partners.length > 0 && (
     <section class="partnerband-section relative z-[1] border-y border-brand-border bg-brand-surface py-10">
-      <h2 class="px-4 text-center text-sm font-semibold uppercase tracking-wide text-brand-muted">{title}</h2>
+      {title && <h2 class="px-4 text-center text-sm font-semibold uppercase tracking-wide text-brand-muted">{title}</h2>}
       <div
-        class:list={["partnerband", "mt-6", { "partnerband--static": !animatie }]}
+        class:list={["partnerband", title && "mt-6", { "partnerband--static": !animatie }]}
         style={`--partnerband-duration:${duration}s`}
       >
         <div class="partnerband__track">
@@ -53,7 +53,10 @@ const logoSrc = (logo: string, height: number) =>
                       alt={isClone ? "" : p.naam}
                       height="48"
                       decoding="async"
-                      class="partnerband__logo"
+                      class:list={[
+                        "partnerband__logo",
+                        p.naam.trim().toLowerCase() === "mxgp" && "partnerband__logo--mxgp",
+                      ]}
                     />
                   ) : (
                     <span class="partnerband__naam">{p.naam}</span>
@@ -189,6 +192,10 @@ const logoSrc = (logo: string, height: number) =>
     transition: filter 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
   }
 
+  .partnerband__logo--mxgp {
+    height: 1.5rem;
+  }
+
   .partnerband__naam {
     font-family: var(--font-heading);
     font-size: 0.9375rem;
@@ -217,6 +224,10 @@ const logoSrc = (logo: string, height: number) =>
     .partnerband__logo {
       height: 3rem;
       max-width: 11rem;
+    }
+
+    .partnerband__logo--mxgp {
+      height: 1.8rem;
     }
   }
 

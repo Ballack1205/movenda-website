@@ -353,7 +353,11 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
                         <a href={group.href}>{group.label}</a>
                         {group.children.map((child) =>
                           child.heading ? (
-                            <p class="lab-menu__heading">{child.label}</p>
+                            child.href ? (
+                              <a href={child.href} class="lab-menu__heading">{child.label}</a>
+                            ) : (
+                              <p class="lab-menu__heading">{child.label}</p>
+                            )
                           ) : (
                             <a
                               href={child.href}

@@ -92,7 +92,6 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 
 <div class="lab-sheet lab-sheet--ink brief-ink">
   <section id="lab-next" class="lab-intro" data-reveal>
-    <p class="brief-kicker">{brief.merkKicker}</p>
     <h1 class="lab-shout lab-intro__title">{brief.merkTitel}</h1>
     <ul class="brief-proof">
       {proof.map((item) => (
@@ -104,21 +103,17 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
     </ul>
     {paragraphs.map((part) => <p>{part}</p>)}
     <p class="brief-statement">{brief.merkStatement}</p>
-    <a href="#aanbod" class="lab-intro__cta">{brief.merkCta}</a>
   </section>
 </div>
 
-<div class="lab-sheet" data-lab-light>
-  <section class="brief-block" data-reveal>
+<div class="lab-sheet lab-sheet--ink brief-ink">
+  <section class="brief-block brief-partners" data-reveal>
     <PartnerBand
       partners={partners}
-      title={settings.partnerband.titel}
+      title=""
       snelheid={settings.partnerband.snelheid}
       animatie={settings.partnerband.animatie}
     />
-    <div class="mx-auto max-w-6xl px-4">
-      <a href="/over#partners" class="brief-textlink">{brief.partnersCta}</a>
-    </div>
   </section>
 </div>
 
@@ -185,9 +180,9 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
     </div>
   </section>
 
-  <section class="brief-block brief-block--flush" data-reveal>
+  <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
-      <p class="brief-kicker">Events</p>
+      <a class="brief-kicker" href="/events">Events</a>
       <ul class="brief-events">
         {homeEvents.map((event) => (
           <li>
@@ -205,7 +200,6 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
           </li>
         ))}
       </ul>
-      <a href="/events" class="brief-textlink">Alle events</a>
     </div>
   </section>
 </div>

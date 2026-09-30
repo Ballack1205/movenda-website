@@ -107,7 +107,15 @@ const linkClass = (item: NavItem, active: boolean) => [
                         {group.children.map((child) => (
                           <li>
                             {child.heading ? (
-                              <p class="lab-mega__label">{child.label}</p>
+                              child.href ? (
+                                <a
+                                  href={child.href}
+                                  class="lab-mega__label"
+                                  aria-current={isCurrentPath(child.href, path) ? "page" : undefined}
+                                >{child.label}</a>
+                              ) : (
+                                <p class="lab-mega__label">{child.label}</p>
+                              )
                             ) : (
                               <a
                                 href={child.href}

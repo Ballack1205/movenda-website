@@ -68,7 +68,7 @@ function chunks(tekst: string): { kind: "p" | "ul"; lines: string[] }[] {
     {aanbod.map((item) =>
       item.heading ? (
         <li class="sm:col-span-2 mt-4 text-sm font-semibold uppercase tracking-wide text-brand-muted first:mt-0">
-          {item.label}
+          {item.href ? <a href={item.href}>{item.label}</a> : item.label}
         </li>
       ) : (
         <li>

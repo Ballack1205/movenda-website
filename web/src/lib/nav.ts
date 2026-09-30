@@ -31,7 +31,7 @@ export interface NavLink {
   href: string;
   label: string;
   external?: boolean;
-  /** Column label inside a mega menu. Not a link. */
+  /** Section label, same style as Train and Test en analyse. A heading with an href stays a link. */
   heading?: boolean;
 }
 
@@ -209,7 +209,7 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
               ...train,
               { href: "", label: en ? "Test and analysis" : "Test en analyse", heading: true },
               ...test,
-              { href: rehabHref, label: en ? "Rehab" : "Revalidatie" },
+              { href: rehabHref, label: en ? "Rehab" : "Revalidatie", heading: true },
             ],
           },
           { label: "GX", href: p("/groepslessen"), children: gx },
@@ -488,10 +488,10 @@ export function isCurrentPath(href: string, path: string): boolean {
 /** Active if the item itself or one of its children matches the current page. */
 export function isActiveItem(item: NavItem, path: string): boolean {
   if (isCurrentPath(item.href, path)) return true;
-  if ((item.children || []).some((child) => !child.heading && isCurrentPath(child.href, path))) return true;
+  if ((item.children || []).some((child) => child.href && isCurrentPath(child.href, path))) return true;
   return (item.groups || []).some(
     (group) =>
       isCurrentPath(group.href, path) ||
-      group.children.some((child) => !child.heading && isCurrentPath(child.href, path)),
+      group.children.some((child) => child.href && isCurrentPath(child.href, path)),
   );
 }

@@ -1121,6 +1121,18 @@ html[data-theme="lab"] .lab-mega__label {
   opacity: 0.62;
 }
 
+html[data-theme="lab"] a.lab-mega__label {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+html[data-theme="lab"] a.lab-mega__label:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
 html[data-theme="lab"] .lab-mega__link {
   display: block;
   padding: 0.28rem 0;
@@ -1179,12 +1191,31 @@ html[data-theme="lab"] .lab-menu__heading {
   opacity: 0.62;
 }
 
+html[data-theme="lab"] a.lab-menu__heading {
+  color: inherit;
+  text-decoration: none;
+}
+
+html[data-theme="lab"] a.lab-menu__heading:hover {
+  opacity: 1;
+}
+
 html[data-theme="lab"] .brief-kicker {
   margin-bottom: 0.85rem;
   font-size: 0.75rem;
   font-weight: 650;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+html[data-theme="lab"] a.brief-kicker {
+  display: inline-block;
+  text-decoration: none;
+}
+
+html[data-theme="lab"] a.brief-kicker:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
 }
 
 html[data-theme="lab"] .brief-statement {
@@ -1196,10 +1227,6 @@ html[data-theme="lab"] .brief-statement {
 
 html[data-theme="lab"] .brief-block {
   padding: 2.25rem 0;
-}
-
-html[data-theme="lab"] .brief-block--flush {
-  padding-bottom: 0;
 }
 
 html[data-theme="lab"] .google-reviews-feed {
@@ -1238,6 +1265,82 @@ html[data-theme="lab"] .brief-textlink {
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.22em;
+}
+
+html[data-theme="lab"] .brief-ink > .lab-intro {
+  padding-top: 4.125rem;
+  padding-bottom: 2rem;
+}
+
+@media (max-width: 767px) {
+  html[data-theme="lab"] .brief-ink > .lab-intro {
+    padding-top: 2.625rem;
+    padding-bottom: 1.75rem;
+  }
+}
+
+html[data-theme="lab"] .brief-partners.brief-block {
+  padding: 1.5rem 0;
+}
+
+html[data-theme="lab"] .brief-ink:has(.brief-partners) + .brief-ink > .brief-block {
+  padding-top: 2rem;
+}
+
+html[data-theme="lab"] .brief-partners .partnerband-section {
+  border: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  background: transparent;
+}
+
+html[data-theme="lab"] .brief-partners .partnerband {
+  position: relative;
+  isolation: isolate;
+  padding: 0.85rem 0;
+  background: #fff;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+html[data-theme="lab"] .brief-partners .partnerband::before {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    #161513,
+    transparent var(--partnerband-fade),
+    transparent calc(100% - var(--partnerband-fade)),
+    #161513
+  );
+  content: "";
+  pointer-events: none;
+}
+
+html[data-theme="lab"] .brief-partners .partnerband::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: rgb(22 21 19 / 0.22);
+  content: "";
+  pointer-events: none;
+}
+
+html[data-theme="lab"] .brief-partners .partnerband__logo {
+  filter: grayscale(1);
+  opacity: 1;
+}
+
+html[data-theme="lab"] .brief-partners .partnerband__item:hover,
+html[data-theme="lab"] .brief-partners .partnerband__item:focus-within {
+  z-index: 2;
+}
+
+html[data-theme="lab"] .brief-partners .partnerband__item:hover .partnerband__logo,
+html[data-theme="lab"] .brief-partners .partnerband__item:focus-within .partnerband__logo {
+  filter: none;
+  opacity: 1;
 }
 
 html[data-theme="lab"] .brief-proof {
@@ -1427,7 +1530,7 @@ html[data-theme="lab"] .brief-loc--light::after {
 html[data-theme="lab"] .brief-loc__veil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(14 16 18 / 0.28) 0%, rgb(14 16 18 / 0.72) 100%);
+  background: linear-gradient(180deg, rgb(14 16 18 / 0.16) 0%, rgb(14 16 18 / 0.38) 100%);
 }
 
 html[data-theme="lab"] .brief-loc--dark .brief-loc__name,
