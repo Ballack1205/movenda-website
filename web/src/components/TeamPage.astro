@@ -118,7 +118,7 @@ const filters = [
   lang={lang}
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-6xl px-4 pb-12 pt-8">
+  <section class="page-ink mx-auto max-w-6xl px-4 pb-12 pt-8">
     <header>
       <h1 class="max-w-full text-balance">{t.h1}</h1>
       <p class="mt-4 max-w-2xl text-lg text-brand-muted">{t.intro}</p>
@@ -322,6 +322,27 @@ const filters = [
   :global(html[data-theme="lab"]) .team-filters button[aria-pressed="true"],
   :global(html[data-theme="lab"]) .team-filters button[aria-pressed="true"]:hover {
     color: var(--brand-text);
+  }
+
+  /* On the black team page the cream chip bar would fight the ink sheet.
+     Unselected chips stay light; the active one is the cream pill. */
+  :global(html[data-theme="lab"]) .page-ink .team-filters {
+    background: transparent;
+    border-color: rgb(244 247 251 / 0.28);
+  }
+  :global(html[data-theme="lab"]) .page-ink .team-filters button {
+    background: transparent;
+    border-color: rgb(244 247 251 / 0.28);
+    color: #f4f7fb;
+  }
+  :global(html[data-theme="lab"]) .page-ink .team-filters button[aria-pressed="true"],
+  :global(html[data-theme="lab"]) .page-ink .team-filters button[aria-pressed="true"]:hover {
+    background: #f3eee4;
+    border-color: #f3eee4;
+    color: #161513;
+  }
+  :global(html[data-theme="lab"]) .page-ink [data-card]:hover {
+    border-color: #f4f7fb;
   }
 
   /* Bio panel sits under the photo. Desktop (lg+) reveals it on hover/focus.

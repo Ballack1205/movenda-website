@@ -317,6 +317,100 @@ html[data-theme="lab"] [data-header] [data-nav-panel] ul {
   box-shadow: none;
 }
 
+/* The bar itself stays see-through. The page behind it is ink, so the
+   cream body never shows through, and copy can scroll across that black. */
+html[data-theme="lab"] body:has(.page-ink) {
+  background: #161513;
+}
+
+/* Black pages: the bar stays ink. Only the bottom strip is see-through,
+   so scrolling type disappears until it crosses that edge. */
+html[data-theme="lab"] body:has(.page-ink) [data-header] {
+  position: sticky;
+  top: 0;
+  background-color: transparent;
+  background-image: linear-gradient(180deg, #161513 0%, #161513 85%, transparent 100%);
+  color: #f4f7fb;
+  border-bottom: 0;
+  box-shadow: none;
+}
+
+html[data-theme="lab"] body:has(.page-ink) [data-header]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.75rem;
+  height: calc(15% + 0.75rem);
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(22 21 19 / 0.2) 0%, transparent 100%);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+}
+
+html[data-theme="lab"] body:has(.page-ink) [data-header] a,
+html[data-theme="lab"] body:has(.page-ink) [data-header] button,
+html[data-theme="lab"] body:has(.page-ink) [data-header] input {
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] body:has(.page-ink) [data-header] input::placeholder {
+  color: rgb(244 247 251 / 0.6);
+}
+
+html[data-theme="lab"] body:has(.page-ink) [data-header] [data-cta],
+html[data-theme="lab"] body:has(.page-ink) [data-header] [data-cta]:hover,
+html[data-theme="lab"] body:has(.page-ink) [data-header] [data-cta]:focus-visible {
+  background: #f3eee4;
+  color: #161513;
+}
+
+html[data-theme="lab"] body:has(.page-ink) [data-menu-toggle] {
+  border-color: rgb(244 247 251 / 0.28);
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] body:has(.page-ink) [data-header] a:not([data-logo]):hover,
+html[data-theme="lab"] body:has(.page-ink) [data-header] button:hover {
+  background-color: rgb(244 247 251 / 0.08);
+}
+
+html[data-theme="lab"] body:has(.page-ink) [data-header] a[data-logo]:hover :is(.logo-on-light, .logo-on-dark),
+html[data-theme="lab"] body:has(.page-ink) [data-header] a[data-logo]:focus-visible :is(.logo-on-light, .logo-on-dark) {
+  filter: none;
+}
+
+html[data-theme="lab"] body:has(.page-ink) .logo-on-light {
+  display: none;
+}
+
+html[data-theme="lab"] body:has(.page-ink) .logo-on-dark {
+  display: block;
+}
+
+html[data-theme="lab"] body:has(.page-ink) [data-header] [data-mobile-nav],
+html[data-theme="lab"] body:has(.page-ink) [data-header] [data-nav-panel] ul,
+html[data-theme="lab"] body:has(.page-ink) [data-nav-panel] .lab-mega {
+  background: #161513;
+  border-color: rgb(244 247 251 / 0.15);
+  color: #f4f7fb;
+}
+
+/* Summaries are not links, so the header link color never reached Aanbod / Over ons. */
+html[data-theme="lab"] body:has(.page-ink) .lab-menu,
+html[data-theme="lab"] body:has(.page-ink) .lab-menu__item,
+html[data-theme="lab"] body:has(.page-ink) .lab-menu summary {
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] body:has(.page-ink) [data-header] [data-search-list] a,
+html[data-theme="lab"] body:has(.page-ink) [data-header] [data-search-list] a:hover {
+  color: #161513;
+}
+
 html[data-theme="lab"] [data-menu-toggle] {
   min-height: 44px;
   min-width: 44px;

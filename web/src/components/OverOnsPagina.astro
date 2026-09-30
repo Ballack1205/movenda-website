@@ -1,0 +1,356 @@
+---
+// Ons verhaal / Onze visie: black lab layout shared by NL and EN. All copy is
+// Julie's (Studio → Pagina's → Ons verhaal / Onze visie); layout lives here.
+import type { ImageMetadata } from "astro";
+import PaginaFoto from "./PaginaFoto.astro";
+import PartnerBand from "./PartnerBand.astro";
+import {
+  getPartners,
+  getSiteSettings,
+  paginaAlineas,
+  paginaBlokKop,
+  paginaBlokTekst,
+  paginaTekst,
+  type Pagina,
+} from "../lib/content";
+import { withLang } from "../lib/i18n";
+
+interface Props {
+  pagina: Pagina;
+  soort: "verhaal" | "visie";
+  fallback: ImageMetadata;
+  fallbackAlt: string;
+  lang?: "nl" | "en";
+}
+
+const { pagina, soort, fallback, fallbackAlt, lang = "nl" } = Astro.props;
+const en = lang === "en";
+const titel = paginaTekst(pagina, "titel", lang);
+const slogan = paginaTekst(pagina, "slogan", lang);
+const afsluiter = paginaTekst(pagina, "afsluiter", lang);
+const intro = paginaAlineas(pagina, lang);
+const alineas = (tekst: string) => tekst.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+
+const verhaal = soort === "verhaal";
+const partners = verhaal ? await getPartners("movenda") : [];
+const settings = verhaal ? await getSiteSettings() : undefined;
+
+const locaties = [
+  { href: withLang("/locaties/olympia", lang), label: "Sportpraktijk Movenda Hasselt" },
+  { href: withLang("/locaties/mpc", lang), label: "Performance Centre Kuringen" },
+];
+const knoppen = verhaal
+  ? [{ href: withLang("/team", lang), label: en ? "Meet our team" : "Maak kennis met ons team" }]
+  : [
+      { href: withLang("/kinesitherapie", lang), label: en ? "Discover our approach" : "Ontdek onze aanpak" },
+      { href: `${withLang("/", lang)}#aanbod`, label: en ? "View what we offer" : "Bekijk ons aanbod" },
+    ];
+const leesOok = verhaal
+  ? { href: withLang("/over-ons/onze-visie", lang), label: en ? "Our vision" : "Onze visie" }
+  : { href: withLang("/over-ons/ons-verhaal", lang), label: en ? "Our story" : "Ons verhaal" };
+---
+
+<article class="overons">
+  <header class="dienst-hero overons-hero">
+    <PaginaFoto
+      pagina={pagina}
+      fallback={fallback}
+      alt={fallbackAlt}
+      width={1600}
+      height={900}
+      widths={[800, 1200, 1600, 2400]}
+      sizes="100vw"
+      priority
+    />
+    <div class="overons-hero__copy">
+      <p class="overons-kicker">{en ? "About us" : "Over ons"}</p>
+      <h1>{titel}</h1>
+      {slogan && <p class="overons-slogan">{slogan}</p>}
+    </div>
+  </header>
+
+  <div class="overons-ink">
+    <div class="overons-copy mx-auto max-w-3xl px-4">
+      {intro.map((p, i) => <p class:list={[i === 0 && "overons-lead"]}>{p}</p>)}
+
+      {pagina.blokken.map((blok) => (
+        <section>
+          <h2>{paginaBlokKop(blok, lang)}</h2>
+          {alineas(paginaBlokTekst(blok, lang)).map((p) => <p>{p}</p>)}
+        </section>
+      ))}
+    </div>
+
+    {!verhaal && pagina.kenmerken.length > 0 && (
+      <section class="overons-principes mx-auto max-w-6xl px-4" aria-labelledby="overons-principes">
+        <h2 id="overons-principes">{en ? "What we stand for" : "Waar we voor staan"}</h2>
+        <ul>
+          {pagina.kenmerken.map((k) => (
+            <li>
+              <h3>{paginaBlokKop(k, lang)}</h3>
+              <p>{paginaBlokTekst(k, lang)}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {afsluiter && (
+      <p class="overons-afsluiter mx-auto max-w-6xl px-4">{afsluiter}</p>
+    )}
+
+    {verhaal && partners.length > 0 && settings && (
+      <div id="partners" class="brief-partners overons-partners">
+        <p class="overons-kicker mx-auto max-w-6xl px-4">{en ? "Our partners" : "Onze partners"}</p>
+        <PartnerBand
+          partners={partners}
+          title=""
+          snelheid={settings.partnerband.snelheid}
+          animatie={settings.partnerband.animatie}
+        />
+      </div>
+    )}
+
+    <div class="overons-close mx-auto max-w-6xl px-4">
+      <div class="overons-knoppen">
+        {knoppen.map((k, i) => (
+          <a href={k.href} class:list={["overons-knop", i === 0 && "overons-knop--primair"]}>{k.label}</a>
+        ))}
+        {!verhaal && (
+          <a href={withLang("/team", lang)} class="overons-link">{en ? "Meet our team" : "Maak kennis met ons team"}</a>
+        )}
+      </div>
+
+      <div class="overons-locs">
+        <p class="overons-kicker">{en ? "Discover our locations" : "Ontdek onze locaties"}</p>
+        <p class="overons-locs__rij">
+          <a href={locaties[0].href}>{locaties[0].label}</a>
+          <span aria-hidden="true">×</span>
+          <a href={locaties[1].href}>{locaties[1].label}</a>
+        </p>
+      </div>
+
+      <p class="overons-leesook">
+        {en ? "Read also" : "Lees ook"}: <a href={leesOok.href}>{leesOok.label}</a>
+      </p>
+    </div>
+  </div>
+</article>
+
+<style>
+  .overons {
+    background: #161513;
+    color: #f4f7fb;
+  }
+
+  .overons-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 72vh;
+    color: #f4f7fb;
+    background: #161513;
+  }
+
+  .overons-hero :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+
+  .overons-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgb(14 16 18 / 0.82), rgb(14 16 18 / 0.18) 60%);
+  }
+
+  .overons-hero__copy {
+    position: relative;
+    z-index: 1;
+    width: min(72rem, 100%);
+    margin-inline: auto;
+    padding: 7.5rem 1.25rem 2.75rem;
+  }
+
+  .overons-kicker {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(244 247 251 / 0.72);
+  }
+
+  .overons-hero h1 {
+    max-width: 16ch;
+    margin-top: 0.75rem;
+    font-size: clamp(2.6rem, 1.5rem + 3.4vw, 4.75rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .overons-slogan {
+    margin-top: 0.85rem;
+    font-size: clamp(1.2rem, 1rem + 0.8vw, 1.6rem);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .overons-ink {
+    padding-bottom: 5rem;
+  }
+
+  .overons-copy {
+    padding-top: 3rem;
+  }
+
+  .overons-copy p {
+    margin-top: 1rem;
+    line-height: 1.75;
+    color: rgb(244 247 251 / 0.86);
+  }
+
+  .overons-copy .overons-lead {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #f4f7fb;
+  }
+
+  .overons-copy h2 {
+    margin-top: 3rem;
+    font-size: clamp(1.45rem, 1.2rem + 0.8vw, 1.9rem);
+    font-weight: 650;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .overons-principes {
+    margin-top: 4.5rem;
+  }
+
+  .overons-principes h2 {
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .overons-principes ul {
+    display: grid;
+    gap: 1px;
+    margin-top: 1.75rem;
+    background: rgb(244 247 251 / 0.16);
+    border: 1px solid rgb(244 247 251 / 0.16);
+  }
+
+  @media (min-width: 640px) {
+    .overons-principes ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .overons-principes ul {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .overons-principes li {
+    padding: 1.75rem 1.5rem;
+    background: #161513;
+  }
+
+  .overons-principes h3 {
+    font-size: 1.1rem;
+    font-weight: 650;
+  }
+
+  .overons-principes li p {
+    margin-top: 0.6rem;
+    line-height: 1.65;
+    color: rgb(244 247 251 / 0.8);
+  }
+
+  .overons-afsluiter {
+    margin-top: 4.5rem;
+    font-size: clamp(1.9rem, 1.2rem + 2.6vw, 3.6rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .overons-partners {
+    margin-top: 4.5rem;
+  }
+
+  .overons-partners .overons-kicker {
+    margin-bottom: 1rem;
+  }
+
+  .overons-close {
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgb(244 247 251 / 0.16);
+  }
+
+  .overons-knoppen {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .overons-knop {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    padding: 0 1.5rem;
+    border: 1px solid rgb(244 247 251 / 0.5);
+    border-radius: 9999px;
+    font-weight: 600;
+    color: #f4f7fb;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .overons-knop:hover,
+  .overons-knop--primair {
+    background: #f4f7fb;
+    color: #161513;
+  }
+
+  .overons-knop--primair:hover {
+    background: transparent;
+    color: #f4f7fb;
+  }
+
+  .overons-link,
+  .overons-locs a,
+  .overons-leesook a {
+    font-weight: 600;
+    color: #f4f7fb;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .overons-locs {
+    margin-top: 2.5rem;
+  }
+
+  .overons-locs__rij {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.6rem;
+    margin-top: 0.6rem;
+    font-size: 1.1rem;
+  }
+
+  .overons-leesook {
+    margin-top: 2rem;
+    color: rgb(244 247 251 / 0.72);
+  }
+</style>

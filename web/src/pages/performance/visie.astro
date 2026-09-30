@@ -2,6 +2,9 @@
 import Layout from "../../layouts/Layout.astro";
 import { getLocatieBySlug, getSiteSettings, getPagina, paginaAlineas } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
+import { MPC_HOST } from "../../lib/site";
+
+if (!MPC_HOST) return Astro.redirect("/over-ons/onze-visie", 301);
 
 const locatie = (await getLocatieBySlug("mpc"))!;
 const settings = await getSiteSettings();

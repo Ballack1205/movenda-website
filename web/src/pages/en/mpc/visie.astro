@@ -1,3 +1,5 @@
 ---
-return Astro.redirect("/en/performance/visie", 301);
+import { MPC_HOST } from "../../../lib/site";
+
+return Astro.redirect(MPC_HOST ? "/en/performance/visie" : "/en/over-ons/onze-visie", 301);
 ---

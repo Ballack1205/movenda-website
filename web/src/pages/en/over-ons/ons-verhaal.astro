@@ -1,0 +1,27 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import OverOnsPagina from "../../../components/OverOnsPagina.astro";
+import { getPagina, paginaTekst } from "../../../lib/content";
+import { breadcrumbSchema } from "../../../lib/schema";
+import overHero from "../../../assets/marketing/over-hero.jpg";
+
+const pagina = await getPagina("over");
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Our story", path: "/en/over-ons/ons-verhaal" },
+  ]),
+];
+---
+
+<Layout
+  title={paginaTekst(pagina, "seoTitle", "en") || "Our story | Sportpraktijk Movenda"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
+  path="/en/over-ons/ons-verhaal"
+  altPath="/over-ons/ons-verhaal"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <OverOnsPagina pagina={pagina} soort="verhaal" lang="en" fallback={overHero} fallbackAlt="A coach guides a client on the treadmill at Movenda" />
+</Layout>

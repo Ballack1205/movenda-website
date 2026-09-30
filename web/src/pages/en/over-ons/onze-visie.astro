@@ -1,0 +1,27 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import OverOnsPagina from "../../../components/OverOnsPagina.astro";
+import { getPagina, paginaTekst } from "../../../lib/content";
+import { breadcrumbSchema } from "../../../lib/schema";
+import visieHero from "../../../assets/marketing/home-performance.jpg";
+
+const pagina = await getPagina("onze-visie");
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Our vision", path: "/en/over-ons/onze-visie" },
+  ]),
+];
+---
+
+<Layout
+  title={paginaTekst(pagina, "seoTitle", "en") || "Our vision | Sportpraktijk Movenda"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
+  path="/en/over-ons/onze-visie"
+  altPath="/over-ons/onze-visie"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <OverOnsPagina pagina={pagina} soort="visie" lang="en" fallback={visieHero} fallbackAlt="A physiotherapist throws a ball to a jumping athlete" />
+</Layout>

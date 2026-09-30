@@ -1200,6 +1200,9 @@ export interface Pagina {
   ctaTekstEn?: string;
   slogan?: string;
   sloganEn?: string;
+  /** Closing statement (Ons verhaal, Onze visie). */
+  afsluiter?: string;
+  afsluiterEn?: string;
   extraTekst?: string;
   extraTekstEn?: string;
   prijsNotitie?: string;
@@ -1288,7 +1291,7 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
       "heroVideo": heroVideo.asset->url,
       blokken, kenmerken, stappenTitel, stappenTitelEn, stappenIntro, stappenIntroEn, stappen, pijlers,
       legeTekst, legeTekstEn, ctaTekst, ctaTekstEn,
-      slogan, sloganEn, extraTekst, extraTekstEn, prijsNotitie, prijsNotitieEn, formulierIntro, formulierIntroEn,
+      slogan, sloganEn, afsluiter, afsluiterEn, extraTekst, extraTekstEn, prijsNotitie, prijsNotitieEn, formulierIntro, formulierIntroEn,
       terugbetalingTitel, terugbetalingTitelEn, terugbetalingTekst, terugbetalingTekstEn,
       perTherapeutTitel, perTherapeutTitelEn, perTherapeutTekst, perTherapeutTekstEn,
       verwijsopties[]{ label, labelEn, vervolg },
@@ -1331,6 +1334,8 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
     ctaTekstEn: pick("ctaTekstEn"),
     slogan: pick("slogan"),
     sloganEn: pick("sloganEn"),
+    afsluiter: pick("afsluiter"),
+    afsluiterEn: pick("afsluiterEn"),
     extraTekst: pick("extraTekst"),
     extraTekstEn: pick("extraTekstEn"),
     prijsNotitie: pick("prijsNotitie"),
@@ -1365,6 +1370,7 @@ type PaginaTekstVeld =
   | "legeTekst"
   | "ctaTekst"
   | "slogan"
+  | "afsluiter"
   | "extraTekst"
   | "prijsNotitie"
   | "formulierIntro"
