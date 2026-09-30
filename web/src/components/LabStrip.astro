@@ -46,5 +46,55 @@ const { items } = Astro.props;
         </span>
       </a>
     ))}
-  </div>
+    </div>
 </section>
+
+<script>
+  // Phones have no hover. After a swipe settles, the door in the middle grows
+  // and the others give up width — the same shift as a desktop hover.
+  const desktop = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 768px)");
+
+  document.querySelectorAll<HTMLElement>(".lab-strip__grid").forEach((grid) => {
+    const cards = [...grid.querySelectorAll<HTMLElement>(".lab-strip__card")];
+    if (cards.length === 0) return;
+    let current = -1;
+    let timer = 0;
+
+    const mark = () => {
+      if (desktop.matches) {
+        if (current !== -1) {
+          current = -1;
+          cards.forEach((card) => card.classList.remove("is-open"));
+        }
+        return;
+      }
+      const mid = grid.getBoundingClientRect().left + grid.clientWidth / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      cards.forEach((card, i) => {
+        const r = card.getBoundingClientRect();
+        const dist = Math.abs(r.left + r.width / 2 - mid);
+        if (dist < bestDist) {
+          best = i;
+          bestDist = dist;
+        }
+      });
+      if (best === current) return;
+      current = best;
+      cards.forEach((card, i) => card.classList.toggle("is-open", i === best));
+    };
+
+    const schedule = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(mark, 140);
+    };
+
+    grid.addEventListener("scroll", schedule, { passive: true });
+    grid.addEventListener("scrollend", () => {
+      window.clearTimeout(timer);
+      mark();
+    });
+    desktop.addEventListener("change", mark);
+    mark();
+  });
+</script>
