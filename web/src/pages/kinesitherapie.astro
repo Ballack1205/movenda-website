@@ -1,20 +1,16 @@
 ---
-import CmsFoto from "../components/CmsFoto.astro";
+import AanbodOverzicht from "../components/AanbodOverzicht.astro";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
-import DienstCard from "../components/DienstCard.astro";
 import PaginaFoto from "../components/PaginaFoto.astro";
-import { getDienstenByCategorie, getLocatieBySlug, getSiteSettings, getPagina, paginaAlineas } from "../lib/content";
+import { getLocatieBySlug, getPagina, paginaAlineas } from "../lib/content";
+import { getBriefAanbod } from "../lib/nav";
 import { breadcrumbSchema, localBusinessSchema } from "../lib/schema";
 import kineHero from "../assets/marketing/kine-hero.jpg";
-import kineSecondary from "../assets/marketing/kine-secondary.jpg";
 
 const locatie = (await getLocatieBySlug("olympia"))!;
-const diensten = await getDienstenByCategorie("kine");
-const settings = await getSiteSettings();
 const pagina = await getPagina("kinesitherapie");
-// Same list Julie edits for the homepage pijler (siteSettings -> Homepage).
-const klachten = settings.homePijlers.kine.lijst;
+const aanbod = (await getBriefAanbod("nl")).find((group) => group.href === "/kinesitherapie")?.children ?? [];
 
 const jsonLd = [
   localBusinessSchema(locatie),
@@ -23,7 +19,6 @@ const jsonLd = [
     { name: "Kinesitherapie", path: "/kinesitherapie" },
   ]),
 ];
-import SectionKicker from "../components/SectionKicker.astro";
 ---
 
 <Layout
@@ -33,69 +28,29 @@ import SectionKicker from "../components/SectionKicker.astro";
   altPath="/en/kinesitherapie"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-6xl px-4 py-12">
-    <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
-      <div>
-        <SectionKicker n={1} />
-        <h1 class="text-3xl font-bold">{pagina.titel}</h1>
-        {settings.slogans.kine && (
-          <p class="mt-2 text-lg font-medium text-brand-primary">{settings.slogans.kine}</p>
-        )}
-        {paginaAlineas(pagina).map((tekst) => (
-          <p class="mt-3 max-w-xl text-brand-muted">{tekst}</p>
-        ))}
-        <div class="mt-6 flex flex-wrap items-center gap-3">
-          <a
-            href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`}
-            class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
-          >
-            Bel {locatie.telefoon}
-          </a>
-          <GoogleReviewBadge locatie="olympia" />
-        </div>
-      </div>
-      <PaginaFoto
-        pagina={pagina}
-        fallback={kineHero}
-        alt="Manuele therapie behandeling bij Movenda"
-        width={640}
-        height={720}
-        widths={[640, 960, 1280]}
-        sizes="(min-width: 1024px) 42vw, 100vw"
-        class="aspect-[4/4.5] w-full rounded-3xl object-cover shadow-xl"
-        priority
-      />
-    </div>
-
-    <h2 class="mt-12 text-xl font-bold">Klachten die we behandelen</h2>
-    <div class="mt-4 flex flex-wrap gap-2">
-      {klachten.map((k) => (
-        <span class="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-sm text-brand-text">
-          {k}
-        </span>
-      ))}
-    </div>
-
-    <h2 class="mt-10 text-xl font-bold">Onze behandeltechnieken</h2>
-    <div class="mt-4 grid gap-6 lg:grid-cols-3">
-      <div class="grid gap-4 sm:grid-cols-2 lg:col-span-2">
-        {diensten.map((dienst) => (
-          <DienstCard dienst={dienst} />
-        ))}
-      </div>
-      <CmsFoto
-        foto={pagina.fotoSecundair}
-        fallback={kineSecondary}
-        alt="Taping en verzorging bij Movenda"
-        width={480}
-        height={640}
-        class="aspect-[16/10] w-full rounded-2xl object-cover lg:aspect-[3/4]"
-      />
-    </div>
-
-    <p class="mt-8 text-sm text-brand-muted">
-      Wij werken enkel op afspraak vanuit Movenda,{" "}
-      {locatie.adres}.
-    </p>
-  </section>
+  <AanbodOverzicht
+    kicker={pagina.ondertitel}
+    titel={pagina.titel}
+    alineaas={paginaAlineas(pagina)}
+    blokken={pagina.blokken}
+    aanbodTitel="Aanbod"
+    aanbod={aanbod}
+  >
+    <a slot="actions" href="/team#keuzehulp" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
+      Plan je afspraak
+    </a>
+    <GoogleReviewBadge slot="actions" locatie="olympia" />
+    <PaginaFoto
+      slot="media"
+      pagina={pagina}
+      fallback={kineHero}
+      alt={pagina.fotoAlt || "Begeleiding bij Movenda"}
+      width={640}
+      height={720}
+      widths={[640, 960, 1280]}
+      sizes="(min-width: 1024px) 42vw, 100vw"
+      class="aspect-[4/4.5] w-full object-cover"
+      priority
+    />
+  </AanbodOverzicht>
 </Layout>

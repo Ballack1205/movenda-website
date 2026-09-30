@@ -10,6 +10,7 @@
 import {
   dienstHref,
   dienstMenuLabel,
+  isB2bDienst,
   getDiensten,
   getLocaties,
   getSiteSettings,
@@ -90,7 +91,7 @@ function dienstLinks(diensten: Dienst[], categorie: DienstCategorie | DienstCate
   // Category order as passed in, then Julie's volgorde within a category.
   // "Tonen in het menu" off (Studio → Diensten) hides a dienst here only; its page stays live.
   return diensten
-    .filter((d) => cats.includes(d.categorie) && d.toonInMenu !== false)
+    .filter((d) => cats.includes(d.categorie) && d.toonInMenu !== false && !isB2bDienst(d))
     .sort((a, b) => cats.indexOf(a.categorie) - cats.indexOf(b.categorie) || a.volgorde - b.volgorde)
     .map((d) => ({ href: dienstHref(d, lang), label: dienstMenuLabel(d, lang) }));
 }
@@ -143,8 +144,9 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
   const train = linksBySlugs(
     diensten,
     [
+      { slug: "personal-training", categorie: "mpc-training", label: en ? "Personal training" : "Personal Training" },
       { slug: "performance-training", categorie: "mpc-training", label: en ? "Performance coaching" : "Performance Coaching" },
-      { slug: "personal-training", categorie: "mpc-training" },
+      { slug: "high-performance-coaching", categorie: "mpc-training", label: en ? "High performance coaching" : "High Performance Coaching" },
       { slug: "duotraining", categorie: "mpc-training", label: en ? "Duo training" : "Duo Training" },
       { slug: "boxing-1-on-1", categorie: "mpc-training", label: "Boxing 1-on-1" },
       { slug: "pre-en-postnatale-training", categorie: "training" },
@@ -158,8 +160,14 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
       { slug: "inspanningstesten", categorie: "training" },
       { slug: "loopanalyse-ontracx", categorie: "mpc-training", label: "Loopanalyse met OnTracx" },
       { slug: "vald-screening", categorie: "mpc-training", label: "VALD Screening" },
-      { slug: "data-analyse", categorie: "mpc-training", label: "Data Analysis" },
-      { slug: "monitoring-whoop", categorie: "mpc-training", label: "Monitoring met Whoop" },
+    ],
+    lang,
+  );
+  const b2b = linksBySlugs(
+    diensten,
+    [
+      { slug: "teamtraining", categorie: "mpc-groep", label: en ? "Team training at Movenda" : "Teamtraining bij Movenda" },
+      { slug: "on-site-workouts", categorie: "mpc-groep", label: "On-site workouts" },
     ],
     lang,
   );
@@ -205,7 +213,7 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
             ],
           },
           { label: "GX", href: p("/groepslessen"), children: gx },
-          { label: "B2B", href: p("/performance/corporate-coaching"), children: [] },
+          { label: "B2B", href: p("/b2b"), children: b2b },
           {
             label: "Olympia",
             href: p("/locaties/olympia"),
@@ -243,6 +251,14 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
     cta: afspraak,
     contact,
   };
+}
+
+/** Same Aanbod lists the header uses, so overview pages do not keep a second copy. */
+export async function getBriefAanbod(lang: Lang): Promise<NavGroup[]> {
+  const { diensten } = await loadNavData();
+  const contact: NavLink =
+    lang === "en" ? { href: "/en/contact", label: "Contact" } : { href: "/contact", label: "Contact" };
+  return briefNav(diensten, lang, contact).items[0]?.groups ?? [];
 }
 
 function sportaanbodLinks(items: SportaanbodItem[], lang: Lang = "nl"): NavLink[] {

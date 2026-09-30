@@ -2,36 +2,30 @@
 import Layout from "../../layouts/Layout.astro";
 import DienstDetail from "../../components/DienstDetail.astro";
 import {
-  getDienstenByCategorie,
-  getDienstBySlug,
+  getDiensten,
   getLocatieBySlug,
   getTeamleden,
   getPrijzen,
   findPrijsVoorDienst,
   dienstHref,
-  isGroepLes,
   isB2bDienst,
 } from "../../lib/content";
 import { serviceNode, breadcrumbNode } from "../../lib/schema";
 
 export async function getStaticPaths() {
-  const canonicalKine = new Set(["dry-needling", "cupping", "taping"]);
-  const diensten = await getDienstenByCategorie("mpc");
-  return diensten
-    .filter((dienst) => !isGroepLes(dienst) && !isB2bDienst(dienst) && dienst.slug !== "corporate-coaching" && !canonicalKine.has(dienst.slug))
-    .map((dienst) => ({ params: { slug: dienst.slug } }));
+  const diensten = await getDiensten();
+  return diensten.filter(isB2bDienst).map((dienst) => ({ params: { slug: dienst.slug } }));
 }
 
 const { slug } = Astro.params;
-const dienst = await getDienstBySlug(slug!, "mpc");
+const dienst = (await getDiensten()).find((item) => item.slug === slug && isB2bDienst(item));
 
 if (!dienst) {
-  return Astro.redirect("/performance");
+  return Astro.redirect("/b2b");
 }
 
 const locatie = (await getLocatieBySlug("mpc"))!;
-const alleTeamleden = await getTeamleden();
-const team = alleTeamleden.filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
+const team = (await getTeamleden()).filter((lid) => dienst.gekoppeldeTeamleden.includes(lid.slug));
 const path = dienstHref(dienst);
 const prijs = findPrijsVoorDienst(dienst, await getPrijzen());
 
@@ -39,7 +33,7 @@ const jsonLd = [
   serviceNode(dienst, locatie, { path, prijs, team }),
   breadcrumbNode([
     { name: "Home", path: "/" },
-    { name: "Movenda Performance Centre", path: "/performance" },
+    { name: "B2B", path: "/b2b" },
     { name: dienst.titel, path },
   ]),
 ];
@@ -51,14 +45,12 @@ const jsonLd = [
   path={path}
   altPath={dienstHref(dienst, "en")}
   jsonLd={jsonLd}
-  ogImage={dienst.afbeelding}
-  ogImageAlt={`${dienst.titel} in het Movenda Performance Centre`}
 >
   <DienstDetail
     dienst={dienst}
     team={team}
     locatie={locatie}
-    backHref="/performance"
-    backLabel="← Terug naar Performance"
+    backHref="/b2b"
+    backLabel="← Terug naar B2B"
   />
 </Layout>

@@ -12,6 +12,8 @@ export const PAGINAS = [
   { key: "over", title: "Over ons", path: "/over" },
   { key: "kinesitherapie", title: "Kinesitherapie (overzicht)", path: "/kinesitherapie" },
   { key: "training", title: "Training (overzicht)", path: "/training" },
+  { key: "performance", title: "Performance (overzicht)", path: "/performance" },
+  { key: "b2b", title: "B2B (overzicht)", path: "/b2b" },
   { key: "mpc", title: "MPC (overzicht)", path: "/mpc" },
   { key: "mpc-visie", title: "MPC — Visie", path: "/mpc/visie" },
   { key: "contact", title: "Contact", path: "/contact" },
@@ -131,11 +133,12 @@ export default defineType({
     // --- Blocks per page -------------------------------------------------
     defineField({
       name: "blokken",
-      title: "Uitklapblokken (Movenda Rehabilitation, Training, MPC, Partnerships…)",
+      title: "Tekstblokken onder de intro",
       type: "array",
       of: [blok],
       group: "blokken",
-      hidden: only("over"),
+      hidden: only("over", "kinesitherapie", "performance", "b2b"),
+      description: "Kop en tekst. Een regel die begint met '- ' wordt een opsomming.",
     }),
     defineField({
       name: "kenmerken",

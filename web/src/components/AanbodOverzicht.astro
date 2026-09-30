@@ -1,0 +1,82 @@
+---
+import type { NavLink } from "../lib/nav";
+import { paginaBlokKop, paginaBlokTekst, type PaginaBlok } from "../lib/content";
+import type { Lang } from "../lib/i18n";
+
+interface Props {
+  kicker?: string;
+  titel: string;
+  alineaas: string[];
+  blokken?: PaginaBlok[];
+  aanbodTitel: string;
+  aanbod: NavLink[];
+  lang?: Lang;
+}
+
+const { kicker, titel, alineaas, blokken = [], aanbodTitel, aanbod, lang = "nl" } = Astro.props;
+
+function chunks(tekst: string): { kind: "p" | "ul"; lines: string[] }[] {
+  const out: { kind: "p" | "ul"; lines: string[] }[] = [];
+  for (const raw of tekst.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    const bullet = line.startsWith("- ") ? line.slice(2) : "";
+    if (bullet) {
+      const last = out[out.length - 1];
+      if (last?.kind === "ul") last.lines.push(bullet);
+      else out.push({ kind: "ul", lines: [bullet] });
+    } else {
+      out.push({ kind: "p", lines: [line] });
+    }
+  }
+  return out;
+}
+---
+
+<section class="mx-auto max-w-6xl px-4 py-16">
+  <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+    <div>
+      {kicker && <p class="brief-kicker">{kicker}</p>}
+      <h1 class="mt-3 max-w-[16ch]">{titel}</h1>
+      {alineaas.map((tekst) => (
+        <p class="mt-4 max-w-xl text-brand-muted">{tekst}</p>
+      ))}
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <slot name="actions" />
+      </div>
+    </div>
+    <slot name="media" />
+  </div>
+
+  {blokken.map((blok) => (
+    <section class="mt-14 max-w-3xl">
+      <h2>{paginaBlokKop(blok, lang)}</h2>
+      {chunks(paginaBlokTekst(blok, lang)).map((chunk) =>
+        chunk.kind === "ul" ? (
+          <ul class="mt-3 list-disc space-y-1 pl-5 text-brand-muted">
+            {chunk.lines.map((line) => <li>{line}</li>)}
+          </ul>
+        ) : (
+          <p class="mt-3 text-brand-muted">{chunk.lines[0]}</p>
+        ),
+      )}
+    </section>
+  ))}
+
+  <h2 class="mt-16">{aanbodTitel}</h2>
+  <ul class="mt-6 grid gap-2 sm:grid-cols-2">
+    {aanbod.map((item) =>
+      item.heading ? (
+        <li class="sm:col-span-2 mt-4 text-sm font-semibold uppercase tracking-wide text-brand-muted first:mt-0">
+          {item.label}
+        </li>
+      ) : (
+        <li>
+          <a class="flex min-h-11 items-center text-lg underline decoration-brand-border underline-offset-4 hover:decoration-brand-text" href={item.href}>
+            {item.label}
+          </a>
+        </li>
+      ),
+    )}
+  </ul>
+</section>

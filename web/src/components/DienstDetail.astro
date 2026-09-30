@@ -1,5 +1,5 @@
 ---
-import { getBlogPostsVoorDienst, rewriteMpcHref, type Dienst, type Locatie, type Teamlid } from "../lib/content";
+import { getBlogPostsVoorDienst, isB2bDienst, rewriteMpcHref, type Dienst, type Locatie, type Teamlid } from "../lib/content";
 import { dienstPhotoSrc, teamPhotoSrc } from "../lib/images";
 import { localizeHref, withLang } from "../lib/i18n";
 import BlogPostCard from "./BlogPostCard.astro";
@@ -127,6 +127,7 @@ const heroSrc = manueel
     </div>
   </header>
 
+  <div class="dienst-ink">
   <div class="dienst-copy mx-auto max-w-3xl px-4">
     {intro.map((p) => (
       <p>{p}</p>
@@ -189,7 +190,9 @@ const heroSrc = manueel
       </div>
     </div>
   )}
+  </div>
 
+  <div class="dienst-close">
   <div class="mx-auto max-w-3xl px-4">
   {team.length > 0 && (
     <div class="mt-10">
@@ -222,7 +225,7 @@ const heroSrc = manueel
     <a href={ctaUrl} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
       {ctaLabel}
     </a>
-    {dienst.categorie === "mpc-groep" && dienst.slug !== "corporate-coaching" && (
+    {dienst.categorie === "mpc-groep" && dienst.slug !== "corporate-coaching" && !isB2bDienst(dienst) && (
       <a href={localizeHref("/groepslessen#inschrijven", lang)} class="text-sm font-semibold text-brand-primary hover:underline">
         {lang === "en" ? "Book a trial class" : "Boek een proefles"}
       </a>
@@ -244,6 +247,7 @@ const heroSrc = manueel
       </div>
     </aside>
   )}
+  </div>
   </div>
 </article>
 
@@ -340,5 +344,33 @@ const heroSrc = manueel
     color: var(--brand-primary);
     text-decoration: underline;
     text-underline-offset: 0.15em;
+  }
+
+  .dienst-ink {
+    padding-bottom: 3.5rem;
+  }
+
+  .dienst-close {
+    padding-bottom: 4rem;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-ink {
+    background: #161513;
+    color: #f4f7fb;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy > p,
+  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy li {
+    color: #e6e0d6;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy :is(h2, h3),
+  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy a {
+    color: #f4f7fb;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-close {
+    background: #f3eee4;
+    color: #161513;
   }
 </style>

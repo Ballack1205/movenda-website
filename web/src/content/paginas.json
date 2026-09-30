@@ -45,23 +45,78 @@
       }
     ],
     "kenmerken": [
-      { "kop": "Individuele behandelingen", "tekst": "Elke patiënt wordt individueel behandeld en krijgt een eigen schema.", "kopEn": "Individual treatments", "tekstEn": "Every patient is treated individually and gets their own programme." },
-      { "kop": "Ruime locatie", "tekst": "Movenda aan de Kuringersteenweg in Hasselt.", "kopEn": "Spacious location", "tekstEn": "Movenda on Kuringersteenweg in Hasselt." },
-      { "kop": "Sfeer", "tekst": "Een jong en dynamisch team zorgt voor een motiverende begeleiding.", "kopEn": "Atmosphere", "tekstEn": "A young, dynamic team provides motivating coaching." },
-      { "kop": "Vooruitstrevend", "tekst": "Kwalitatief en constant innoverend.", "kopEn": "Forward-looking", "tekstEn": "High quality and constantly innovating." },
-      { "kop": "Professioneel team", "tekst": "Onze gelicentieerde kinesisten scholen zich op regelmatige basis bij.", "kopEn": "Professional team", "tekstEn": "Our licensed physiotherapists take regular further training." },
-      { "kop": "Netwerk", "tekst": "Samenwerking met verschillende sportclubs.", "kopEn": "Network", "tekstEn": "Collaboration with several sports clubs." }
+      {
+        "kop": "Individuele behandelingen",
+        "tekst": "Elke patiënt wordt individueel behandeld en krijgt een eigen schema.",
+        "kopEn": "Individual treatments",
+        "tekstEn": "Every patient is treated individually and gets their own programme."
+      },
+      {
+        "kop": "Ruime locatie",
+        "tekst": "Movenda aan de Kuringersteenweg in Hasselt.",
+        "kopEn": "Spacious location",
+        "tekstEn": "Movenda on Kuringersteenweg in Hasselt."
+      },
+      {
+        "kop": "Sfeer",
+        "tekst": "Een jong en dynamisch team zorgt voor een motiverende begeleiding.",
+        "kopEn": "Atmosphere",
+        "tekstEn": "A young, dynamic team provides motivating coaching."
+      },
+      {
+        "kop": "Vooruitstrevend",
+        "tekst": "Kwalitatief en constant innoverend.",
+        "kopEn": "Forward-looking",
+        "tekstEn": "High quality and constantly innovating."
+      },
+      {
+        "kop": "Professioneel team",
+        "tekst": "Onze gelicentieerde kinesisten scholen zich op regelmatige basis bij.",
+        "kopEn": "Professional team",
+        "tekstEn": "Our licensed physiotherapists take regular further training."
+      },
+      {
+        "kop": "Netwerk",
+        "tekst": "Samenwerking met verschillende sportclubs.",
+        "kopEn": "Network",
+        "tekstEn": "Collaboration with several sports clubs."
+      }
     ],
     "stappenTitel": "Zo werkt een eerste bezoek bij Movenda",
     "stappenTitelEn": "How a first visit to Movenda works",
     "stappenIntro": "Of je nu komt voor kinesitherapie of personal training — bij Movenda weet je altijd op voorhand wat je kunt verwachten. Geen verrassingen, wel een aanpak volledig op maat van jouw lichaam en doelen.",
     "stappenIntroEn": "Whether you come for physiotherapy or personal training — at Movenda you always know in advance what to expect. No surprises, just an approach fully tailored to your body and goals.",
     "stappen": [
-      { "kop": "Maak een afspraak", "tekst": "Neem contact op via telefoon, e-mail of ons contactformulier. We koppelen je aan de therapeut of coach die het best aansluit bij jouw klacht of doel. Je ontvangt een bevestiging met praktische info over de locatie en wat je best meebrengt.", "kopEn": "Make an appointment", "tekstEn": "Get in touch by phone, email or our contact form. We match you with the therapist or coach who best fits your complaint or goal. You receive a confirmation with practical info about the location and what to bring." },
-      { "kop": "Intake & screening", "tekst": "Bij je eerste sessie nemen we de tijd voor een grondige intake. We bespreken je klachten, medische voorgeschiedenis en doelstellingen. Daarna volgt een functionele screening: we kijken hoe je beweegt, waar beperkingen zitten en wat de oorzaak is van het probleem — niet enkel het symptoom.", "kopEn": "Intake & screening", "tekstEn": "At your first session we take time for a thorough intake. We discuss your complaints, medical history and goals. Then comes a functional screening: how you move, where limitations sit, and what causes the problem — not only the symptom." },
-      { "kop": "Behandeling of trainingsplan op maat", "tekst": "Op basis van de screening stellen we een gepersonaliseerd traject op. Voor kinesitherapie combineren we passieve behandelingen zoals manuele therapie en dry needling met actieve oefentherapie. Voor personal training werk je met een schema dat perfect past bij jouw niveau, agenda en lichaam.", "kopEn": "Tailored treatment or training plan", "tekstEn": "Based on the screening we draw up a personalised trajectory. For physiotherapy we combine hands-on treatments such as manual therapy and dry needling with active exercise therapy. For personal training you work with a programme that fits your level, schedule and body." },
-      { "kop": "Opvolging & bijsturing", "tekst": "Elke sessie wordt individueel begeleid. We evalueren regelmatig je vooruitgang en passen het schema aan waar nodig. Je bent nooit overgelaten aan jezelf.", "kopEn": "Follow-up & adjustment", "tekstEn": "Every session is individually coached. We regularly evaluate your progress and adjust the plan where needed. You are never left to it on your own." },
-      { "kop": "Langetermijnaanpak", "tekst": "Ons doel is niet alleen dat je klachtenvrij bent, maar dat je bewuster en actiever in het leven staat. We coachen je ook na de revalidatie zodat je terugval vermijdt en gezonde gewoonten aanhoudt.", "kopEn": "Long-term approach", "tekstEn": "Our goal is not only that you are complaint-free, but that you live more consciously and actively. We also coach you after rehabilitation so you avoid relapse and keep healthy habits." }
+      {
+        "kop": "Maak een afspraak",
+        "tekst": "Neem contact op via telefoon, e-mail of ons contactformulier. We koppelen je aan de therapeut of coach die het best aansluit bij jouw klacht of doel. Je ontvangt een bevestiging met praktische info over de locatie en wat je best meebrengt.",
+        "kopEn": "Make an appointment",
+        "tekstEn": "Get in touch by phone, email or our contact form. We match you with the therapist or coach who best fits your complaint or goal. You receive a confirmation with practical info about the location and what to bring."
+      },
+      {
+        "kop": "Intake & screening",
+        "tekst": "Bij je eerste sessie nemen we de tijd voor een grondige intake. We bespreken je klachten, medische voorgeschiedenis en doelstellingen. Daarna volgt een functionele screening: we kijken hoe je beweegt, waar beperkingen zitten en wat de oorzaak is van het probleem — niet enkel het symptoom.",
+        "kopEn": "Intake & screening",
+        "tekstEn": "At your first session we take time for a thorough intake. We discuss your complaints, medical history and goals. Then comes a functional screening: how you move, where limitations sit, and what causes the problem — not only the symptom."
+      },
+      {
+        "kop": "Behandeling of trainingsplan op maat",
+        "tekst": "Op basis van de screening stellen we een gepersonaliseerd traject op. Voor kinesitherapie combineren we passieve behandelingen zoals manuele therapie en dry needling met actieve oefentherapie. Voor personal training werk je met een schema dat perfect past bij jouw niveau, agenda en lichaam.",
+        "kopEn": "Tailored treatment or training plan",
+        "tekstEn": "Based on the screening we draw up a personalised trajectory. For physiotherapy we combine hands-on treatments such as manual therapy and dry needling with active exercise therapy. For personal training you work with a programme that fits your level, schedule and body."
+      },
+      {
+        "kop": "Opvolging & bijsturing",
+        "tekst": "Elke sessie wordt individueel begeleid. We evalueren regelmatig je vooruitgang en passen het schema aan waar nodig. Je bent nooit overgelaten aan jezelf.",
+        "kopEn": "Follow-up & adjustment",
+        "tekstEn": "Every session is individually coached. We regularly evaluate your progress and adjust the plan where needed. You are never left to it on your own."
+      },
+      {
+        "kop": "Langetermijnaanpak",
+        "tekst": "Ons doel is niet alleen dat je klachtenvrij bent, maar dat je bewuster en actiever in het leven staat. We coachen je ook na de revalidatie zodat je terugval vermijdt en gezonde gewoonten aanhoudt.",
+        "kopEn": "Long-term approach",
+        "tekstEn": "Our goal is not only that you are complaint-free, but that you live more consciously and actively. We also coach you after rehabilitation so you avoid relapse and keep healthy habits."
+      }
     ],
     "seoTitle": "Over Movenda | Groepspraktijk kinesitherapie Hasselt",
     "seoDescription": "De visie van Movenda: individuele begeleiding, een actieve aanpak en samenwerking met sportclubs in en rond Hasselt.",
@@ -69,15 +124,67 @@
     "seoDescriptionEn": "Movenda's vision: individual coaching, an active approach and collaboration with sports clubs in and around Hasselt."
   },
   "kinesitherapie": {
-    "titel": "Kinesitherapie Hasselt",
-    "titelEn": "Physiotherapy Hasselt",
-    "intro": "Bij Movenda in Hasselt vind je een team van ervaren kinesisten die je begeleiden bij uiteenlopende spier- en gewrichtsklachten. Of je nu last hebt van rugpijn, herstelt na een blessure of een operatie, of gewoon pijnvrij wil bewegen — onze kinesitherapeuten stellen een behandeling op maat voor jou op.\n\nWij combineren klassieke kinesitherapie met de nieuwste technieken en inzichten. Elke behandeling duurt 30 minuten één-op-één, waarna je extra tijd krijgt om je oefeningen zelfstandig verder te zetten. Zo werk jij actief mee aan je eigen herstel.",
-    "introEn": "At Movenda in Hasselt you will find a team of experienced physiotherapists who guide you through a wide range of muscle and joint complaints. Whether you have back pain, are recovering from an injury or surgery, or simply want to move without pain — our physiotherapists draw up a treatment tailored to you.\n\nWe combine classic physiotherapy with the latest techniques and insights. Every treatment lasts 30 minutes one-on-one, after which you get extra time to continue your exercises independently. That way you take an active part in your own recovery.",
+    "titel": "Herstel begint met begrijpen hoe jij beweegt.",
+    "titelEn": "Recovery starts with understanding how you move.",
+    "intro": "Gespecialiseerde kinesitherapie en actieve revalidatie, afgestemd op jouw lichaam, jouw klacht en jouw doel. We helpen je om pijnvrijer te bewegen, vertrouwen terug te winnen en stap voor stap sterker te worden.",
+    "introEn": "Specialised physiotherapy and active rehabilitation, matched to your body, your complaint and your goal. We help you move with less pain, regain confidence and get stronger, step by step.",
     "fotoAlt": "Manuele therapie behandeling bij Movenda",
     "seoTitle": "Kinesitherapie Hasselt | Movenda",
-    "seoDescription": "Team van ervaren kinesisten in Hasselt: manuele therapie, dry needling, acupunctuur, pre- en postnatale kinesitherapie en meer.",
+    "seoDescription": "Gespecialiseerde kinesitherapie en actieve revalidatie in Hasselt, afgestemd op jouw klacht en jouw doel.",
     "seoTitleEn": "Physiotherapy Hasselt | Movenda",
-    "seoDescriptionEn": "A team of experienced physiotherapists in Hasselt: manual therapy, dry needling, acupuncture, pre- and postnatal physiotherapy and more."
+    "seoDescriptionEn": "Specialised physiotherapy and active rehabilitation in Hasselt, matched to your complaint and your goal.",
+    "ondertitel": "Kinesitherapie bij Sportpraktijk Movenda",
+    "ondertitelEn": "Physiotherapy at Sportpraktijk Movenda",
+    "blokken": [
+      {
+        "kop": "Geen standaardtraject maar een aanpak die bij jou past.",
+        "kopEn": "No standard programme, but an approach that fits you.",
+        "tekst": "Iedere persoon start vanuit een andere situatie. Misschien heb je pijn tijdens je dagelijkse activiteiten, herstel je van een operatie of blessure, wil je opnieuw sporten of zoek je begeleiding bij een langdurige klacht.\nDaarom beginnen we met luisteren, onderzoeken en begrijpen. We brengen je klacht, je manier van bewegen, je huidige belastbaarheid en je persoonlijke doelstellingen in kaart. Op basis daarvan bouwen we een behandel- en revalidatietraject dat met je evolueert.\nBij Sportpraktijk Movenda combineren we manuele behandeling waar die meerwaarde biedt met actieve oefentherapie, persoonlijke begeleiding en een duidelijke opbouw naar zelfstandig bewegen.\nElke behandeling duurt +/-30 minuten, inclusief administratie en omkleden, en verloopt één-op-één. Tijdens die tijd werkt je kinesitherapeut uitsluitend met jou. Hierna krijg je, indien relevant, extra tijd om je oefeningen zelfstandig verder te zetten.\n- Persoonlijk onderzoek en behandelplan\n- Actieve en doelgerichte begeleiding\n- Gespecialiseerde expertise\n- Regelmatige evaluatie en bijsturing\n- Aandacht voor duurzaam herstel",
+        "tekstEn": "Everyone starts from a different situation. You may have pain in daily life, be recovering from surgery or an injury, want to play sport again, or need guidance with a long-standing complaint.\nWe start by listening, examining and understanding. From there we build a treatment and rehabilitation plan that evolves with you.\n- A personal assessment and treatment plan\n- Active, purposeful guidance\n- Specialist expertise\n- Regular review and adjustment\n- Attention to lasting recovery"
+      },
+      {
+        "kop": "Kinesitherapie is meer dan het behandelen van een klacht.",
+        "kopEn": "Physiotherapy is more than treating a complaint.",
+        "tekst": "Kinesitherapie is de overkoepelende zorgverlening. Revalidatie is het actieve proces binnen dat traject waarbij we functies, kracht, mobiliteit, belastbaarheid en vertrouwen opnieuw opbouwen.\nIn de eerste fase kan de nadruk liggen op pijnvermindering, mobiliteit en herstel. Daarna verschuift de begeleiding steeds meer naar actief bewegen, oefenen en het voorbereiden op je dagelijkse activiteiten of sport.\nRevalidatie is bij Sportpraktijk Movenda daarom geen afzonderlijke dienst naast kinesitherapie. Het is een essentieel onderdeel van een doelgericht kinesitherapeutisch traject.\n- Begrijpen: intake en een klinisch onderzoek van het volledige lichaam. We bekijken niet alleen waar je de klacht voelt, maar ook welke andere regio’s of bewegingsketens ermee samenhangen.\n- Behandelen: gerichte behandeling van pijn, beperkingen en klachten.\n- Opbouwen: actieve oefentherapie voor mobiliteit, kracht, controle en belastbaarheid.\n- Hervatten: geleidelijke terugkeer naar dagelijkse activiteiten, werk of sport.\n- Voorkomen: inzicht en begeleiding om herval te beperken en zelfstandig verder te gaan.",
+        "tekstEn": "Physiotherapy is the overall care. Rehabilitation is the active process inside that trajectory: rebuilding function, strength, mobility, load tolerance and confidence.\n- Understand: intake and a clinical assessment of the whole body.\n- Treat: targeted care for pain, limits and complaints.\n- Build: active exercise for mobility, strength, control and load tolerance.\n- Return: a gradual return to daily life, work or sport.\n- Prevent: guidance so you can continue on your own."
+      },
+      {
+        "kop": "Iedere behandeling en oefening heeft een doel.",
+        "kopEn": "Every treatment and every exercise has a purpose.",
+        "tekst": "We willen niet alleen weten waar je pijn hebt. We willen begrijpen waarom de klacht je belemmert, welke belasting je lichaam aankan en wat je opnieuw wilt kunnen doen.\n- Een grondige intake en klinisch onderzoek van het volledige lichaam\n- Een helder en realistisch behandelplan\n- Manuele behandeling wanneer aangewezen\n- Actieve en progressieve oefentherapie\n- Functionele of sportspecifieke testing wanneer relevant\n- Regelmatige evaluatie en bijsturing\n- Advies waarmee je ook zelfstandig verder kunt",
+        "tekstEn": "We want to understand why the complaint limits you, what load your body can take, and what you want to be able to do again.\n- A thorough intake and clinical assessment\n- A clear, realistic treatment plan\n- Manual treatment when it is indicated\n- Active, progressive exercise\n- Functional or sport-specific testing when it is relevant\n- Regular review\n- Advice you can continue on your own"
+      },
+      {
+        "kop": "Voor iedereen die opnieuw vrij en sterk wil bewegen.",
+        "kopEn": "For anyone who wants to move freely and strongly again.",
+        "tekst": "Onze kinesitherapeuten begeleiden onder meer:\n- Mensen met acute of langdurige pijnklachten\n- Patiënten die herstellen na een operatie\n- Recreatieve en competitieve sporters met een blessure\n- Mensen die opnieuw vertrouwen willen krijgen in bewegen\n- Patiënten met een gespecialiseerde hulpvraag\n- Sporters die veilig willen terugkeren naar training of competitie\nJe hoeft geen professionele sporter te zijn om begeleid te worden vanuit een sportieve en actieve aanpak.",
+        "tekstEn": "Our physiotherapists guide, among others:\n- People with acute or long-standing pain\n- Patients recovering after surgery\n- Recreational and competitive athletes with an injury\n- People who want to trust movement again\n- Patients with a specialist question\n- Athletes who want a safe return to training or competition\nYou do not need to be a professional athlete."
+      },
+      {
+        "kop": "Een team met verschillende expertises.",
+        "kopEn": "A team with different areas of expertise.",
+        "tekst": "Ons team bestaat uit kinesitherapeuten met verschillende specialisaties en achtergronden. Zo kunnen we je gericht koppelen aan de therapeut die het best aansluit bij je klacht, je doel en de locatie van je traject.",
+        "tekstEn": "Our team is made up of physiotherapists with different specialisms. We match you with the therapist who fits your complaint, your goal and your location."
+      },
+      {
+        "kop": "Kies de omgeving die bij jouw traject past.",
+        "kopEn": "Choose the setting that fits your programme.",
+        "tekst": "Movenda Hasselt: Sportcentrum Olympia, Kuringersteenweg 242, 3500 Hasselt. Kinesitherapie, actieve revalidatie en training in een toegankelijke sportomgeving.\nPerformance Centre Kuringen: Lammerweg 33, 3511 Kuringen. Sportkinesitherapie, actieve revalidatie, testing en performancebegeleiding.",
+        "tekstEn": "Movenda Hasselt: Sportcentrum Olympia, Kuringersteenweg 242, 3500 Hasselt.\nPerformance Centre Kuringen: Lammerweg 33, 3511 Kuringen."
+      },
+      {
+        "kop": "Je eerste afspraak.",
+        "kopEn": "Your first appointment.",
+        "tekst": "Tijdens je eerste afspraak bespreken we je klachten, medische achtergrond en doelstellingen. Vervolgens voert de kinesitherapeut een gericht onderzoek uit en bespreekt die samen met jou de eerste bevindingen en het verdere behandelplan.",
+        "tekstEn": "At the first appointment we discuss your complaints, medical background and goals. The physiotherapist then examines you and talks through the first findings and the plan."
+      },
+      {
+        "kop": "Klaar om opnieuw vooruit te gaan?",
+        "kopEn": "Ready to move forward again?",
+        "tekst": "Of je nu herstelt van een blessure, opnieuw wilt sporten of beter wilt bewegen in het dagelijkse leven: we bouwen samen aan een traject dat vertrekt vanuit jouw lichaam en jouw doel.",
+        "tekstEn": "Whether you are recovering from an injury, want to play sport again or move better in daily life, we build a programme from your body and your goal."
+      }
+    ]
   },
   "training": {
     "titel": "Personal Training Hasselt",
@@ -97,9 +204,24 @@
     "introEn": "A multidisciplinary performance centre focused on maximising the performance of (semi-)professional athletes and on medical rehabilitation based on data analysis. Open space, high-end equipment and one-on-one coaching.",
     "fotoAlt": "Movenda Performance Centre trainingsruimte",
     "pijlers": [
-      { "kop": "Training", "tekst": "Performance, personal training, duo en data-analyse.", "kopEn": "Training", "tekstEn": "Performance, personal training, duo and data analysis." },
-      { "kop": "Sportrevalidatie", "tekst": "Herstel na blessure, dry needling, cupping en taping.", "kopEn": "Sports rehabilitation", "tekstEn": "Recovery after injury, dry needling, cupping and taping." },
-      { "kop": "Groepslessen", "tekst": "HIIT, Full Body, PowerPlus, boxing, running en meer. Max. 8 personen.", "kopEn": "Group classes", "tekstEn": "HIIT, Full Body, PowerPlus, boxing, running and more. Max. 8 people." }
+      {
+        "kop": "Training",
+        "tekst": "Performance, personal training, duo en data-analyse.",
+        "kopEn": "Training",
+        "tekstEn": "Performance, personal training, duo and data analysis."
+      },
+      {
+        "kop": "Sportrevalidatie",
+        "tekst": "Herstel na blessure, dry needling, cupping en taping.",
+        "kopEn": "Sports rehabilitation",
+        "tekstEn": "Recovery after injury, dry needling, cupping and taping."
+      },
+      {
+        "kop": "Groepslessen",
+        "tekst": "HIIT, Full Body, PowerPlus, boxing, running en meer. Max. 8 personen.",
+        "kopEn": "Group classes",
+        "tekstEn": "HIIT, Full Body, PowerPlus, boxing, running and more. Max. 8 people."
+      }
     ],
     "seoTitle": "Movenda Performance Centre | Performance training Hasselt",
     "seoDescription": "Movenda Performance Centre in Kuringen: data-gedreven performance training en sportrevalidatie voor recreatieve en professionele sporters.",
@@ -120,21 +242,81 @@
   },
   "contact": {
     "verwijsopties": [
-      { "label": "Huisarts", "labelEn": "GP", "vervolg": "naam" },
-      { "label": "Specialist", "labelEn": "Specialist", "vervolg": "naam" },
-      { "label": "Gynaecoloog", "labelEn": "Gynaecologist", "vervolg": "naam" },
-      { "label": "Vroedvrouw", "labelEn": "Midwife", "vervolg": "naam" },
-      { "label": "Familie", "labelEn": "Family", "vervolg": "geen" },
-      { "label": "Vrienden", "labelEn": "Friends", "vervolg": "geen" },
-      { "label": "Sportclub, trainer of coach", "labelEn": "Sports club, trainer or coach", "vervolg": "club" },
-      { "label": "Sportcentrum Olympia", "labelEn": "Olympia sports centre", "vervolg": "geen" },
-      { "label": "Google / Google Maps", "labelEn": "Google / Google Maps", "vervolg": "geen" },
-      { "label": "Instagram", "labelEn": "Instagram", "vervolg": "geen" },
-      { "label": "Facebook", "labelEn": "Facebook", "vervolg": "geen" },
-      { "label": "Een evenement of activiteit van Movenda", "labelEn": "A Movenda event or activity", "vervolg": "event" },
-      { "label": "Via een andere zorgverlener", "labelEn": "Another healthcare provider", "vervolg": "naam" },
-      { "label": "Bedrijf / werkgever", "labelEn": "Company / employer", "vervolg": "tekst" },
-      { "label": "Andere", "labelEn": "Other", "vervolg": "tekst" }
+      {
+        "label": "Huisarts",
+        "labelEn": "GP",
+        "vervolg": "naam"
+      },
+      {
+        "label": "Specialist",
+        "labelEn": "Specialist",
+        "vervolg": "naam"
+      },
+      {
+        "label": "Gynaecoloog",
+        "labelEn": "Gynaecologist",
+        "vervolg": "naam"
+      },
+      {
+        "label": "Vroedvrouw",
+        "labelEn": "Midwife",
+        "vervolg": "naam"
+      },
+      {
+        "label": "Familie",
+        "labelEn": "Family",
+        "vervolg": "geen"
+      },
+      {
+        "label": "Vrienden",
+        "labelEn": "Friends",
+        "vervolg": "geen"
+      },
+      {
+        "label": "Sportclub, trainer of coach",
+        "labelEn": "Sports club, trainer or coach",
+        "vervolg": "club"
+      },
+      {
+        "label": "Sportcentrum Olympia",
+        "labelEn": "Olympia sports centre",
+        "vervolg": "geen"
+      },
+      {
+        "label": "Google / Google Maps",
+        "labelEn": "Google / Google Maps",
+        "vervolg": "geen"
+      },
+      {
+        "label": "Instagram",
+        "labelEn": "Instagram",
+        "vervolg": "geen"
+      },
+      {
+        "label": "Facebook",
+        "labelEn": "Facebook",
+        "vervolg": "geen"
+      },
+      {
+        "label": "Een evenement of activiteit van Movenda",
+        "labelEn": "A Movenda event or activity",
+        "vervolg": "event"
+      },
+      {
+        "label": "Via een andere zorgverlener",
+        "labelEn": "Another healthcare provider",
+        "vervolg": "naam"
+      },
+      {
+        "label": "Bedrijf / werkgever",
+        "labelEn": "Company / employer",
+        "vervolg": "tekst"
+      },
+      {
+        "label": "Andere",
+        "labelEn": "Other",
+        "vervolg": "tekst"
+      }
     ],
     "titel": "Neem contact op",
     "titelEn": "Get in touch",
@@ -156,5 +338,62 @@
     "seoDescription": "Bekijk de openstaande vacatures bij Movenda in Hasselt en het Movenda Performance Centre in Kuringen.",
     "seoTitleEn": "Jobs | Work at Movenda Hasselt",
     "seoDescriptionEn": "See open vacancies at Movenda in Hasselt and the Movenda Performance Centre in Kuringen."
+  },
+  "performance": {
+    "ondertitel": "Performance bij Sportpraktijk Movenda",
+    "ondertitelEn": "Performance at Sportpraktijk Movenda",
+    "titel": "Progress you can measure.",
+    "titelEn": "Progress you can measure.",
+    "intro": "Doelgerichte training, testing en data voor sporters die hun fysieke capaciteiten gericht willen ontwikkelen. We brengen in kaart waar je staat, bouwen een persoonlijk traject en maken je vooruitgang zichtbaar. Van persoonlijke training tot intensieve begeleiding voor atleten: elke stap vertrekt vanuit jouw sport, jouw context en het doel dat je wilt bereiken.",
+    "introEn": "Purposeful training, testing and data for athletes who want to develop their physical capacities. We map where you are, build a personal programme and make your progress visible.",
+    "seoTitle": "Performance training Hasselt | Movenda",
+    "seoDescription": "Doelgerichte training, testing en coaching in Kuringen. Personal training, performance coaching en screening bij Movenda.",
+    "seoTitleEn": "Performance training Hasselt | Movenda",
+    "seoDescriptionEn": "Purposeful training, testing and coaching in Kuringen, at Sportpraktijk Movenda.",
+    "blokken": [
+      {
+        "kop": "Test. Train. Retest. Progress.",
+        "tekst": "- Doelgesprek en relevante voorgeschiedenis\n- Screening of basismeting wanneer die een meerwaarde biedt\n- Persoonlijk trainingsplan en gerichte coaching\n- Opvolging van trainingsbelasting en uitvoering\n- Hertesting, evaluatie en aanpassing van het plan",
+        "tekstEn": "- A goal conversation and relevant history\n- Screening or a baseline test when it adds value\n- A personal plan and focused coaching\n- Follow-up of training load and execution\n- Retesting, review and an adjusted plan"
+      },
+      {
+        "kop": "Data krijgt waarde wanneer ze tot actie leidt.",
+        "kopEn": "Data matters when it leads to action.",
+        "tekst": "We vertalen test- en trainingsgegevens naar inzichten die jij en je coach daadwerkelijk kunnen gebruiken. We brengen meetmomenten, trainingscontext en relevante patronen samen in één helder verhaal. Het doel is niet een dashboard vol cijfers, maar beter onderbouwde keuzes over training, belasting en opvolging.",
+        "tekstEn": "We turn test and training data into insights you and your coach can use. The aim is not a dashboard full of numbers, but better decisions about training, load and follow-up."
+      },
+      {
+        "kop": "Voor wie",
+        "kopEn": "Who it's for",
+        "tekst": "- Recreatieve sporters die sterker, fitter of doelgerichter willen trainen\n- Competitieve en professionele atleten die hun fysieke prestaties willen ontwikkelen\n- Sporters die progressie meetbaar willen maken\n- Sporters die na een revalidatietraject verder willen bouwen richting performance",
+        "tekstEn": "- Recreational athletes who want to train stronger, fitter or with a clearer goal\n- Competitive and professional athletes\n- Athletes who want measurable progress\n- Athletes building toward performance after rehabilitation"
+      }
+    ]
+  },
+  "b2b": {
+    "ondertitel": "B2B voor bedrijven",
+    "ondertitelEn": "B2B for companies",
+    "titel": "Meer beweging en energie op de werkvloer.",
+    "titelEn": "More movement and energy at work.",
+    "intro": "Een werkdag vraagt veel van mensen, maar biedt niet altijd voldoende ruimte om te bewegen. Sportpraktijk Movenda helpt organisaties om beweging op een haalbare manier in de werkcontext te brengen. Met professionele coaching, medische kennis en ervaring in performance bouwen we een formule die past bij je team, je locatie en je doelstellingen.",
+    "introEn": "A working day asks a lot of people, and does not always leave room to move. Sportpraktijk Movenda helps organisations bring movement into the working day, with coaching that fits the team, the location and the goal.",
+    "seoTitle": "B2B voor bedrijven | Movenda",
+    "seoDescription": "Teamtraining in Kuringen of een workout op je bedrijf. Een voorstel op maat, zonder vast tarief op de pagina.",
+    "seoTitleEn": "B2B for companies | Movenda",
+    "seoDescriptionEn": "Team training in Kuringen or a workout at your company. A tailored proposal, with no fixed fee on the page.",
+    "blokken": [
+      {
+        "kop": "Waarom Sportpraktijk Movenda",
+        "kopEn": "Why Sportpraktijk Movenda",
+        "tekst": "- Medische en performance-expertise binnen één sportpraktijk\n- Een programma op maat van het team, de werkcontext en het beschikbare budget\n- Schaalbare oefeningen zodat verschillende niveaus samen kunnen deelnemen\n- Keuze tussen een eenmalig teammoment en een terugkerend traject",
+        "tekstEn": "- Medical and performance expertise in one practice\n- A programme matched to the team, the work context and the budget\n- Scalable exercises so different levels can train together\n- A one-off team session or a returning programme"
+      },
+      {
+        "kop": "Van vraag naar voorstel",
+        "kopEn": "From question to proposal",
+        "tekst": "- We bespreken je doel, doelgroep, groepsgrootte, locatie en timing.\n- We bekijken welke formule praktisch en inhoudelijk het best aansluit.\n- Je ontvangt een voorstel op maat met programma, planning en prijs.",
+        "tekstEn": "- We discuss your goal, audience, group size, location and timing.\n- We look at which formula fits in practice and in content.\n- You receive a tailored proposal with programme, planning and price."
+      }
+    ]
   }
 }

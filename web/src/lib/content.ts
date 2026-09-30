@@ -570,6 +570,9 @@ const GROEP_LES_SLUGS = new Set([
   "mxgp",
 ]);
 
+/** B2B formulas live under /b2b, not under groepslessen or /performance. */
+const B2B_SLUGS = new Set(["teamtraining", "on-site-workouts"]);
+
 /** Older MPC copies. The kinesitherapie page is the canonical URL. */
 const KINE_CANONICAL_SLUGS = new Set(["dry-needling", "cupping", "taping"]);
 
@@ -579,6 +582,10 @@ export function isMpcCategorie(categorie: DienstCategorie): boolean {
 
 export function isGroepLes(dienst: Pick<Dienst, "slug" | "categorie">): boolean {
   return dienst.categorie === "mpc-groep" && GROEP_LES_SLUGS.has(dienst.slug);
+}
+
+export function isB2bDienst(dienst: Pick<Dienst, "slug">): boolean {
+  return B2B_SLUGS.has(dienst.slug);
 }
 
 /**
@@ -602,6 +609,8 @@ export function rewriteMpcHref(href: string | undefined): string | undefined {
   if (!slug || slug.includes("/")) return href;
   if (KINE_CANONICAL_SLUGS.has(slug)) return `${prefix}/kinesitherapie/${slug}${hash}`;
   if (GROEP_LES_SLUGS.has(slug)) return `${prefix}/groepslessen/${slug}${hash}`;
+  if (slug === "corporate-coaching") return `${prefix}/b2b${hash}`;
+  if (B2B_SLUGS.has(slug)) return `${prefix}/b2b/${slug}${hash}`;
   return `${prefix}/performance/${slug}${hash}`;
 }
 
@@ -611,8 +620,27 @@ export function dienstHref(dienst: Pick<Dienst, "slug" | "categorie">, lang: "nl
     return `${prefix}/kinesitherapie/${dienst.slug}`;
   }
   if (dienst.categorie === "training") return `${prefix}/training/${dienst.slug}`;
+  if (dienst.slug === "corporate-coaching") return `${prefix}/b2b`;
+  if (isB2bDienst(dienst)) return `${prefix}/b2b/${dienst.slug}`;
   if (isGroepLes(dienst)) return `${prefix}/groepslessen/${dienst.slug}`;
   return `${prefix}/performance/${dienst.slug}`;
+}
+
+/** Every timetable row links somewhere, even when Sanity has no dienst slug. */
+export function lesHref(
+  les: { les: string; dienstSlug?: string; dienstCategorie?: string },
+  diensten: Pick<Dienst, "slug" | "categorie" | "titel" | "menuLabel">[],
+  lang: "nl" | "en" = "nl",
+): string {
+  if (les.dienstSlug && les.dienstCategorie) {
+    return dienstHref({ slug: les.dienstSlug, categorie: les.dienstCategorie as DienstCategorie }, lang);
+  }
+  const name = les.les.trim().toLowerCase();
+  const match = diensten.find(
+    (d) => d.titel.toLowerCase() === name || d.menuLabel?.toLowerCase() === name || d.slug === name,
+  );
+  if (match) return dienstHref(match, lang);
+  return lang === "en" ? "/en/groepslessen#inschrijven" : "/groepslessen#inschrijven";
 }
 
 export function formatPrijs(
@@ -1076,7 +1104,7 @@ function mergeHomeDeuren(
         regelEn: row.regelEn?.trim() || undefined,
         tekst: row.tekst?.trim() || undefined,
         tekstEn: row.tekstEn?.trim() || undefined,
-        href: rewriteMpcHref(href) || href,
+        href: (rewriteMpcHref(href) || href).replace(/\/performance\/corporate-coaching$/, "/b2b"),
         foto: toCmsFoto(row.foto),
       } satisfies HomeDeur;
     })

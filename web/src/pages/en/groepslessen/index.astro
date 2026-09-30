@@ -1,22 +1,20 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import DienstCard from "../../../components/DienstCard.astro";
 import {
-  getDienstenByCategorie,
   getLesrooster,
   getLocatieBySlug,
   getPrijzenByCategorie,
   prijsNaam,
   formatPrijs,
-  dienstHref,
+  getDiensten,
+  lesHref,
 } from "../../../lib/content";
 import { breadcrumbSchema } from "../../../lib/schema";
 import { WEEKDAYS_NL, floorNote, weekday } from "../../../lib/i18n";
 
 const locatie = (await getLocatieBySlug("mpc"))!;
 const rooster = await getLesrooster();
-const groep = await getDienstenByCategorie("mpc-groep");
-// Everything Julie filed under "MPC — groepslessen" in Sanity.
+const diensten = await getDiensten();
 const memberships = await getPrijzenByCategorie("mpc-groep");
 
 const jsonLd = [
@@ -34,7 +32,6 @@ import SectionKicker from "../../../components/SectionKicker.astro";
   description="Timetable of the Movenda Performance Centre in Kuringen: HIIT, Full Body, PowerPlus, boxing, corporate and more. Maximum 8 people."
   path="/en/groepslessen"
   altPath="/groepslessen"
-  brand="mpc"
   lang="en"
   jsonLd={jsonLd}
 >
@@ -60,14 +57,11 @@ import SectionKicker from "../../../components/SectionKicker.astro";
               <ul class="mt-3 space-y-2 text-sm">
                 {lessen.map((les) => (
                   <li>
-                    <span class="font-medium">{les.van}–{les.tot}</span>
-                    {" · "}
-                    {les.dienstSlug && les.dienstCategorie ? (
-                      <a href={dienstHref({ slug: les.dienstSlug, categorie: les.dienstCategorie }, "en")} class="text-brand-primary hover:underline">{les.les}</a>
-                    ) : (
-                      les.les
-                    )}
-                    {les.coachNaam && <span class="text-brand-muted"> — {les.coachNaam}</span>}
+                    <a href={lesHref(les, diensten, "en")} class="flex min-h-11 items-center gap-1 py-1 hover:underline">
+                      <span class="font-medium">{les.van}–{les.tot}</span>
+                      <span>· {les.les}</span>
+                      {les.coachNaam && <span class="text-brand-muted"> — {les.coachNaam}</span>}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -99,12 +93,5 @@ import SectionKicker from "../../../components/SectionKicker.astro";
         </div>
       </div>
     )}
-
-    <h2 class="mt-12 text-xl font-bold">Programmes</h2>
-    <div class="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      {groep.map((dienst) => (
-        <DienstCard dienst={dienst} lang="en" />
-      ))}
-    </div>
   </section>
 </Layout>

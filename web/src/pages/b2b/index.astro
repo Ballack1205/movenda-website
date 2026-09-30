@@ -5,22 +5,22 @@ import { getPagina, paginaAlineas } from "../../lib/content";
 import { getBriefAanbod } from "../../lib/nav";
 import { breadcrumbSchema } from "../../lib/schema";
 
-const pagina = await getPagina("performance");
-const aanbod = (await getBriefAanbod("nl")).find((group) => group.label === "Performance")?.children ?? [];
+const pagina = await getPagina("b2b");
+const aanbod = (await getBriefAanbod("nl")).find((group) => group.label === "B2B")?.children ?? [];
 
 const jsonLd = [
   breadcrumbSchema([
     { name: "Home", path: "/" },
-    { name: "Performance", path: "/performance" },
+    { name: "B2B", path: "/b2b" },
   ]),
 ];
 ---
 
 <Layout
-  title={pagina.seoTitle || "Performance training Hasselt | Movenda"}
+  title={pagina.seoTitle || "B2B voor bedrijven | Movenda"}
   description={pagina.seoDescription || ""}
-  path="/performance"
-  altPath="/en/performance"
+  path="/b2b"
+  altPath="/en/b2b"
   jsonLd={jsonLd}
 >
   <AanbodOverzicht
@@ -31,8 +31,8 @@ const jsonLd = [
     aanbodTitel="Aanbod"
     aanbod={aanbod}
   >
-    <a slot="actions" href="/contact?behandeling=Performance" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
-      Plan jouw performancetraject
+    <a slot="actions" href="/contact?behandeling=B2B" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
+      Vraag een voorstel op maat
     </a>
   </AanbodOverzicht>
 </Layout>
