@@ -1293,11 +1293,16 @@ html[data-theme="lab"] .brief-ink > .lab-intro {
 }
 
 html[data-theme="lab"] .brief-partners.brief-block {
-  padding: 1.5rem 0;
+  padding: 1.5rem 0 0;
+}
+
+html[data-theme="lab"] .brief-partners .brief-textlink {
+  margin-top: 0.7rem;
+  min-height: 0;
 }
 
 html[data-theme="lab"] .brief-ink:has(.brief-partners) + .brief-ink > .brief-block {
-  padding-top: 2rem;
+  padding-top: 1.15rem;
 }
 
 html[data-theme="lab"] .brief-partners .partnerband-section {
