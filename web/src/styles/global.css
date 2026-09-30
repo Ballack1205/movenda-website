@@ -113,6 +113,32 @@ html[data-theme="lab"] body {
   line-height: 1.5;
 }
 
+html[data-theme="lab"] body:has(.locatie-page) main {
+  display: flex;
+  flex-direction: column;
+  background: #161513;
+}
+
+html[data-theme="lab"] .locatie-page {
+  flex: 1;
+  background: #161513;
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .locatie-page :is(h1, h2, p, li, a, .section-kicker, .text-brand-muted, .text-brand-primary, .text-brand-text) {
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .locatie-page :is(.rounded-2xl, .rounded-xl) {
+  background: transparent;
+  border-color: rgb(244 247 251 / 0.18);
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .locatie-page a.rounded-xl:hover {
+  border-color: #f4f7fb;
+}
+
 html[data-theme="lab"] h1 {
   font-size: clamp(2.25rem, 1.2rem + 3vw, 4rem);
   font-weight: 500;

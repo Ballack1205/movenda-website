@@ -30,7 +30,7 @@ const expectLabel = /^(Wat je mag verwachten|What to expect)\s*:?\s*/i;
 const duurStart = /^(elke behandeling duurt|each (treatment|session) lasts)/i;
 const duurLabel = /^(Duur|Duration)\s*:?\s*/i;
 const locLabel = /^(Locatie|Location)\s*:?\s*/i;
-const relatedLabel = /^(Gerelateerd|Related)\s*:?\s*/i;
+const relatedLabel = /^(Gerelateerd|Ontdek ook|Related|Discover more)\s*:?\s*/i;
 const intro: string[] = [];
 const lists: { title: string; items: string[] }[] = [];
 let verwacht: { title: string; text: string } | undefined;
@@ -87,6 +87,10 @@ const knownLocaties = [
 const locatieLinks = manueel && !locatieTekst
   ? knownLocaties
   : knownLocaties.filter((link) => link.test.test(locatieTekst));
+const isPrijsLink = (link: { label: string; href: string }) =>
+  /^(prijzen|prices)$/i.test(link.label) || /\/prijzen(?:$|[?#])/.test(link.href);
+const prijsLink = related.find(isPrijsLink);
+const ontdek = related.filter((link) => link !== prijsLink);
 const showPraktisch = manueel || Boolean(duurTekst) || locatieLinks.length > 0;
 const dutchCta = /afspraak|contacteer|boek/i.test(dienst.ctaLabel || "");
 const ctaLabel = manueel
@@ -96,7 +100,9 @@ const ctaLabel = manueel
   : lang === "en"
     ? dienst.ctaLabelEn || (dienst.ctaLabel && !dutchCta ? dienst.ctaLabel : "Contact us")
     : dienst.ctaLabel || "Maak een afspraak";
-const ctaUrl = localizeHref(dienst.ctaUrl, lang);
+const rawCta = localizeHref(dienst.ctaUrl, lang);
+const toContact = /\/contact(?:$|[?#])/.test(rawCta);
+const ctaUrl = toContact && !isB2bDienst(dienst) ? withLang("/team#keuzehulp", lang) : rawCta;
 // "Lees ook": articles Julie linked to this dienst (Blogpost → "Gaat over deze behandelingen"),
 // topped up with posts that mention it. Internal links dienst ↔ blog are what make the blog
 // count for the ranking of the treatment pages.
@@ -160,22 +166,32 @@ const heroSrc = manueel
         {locatieLinks.length > 0 && (
           <>
             <h3>{lang === "en" ? "Location" : "Locatie"}</h3>
+            <p class="dienst-locs">
+              {locatieLinks.map((link, index) =>
+                index === 0 ? (
+                  <a href={link.href}>{link.label}</a>
+                ) : (
+                  <span class="dienst-locs__more">
+                    <span aria-hidden="true">×</span>
+                    <a href={link.href}>{link.label}</a>
+                  </span>
+                ),
+              )}
+            </p>
+          </>
+        )}
+        {ontdek.length > 0 && (
+          <>
+            <h3>{lang === "en" ? "Discover more" : "Ontdek ook"}</h3>
             <ul>
-              {locatieLinks.map((link) => (
+              {ontdek.map((link) => (
                 <li><a href={link.href}>{link.label}</a></li>
               ))}
             </ul>
           </>
         )}
-        {related.length > 0 && (
-          <>
-            <h3>{lang === "en" ? "Related" : "Gerelateerd"}</h3>
-            <ul>
-              {related.map((link) => (
-                <li><a href={link.href}>{link.label}</a></li>
-              ))}
-            </ul>
-          </>
+        {prijsLink && (
+          <h3><a href={prijsLink.href}>{lang === "en" ? "Prices" : "Prijzen"}</a></h3>
         )}
       </section>
     )}
@@ -301,7 +317,7 @@ const heroSrc = manueel
   }
 
   .dienst-hero p {
-    max-width: 28rem;
+    max-width: 100%;
     margin-top: 0.85rem;
     font-size: 1.2rem;
     font-weight: 500;
@@ -312,10 +328,10 @@ const heroSrc = manueel
     padding-top: 2.5rem;
   }
 
-  .dienst-copy > p,
+  .dienst-copy p,
   .dienst-copy li {
     margin-top: 0.85rem;
-    line-height: 1.65;
+    line-height: 1.7;
     color: var(--brand-muted);
   }
 
@@ -334,10 +350,32 @@ const heroSrc = manueel
     color: var(--brand-text);
   }
 
+  .dienst-copy h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .dienst-copy h3 a:hover {
+    text-decoration: underline;
+  }
+
   .dienst-copy ul {
     margin-top: 0.35rem;
     padding-left: 1.15rem;
     list-style: disc;
+  }
+
+  .dienst-locs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.55rem;
+  }
+
+  .dienst-locs__more {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.55rem;
   }
 
   .dienst-copy a {
@@ -359,9 +397,8 @@ const heroSrc = manueel
     color: #f4f7fb;
   }
 
-  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy > p,
-  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy li {
-    color: #e6e0d6;
+  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy :is(p, li) {
+    color: #f4f7fb;
   }
 
   :global(html[data-theme="lab"]) .dienst-ink .dienst-copy :is(h2, h3),
