@@ -5,10 +5,8 @@ import LabCover from "./LabCover.astro";
 import LabStrip from "./LabStrip.astro";
 import PartnerBand from "./PartnerBand.astro";
 import InstagramFeed from "./InstagramFeed.astro";
-import BlogPostCard from "./BlogPostCard.astro";
 import GoogleReviewsFeed from "./GoogleReviewsFeed.astro";
 import {
-  getBlogPosts,
   getEvents,
   getLocaties,
   teamCounts,
@@ -37,7 +35,6 @@ interface Props {
 
 const { pagina, settings, partners, team } = Astro.props;
 const brief = settings.homeBrief;
-const posts = await getBlogPosts();
 const today = new Date().toISOString().slice(0, 10);
 const homeEvents = (await getEvents())
   .filter((event) => event.tonenOpHome)
@@ -53,9 +50,6 @@ const eventWhen = (event: { datum: string }) => {
 const eventPhoto = (foto: string) =>
   foto.startsWith("/") ? foto : `${foto}?w=480&h=320&fit=crop&auto=format`;
 const locaties = await getLocaties();
-const hasselt = locaties.find((loc) => loc.slug === "olympia");
-const kuringen = locaties.find((loc) => loc.slug === "mpc");
-const insightsKicker = brief.insightsKicker === "Insights" ? "Insights/Blog" : brief.insightsKicker;
 const deurFallback: Record<string, ImageMetadata> = {
   "/kinesitherapie": kineHero,
   "/mpc": homePerformance,
@@ -94,10 +88,18 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
   crop="object-[center_72%]"
 />
 
-<div class="lab-sheet lab-sheet--ink">
+<div class="lab-sheet lab-sheet--ink brief-ink">
   <section id="lab-next" class="lab-intro" data-reveal>
     <p class="brief-kicker">{brief.merkKicker}</p>
     <h1 class="lab-shout lab-intro__title">{brief.merkTitel}</h1>
+    <ul class="brief-proof">
+      {proof.map((item) => (
+        <li>
+          <span class="brief-proof__value">{item.value}</span>
+          <span class="brief-proof__label">{item.label}</span>
+        </li>
+      ))}
+    </ul>
     {paragraphs.map((part) => <p>{part}</p>)}
     <p class="brief-statement">{brief.merkStatement}</p>
     <a href="#aanbod" class="lab-intro__cta">{brief.merkCta}</a>
@@ -115,18 +117,10 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
     <div class="mx-auto max-w-6xl px-4">
       <a href="/over#partners" class="brief-textlink">{brief.partnersCta}</a>
     </div>
-    <ul class="brief-proof">
-      {proof.map((item) => (
-        <li>
-          <span class="brief-proof__value">{item.value}</span>
-          <span class="brief-proof__label">{item.label}</span>
-        </li>
-      ))}
-    </ul>
   </section>
 </div>
 
-<div class="lab-sheet lab-sheet--ink">
+<div class="lab-sheet lab-sheet--ink brief-ink">
   <section id="aanbod" class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4 pb-6">
       <h2 class="brief-title brief-title--wide">{brief.aanbodKicker.replace(/\.$/, "")}</h2>
@@ -137,32 +131,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 
 <LabStrip items={deuren} />
 
-<div class="lab-sheet lab-sheet--ink">
-  <section class="brief-locs" data-reveal>
-    <h2 class="brief-title brief-title--wide brief-locs__title">Eén praktijk, twee locaties!</h2>
-    <div class="brief-locs__grid">
-      {hasselt && (
-        <a class="brief-loc brief-loc--light" href="/locaties/olympia">
-          {hasselt.foto && <img src={hasselt.foto} alt="" class="brief-loc__photo" />}
-          <span class="brief-loc__copy">
-            <span class="brief-loc__name">Movenda Hasselt</span>
-            <span class="brief-loc__address">{hasselt.adres}</span>
-          </span>
-        </a>
-      )}
-      {kuringen && (
-        <a class="brief-loc brief-loc--dark" href="/locaties/mpc">
-          <img src={homePerformance.src} alt="" class="brief-loc__photo" />
-          <span class="brief-loc__veil" aria-hidden="true"></span>
-          <span class="brief-loc__copy">
-            <span class="brief-loc__name">Performance Centre Kuringen</span>
-            <span class="brief-loc__address">{kuringen.adres}</span>
-          </span>
-        </a>
-      )}
-    </div>
-  </section>
-
+<div class="lab-sheet lab-sheet--ink brief-ink">
   <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
       <p class="brief-kicker">{brief.teamKicker}</p>
@@ -219,30 +188,12 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 
   <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
-      <p class="brief-kicker">{insightsKicker}</p>
-      <h2 class="brief-title brief-title--wide">{brief.insightsTitel}</h2>
-      <p class="brief-lead brief-lead--wide">{brief.insightsTekst}</p>
-      {posts.length > 0 && (
-        <div class="relative mt-6" data-team-carousel>
-          <div class="absolute -top-12 right-0 hidden gap-2 md:flex" data-carousel-controls hidden>
-            <button type="button" data-carousel-prev aria-label="Vorige posts" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand-border bg-white text-brand-text">‹</button>
-            <button type="button" data-carousel-next aria-label="Volgende posts" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand-border bg-white text-brand-text">›</button>
-          </div>
-          <ul class="team-strip -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2" data-carousel-track aria-label="Insights/Blog">
-            {posts.map((post) => (
-              <li class="flex w-[18rem] shrink-0 snap-start sm:w-[22rem]">
-                <BlogPostCard post={post} thumb />
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      <a href="/blog" class="brief-textlink">{brief.insightsCta === "Bekijk alle Insights" ? "Bekijk Insights/Blog" : brief.insightsCta}</a>
+      <a href="/blog" class="brief-textlink">Bekijk Insights/Blog</a>
     </div>
   </section>
 </div>
 
-<div class="lab-sheet lab-sheet--ink">
+<div class="lab-sheet lab-sheet--ink brief-ink">
   <InstagramFeed settings={settings} title="Follow us" />
 
   <section class="brief-slot" data-reveal>

@@ -305,6 +305,11 @@ html[data-theme="lab"] .lab-sheet--ink {
   color: #f4f7fb;
 }
 
+/* Homepage bands use the same black as the Aanbod menu over the cover. */
+html[data-theme="lab"] .brief-ink {
+  background: #161513;
+}
+
 html[data-theme="lab"] .lab-sheet--ink .lab-intro__title,
 html[data-theme="lab"] .lab-sheet--ink .lab-intro p,
 html[data-theme="lab"] .lab-sheet--ink .lab-intro__cta,
@@ -1245,6 +1250,12 @@ html[data-theme="lab"] .brief-proof {
   list-style: none;
 }
 
+html[data-theme="lab"] .lab-intro .brief-proof {
+  max-width: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+}
+
 @media (min-width: 768px) {
   html[data-theme="lab"] .brief-proof {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1259,10 +1270,18 @@ html[data-theme="lab"] .brief-proof__value {
   line-height: 1;
 }
 
+html[data-theme="lab"] .lab-intro .brief-proof__value {
+  font-size: clamp(1.2rem, 1.05rem + 0.6vw, 1.55rem);
+}
+
 html[data-theme="lab"] .brief-proof__label {
   display: block;
   margin-top: 0.35rem;
   font-size: 0.95rem;
+}
+
+html[data-theme="lab"] .lab-intro .brief-proof__label {
+  font-size: 0.8rem;
 }
 
 html[data-theme="lab"] .brief-locs {

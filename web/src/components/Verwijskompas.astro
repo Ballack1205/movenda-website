@@ -13,7 +13,7 @@ const tree = {
 <dialog
   data-verwijskompas
   aria-labelledby="verwijskompas-titel"
-  class="m-auto w-[min(100vw-2rem,40rem)] max-h-[min(100dvh-2rem,44rem)] rounded-2xl bg-brand-surface p-0 text-brand-text shadow-2xl backdrop:bg-brand-header/60 backdrop:backdrop-blur-sm max-sm:mb-0 max-sm:mt-auto max-sm:max-h-[92dvh] max-sm:w-screen max-sm:max-w-none max-sm:rounded-b-none"
+  class="m-auto w-[min(100vw-2rem,40rem)] max-h-[min(100dvh-2rem,44rem)] rounded-2xl bg-brand-surface p-0 text-brand-text shadow-2xl backdrop:bg-brand-header/60 backdrop:backdrop-blur-sm max-sm:mb-0 max-sm:mt-auto max-sm:max-h-[92dvh] max-sm:w-screen max-sm:max-w-none max-sm:rounded-b-none md:w-[min(100vw-3rem,56rem)] md:max-h-[min(100dvh-3rem,48rem)]"
 >
   <div class="flex max-h-[inherit] flex-col">
     <header class="flex items-start justify-between gap-3 border-b border-brand-border px-4 py-4 sm:px-6">
@@ -70,25 +70,35 @@ const tree = {
     }
 
     function choiceButton(label, key) {
-      return `<button type="button" data-kompas-choice="${esc(key)}" class="rounded-xl border border-brand-border bg-brand-bg px-4 py-3 text-left text-sm font-medium transition hover:border-brand-primary">${esc(label)}</button>`;
+      return `<button type="button" data-kompas-choice="${esc(key)}" class="min-h-11 rounded-xl border border-brand-border bg-brand-bg px-4 py-3 text-left text-sm font-medium leading-snug transition hover:border-brand-primary">${esc(label)}</button>`;
+    }
+
+    function setBodyLayout(split) {
+      bodyEl.className = split
+        ? "mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2"
+        : "mt-3 flex flex-col gap-3";
     }
 
     function showResult(item, heading) {
-      const people = (item.people || []).map((id) => `<li class="py-2">${personHtml(id)}</li>`).join("");
+      const names = item.people || [];
+      const people = names.map((id) => `<li class="border-b border-brand-border py-2.5">${personHtml(id)}</li>`).join("");
       const places = (item.places || [])
         .map(
           (place) =>
-            `<a class="rounded-full border border-brand-border px-3 py-1.5 text-sm font-semibold text-brand-primary hover:border-brand-primary" href="${esc(place.href)}" target="_blank" rel="noopener noreferrer">${esc(place.label)}</a>`,
+            `<a class="inline-flex min-h-11 items-center rounded-full border border-brand-border px-3 py-1.5 text-sm font-semibold text-brand-primary hover:border-brand-primary" href="${esc(place.href)}" target="_blank" rel="noopener noreferrer">${esc(place.label)}</a>`,
         )
         .join("");
       titleEl.textContent = heading;
-      bodyEl.innerHTML = `<ul class="divide-y divide-brand-border">${people}</ul>${
+      setBodyLayout(false);
+      const cols = names.length >= 4 ? "sm:grid-cols-2 sm:gap-x-8" : "";
+      bodyEl.innerHTML = `<ul class="grid grid-cols-1 ${cols}">${people}</ul>${
         places ? `<p class="mb-2 mt-5 text-sm font-semibold">Locatie</p><div class="flex flex-wrap gap-2">${places}</div>` : ""
       }`;
     }
 
     function showChoices(heading, choices) {
       titleEl.textContent = heading;
+      setBodyLayout(choices.length >= 2);
       bodyEl.innerHTML = choices.map((choice) => choiceButton(choice.label, choice.key)).join("");
     }
 

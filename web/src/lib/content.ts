@@ -24,6 +24,7 @@ import seedGetuigenissen from "../content/getuigenissen.json";
 import seedBlog from "../content/blog.json";
 import seedSportaanbod from "../content/sportaanbod.json";
 import seedDiensten from "../content/diensten.json";
+import seedPartners from "../content/partners.json";
 import seedPaginas from "../content/paginas.json";
 import { resolveBlogMedia } from "./blog";
 import type { Lang } from "./i18n";
@@ -625,7 +626,7 @@ const dienstProjection = `{
   "slug": slug.current,
   categorie, titel, titelEn, intro, slogan, body, bodyEn,
   ctaLabel, ctaUrl, seoTitle, seoDescription, seoTitleEn, seoDescriptionEn, volgorde,
-  "toonInMenu": coalesce(toonInMenu, true), menuLabel, menuLabelEn,
+  toonInMenu, menuLabel, menuLabelEn,
   "gekoppeldeTeamleden": gekoppeldeTeamleden[]->slug.current,
   "afbeelding": afbeelding.asset->url,
   "galerij": galerij[].asset->url,
@@ -871,6 +872,9 @@ function normalizeDienst(row: Dienst): Dienst {
     gekoppeldeTeamleden: row.gekoppeldeTeamleden || [],
     slogan: (seedWon ? fromSeed?.slogan : undefined) || row.slogan?.trim() || fromSeed?.slogan,
     sloganEn: (seedWon ? fromSeed?.sloganEn : undefined) || row.sloganEn || fromSeed?.sloganEn,
+    // Sanity wins once Julie sets the checkbox. An empty field falls back to the seed,
+    // so these three can start hidden and she can turn them back on in Studio.
+    toonInMenu: row.toonInMenu ?? fromSeed?.toonInMenu ?? true,
   };
 }
 
@@ -1324,7 +1328,17 @@ export async function getPrijzen(): Promise<Prijsitem[]> {
       sanity.fetch(`*[_type == "prijsitem"] | order(volgorde asc) ${prijsitemProjection}`) as Promise<Prijsitem[]>,
       sanity.fetch(`*[_id == "siteSettings"][0].prijzenInfo.exBtwMpc`) as Promise<boolean | undefined>,
     ]);
-    return (rows || []).map((row) => ({ ...row, exclBtw: prijsIsExclBtw(row, exBtwMpc) }));
+    const items = (rows || []).map((row) => ({ ...row, exclBtw: prijsIsExclBtw(row, exBtwMpc) }));
+    const hidden = (await getDiensten())
+      .filter((dienst) => dienst.toonInMenu === false)
+      .flatMap((dienst) => [dienst.titel, dienst.titelEn].filter((naam): naam is string => !!naam))
+      .map(normalizeNaam);
+    return items.filter((item) => {
+      const names = [normalizeNaam(item.naam), item.naamEn ? normalizeNaam(item.naamEn) : ""];
+      return !hidden.some(
+        (naam) => naam && names.some((pn) => pn === naam || pn.startsWith(`${naam} `)),
+      );
+    });
   });
 }
 
@@ -1433,7 +1447,12 @@ async function loadPartners(): Promise<Partner[]> {
       "logo": logo.asset->url
     }`,
   );
-  return (rows || []).filter((partner) => !hidden.test(partner.naam) && !hidden.test(partner.slug));
+  const live = (rows || []).filter((partner) => !hidden.test(partner.naam) && !hidden.test(partner.slug));
+  const names = new Set(live.map((partner) => partner.naam.toLowerCase()));
+  const extra = (seedPartners as Partner[]).filter(
+    (partner) => partner.actief !== false && !names.has(partner.naam.toLowerCase()) && !hidden.test(partner.naam),
+  );
+  return [...live, ...extra];
 }
 
 export async function getLesrooster(): Promise<LesroosterItem[]> {

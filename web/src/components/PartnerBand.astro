@@ -28,7 +28,8 @@ const secondsPerLogo: Record<PartnerbandSnelheid, number> = {
 const groups = animatie ? Math.max(2, Math.ceil(14 / Math.max(partners.length, 1))) : 1;
 const duration = Math.round(Math.max(partners.length, 1) * secondsPerLogo[snelheid] * 10) / 10;
 
-const logoSrc = (logo: string, height: number) => `${logo}?h=${height}&fit=max&auto=format`;
+const logoSrc = (logo: string, height: number) =>
+  logo.startsWith("/") ? logo : `${logo}?h=${height}&fit=max&auto=format`;
 ---
 
 {

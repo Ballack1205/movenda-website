@@ -122,7 +122,7 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
       ],
       lang,
     ),
-    { href: rehabHref, label: en ? "Sports physiotherapy and rehab" : "Sportkinesitherapie en revalidatie" },
+    { href: rehabHref, label: en ? "Sports physiotherapy and rehab" : "Sportkinesitherapie" },
     ...linksBySlugs(
       diensten,
       [

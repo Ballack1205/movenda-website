@@ -123,6 +123,7 @@
       "koen-daniels"
     ],
     "volgorde": 6,
+    "toonInMenu": false,
     "seoTitle": "Acupunctuur Hasselt | Movenda",
     "seoDescription": "Acupunctuur bij Movenda Hasselt voor pijnbestrijding, stress en welzijn. Behandeling door erkend kinesitherapeut.",
     "seoTitleEn": "Acupuncture Hasselt | Movenda",
@@ -143,6 +144,7 @@
       "koen-daniels"
     ],
     "volgorde": 7,
+    "toonInMenu": false,
     "seoTitle": "Auriculotherapie Hasselt | Movenda",
     "seoDescription": "Auriculotherapie (ooracupunctuur) bij Movenda Hasselt: een zachte, natuurlijke methode via specifieke punten op het oor.",
     "seoTitleEn": "Auriculotherapy Hasselt | Movenda",
@@ -161,6 +163,7 @@
     "ctaUrl": "/contact?behandeling=Cardiovasculaire revalidatie",
     "gekoppeldeTeamleden": [],
     "volgorde": 8,
+    "toonInMenu": false,
     "seoTitle": "Hartrevalidatie Hasselt | Movenda",
     "seoDescription": "Cardiovasculaire revalidatie in Hasselt na een hartziekte of operatie. Progressief trainingsprogramma bij Movenda.",
     "seoTitleEn": "Cardiac rehabilitation Hasselt | Movenda",
