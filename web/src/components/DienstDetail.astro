@@ -107,10 +107,11 @@ const ctaUrl = toContact && !isB2bDienst(dienst) ? withLang("/team#keuzehulp", l
 // topped up with posts that mention it. Internal links dienst ↔ blog are what make the blog
 // count for the ranking of the treatment pages.
 const posts = await getBlogPostsVoorDienst(dienst, 3);
-const heroSrc = manueel
-  ? "/marketing/manuele-therapie.jpg"
-  : dienst.afbeelding
-    ? dienstPhotoSrc(dienst.afbeelding, "hero")
+const heroFallback = manueel && !dienst.afbeelding;
+const heroSrc = dienst.afbeelding
+  ? dienstPhotoSrc(dienst.afbeelding, "hero")
+  : heroFallback
+    ? "/marketing/manuele-therapie.jpg"
     : "";
 
 ---
@@ -121,9 +122,9 @@ const heroSrc = manueel
       <img
         src={heroSrc}
         alt={manueel ? (lang === "en" ? "A therapist treats a back with manual therapy" : "Therapeut behandelt een rug met manuele therapie") : ""}
-        width={manueel ? 2200 : 1600}
-        height={manueel ? 1467 : 900}
-        class:list={[manueel && "dienst-hero__bw"]}
+        width={heroFallback ? 2200 : 1600}
+        height={heroFallback ? 1467 : 900}
+        class:list={[heroFallback && "dienst-hero__bw"]}
       />
     )}
     <div class="dienst-hero__copy">
