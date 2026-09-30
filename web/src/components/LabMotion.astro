@@ -42,9 +42,16 @@
         const shift = Math.min(window.scrollY * 0.45, window.innerHeight * 0.42);
         arrow.style.setProperty("--arrow-shift", `${-shift}px`);
       }
+      // The cover stays sticky under the whole page. Once it has scrolled
+      // out of its own slot, later fade-ins should reveal black, not the photo.
+      const hero = document.querySelector<HTMLElement>(".lab-cover");
+      if (hero && document.querySelector(".brief-ink")) {
+        document.body.classList.toggle("lab-cover-gone", window.scrollY >= hero.offsetHeight - 1);
+      }
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
   } else if (cover) {
     const coverIo = new IntersectionObserver(
       ([entry]) => {

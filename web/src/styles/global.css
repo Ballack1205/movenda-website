@@ -398,6 +398,19 @@ html[data-theme="lab"] body.lab-past-cover .lab-cover__arrow {
   pointer-events: none;
 }
 
+/* After the hero has left its slot, keep a black plate under the scroll
+   reveals so the sticky photo does not show through the fade. */
+html[data-theme="lab"] body.lab-cover-gone .lab-cover {
+  background: #161513;
+}
+
+html[data-theme="lab"] body.lab-cover-gone .lab-cover__media,
+html[data-theme="lab"] body.lab-cover-gone .lab-cover__veil,
+html[data-theme="lab"] body.lab-cover-gone .lab-cover__copy,
+html[data-theme="lab"] body.lab-cover-gone .lab-cover__arrow {
+  visibility: hidden;
+}
+
 html[data-theme="lab"] .lab-intro {
   margin: 0 auto;
   max-width: 72rem;
