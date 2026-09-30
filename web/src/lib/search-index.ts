@@ -36,7 +36,7 @@ export function buildSearchIndex(input: {
     },
     {
       title: "Performance Centre",
-      href: page(lang, "/mpc"),
+      href: page(lang, "/performance"),
       keys: "mpc performance centre center kuringen lammerweg",
       text: "",
       kind: "page",
@@ -85,7 +85,7 @@ export function buildSearchIndex(input: {
     },
     {
       title: en ? "Group classes" : "Groepslessen",
-      href: page(lang, "/mpc/groepslessen"),
+      href: page(lang, "/groepslessen"),
       keys: "gx groepslessen group classes rooster timetable",
       text: "",
       kind: "page",

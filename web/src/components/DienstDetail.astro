@@ -1,5 +1,5 @@
 ---
-import { getBlogPostsVoorDienst, type Dienst, type Locatie, type Teamlid } from "../lib/content";
+import { getBlogPostsVoorDienst, rewriteMpcHref, type Dienst, type Locatie, type Teamlid } from "../lib/content";
 import { dienstPhotoSrc, teamPhotoSrc } from "../lib/images";
 import { localizeHref, withLang } from "../lib/i18n";
 import BlogPostCard from "./BlogPostCard.astro";
@@ -64,7 +64,7 @@ for (const raw of (body || "").split(/\n\n+/).map((p) => p.trim()).filter(Boolea
   if (relatedLabel.test(raw)) {
     for (const line of raw.replace(relatedLabel, "").split(/\n+/)) {
       const [label, href] = line.split("|").map((part) => part.trim());
-      if (label && href) related.push({ label, href: localizeHref(href, lang) });
+      if (label && href) related.push({ label, href: localizeHref(rewriteMpcHref(href) || href, lang) });
     }
     continue;
   }
@@ -223,7 +223,7 @@ const heroSrc = manueel
       {ctaLabel}
     </a>
     {dienst.categorie === "mpc-groep" && dienst.slug !== "corporate-coaching" && (
-      <a href={localizeHref("/mpc/groepslessen#inschrijven", lang)} class="text-sm font-semibold text-brand-primary hover:underline">
+      <a href={localizeHref("/groepslessen#inschrijven", lang)} class="text-sm font-semibold text-brand-primary hover:underline">
         {lang === "en" ? "Book a trial class" : "Boek een proefles"}
       </a>
     )}

@@ -17,13 +17,6 @@ const SANITY_DATASET = process.env.PUBLIC_SANITY_DATASET || "production";
 const SITEMAP_EXCLUDE = new Set([
   "/welkom",
   "/en/welkom",
-  // Older MPC copies. The 25 Sep kinesitherapie master is the canonical page.
-  "/mpc/dry-needling",
-  "/mpc/cupping",
-  "/mpc/taping",
-  "/en/mpc/dry-needling",
-  "/en/mpc/cupping",
-  "/en/mpc/taping",
 ]);
 
 /**
@@ -51,7 +44,15 @@ async function getLastmodMap() {
       if (!res.ok) return map;
       const { result } = await res.json();
       for (const d of result.diensten || []) {
-        const base = d.categorie === "kine" ? "/kinesitherapie" : d.categorie === "training" ? "/training" : "/mpc";
+        const groep = new Set(["boxing", "kleine-groepstraining", "hiit", "full-body", "powerplus", "skifit", "running", "core", "mxgp"]);
+        const onKine = d.categorie === "kine" || ["dry-needling", "cupping", "taping"].includes(d.slug);
+        const base = onKine
+          ? "/kinesitherapie"
+          : d.categorie === "training"
+            ? "/training"
+            : groep.has(d.slug)
+              ? "/groepslessen"
+              : "/performance";
         map.set(`${base}/${d.slug}`, d.u);
         map.set(`/en${base}/${d.slug}`, d.u);
       }
@@ -97,9 +98,12 @@ export default defineConfig({
       filter: (url) => {
         const path = new URL(url).pathname.replace(/\/$/, "") || "/";
         if (SITEMAP_EXCLUDE.has(path)) return false;
+        // Old /mpc URLs are redirects. The pages live at /performance and /groepslessen.
+        if (path === "/mpc" || path.startsWith("/mpc/") || path === "/en/mpc" || path.startsWith("/en/mpc/")) return false;
         if (!hostMode) return true;
         if (path === "/" || path === "/en") return true;
-        if (path.startsWith("/mpc") || path.startsWith("/en/mpc")) return true;
+        if (path.startsWith("/performance") || path.startsWith("/en/performance")) return true;
+        if (path.startsWith("/groepslessen") || path.startsWith("/en/groepslessen")) return true;
         if (path === "/contact" || path === "/en/contact") return true;
         if (path === "/team" || path.startsWith("/team/")) return true;
         if (path === "/en/team" || path.startsWith("/en/team/")) return true;

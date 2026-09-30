@@ -111,7 +111,7 @@ function linksBySlugs(
 function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
   const p = (href: string) => localizeInternalHref(href, lang);
   const en = lang === "en";
-  const rehabHref = p("/mpc/sportrevalidatie");
+  const rehabHref = p("/performance/sportrevalidatie");
   const kine: NavLink[] = [
     ...linksBySlugs(
       diensten,
@@ -176,7 +176,7 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
       ],
       lang,
     ),
-    { href: p("/mpc/groepslessen"), label: en ? "Timetable" : "Lessenrooster" },
+    { href: p("/groepslessen"), label: en ? "Timetable" : "Lessenrooster" },
   ];
   const keuzehulp = `${p("/team")}#keuzehulp`;
   const afspraak: NavItem = {
@@ -195,7 +195,7 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
           { label: en ? "Physiotherapy" : "Kinesitherapie", href: p("/kinesitherapie"), children: kine },
           {
             label: "Performance",
-            href: p("/mpc"),
+            href: p("/performance"),
             children: [
               { href: "", label: "Train", heading: true },
               ...train,
@@ -204,8 +204,8 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
               { href: rehabHref, label: en ? "Rehab" : "Revalidatie" },
             ],
           },
-          { label: "GX", href: p("/mpc/groepslessen"), children: gx },
-          { label: "B2B", href: p("/mpc/corporate-coaching"), children: [] },
+          { label: "GX", href: p("/groepslessen"), children: gx },
+          { label: "B2B", href: p("/performance/corporate-coaching"), children: [] },
           {
             label: "Olympia",
             href: p("/locaties/olympia"),
@@ -229,7 +229,7 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
         label: en ? "About us" : "Over ons",
         children: [
           { href: p("/over"), label: en ? "Our story" : "Ons verhaal" },
-          { href: p("/mpc/visie"), label: en ? "Our vision" : "Onze visie" },
+          { href: p("/performance/visie"), label: en ? "Our vision" : "Onze visie" },
           { href: p("/team"), label: "Team" },
           { href: p("/events"), label: "Events" },
           { href: p("/prijzen"), label: en ? "Prices" : "Prijzen" },
@@ -281,37 +281,37 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
       return {
         items: [
           {
-            href: "/en/mpc#training",
+            href: "/en/performance#training",
             label: "Training",
             children: [
-              { href: "/en/mpc#training", label: "All training" },
+              { href: "/en/performance#training", label: "All training" },
               ...dienstLinks(diensten, "mpc-training", "en"),
             ],
           },
           {
-            href: "/en/mpc#sportrevalidatie",
+            href: "/en/performance#sportrevalidatie",
             label: "Sports rehabilitation",
             children: [
-              { href: "/en/mpc#sportrevalidatie", label: "All sports rehabilitation" },
+              { href: "/en/performance#sportrevalidatie", label: "All sports rehabilitation" },
               ...dienstLinks(diensten, "mpc-rehab", "en"),
             ],
           },
           {
-            href: "/en/mpc/groepslessen",
+            href: "/en/groepslessen",
             label: "Group classes",
             children: [
-              { href: "/en/mpc/groepslessen", label: "Timetable & all classes" },
+              { href: "/en/groepslessen", label: "Timetable & all classes" },
               ...dienstLinks(diensten, "mpc-groep", "en"),
             ],
           },
-          { href: "/en/mpc/prijzen", label: "Prices" },
+          { href: "/en/performance/prijzen", label: "Prices" },
           { href: "/en/team", label: "Team" },
           {
-            href: "/en/mpc/visie",
+            href: "/en/performance/visie",
             label: "About MPC",
             children: [
-              { href: "/en/mpc/visie", label: "Vision" },
-              { href: "/en/mpc#faq", label: "FAQ" },
+              { href: "/en/performance/visie", label: "Vision" },
+              { href: "/en/performance#faq", label: "FAQ" },
             ],
           },
           (() => {
@@ -328,37 +328,37 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
     return {
       items: [
         {
-          href: "/mpc#training",
+          href: "/performance#training",
           label: "Training",
           children: [
-            { href: "/mpc#training", label: "Alle training" },
+            { href: "/performance#training", label: "Alle training" },
             ...dienstLinks(diensten, "mpc-training", "nl"),
           ],
         },
         {
-          href: "/mpc#sportrevalidatie",
+          href: "/performance#sportrevalidatie",
           label: "Sportrevalidatie",
           children: [
-            { href: "/mpc#sportrevalidatie", label: "Alle sportrevalidatie" },
+            { href: "/performance#sportrevalidatie", label: "Alle sportrevalidatie" },
             ...dienstLinks(diensten, "mpc-rehab", "nl"),
           ],
         },
         {
-          href: "/mpc/groepslessen",
+          href: "/groepslessen",
           label: "Groepslessen",
           children: [
-            { href: "/mpc/groepslessen", label: "Lesrooster & alle lessen" },
+            { href: "/groepslessen", label: "Lesrooster & alle lessen" },
             ...dienstLinks(diensten, "mpc-groep", "nl"),
           ],
         },
-        { href: "/mpc/prijzen", label: "Prijzen" },
+        { href: "/performance/prijzen", label: "Prijzen" },
         { href: "/team", label: "Team" },
         {
-          href: "/mpc/visie",
+          href: "/performance/visie",
           label: "Over MPC",
           children: [
-            { href: "/mpc/visie", label: "Visie" },
-            { href: "/mpc#faq", label: "Veelgestelde vragen" },
+            { href: "/performance/visie", label: "Visie" },
+            { href: "/performance#faq", label: "Veelgestelde vragen" },
           ],
         },
         (() => {
@@ -402,7 +402,7 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
             ...sportaanbodLinks(sportaanbod, "en"),
           ],
         },
-        { href: "/en/mpc", label: "MPC", emphasize: true },
+        { href: "/en/performance", label: "MPC", emphasize: true },
         ...contactItem,
       ],
       cta,
@@ -439,7 +439,7 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
           ...sportaanbodLinks(sportaanbod, "nl"),
         ],
       },
-      { href: "/mpc", label: "MPC", emphasize: true },
+      { href: "/performance", label: "MPC", emphasize: true },
       ...contactItem,
     ],
     cta,
@@ -460,8 +460,8 @@ function normalizePath(href: string): string {
  */
 export function isCurrentPath(href: string, path: string): boolean {
   if (/^https?:/.test(href)) return false;
-  // Section anchors (/mpc#training) are never "the current page": on /mpc
-  // every anchor would light up, and /mpc/* pages would match them by prefix.
+  // Section anchors (/performance#training) are never "the current page": on /performance
+  // every anchor would light up, and /performance/* pages would match them by prefix.
   if (href.includes("#")) return false;
   const target = normalizePath(href);
   const current = normalizePath(path);

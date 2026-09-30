@@ -30,7 +30,7 @@ import mpcSecondary from "../assets/marketing/mpc-secondary.jpg";
 
 interface Props {
   lang?: "nl" | "en";
-  /** Canonical path for this render (`/` on the MPC host, `/mpc` on the full site). */
+  /** Canonical path for this render (`/` on the MPC host, `/performance` on the full site). */
   path: string;
   altPath: string;
 }
@@ -50,7 +50,7 @@ const settings = await getSiteSettings();
 const getuigenissen = await getGetuigenissen("mpc", lang);
 const pagina = await getPagina("mpc");
 
-const groepHref = en ? "/en/mpc/groepslessen" : "/mpc/groepslessen";
+const groepHref = en ? "/en/groepslessen" : "/groepslessen";
 const contactHref = en ? "/en/contact" : "/contact";
 const pillarTargets = [
   { href: "#training", foto: training.find((d) => d.afbeelding)?.afbeelding },
@@ -72,10 +72,10 @@ const jsonLd = [
   localBusinessSchema(locatie),
   breadcrumbSchema([
     { name: "Home", path: en ? "/en" : "/" },
-    { name: "Movenda Performance Centre", path: en ? "/en/mpc" : "/mpc" },
+    { name: "Movenda Performance Centre", path: en ? "/en/performance" : "/performance" },
   ]),
   ...(faqs.length > 0
-    ? [faqPageSchema(en ? faqs.map((f) => ({ ...f, ...faqCopy(f, "en") })) : faqs, en ? "/en/mpc" : "/mpc")]
+    ? [faqPageSchema(en ? faqs.map((f) => ({ ...f, ...faqCopy(f, "en") })) : faqs, en ? "/en/performance" : "/performance")]
     : []),
 ];
 

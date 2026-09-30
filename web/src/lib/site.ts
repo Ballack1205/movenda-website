@@ -20,7 +20,7 @@ export const THEME: Theme = import.meta.env.PUBLIC_THEME === "lab" ? "lab" : "cu
 /**
  * `mpc`: this deploy is only the Performance Centre (mpc.movenda.be).
  * Movenda brand links go to the existing Squarespace site. Flip back to
- * `full` when www.movenda.be points here; then 301 mpc.movenda.be → /mpc.
+ * `full` when www.movenda.be points here; then 301 mpc.movenda.be → /performance.
  */
 export const HOST_MODE: HostMode = import.meta.env.PUBLIC_HOST_MODE === "mpc" ? "mpc" : "full";
 
@@ -40,10 +40,10 @@ export function absoluteUrl(pathOrUrl?: string): string | undefined {
   return new URL(pathOrUrl, `${SITE_URL}/`).toString();
 }
 
-/** MPC home on this host (`/` when host-mode is on, `/mpc` on the full site). */
+/** Performance home on this host (`/` when host-mode is on, `/performance` on the full site). */
 export function mpcHomePath(lang: "nl" | "en" = "nl"): string {
   if (MPC_HOST) return lang === "en" ? "/en" : "/";
-  return lang === "en" ? "/en/mpc" : "/mpc";
+  return lang === "en" ? "/en/performance" : "/performance";
 }
 
 /** Movenda home: old www.movenda.be while only MPC is on this deploy. */
@@ -56,7 +56,8 @@ export function movendaHomeHref(lang: "nl" | "en" = "nl"): string {
 export function isMpcSitemapPath(pathname: string): boolean {
   const p = pathname.replace(/\/$/, "") || "/";
   if (p === "/" || p === "/en") return true;
-  if (p.startsWith("/mpc") || p.startsWith("/en/mpc")) return true;
+  if (p.startsWith("/performance") || p.startsWith("/en/performance")) return true;
+  if (p.startsWith("/groepslessen") || p.startsWith("/en/groepslessen")) return true;
   if (p === "/contact" || p === "/en/contact") return true;
   if (p === "/team" || p.startsWith("/team/")) return true;
   if (p === "/en/team" || p.startsWith("/en/team/")) return true;

@@ -92,7 +92,7 @@ const heroEyebrow = paginaTekst(pagina, "ondertitel", "en");
 const deurFallback = {
   "/kinesitherapie": kineHero,
   "/training": trainingSecondary,
-  "/mpc": mpcHero,
+  "/performance": mpcHero,
 } as const;
 const labDeuren = settings.homeDeuren.map((deur, i) => ({
   n: i + 1,
@@ -297,7 +297,7 @@ const labDeuren = settings.homeDeuren.map((deur, i) => ({
       diensten={homePijlerDiensten("mpc", alleDiensten)}
       image={mpcHero}
       imageAlt="Performance training at the Movenda Performance Centre in Kuringen"
-      aanbodHref="/en/mpc"
+      aanbodHref="/en/performance"
       aanbodLabel="Discover the Performance Centre"
       afspraakHref={afspraakHref}
       lang="en"
@@ -319,7 +319,7 @@ const labDeuren = settings.homeDeuren.map((deur, i) => ({
       </span>
     </a>
     <a
-      href="/en/mpc"
+      href="/en/performance"
       class="group relative overflow-hidden rounded-2xl p-6 text-white transition hover:opacity-95 sm:p-8"
     >
       <CmsFoto foto={mpcTeaserFoto} fallback={mpcHero} alt="" decorative width={640} height={480} class="absolute inset-0 h-full w-full object-cover" />

@@ -1,0 +1,64 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import DienstDetail from "../../components/DienstDetail.astro";
+import {
+  getDienstenByCategorie,
+  getDienstBySlug,
+  getLocatieBySlug,
+  getTeamleden,
+  getPrijzen,
+  findPrijsVoorDienst,
+  dienstHref,
+  isGroepLes,
+} from "../../lib/content";
+import { serviceNode, breadcrumbNode } from "../../lib/schema";
+
+export async function getStaticPaths() {
+  const canonicalKine = new Set(["dry-needling", "cupping", "taping"]);
+  const diensten = await getDienstenByCategorie("mpc");
+  return diensten
+    .filter((dienst) => !isGroepLes(dienst) && !canonicalKine.has(dienst.slug))
+    .map((dienst) => ({ params: { slug: dienst.slug } }));
+}
+
+const { slug } = Astro.params;
+const dienst = await getDienstBySlug(slug!, "mpc");
+
+if (!dienst) {
+  return Astro.redirect("/performance");
+}
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const alleTeamleden = await getTeamleden();
+const team = alleTeamleden.filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
+const path = dienstHref(dienst);
+const prijs = findPrijsVoorDienst(dienst, await getPrijzen());
+
+const jsonLd = [
+  serviceNode(dienst, locatie, { path, prijs, team }),
+  breadcrumbNode([
+    { name: "Home", path: "/" },
+    { name: "Movenda Performance Centre", path: "/performance" },
+    { name: dienst.titel, path },
+  ]),
+];
+---
+
+<Layout
+  title={dienst.seoTitle}
+  description={dienst.seoDescription}
+  path={path}
+  altPath={dienstHref(dienst, "en")}
+  brand="mpc"
+  jsonLd={jsonLd}
+  ogImage={dienst.afbeelding}
+  ogImageAlt={`${dienst.titel} in het Movenda Performance Centre`}
+>
+  <DienstDetail
+    dienst={dienst}
+    team={team}
+    locatie={locatie}
+    backHref="/performance"
+    backLabel="← Terug naar Performance"
+  />
+</Layout>

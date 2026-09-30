@@ -1,0 +1,45 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getLocatieBySlug, getSiteSettings, getPagina, paginaAlineas } from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const settings = await getSiteSettings();
+const pagina = await getPagina("mpc-visie");
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Movenda Performance Centre", path: "/performance" },
+    { name: "Visie", path: "/performance/visie" },
+  ]),
+];
+import SectionKicker from "../../components/SectionKicker.astro";
+---
+
+<Layout
+  title={pagina.seoTitle || "Visie | Movenda Performance Centre"}
+  description={pagina.seoDescription || ""}
+  path="/performance/visie"
+  altPath="/en/performance/visie"
+  brand="mpc"
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-3xl px-4 py-16">
+    <a href="/performance" class="text-sm font-medium text-brand-primary">← Terug naar Performance</a>
+    <SectionKicker n={1} />
+        <h1 class="mt-4 text-3xl font-bold">{pagina.titel}</h1>
+    {settings.slogans.mpc && (
+      <p class="mt-3 text-lg font-medium text-brand-primary">{settings.slogans.mpc}</p>
+    )}
+    <div class="mt-6 space-y-4 leading-relaxed text-brand-muted">
+      {paginaAlineas(pagina).map((tekst) => <p>{tekst}</p>)}
+      <p>
+        {locatie.adres}. Enkel op afspraak.
+      </p>
+    </div>
+    <a href="/contact" class="mt-10 inline-block rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+      {pagina.ctaTekst || "Contacteer ons"}
+    </a>
+  </article>
+</Layout>

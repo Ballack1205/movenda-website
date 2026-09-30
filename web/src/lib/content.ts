@@ -557,15 +557,62 @@ export interface Popup {
 
 const MPC_CATEGORIES: DienstCategorie[] = ["mpc-training", "mpc-rehab", "mpc-groep"];
 
+/** Group-class pages. Corporate coaching stays under /performance. */
+const GROEP_LES_SLUGS = new Set([
+  "boxing",
+  "kleine-groepstraining",
+  "hiit",
+  "full-body",
+  "powerplus",
+  "skifit",
+  "running",
+  "core",
+  "mxgp",
+]);
+
+/** Older MPC copies. The kinesitherapie page is the canonical URL. */
+const KINE_CANONICAL_SLUGS = new Set(["dry-needling", "cupping", "taping"]);
+
 export function isMpcCategorie(categorie: DienstCategorie): boolean {
   return MPC_CATEGORIES.includes(categorie);
 }
 
+export function isGroepLes(dienst: Pick<Dienst, "slug" | "categorie">): boolean {
+  return dienst.categorie === "mpc-groep" && GROEP_LES_SLUGS.has(dienst.slug);
+}
+
+/**
+ * Julie: no public /mpc path. Old links (Sanity doors, CTA urls) are rewritten
+ * onto /performance and /groepslessen. /locaties/mpc stays the location slug.
+ */
+export function rewriteMpcHref(href: string): string;
+export function rewriteMpcHref(href: string | undefined): string | undefined;
+export function rewriteMpcHref(href: string | undefined): string | undefined {
+  if (!href) return href;
+  const hashAt = href.indexOf("#");
+  const hash = hashAt >= 0 ? href.slice(hashAt) : "";
+  const path = hashAt >= 0 ? href.slice(0, hashAt) : href;
+  const en = path.startsWith("/en/");
+  const rest = en ? path.slice(3) : path;
+  if (rest !== "/mpc" && !rest.startsWith("/mpc/")) return href;
+  const prefix = en ? "/en" : "";
+  if (rest === "/mpc" || rest === "/mpc/") return `${prefix}/performance${hash}`;
+  if (rest === "/mpc/groepslessen") return `${prefix}/groepslessen${hash}`;
+  const slug = rest.slice("/mpc/".length).replace(/\/$/, "");
+  if (!slug || slug.includes("/")) return href;
+  if (KINE_CANONICAL_SLUGS.has(slug)) return `${prefix}/kinesitherapie/${slug}${hash}`;
+  if (GROEP_LES_SLUGS.has(slug)) return `${prefix}/groepslessen/${slug}${hash}`;
+  return `${prefix}/performance/${slug}${hash}`;
+}
+
 export function dienstHref(dienst: Pick<Dienst, "slug" | "categorie">, lang: "nl" | "en" = "nl"): string {
   const prefix = lang === "en" ? "/en" : "";
-  if (dienst.categorie === "kine") return `${prefix}/kinesitherapie/${dienst.slug}`;
+  if (dienst.categorie === "kine" || KINE_CANONICAL_SLUGS.has(dienst.slug)) {
+    return `${prefix}/kinesitherapie/${dienst.slug}`;
+  }
   if (dienst.categorie === "training") return `${prefix}/training/${dienst.slug}`;
-  return `${prefix}/mpc/${dienst.slug}`;
+  if (isGroepLes(dienst)) return `${prefix}/groepslessen/${dienst.slug}`;
+  return `${prefix}/performance/${dienst.slug}`;
 }
 
 export function formatPrijs(
@@ -875,6 +922,7 @@ function normalizeDienst(row: Dienst): Dienst {
     // Sanity wins once Julie sets the checkbox. An empty field falls back to the seed,
     // so these three can start hidden and she can turn them back on in Studio.
     toonInMenu: row.toonInMenu ?? fromSeed?.toonInMenu ?? true,
+    ctaUrl: rewriteMpcHref((seedWon ? fromSeed?.ctaUrl : undefined) || row.ctaUrl || fromSeed?.ctaUrl),
   };
 }
 
@@ -1028,7 +1076,7 @@ function mergeHomeDeuren(
         regelEn: row.regelEn?.trim() || undefined,
         tekst: row.tekst?.trim() || undefined,
         tekstEn: row.tekstEn?.trim() || undefined,
-        href,
+        href: rewriteMpcHref(href) || href,
         foto: toCmsFoto(row.foto),
       } satisfies HomeDeur;
     })
@@ -1696,7 +1744,9 @@ async function loadSportaanbod(): Promise<SportaanbodItem[]> {
 
 function popupMatchesPath(toonOp: PopupTonenOp, path: string): boolean {
   if (toonOp === "home") return path === "/" || path === "/en" || path === "/en/";
-  if (toonOp === "mpc") return path.includes("/mpc");
+  if (toonOp === "mpc") {
+    return path.includes("/performance") || path.includes("/groepslessen") || path.includes("/mpc");
+  }
   return true;
 }
 

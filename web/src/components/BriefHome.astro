@@ -52,9 +52,9 @@ const eventPhoto = (foto: string) =>
 const locaties = await getLocaties();
 const deurFallback: Record<string, ImageMetadata> = {
   "/kinesitherapie": kineHero,
-  "/mpc": homePerformance,
-  "/mpc/groepslessen": homeGx,
-  "/mpc/corporate-coaching": homeB2b,
+  "/performance": homePerformance,
+  "/groepslessen": homeGx,
+  "/performance/corporate-coaching": homeB2b,
   "/locaties/olympia": homeOlympia,
 };
 
@@ -63,7 +63,7 @@ const deuren = settings.homeAanbod.map((deur, i) => ({
   href: localizeInternalHref(deur.href, "nl"),
   title: deur.href.endsWith("/locaties/olympia") ? "Olympia" : homeDeurNaam(deur, "nl"),
   body: homeDeurTekst(deur, "nl"),
-  lead: deur.href === "/kinesitherapie" || deur.href === "/mpc",
+  lead: deur.href === "/kinesitherapie" || deur.href === "/performance",
   foto: deur.foto,
   fallback: deurFallback[deur.href] ?? homeCover,
   alt: homeDeurNaam(deur, "nl"),

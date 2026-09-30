@@ -92,7 +92,7 @@
       "korteNaamEn": "Performance",
       "regel": "Kuringen",
       "regelEn": "Kuringen",
-      "href": "/mpc"
+      "href": "/performance"
     }
   ],
   "homeAanbod": [
@@ -106,19 +106,19 @@
       "korteNaam": "Performance",
       "regel": "Ontdek performance",
       "tekst": "Doelgerichte training, testing en data voor sporters die hun fysieke capaciteiten en prestaties willen verbeteren.",
-      "href": "/mpc"
+      "href": "/performance"
     },
     {
       "korteNaam": "GX",
       "regel": "Ontdek GX",
       "tekst": "Kwalitatieve groepstraining met professionele begeleiding, persoonlijke aandacht en maximaal acht deelnemers.",
-      "href": "/mpc/groepslessen"
+      "href": "/groepslessen"
     },
     {
       "korteNaam": "B2B",
       "regel": "Ontdek B2B",
       "tekst": "Maatwerktrajecten die beweging en gezondheid duurzaam verankeren binnen jouw organisatie.",
-      "href": "/mpc/corporate-coaching"
+      "href": "/performance/corporate-coaching"
     },
     {
       "korteNaam": "Olympia",
