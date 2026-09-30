@@ -1430,7 +1430,8 @@ html[data-theme="lab"] .brief-loc__veil {
   background: linear-gradient(180deg, rgb(14 16 18 / 0.28) 0%, rgb(14 16 18 / 0.72) 100%);
 }
 
-html[data-theme="lab"] .brief-loc--dark .brief-loc__name {
+html[data-theme="lab"] .brief-loc--dark .brief-loc__name,
+html[data-theme="lab"] .brief-loc--dark .brief-loc__address {
   color: #fff;
 }
 
