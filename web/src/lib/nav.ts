@@ -235,11 +235,11 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
         label: "Team",
       },
       {
-        href: p("/over"),
+        href: p("/over-ons/ons-verhaal"),
         label: en ? "About us" : "Over ons",
         children: [
-          { href: p("/over"), label: en ? "Our story" : "Ons verhaal" },
-          { href: p("/performance/visie"), label: en ? "Our vision" : "Onze visie" },
+          { href: p("/over-ons/ons-verhaal"), label: en ? "Our story" : "Ons verhaal" },
+          { href: p("/over-ons/onze-visie"), label: en ? "Our vision" : "Onze visie" },
           { href: p("/team"), label: "Team" },
           { href: p("/events"), label: "Events" },
           { href: p("/prijzen"), label: en ? "Prices" : "Prijzen" },
@@ -410,10 +410,11 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
         { href: "/en/team", label: "Team" },
         { href: "/en/prijzen", label: "Prices" },
         {
-          href: "/en/over",
+          href: "/en/over-ons/ons-verhaal",
           label: "About us",
           children: [
-            { href: "/en/over", label: "About Movenda" },
+            { href: "/en/over-ons/ons-verhaal", label: "Our story" },
+            { href: "/en/over-ons/onze-visie", label: "Our vision" },
             { href: "/en/faq", label: "FAQ" },
             { href: "/en/blog", label: "Blog" },
             { href: "/en/jobs", label: "Jobs" },
@@ -447,10 +448,11 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
       { href: "/team", label: "Team" },
       { href: "/prijzen", label: "Prijzen" },
       {
-        href: "/over",
+        href: "/over-ons/ons-verhaal",
         label: "Over ons",
         children: [
-          { href: "/over", label: "Over Movenda" },
+          { href: "/over-ons/ons-verhaal", label: "Ons verhaal" },
+          { href: "/over-ons/onze-visie", label: "Onze visie" },
           { href: "/faq", label: "Veelgestelde vragen" },
           { href: "/blog", label: "Blog" },
           { href: "/jobs", label: "Vacatures" },
