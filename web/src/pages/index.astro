@@ -30,6 +30,7 @@ import {
   teamCounts,
 } from "../lib/content";
 import homeHero from "../assets/marketing/home-hero.jpg";
+import homeCover from "../assets/marketing/home-cover.jpg";
 import mpcHero from "../assets/marketing/mpc-hero.jpg";
 import homeSquats from "../assets/marketing/home-squats.jpg";
 import kineHero from "../assets/marketing/kine-hero.jpg";
@@ -96,6 +97,8 @@ const heroIntro = paginaAlineas(pagina, "nl", { kinesisten: kinesistenCount, tra
   description={pagina.seoDescription || ""}
   path="/"
   altPath="/en"
+  ogImage={pagina.foto || homeCover.src}
+  ogImageAlt={pagina.fotoAlt || "Trainer van Movenda begeleidt een klant tijdens een training"}
   extraLinks={heroLinks}
 >
   {THEME === "lab" ? (
