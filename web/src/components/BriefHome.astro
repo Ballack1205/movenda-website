@@ -73,10 +73,10 @@ const deuren = settings.homeAanbod.map((deur, i) => ({
 
 const counts = teamCounts(team);
 const proof = [
-  { value: String(counts.kinesisten), label: "kinesitherapeuten" },
-  { value: String(counts.trainers), label: "personal trainers" },
-  { value: String(locaties.length), label: "locaties" },
-  { value: brief.bewijs.jaren, label: "jaar ervaring" },
+  { value: String(counts.kinesisten), label: brief.bewijs.kinesistenLabel },
+  { value: String(counts.trainers), label: brief.bewijs.trainersLabel },
+  { value: String(locaties.length), label: brief.bewijs.locatiesLabel },
+  { value: brief.bewijs.jaren, label: brief.bewijs.jarenLabel },
 ];
 
 const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).filter(Boolean);
@@ -138,7 +138,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
         {hasselt.foto && <img src={hasselt.foto} alt="" class="brief-loc__photo" />}
         <span class="brief-loc__veil" aria-hidden="true"></span>
         <span class="brief-loc__copy">
-          <span class="brief-loc__name">Movenda Hasselt</span>
+          <span class="brief-loc__name">{brief.hasseltNaam}</span>
           <span class="brief-loc__address">{hasselt.adres}</span>
         </span>
       </a>
@@ -148,7 +148,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
         <img src={kuringen.foto} alt="" class="brief-loc__photo" />
         <span class="brief-loc__veil" aria-hidden="true"></span>
         <span class="brief-loc__copy">
-          <span class="brief-loc__name">Performance Centre Kuringen</span>
+          <span class="brief-loc__name">{brief.kuringenNaam}</span>
           <span class="brief-loc__address">{kuringen.adres}</span>
         </span>
       </a>
@@ -185,7 +185,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 
   <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
-      <a class="brief-kicker" href="/events">Events</a>
+      <a class="brief-kicker" href="/events">{brief.eventsKicker}</a>
       <ul class="brief-events">
         {homeEvents.map((event) => (
           <li>
@@ -212,13 +212,13 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 
   <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
-      <a href="/blog" class="brief-textlink">Bekijk Insights/Blog</a>
+      <a href="/blog" class="brief-textlink">{brief.insightsCta}</a>
     </div>
   </section>
 </div>
 
 <div class="lab-sheet lab-sheet--ink brief-ink">
-  <InstagramFeed settings={settings} title="Follow us" />
+  <InstagramFeed settings={settings} title={brief.instagramTitel} />
 
   <section class="brief-slot" data-reveal>
     <h2 class="brief-title">{brief.slotTitel}</h2>

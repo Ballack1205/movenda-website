@@ -1,11 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getFaqs, getSiteSettings } from "../../lib/content";
+import LinkedText from "../../components/LinkedText.astro";
+import { getFaqs, getPagina, getSiteSettings, paginaAlineas, paginaTekst } from "../../lib/content";
 import { breadcrumbSchema, faqPageSchema } from "../../lib/schema";
 import { faqCopy } from "../../lib/i18n";
 
 const faqs = await getFaqs("movenda");
 const settings = await getSiteSettings();
+const pagina = await getPagina("faq");
 const shown = faqs.map((f) => ({ ...f, ...faqCopy(f, "en") }));
 
 const jsonLd = [
@@ -19,8 +21,8 @@ import SectionKicker from "../../components/SectionKicker.astro";
 ---
 
 <Layout
-  title="Frequently asked questions | Movenda Hasselt"
-  description="Answers to the most common questions about appointments, fees, doctor's prescriptions and more at Movenda."
+  title={paginaTekst(pagina, "seoTitle", "en") || "Frequently asked questions | Movenda Hasselt"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
   path="/en/faq"
   altPath="/faq"
   lang="en"
@@ -28,13 +30,12 @@ import SectionKicker from "../../components/SectionKicker.astro";
 >
   <section class="mx-auto max-w-3xl px-4 py-12">
     <SectionKicker n={1} />
-        <h1 class="text-3xl font-bold">Frequently asked questions</h1>
-    <p class="mt-2 text-brand-muted">
-      Can't find your question? Email us at{" "}
-      <a href={`mailto:${settings.email}`} class="font-semibold text-brand-primary hover:underline">
-        {settings.email}
-      </a>.
-    </p>
+        <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", "en")}</h1>
+    {paginaAlineas(pagina, "en", { email: settings.email }).map((tekst) => (
+      <p class="mt-2 text-brand-muted">
+        <LinkedText text={tekst} linkClass="font-semibold text-brand-primary hover:underline" />
+      </p>
+    ))}
 
     <div class="mt-8 divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
       {shown.map((faq) => (

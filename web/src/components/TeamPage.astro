@@ -5,6 +5,9 @@ import {
   getSiteSettings,
   getKeuzehulp,
   getLocaties,
+  getPagina,
+  paginaAlineas,
+  paginaTekst,
   KEUZEHULP_CATEGORIEEN,
   isKinesist,
   isTrainer,
@@ -29,6 +32,7 @@ const team = await getTeamleden();
 const settings = await getSiteSettings();
 const keuzehulp = await getKeuzehulp();
 const locaties = await getLocaties();
+const pagina = await getPagina("team");
 const path = withLang("/team", lang);
 const homePath = withLang("/", lang);
 
@@ -80,16 +84,10 @@ const payload = {
 };
 
 const t = {
-  title: lang === "en" ? "Our team | Physiotherapists & trainers Hasselt | Movenda" : "Ons team | Kinesisten & personal trainers Hasselt | Movenda",
-  description:
-    lang === "en"
-      ? "Meet the Movenda team: physiotherapists, personal trainers and performance coaches in Hasselt and Kuringen."
-      : "Maak kennis met het team van Movenda: kinesisten, personal trainers en performance coaches in Hasselt en Kuringen.",
-  h1: lang === "en" ? "Our team, your health" : "Ons team, jouw gezondheid",
-  intro:
-    lang === "en"
-      ? `${team.length} therapists and coaches, across Movenda and the Performance Centre. Each team member has their own specialisation — pick whoever best matches your complaint or goal.`
-      : `${team.length} therapeuten en coaches, verdeeld over Movenda en het Performance Centre. Elk teamlid heeft een eigen specialisatie — kies zelf wie het best aansluit bij jouw klacht of doel.`,
+  title: paginaTekst(pagina, "seoTitle", lang),
+  description: paginaTekst(pagina, "seoDescription", lang),
+  h1: paginaTekst(pagina, "titel", lang),
+  intro: paginaAlineas(pagina, lang, { aantal: team.length }).join(" "),
   filter: lang === "en" ? "Filter by role or location" : "Filter op rol of vestiging",
   colleagues: lang === "en" ? "colleagues" : "collega's",
   empty: lang === "en" ? "No colleagues in this selection." : "Geen collega's in deze selectie.",

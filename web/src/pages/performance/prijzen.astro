@@ -7,11 +7,15 @@ import {
   getLocatieBySlug,
   formatPrijs,
   formatEuro,
+  getPagina,
+  paginaAlineas,
   prijsNotitie,
   type Prijsitem,
 } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
+import LinkedText from "../../components/LinkedText.astro";
 
+const pagina = await getPagina("performance-prijzen");
 const locatie = (await getLocatieBySlug("mpc"))!;
 const settings = await getSiteSettings();
 const info = settings.prijzenInfo;
@@ -44,21 +48,19 @@ import SectionKicker from "../../components/SectionKicker.astro";
 ---
 
 <Layout
-  title="Prijzen | Movenda Performance Centre"
-  description="Tarieven van het Movenda Performance Centre in Kuringen: personal training, sportrevalidatie, groepslessen en screening. Exclusief BTW, enkel op afspraak."
+  title={pagina.seoTitle || "Prijzen | Movenda Performance Centre"}
+  description={pagina.seoDescription || ""}
   path="/performance/prijzen"
   altPath="/en/performance/prijzen"
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-4xl px-4 py-12">
-    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">MPC</p>
+    {pagina.ondertitel && <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">{pagina.ondertitel}</p>}
     <SectionKicker n={1} />
-        <h1 class="mt-2 text-3xl font-bold">Prijzen</h1>
-    <p class="mt-3 max-w-2xl text-brand-muted">
-      {info.exBtwMpc !== false
-        ? "Alle prijzen zijn exclusief BTW, enkel op afspraak. Je ontvangt een factuur na een aantal sessies."
-        : "Enkel op afspraak. Je ontvangt een factuur na een aantal sessies."}
-    </p>
+        <h1 class="mt-2 text-3xl font-bold">{pagina.titel}</h1>
+    {paginaAlineas(pagina).map((tekst) => (
+      <p class="mt-3 max-w-2xl text-brand-muted"><LinkedText text={tekst} /></p>
+    ))}
 
     {sections.map((section) => (
       <div class="mt-10">
@@ -88,7 +90,7 @@ import SectionKicker from "../../components/SectionKicker.astro";
 
     {coaches.length > 0 && (
       <div class="mt-10">
-        <h2 class="text-xl font-semibold">Tarieven per coach</h2>
+        <h2 class="text-xl font-semibold">{pagina.perTherapeutTitel}</h2>
         <div class="mt-4 overflow-x-auto rounded-2xl border border-brand-border">
           <table class="w-full min-w-[28rem] text-left text-sm">
             <thead class="bg-brand-surface text-brand-muted">

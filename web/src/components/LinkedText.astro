@@ -1,0 +1,40 @@
+---
+// Plain CMS text with [label](url) links and bare e-mail addresses turned into anchors.
+interface Props {
+  text: string;
+  linkClass?: string;
+}
+
+const { text, linkClass = "underline underline-offset-4" } = Astro.props;
+
+type Part = { text: string; href?: string; external?: boolean };
+const parts: Part[] = [];
+const pattern = /\[([^\]]+)\]\(([^)\s]+)\)|([\w.+-]+@[\w-]+(?:\.[\w-]+)+)/g;
+let last = 0;
+for (const match of text.matchAll(pattern)) {
+  const index = match.index ?? 0;
+  if (index > last) parts.push({ text: text.slice(last, index) });
+  if (match[3]) {
+    parts.push({ text: match[3], href: `mailto:${match[3]}` });
+  } else {
+    const href = match[2];
+    const safe = /^(https?:|mailto:|tel:|\/|#)/i.test(href);
+    parts.push(safe ? { text: match[1], href, external: /^https?:/i.test(href) } : { text: match[1] });
+  }
+  last = index + match[0].length;
+}
+if (last < text.length) parts.push({ text: text.slice(last) });
+---
+
+{parts.map((part) =>
+  part.href ? (
+    <a
+      href={part.href}
+      class={linkClass}
+      target={part.external ? "_blank" : undefined}
+      rel={part.external ? "noopener noreferrer" : undefined}
+    >{part.text}</a>
+  ) : (
+    part.text
+  ),
+)}

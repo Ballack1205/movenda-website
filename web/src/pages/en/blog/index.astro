@@ -2,11 +2,13 @@
 import Layout from "../../../layouts/Layout.astro";
 import BlogPostFeature from "../../../components/BlogPostFeature.astro";
 import BlogPostCard from "../../../components/BlogPostCard.astro";
-import { getBlogPosts } from "../../../lib/content";
+import { getBlogPosts, getPagina, paginaAlineas, paginaTekst } from "../../../lib/content";
 import { blogListSchema, breadcrumbSchema } from "../../../lib/schema";
 import SectionKicker from "../../../components/SectionKicker.astro";
+import LinkedText from "../../../components/LinkedText.astro";
 
 const posts = await getBlogPosts();
+const pagina = await getPagina("blog");
 const featured = posts[0];
 const rest = posts.slice(1);
 
@@ -20,8 +22,8 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Blog | Tips on physiotherapy, training and recovery | Movenda"
-  description="Practical tips on injury prevention, training and recovery, written by the Movenda team."
+  title={paginaTekst(pagina, "seoTitle", "en") || "Blog | Movenda"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
   path="/en/blog"
   altPath="/blog"
   lang="en"
@@ -33,17 +35,18 @@ const jsonLd = [
 >
   <section class="mx-auto max-w-6xl px-4 py-12 lg:py-16">
     <SectionKicker n={1} />
-    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">Blog</p>
+    {paginaTekst(pagina, "ondertitel", "en") && (
+      <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">{paginaTekst(pagina, "ondertitel", "en")}</p>
+    )}
     <h1 class="mt-2 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
-      Tips from our physiotherapists and trainers
+      {paginaTekst(pagina, "titel", "en")}
     </h1>
-    <p class="mt-4 max-w-2xl text-lg text-brand-muted">
-      Practical insights on injury prevention, recovery and training — straight from the practice
-      in Hasselt.
-    </p>
+    {paginaAlineas(pagina, "en").map((tekst) => (
+      <p class="mt-4 max-w-2xl text-lg text-brand-muted"><LinkedText text={tekst} /></p>
+    ))}
 
     {posts.length === 0 ? (
-      <p class="mt-10 text-brand-muted">Our first blog posts will appear here soon.</p>
+      <p class="mt-10 text-brand-muted">{paginaTekst(pagina, "legeTekst", "en")}</p>
     ) : (
       <>
         {featured && (

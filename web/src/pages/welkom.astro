@@ -1,26 +1,27 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { getLocatieBySlug } from "../lib/content";
+import { getLocatieBySlug, getPagina, paginaAlineas } from "../lib/content";
 
 const locatie = (await getLocatieBySlug("olympia"))!;
+const pagina = await getPagina("welkom");
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
 import SectionKicker from "../components/SectionKicker.astro";
 ---
 
 <Layout
-  title="Welkom bij Movenda"
-  description="Vertel ons waarmee we je kunnen helpen. We nemen zo snel mogelijk contact met je op."
+  title={pagina.seoTitle || pagina.titel}
+  description={pagina.seoDescription || ""}
   path="/welkom"
   altPath="/en/welkom"
   noindex
 >
   <section class="mx-auto max-w-xl px-4 py-16">
     <SectionKicker n={1} />
-        <h1 class="text-3xl font-bold">Welkom bij Movenda</h1>
-    <p class="mt-2 text-lg font-medium text-brand-primary">Vertel ons waarmee we je kunnen helpen.</p>
-    <p class="mt-2 text-sm text-brand-muted">
-      We nemen zo snel mogelijk contact met je op. Of bel {locatie.telefoon}.
-    </p>
+        <h1 class="text-3xl font-bold">{pagina.titel}</h1>
+    {pagina.slogan && <p class="mt-2 text-lg font-medium text-brand-primary">{pagina.slogan}</p>}
+    {paginaAlineas(pagina, "nl", { telefoon: locatie.telefoon }).map((tekst) => (
+      <p class="mt-2 text-sm text-brand-muted">{tekst}</p>
+    ))}
 
     <form class="mt-8 grid gap-4" data-contact-form>
       <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Naam" required />

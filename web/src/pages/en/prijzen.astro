@@ -1,7 +1,11 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import GetuigenisCarousel from "../../components/GetuigenisCarousel.astro";
+import LinkedText from "../../components/LinkedText.astro";
 import {
+  getPagina,
+  paginaParagrafen,
+  paginaTekst,
   getPrijzenByCategorie,
   prijsNaam,
   prijsNotitie,
@@ -18,6 +22,11 @@ const kine = await getPrijzenByCategorie("kine");
 const training = await getPrijzenByCategorie("training");
 const settings = await getSiteSettings();
 const info = settings.prijzenInfo;
+const pagina = await getPagina("prijzen");
+const alineas = (field: Parameters<typeof paginaParagrafen>[1]) =>
+  paginaParagrafen(pagina, field, "en")
+    .filter((tekst) => info.basishonorarium || !tekst.includes("{basishonorarium}"))
+    .map((tekst) => tekst.replaceAll("{basishonorarium}", String(info.basishonorarium ?? "")));
 const team = await getTeamleden();
 const getuigenissen = await getGetuigenissen("olympia", "en");
 
@@ -34,8 +43,8 @@ import SectionKicker from "../../components/SectionKicker.astro";
 ---
 
 <Layout
-  title="Fees for physiotherapy & personal training | Movenda"
-  description="Overview of physiotherapy and personal training fees at Movenda Hasselt, and how much you get back from your health insurance fund."
+  title={paginaTekst(pagina, "seoTitle", "en") || "Fees for physiotherapy & personal training | Movenda"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
   path="/en/prijzen"
   altPath="/prijzen"
   lang="en"
@@ -43,14 +52,11 @@ import SectionKicker from "../../components/SectionKicker.astro";
 >
   <section class="mx-auto max-w-4xl px-4 py-12">
     <SectionKicker n={1} />
-        <h1 class="text-3xl font-bold">Fees &amp; reimbursement</h1>
+        <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", "en")}</h1>
     <p class="mt-3 max-w-2xl text-brand-muted">{PRIJZEN_INFO_EN.intro}</p>
-    {info.basishonorarium && (
-      <p class="mt-2 max-w-2xl text-brand-muted">
-        Our base fee is <strong>€{info.basishonorarium}</strong>. The exact rate depends on the
-        treating therapist, specialisation and experience.
-      </p>
-    )}
+    {alineas("intro").map((tekst) => (
+      <p class="mt-2 max-w-2xl text-brand-muted"><LinkedText text={tekst} /></p>
+    ))}
     {settings.slogans.prijzenKine && (
       <p class="mt-4 text-lg font-semibold text-brand-primary">{settings.slogans.prijzenKine}</p>
     )}
@@ -184,8 +190,10 @@ import SectionKicker from "../../components/SectionKicker.astro";
     </div>
 
     <div class="mt-12 rounded-2xl border border-brand-border bg-brand-surface p-6">
-      <h2 class="text-xl font-semibold">{PRIJZEN_INFO_EN.terugbetaling}</h2>
-      <p class="mt-2 text-sm text-brand-muted">{PRIJZEN_INFO_EN.terugbetalingBody}</p>
+      <h2 class="text-xl font-semibold">{paginaTekst(pagina, "terugbetalingTitel", "en")}</h2>
+      {alineas("terugbetalingTekst").map((tekst) => (
+        <p class="mt-2 text-sm text-brand-muted"><LinkedText text={tekst} /></p>
+      ))}
       <div class="mt-4 grid gap-4 sm:grid-cols-2">
         {info.terugbetalingStandaard && (
           <div>

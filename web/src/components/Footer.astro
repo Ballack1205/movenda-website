@@ -133,10 +133,10 @@ const socialClass =
         {lang === "en"
           ? brand === "mpc"
             ? "Part of Movenda — physiotherapy & personal training in Hasselt, Belgium."
-            : "Physiotherapy, personal and performance training."
+            : settings.footerTaglineEn
           : brand === "mpc"
             ? "Onderdeel van Movenda, kinesitherapie & personal training in Hasselt."
-            : "Kinesitherapie, personal- en performance training"}
+            : settings.footerTagline}
       </p>
 
       {(sharedEmail || sharedNote) && (

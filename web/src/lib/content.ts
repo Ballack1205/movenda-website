@@ -303,8 +303,11 @@ export interface HomeBrief {
   aanbodKicker: string;
   aanbodTekst: string;
   locatiesTitel: string;
+  hasseltNaam: string;
+  kuringenNaam: string;
   hasseltProfiel: string;
   kuringenProfiel: string;
+  eventsKicker: string;
   teamKicker: string;
   teamTitel: string;
   teamTekst: string;
@@ -321,7 +324,7 @@ export interface HomeBrief {
   slotTekst: string;
   slotAfspraak: string;
   slotContact: string;
-  bewijs: { jaren: string };
+  bewijs: { jaren: string; kinesistenLabel: string; trainersLabel: string; locatiesLabel: string; jarenLabel: string };
 }
 
 /** Wide group photo of the whole team (Site-instellingen → Groepsfoto team). `url` is a
@@ -337,6 +340,8 @@ export interface Teamfoto {
 export interface SiteSettings {
   siteNaam: string;
   tagline: string;
+  footerTagline: string;
+  footerTaglineEn: string;
   telefoonOlympia: string;
   telefoonMpc: string;
   email: string;
@@ -960,7 +965,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 async function loadSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
-    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, googleReviewsFeed, partnerband,
+    `*[_id == "siteSettings"][0]{ siteNaam, tagline, footerTagline, footerTaglineEn, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, googleReviewsFeed, partnerband,
       homePijlers{ kine{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, training{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, mpc{ ..., "foto": foto${CMS_FOTO_PROJECTION} } },
       homeDeurenTitel, homeDeurenTitelEn,
       homeDeuren[]{ korteNaam, korteNaamEn, regel, regelEn, tekst, tekstEn, href, "foto": foto${CMS_FOTO_PROJECTION} },
@@ -974,6 +979,8 @@ async function loadSiteSettings(): Promise<SiteSettings> {
   return {
     siteNaam: settings?.siteNaam || "Movenda",
     tagline: settings?.tagline || "",
+    footerTagline: settings?.footerTagline?.trim() || seedSettings.footerTagline,
+    footerTaglineEn: settings?.footerTaglineEn?.trim() || seedSettings.footerTaglineEn,
     telefoonOlympia: olympia?.telefoon || "",
     telefoonMpc: mpc?.telefoon || "",
     email: settings?.email || "info@movenda.be",
@@ -1063,8 +1070,11 @@ function mergeHomeBrief(fromSanity?: Partial<HomeBrief> | null): HomeBrief {
     aanbodKicker: text(fromSanity?.aanbodKicker, seedBrief.aanbodKicker),
     aanbodTekst: text(fromSanity?.aanbodTekst, seedBrief.aanbodTekst),
     locatiesTitel: text(fromSanity?.locatiesTitel, seedBrief.locatiesTitel),
+    hasseltNaam: text(fromSanity?.hasseltNaam, seedBrief.hasseltNaam),
+    kuringenNaam: text(fromSanity?.kuringenNaam, seedBrief.kuringenNaam),
     hasseltProfiel: text(fromSanity?.hasseltProfiel, seedBrief.hasseltProfiel),
     kuringenProfiel: text(fromSanity?.kuringenProfiel, seedBrief.kuringenProfiel),
+    eventsKicker: text(fromSanity?.eventsKicker, seedBrief.eventsKicker),
     teamKicker: text(fromSanity?.teamKicker, seedBrief.teamKicker),
     teamTitel: text(fromSanity?.teamTitel, seedBrief.teamTitel),
     teamTekst: text(fromSanity?.teamTekst, seedBrief.teamTekst),
@@ -1083,6 +1093,10 @@ function mergeHomeBrief(fromSanity?: Partial<HomeBrief> | null): HomeBrief {
     slotContact: text(fromSanity?.slotContact, seedBrief.slotContact),
     bewijs: {
       jaren: text(fromSanity?.bewijs?.jaren, seedBrief.bewijs.jaren),
+      kinesistenLabel: text(fromSanity?.bewijs?.kinesistenLabel, seedBrief.bewijs.kinesistenLabel),
+      trainersLabel: text(fromSanity?.bewijs?.trainersLabel, seedBrief.bewijs.trainersLabel),
+      locatiesLabel: text(fromSanity?.bewijs?.locatiesLabel, seedBrief.bewijs.locatiesLabel),
+      jarenLabel: text(fromSanity?.bewijs?.jarenLabel, seedBrief.bewijs.jarenLabel),
     },
   };
 }
@@ -1176,6 +1190,22 @@ export interface Pagina {
   legeTekstEn?: string;
   ctaTekst?: string;
   ctaTekstEn?: string;
+  slogan?: string;
+  sloganEn?: string;
+  extraTekst?: string;
+  extraTekstEn?: string;
+  prijsNotitie?: string;
+  prijsNotitieEn?: string;
+  formulierIntro?: string;
+  formulierIntroEn?: string;
+  terugbetalingTitel?: string;
+  terugbetalingTitelEn?: string;
+  terugbetalingTekst?: string;
+  terugbetalingTekstEn?: string;
+  perTherapeutTitel?: string;
+  perTherapeutTitelEn?: string;
+  perTherapeutTekst?: string;
+  perTherapeutTekstEn?: string;
   /** Contact form: choices for "Hoe ben je bij ons terechtgekomen?" (contact page only). */
   verwijsopties: VerwijsOptie[];
   seoTitle?: string;
@@ -1250,6 +1280,9 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
       "heroVideo": heroVideo.asset->url,
       blokken, kenmerken, stappenTitel, stappenTitelEn, stappenIntro, stappenIntroEn, stappen, pijlers,
       legeTekst, legeTekstEn, ctaTekst, ctaTekstEn,
+      slogan, sloganEn, extraTekst, extraTekstEn, prijsNotitie, prijsNotitieEn, formulierIntro, formulierIntroEn,
+      terugbetalingTitel, terugbetalingTitelEn, terugbetalingTekst, terugbetalingTekstEn,
+      perTherapeutTitel, perTherapeutTitelEn, perTherapeutTekst, perTherapeutTekstEn,
       verwijsopties[]{ label, labelEn, vervolg },
       seoTitle, seoDescription, seoTitleEn, seoDescriptionEn
     }`,
@@ -1288,6 +1321,22 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
     legeTekstEn: pick("legeTekstEn"),
     ctaTekst: pick("ctaTekst"),
     ctaTekstEn: pick("ctaTekstEn"),
+    slogan: pick("slogan"),
+    sloganEn: pick("sloganEn"),
+    extraTekst: pick("extraTekst"),
+    extraTekstEn: pick("extraTekstEn"),
+    prijsNotitie: pick("prijsNotitie"),
+    prijsNotitieEn: pick("prijsNotitieEn"),
+    formulierIntro: pick("formulierIntro"),
+    formulierIntroEn: pick("formulierIntroEn"),
+    terugbetalingTitel: pick("terugbetalingTitel"),
+    terugbetalingTitelEn: pick("terugbetalingTitelEn"),
+    terugbetalingTekst: pick("terugbetalingTekst"),
+    terugbetalingTekstEn: pick("terugbetalingTekstEn"),
+    perTherapeutTitel: pick("perTherapeutTitel"),
+    perTherapeutTitelEn: pick("perTherapeutTitelEn"),
+    perTherapeutTekst: pick("perTherapeutTekst"),
+    perTherapeutTekstEn: pick("perTherapeutTekstEn"),
     verwijsopties: withSeedVerwijsopties(
       normalizeVerwijsopties(row?.verwijsopties?.length ? row.verwijsopties : seed.verwijsopties),
       seed.verwijsopties,
@@ -1307,6 +1356,14 @@ type PaginaTekstVeld =
   | "stappenIntro"
   | "legeTekst"
   | "ctaTekst"
+  | "slogan"
+  | "extraTekst"
+  | "prijsNotitie"
+  | "formulierIntro"
+  | "terugbetalingTitel"
+  | "terugbetalingTekst"
+  | "perTherapeutTitel"
+  | "perTherapeutTekst"
   | "seoTitle"
   | "seoDescription";
 
@@ -1324,11 +1381,35 @@ export function paginaAlineas(
   lang: Lang = "nl",
   vars: Record<string, string | number> = {},
 ): string[] {
-  const raw = paginaTekst(p, "intro", lang);
-  return raw
+  return paginaParagrafen(p, "intro", lang, vars);
+}
+
+/** Any text field as paragraphs (blank line = new paragraph), with {placeholders} filled from `vars`. */
+export function paginaParagrafen(
+  p: Pagina,
+  field: PaginaTekstVeld,
+  lang: Lang = "nl",
+  vars: Record<string, string | number> = {},
+): string[] {
+  return paginaTekst(p, field, lang)
     .split(/\n\s*\n/)
     .map((s) => s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m)).trim())
     .filter(Boolean);
+}
+
+/** Block text as paragraphs and bullet lists: a line starting with "- " is a list item. */
+export function tekstChunks(tekst: string): { kind: "p" | "ul"; lines: string[] }[] {
+  const out: { kind: "p" | "ul"; lines: string[] }[] = [];
+  for (const raw of tekst.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    const bullet = line.startsWith("- ") ? line.slice(2) : "";
+    const last = out[out.length - 1];
+    if (bullet && last?.kind === "ul") last.lines.push(bullet);
+    else if (bullet) out.push({ kind: "ul", lines: [bullet] });
+    else out.push({ kind: "p", lines: [line] });
+  }
+  return out;
 }
 
 export function paginaBlokKop(b: PaginaBlok, lang: Lang = "nl"): string {

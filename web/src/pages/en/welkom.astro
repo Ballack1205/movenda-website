@@ -1,15 +1,16 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getLocatieBySlug } from "../../lib/content";
+import { getLocatieBySlug, getPagina, paginaAlineas, paginaTekst } from "../../lib/content";
 
 const locatie = (await getLocatieBySlug("olympia"))!;
+const pagina = await getPagina("welkom");
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
 import SectionKicker from "../../components/SectionKicker.astro";
 ---
 
 <Layout
-  title="Welcome to Movenda"
-  description="Tell us how we can help. We'll get back to you as soon as possible."
+  title={paginaTekst(pagina, "seoTitle", "en") || paginaTekst(pagina, "titel", "en")}
+  description={paginaTekst(pagina, "seoDescription", "en")}
   path="/en/welkom"
   altPath="/welkom"
   lang="en"
@@ -17,11 +18,11 @@ import SectionKicker from "../../components/SectionKicker.astro";
 >
   <section class="mx-auto max-w-xl px-4 py-16">
     <SectionKicker n={1} />
-        <h1 class="text-3xl font-bold">Welcome to Movenda</h1>
-    <p class="mt-2 text-lg font-medium text-brand-primary">Tell us how we can help.</p>
-    <p class="mt-2 text-sm text-brand-muted">
-      We'll get back to you as soon as possible. Or call {locatie.telefoon}.
-    </p>
+        <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", "en")}</h1>
+    {pagina.sloganEn && <p class="mt-2 text-lg font-medium text-brand-primary">{pagina.sloganEn}</p>}
+    {paginaAlineas(pagina, "en", { telefoon: locatie.telefoon }).map((tekst) => (
+      <p class="mt-2 text-sm text-brand-muted">{tekst}</p>
+    ))}
 
     <form class="mt-8 grid gap-4" data-contact-form>
       <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Name" required />

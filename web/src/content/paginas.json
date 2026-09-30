@@ -395,5 +395,122 @@
         "tekstEn": "- We discuss your goal, audience, group size, location and timing.\n- We look at which formula fits in practice and in content.\n- You receive a tailored proposal with programme, planning and price."
       }
     ]
+  },
+  "team": {
+    "titel": "Ons team, jouw gezondheid",
+    "titelEn": "Our team, your health",
+    "intro": "{aantal} therapeuten en coaches, verdeeld over Movenda en het Performance Centre. Elk teamlid heeft een eigen specialisatie — kies zelf wie het best aansluit bij jouw klacht of doel.",
+    "introEn": "{aantal} therapists and coaches, across Movenda and the Performance Centre. Each team member has their own specialisation — pick whoever best matches your complaint or goal.",
+    "seoTitle": "Ons team | Kinesisten & personal trainers Hasselt | Movenda",
+    "seoDescription": "Maak kennis met het team van Movenda: kinesisten, personal trainers en performance coaches in Hasselt en Kuringen.",
+    "seoTitleEn": "Our team | Physiotherapists & trainers Hasselt | Movenda",
+    "seoDescriptionEn": "Meet the Movenda team: physiotherapists, personal trainers and performance coaches in Hasselt and Kuringen."
+  },
+  "groepslessen": {
+    "ondertitel": "GX",
+    "ondertitelEn": "MPC",
+    "titel": "GX (small) group training",
+    "titelEn": "Group classes",
+    "slogan": "Samen trainen. Persoonlijk blijven groeien.",
+    "intro": "GX combineert de energie van een groep met de kwaliteit van gerichte coaching. Elke sessie telt maximaal acht deelnemers. Daardoor kan de coach techniek opvolgen, oefeningen aanpassen en iedereen uitdagen op een niveau dat past. Je traint samen, maar je progressie blijft persoonlijk.",
+    "introEn": "Small groups, maximum 8 people, coached. First running class is free; PowerPlus has a free trial lesson.",
+    "blokken": [
+      {
+        "kop": "Waarom GX",
+        "tekst": "- Maximaal acht deelnemers per sessie\n- Professionele coaching en technische correctie\n- Schaalbare oefeningen binnen één groepsformat\n- Vaste trainingsmomenten die regelmaat ondersteunen\n- Gedeelde energie, persoonlijke aandacht en ruimte om te groeien"
+      }
+    ],
+    "extraTekst": "Coach, dag, uur, duur, locatie en vrije plaatsen staan alleen in het lessenrooster hieronder. Locatie: Performance Centre Kuringen, Lammerweg 33, 3511 Kuringen.",
+    "prijsNotitie": "Prijzen exclusief BTW. Annuleren tot 24u op voorhand.",
+    "prijsNotitieEn": "Prices exclusive of VAT. Cancel up to 24 hours in advance.",
+    "formulierIntro": "Zonder betaling. Je aanvraag komt bij ons binnen per mail.",
+    "seoTitle": "Groepslessen & lesrooster | Movenda Performance Centre",
+    "seoDescription": "GX small group training in Kuringen: maximaal acht deelnemers, met coaching op techniek en niveau. Lesrooster van het Movenda Performance Centre.",
+    "seoTitleEn": "Group classes & timetable | Movenda Performance Centre",
+    "seoDescriptionEn": "Timetable of the Movenda Performance Centre in Kuringen: HIIT, Full Body, PowerPlus, boxing, corporate and more. Maximum 8 people."
+  },
+  "kine-abonnement": {
+    "ondertitel": "Kiné-abonnement",
+    "titel": "Revalideer verder, ook buiten je kine sessies.",
+    "intro": "Daarom bieden we, in samenwerking met [Olympia Hasselt](https://www.oly.be), een kine-fitnessabonnement aan voor mensen met een lopende revalidatie.\n\nVoor €40 per maand krijg je toegang tot de volledige fitnessruimte van Olympia Hasselt, zodat je ook buiten je kinesitherapiebehandelingen verder kan werken aan je herstel. De Milon Cirkel is niet inbegrepen.\n\nVraag dit speciale abonnement aan via jouw therapeut.",
+    "seoTitle": "Kiné-fitnessabonnement | Movenda Hasselt",
+    "seoDescription": "Met een lopende revalidatie bij Movenda oefen je voor €40 per maand verder in de fitnessruimte van Olympia Hasselt. De Milon Cirkel is niet inbegrepen."
+  },
+  "prijzen": {
+    "titel": "Tarieven & terugbetaling",
+    "titelEn": "Fees & reimbursement",
+    "intro": "Ons basishonorarium is €{basishonorarium}. Het exacte tarief hangt af van de behandelende therapeut, specialisatie en ervaring.",
+    "introEn": "Our base fee is €{basishonorarium}. The exact rate depends on the treating therapist, specialisation and experience.",
+    "terugbetalingTitel": "Terugbetaling",
+    "terugbetalingTitelEn": "Reimbursement",
+    "terugbetalingTekst": "Je ontvangt na elke sessie een getuigschrift voor verstrekte hulp. Daarmee vraag je zelf een terugbetaling aan bij je ziekenfonds (via de app of op kantoor).",
+    "terugbetalingTekstEn": "After each session you receive a certificate of provided care. You claim reimbursement from your health insurance fund yourself (via the app or at the office).",
+    "perTherapeutTitel": "Tarieven per therapeut",
+    "perTherapeutTekst": "Het bedrag van jouw sessie hangt af van wie je behandelt.",
+    "seoTitle": "Tarieven kinesitherapie & personal training | Movenda",
+    "seoDescription": "Overzicht van de tarieven voor kinesitherapie en personal training bij Movenda Hasselt, en hoeveel je terugkrijgt van je ziekenfonds.",
+    "seoTitleEn": "Fees for physiotherapy & personal training | Movenda",
+    "seoDescriptionEn": "Overview of physiotherapy and personal training fees at Movenda Hasselt, and how much you get back from your health insurance fund."
+  },
+  "performance-prijzen": {
+    "ondertitel": "MPC",
+    "ondertitelEn": "MPC",
+    "titel": "Prijzen",
+    "titelEn": "Prices",
+    "intro": "Alle prijzen zijn exclusief BTW, enkel op afspraak. Je ontvangt een factuur na een aantal sessies.",
+    "introEn": "All prices are exclusive of VAT, by appointment only. You receive an invoice after a number of sessions.",
+    "perTherapeutTitel": "Tarieven per coach",
+    "perTherapeutTitelEn": "Fees per coach",
+    "seoTitle": "Prijzen | Movenda Performance Centre",
+    "seoDescription": "Tarieven van het Movenda Performance Centre in Kuringen: personal training, sportrevalidatie, groepslessen en screening. Exclusief BTW, enkel op afspraak.",
+    "seoTitleEn": "Prices | Movenda Performance Centre",
+    "seoDescriptionEn": "Fees at the Movenda Performance Centre in Kuringen: personal training, sports rehabilitation, group classes and screening. Exclusive of VAT, by appointment only."
+  },
+  "faq": {
+    "titel": "Veelgestelde vragen",
+    "titelEn": "Frequently asked questions",
+    "intro": "Staat je vraag er niet bij? Mail ons gerust op {email}.",
+    "introEn": "Can't find your question? Email us at {email}.",
+    "seoTitle": "Veelgestelde vragen | Movenda Hasselt",
+    "seoDescription": "Antwoorden op de meest gestelde vragen over afspraken, tarieven, doktersvoorschrift en meer bij Movenda.",
+    "seoTitleEn": "Frequently asked questions | Movenda Hasselt",
+    "seoDescriptionEn": "Answers to the most common questions about appointments, fees, doctor's prescriptions and more at Movenda."
+  },
+  "blog": {
+    "ondertitel": "Blog",
+    "ondertitelEn": "Blog",
+    "titel": "Tips van onze kinesisten en trainers",
+    "titelEn": "Tips from our physiotherapists and trainers",
+    "intro": "Praktische inzichten over blessurepreventie, herstel en training — recht uit de praktijk in Hasselt.",
+    "introEn": "Practical insights on injury prevention, recovery and training — straight from the practice in Hasselt.",
+    "legeTekst": "Binnenkort verschijnen hier onze eerste blogposts.",
+    "legeTekstEn": "Our first blog posts will appear here soon.",
+    "seoTitle": "Blog | Tips over kinesitherapie, training en herstel | Movenda",
+    "seoDescription": "Praktische tips over blessurepreventie, training en herstel, geschreven door het team van Movenda.",
+    "seoTitleEn": "Blog | Tips on physiotherapy, training and recovery | Movenda",
+    "seoDescriptionEn": "Practical tips on injury prevention, training and recovery, written by the Movenda team."
+  },
+  "events": {
+    "titel": "Events",
+    "titelEn": "Events",
+    "intro": "Komende momenten staan bovenaan. Afgelopen events blijven staan.",
+    "legeTekst": "Er staan nog geen events online. Nieuwe events verschijnen hier zodra ze gepubliceerd zijn.",
+    "legeTekstEn": "No events published yet.",
+    "seoTitle": "Events | Movenda",
+    "seoDescription": "Komende en afgelopen events van Sportpraktijk Movenda en het Performance Centre.",
+    "seoTitleEn": "Events | Movenda",
+    "seoDescriptionEn": "Upcoming and past events at Movenda and the Performance Centre."
+  },
+  "welkom": {
+    "titel": "Welkom bij Movenda",
+    "titelEn": "Welcome to Movenda",
+    "slogan": "Vertel ons waarmee we je kunnen helpen.",
+    "sloganEn": "Tell us how we can help.",
+    "intro": "We nemen zo snel mogelijk contact met je op. Of bel {telefoon}.",
+    "introEn": "We'll get back to you as soon as possible. Or call {telefoon}.",
+    "seoTitle": "Welkom bij Movenda",
+    "seoDescription": "Vertel ons waarmee we je kunnen helpen. We nemen zo snel mogelijk contact met je op.",
+    "seoTitleEn": "Welcome to Movenda",
+    "seoDescriptionEn": "Tell us how we can help. We'll get back to you as soon as possible."
   }
 }

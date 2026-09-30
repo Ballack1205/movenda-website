@@ -6,10 +6,18 @@ import {
   getPrijzenByCategorie,
   formatPrijs,
   getDiensten,
+  getPagina,
   lesHref,
+  paginaAlineas,
+  paginaBlokKop,
+  paginaBlokTekst,
+  paginaParagrafen,
+  tekstChunks,
 } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
+import LinkedText from "../../components/LinkedText.astro";
 
+const pagina = await getPagina("groepslessen");
 const locatie = (await getLocatieBySlug("mpc"))!;
 const rooster = await getLesrooster();
 const diensten = await getDiensten();
@@ -27,33 +35,38 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Groepslessen & lesrooster | Movenda Performance Centre"
-  description="GX small group training in Kuringen: maximaal acht deelnemers, met coaching op techniek en niveau. Lesrooster van het Movenda Performance Centre."
+  title={pagina.seoTitle || "Groepslessen & lesrooster | Movenda Performance Centre"}
+  description={pagina.seoDescription || ""}
   path="/groepslessen"
   altPath="/en/groepslessen"
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-6xl px-4 py-12">
-    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">GX</p>
-    <h1 class="mt-2 text-3xl font-bold">GX (small) group training</h1>
-    <p class="mt-3 text-xl font-semibold">Samen trainen. Persoonlijk blijven groeien.</p>
-    <p class="mt-3 max-w-3xl text-brand-muted">
-      GX combineert de energie van een groep met de kwaliteit van gerichte coaching. Elke sessie telt
-      maximaal acht deelnemers. Daardoor kan de coach techniek opvolgen, oefeningen aanpassen en iedereen
-      uitdagen op een niveau dat past. Je traint samen, maar je progressie blijft persoonlijk.
-    </p>
-    <h2 class="mt-8 text-xl font-bold">Waarom GX</h2>
-    <ul class="mt-3 max-w-3xl list-disc space-y-1 pl-5 text-brand-muted">
-      <li>Maximaal acht deelnemers per sessie</li>
-      <li>Professionele coaching en technische correctie</li>
-      <li>Schaalbare oefeningen binnen één groepsformat</li>
-      <li>Vaste trainingsmomenten die regelmaat ondersteunen</li>
-      <li>Gedeelde energie, persoonlijke aandacht en ruimte om te groeien</li>
-    </ul>
-    <p class="mt-6 max-w-3xl text-brand-muted">
-      Coach, dag, uur, duur, locatie en vrije plaatsen staan alleen in het lessenrooster hieronder.
-      Locatie: Performance Centre Kuringen, Lammerweg 33, 3511 Kuringen. {locatie.verdiepingNote}
-    </p>
+    {pagina.ondertitel && <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">{pagina.ondertitel}</p>}
+    <h1 class="mt-2 text-3xl font-bold">{pagina.titel}</h1>
+    {pagina.slogan && <p class="mt-3 text-xl font-semibold">{pagina.slogan}</p>}
+    {paginaAlineas(pagina).map((tekst) => (
+      <p class="mt-3 max-w-3xl text-brand-muted"><LinkedText text={tekst} /></p>
+    ))}
+    {pagina.blokken.map((blok) => (
+      <>
+        <h2 class="mt-8 text-xl font-bold">{paginaBlokKop(blok)}</h2>
+        {tekstChunks(paginaBlokTekst(blok)).map((chunk) =>
+          chunk.kind === "ul" ? (
+            <ul class="mt-3 max-w-3xl list-disc space-y-1 pl-5 text-brand-muted">
+              {chunk.lines.map((line) => <li>{line}</li>)}
+            </ul>
+          ) : (
+            <p class="mt-3 max-w-3xl text-brand-muted"><LinkedText text={chunk.lines[0]} /></p>
+          ),
+        )}
+      </>
+    ))}
+    {paginaParagrafen(pagina, "extraTekst").map((tekst, i, all) => (
+      <p class="mt-6 max-w-3xl text-brand-muted">
+        <LinkedText text={tekst} />{i === all.length - 1 && locatie.verdiepingNote ? ` ${locatie.verdiepingNote}` : ""}
+      </p>
+    ))}
     <p class="mt-4">
       <a href="#inschrijven" class="font-semibold text-brand-primary hover:underline">Boek een proefles</a>
     </p>
@@ -89,7 +102,7 @@ const jsonLd = [
       <div class="mt-12">
         <h2 class="text-xl font-bold">Memberships</h2>
         <p class="mt-2 text-sm text-brand-muted">
-          Prijzen exclusief BTW. Annuleren tot 24u op voorhand.
+          {pagina.prijsNotitie}
           {" "}
           <a href="/performance/prijzen" class="font-medium text-brand-primary hover:underline">Alle tarieven</a>
         </p>
@@ -110,7 +123,7 @@ const jsonLd = [
 
     <form id="inschrijven" class="mt-12 max-w-xl space-y-3" data-groep-form>
       <h2 class="text-xl font-bold">Inschrijven</h2>
-      <p class="text-sm text-brand-muted">Zonder betaling. Je aanvraag komt bij ons binnen per mail.</p>
+      {pagina.formulierIntro && <p class="text-sm text-brand-muted">{pagina.formulierIntro}</p>}
       <input class="w-full rounded-lg border border-brand-border px-4 py-3" name="naam" placeholder="Naam" required />
       <input class="w-full rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="E-mail" required />
       <input class="w-full rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Telefoon" />

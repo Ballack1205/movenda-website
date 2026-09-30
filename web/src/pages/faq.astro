@@ -1,10 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { getFaqs, getSiteSettings } from "../lib/content";
+import LinkedText from "../components/LinkedText.astro";
+import { getFaqs, getPagina, getSiteSettings, paginaAlineas } from "../lib/content";
 import { breadcrumbSchema, faqPageSchema } from "../lib/schema";
 
 const faqs = await getFaqs("movenda");
 const settings = await getSiteSettings();
+const pagina = await getPagina("faq");
 
 const jsonLd = [
   breadcrumbSchema([
@@ -17,21 +19,20 @@ import SectionKicker from "../components/SectionKicker.astro";
 ---
 
 <Layout
-  title="Veelgestelde vragen | Movenda Hasselt"
-  description="Antwoorden op de meest gestelde vragen over afspraken, tarieven, doktersvoorschrift en meer bij Movenda."
+  title={pagina.seoTitle || "Veelgestelde vragen | Movenda Hasselt"}
+  description={pagina.seoDescription || ""}
   path="/faq"
   altPath="/en/faq"
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-3xl px-4 py-12">
     <SectionKicker n={1} />
-        <h1 class="text-3xl font-bold">Veelgestelde vragen</h1>
-    <p class="mt-2 text-brand-muted">
-      Staat je vraag er niet bij? Mail ons gerust op{" "}
-      <a href={`mailto:${settings.email}`} class="font-semibold text-brand-primary hover:underline">
-        {settings.email}
-      </a>.
-    </p>
+        <h1 class="text-3xl font-bold">{pagina.titel}</h1>
+    {paginaAlineas(pagina, "nl", { email: settings.email }).map((tekst) => (
+      <p class="mt-2 text-brand-muted">
+        <LinkedText text={tekst} linkClass="font-semibold text-brand-primary hover:underline" />
+      </p>
+    ))}
 
     <div class="mt-8 divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
       {faqs.map((faq) => (

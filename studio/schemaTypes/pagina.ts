@@ -18,6 +18,15 @@ export const PAGINAS = [
   { key: "mpc-visie", title: "MPC — Visie", path: "/mpc/visie" },
   { key: "contact", title: "Contact", path: "/contact" },
   { key: "jobs", title: "Vacatures", path: "/jobs" },
+  { key: "team", title: "Team", path: "/team" },
+  { key: "groepslessen", title: "Groepslessen (GX)", path: "/groepslessen" },
+  { key: "kine-abonnement", title: "Kiné-abonnement", path: "/kine-abonnement" },
+  { key: "prijzen", title: "Prijzen (Movenda)", path: "/prijzen" },
+  { key: "performance-prijzen", title: "Prijzen (Performance Centre)", path: "/performance/prijzen" },
+  { key: "faq", title: "FAQ", path: "/faq" },
+  { key: "blog", title: "Blog (overzicht)", path: "/blog" },
+  { key: "events", title: "Events (overzicht)", path: "/events" },
+  { key: "welkom", title: "Welkom (QR-formulier)", path: "/welkom" },
 ] as const;
 
 export type PaginaKey = (typeof PAGINAS)[number]["key"];
@@ -27,6 +36,20 @@ const only =
   (...keys: PaginaKey[]) =>
   ({ document }: ConditionalPropertyCallbackContext) =>
     !keys.includes(((document as { key?: string } | undefined)?.key || "") as PaginaKey);
+
+const ONDERTITEL: PaginaKey[] = ["home", "kinesitherapie", "performance", "b2b", "groepslessen", "kine-abonnement", "performance-prijzen", "blog"];
+
+// NL field + its EN twin, only on the listed pages.
+const tekstVeld = (name: string, title: string, keys: PaginaKey[], kort = false) =>
+  kort
+    ? [
+        defineField({ name, title: `${title} (NL)`, type: "string", group: "blokken", hidden: only(...keys) }),
+        defineField({ name: `${name}En`, title: `${title} (EN)`, type: "string", group: "blokken", fieldset: "en", hidden: only(...keys) }),
+      ]
+    : [
+        defineField({ name, title: `${title} (NL)`, type: "text", rows: 3, group: "blokken", hidden: only(...keys) }),
+        defineField({ name: `${name}En`, title: `${title} (EN)`, type: "text", rows: 3, group: "blokken", fieldset: "en", hidden: only(...keys) }),
+      ];
 
 const blok = {
   type: "object",
@@ -70,12 +93,20 @@ export default defineType({
       title: "Kleine regel boven de titel (NL)",
       type: "string",
       group: "inhoud",
-      hidden: only("home"),
+      hidden: only(...ONDERTITEL),
       description: "Bv. 'Kinesitherapie en personal training in Hasselt'.",
     }),
-    defineField({ name: "ondertitelEn", title: "Kleine regel boven de titel (EN)", type: "string", group: "inhoud", fieldset: "en", hidden: only("home") }),
+    defineField({ name: "ondertitelEn", title: "Kleine regel boven de titel (EN)", type: "string", group: "inhoud", fieldset: "en", hidden: only(...ONDERTITEL) }),
     defineField({ name: "titel", title: "Titel (H1, NL)", type: "string", group: "inhoud", validation: (Rule) => Rule.required() }),
     defineField({ name: "titelEn", title: "Titel (H1, EN)", type: "string", group: "inhoud", fieldset: "en" }),
+    defineField({
+      name: "slogan",
+      title: "Slogan onder de titel (NL)",
+      type: "string",
+      group: "inhoud",
+      hidden: only("groepslessen", "welkom"),
+    }),
+    defineField({ name: "sloganEn", title: "Slogan onder de titel (EN)", type: "string", group: "inhoud", fieldset: "en", hidden: only("groepslessen", "welkom") }),
     defineField({
       name: "intro",
       title: "Introtekst (NL)",
@@ -83,7 +114,7 @@ export default defineType({
       rows: 8,
       group: "inhoud",
       description:
-        "Een lege regel = nieuwe alinea. Op de homepage mag je {kinesisten} en {trainers} gebruiken; de site vult de aantallen in.",
+        "Een lege regel = nieuwe alinea. Link: [tekst](https://…). Automatisch ingevuld: {kinesisten} en {trainers} (homepage), {aantal} (team), {basishonorarium} (prijzen), {email} (FAQ), {telefoon} (welkom).",
     }),
     defineField({ name: "introEn", title: "Introtekst (EN)", type: "text", rows: 8, group: "inhoud", fieldset: "en" }),
     defineField({
@@ -137,7 +168,7 @@ export default defineType({
       type: "array",
       of: [blok],
       group: "blokken",
-      hidden: only("over", "kinesitherapie", "performance", "b2b"),
+      hidden: only("over", "kinesitherapie", "performance", "b2b", "groepslessen"),
       description: "Kop en tekst. Een regel die begint met '- ' wordt een opsomming.",
     }),
     defineField({
@@ -222,14 +253,21 @@ export default defineType({
     }),
     defineField({
       name: "legeTekst",
-      title: "Tekst als er geen vacatures zijn (NL)",
+      title: "Tekst als de lijst leeg is (NL)",
       type: "text",
       rows: 3,
       group: "blokken",
-      hidden: only("jobs"),
-      description: "De eerste regel wordt vet. Het e-mailadres komt automatisch uit Site-instellingen.",
+      hidden: only("jobs", "blog", "events"),
+      description: "Verschijnt als er geen vacatures, blogposts of events zijn. Bij vacatures wordt de eerste regel vet en komt het e-mailadres automatisch uit Site-instellingen.",
     }),
-    defineField({ name: "legeTekstEn", title: "Tekst als er geen vacatures zijn (EN)", type: "text", rows: 3, group: "blokken", fieldset: "en", hidden: only("jobs") }),
+    defineField({ name: "legeTekstEn", title: "Tekst als de lijst leeg is (EN)", type: "text", rows: 3, group: "blokken", fieldset: "en", hidden: only("jobs", "blog", "events") }),
+    ...tekstVeld("extraTekst", "Tekst onder de blokken", ["groepslessen"]),
+    ...tekstVeld("prijsNotitie", "Tekst bij de prijzen", ["groepslessen"]),
+    ...tekstVeld("formulierIntro", "Tekst boven het inschrijfformulier", ["groepslessen"]),
+    ...tekstVeld("terugbetalingTitel", "Terugbetaling — titel", ["prijzen"], true),
+    ...tekstVeld("terugbetalingTekst", "Terugbetaling — uitleg", ["prijzen"]),
+    ...tekstVeld("perTherapeutTitel", "Tarieven per therapeut of coach — titel", ["prijzen", "performance-prijzen"], true),
+    ...tekstVeld("perTherapeutTekst", "Tarieven per therapeut — uitleg", ["prijzen"]),
     defineField({
       name: "ctaTekst",
       title: "Tekst op de knop onderaan (NL)",

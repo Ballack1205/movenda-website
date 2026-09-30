@@ -1,10 +1,12 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getEvents } from "../../lib/content";
+import { getEvents, getPagina, paginaAlineas } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
 import SectionKicker from "../../components/SectionKicker.astro";
+import LinkedText from "../../components/LinkedText.astro";
 
 const events = await getEvents();
+const pagina = await getPagina("events");
 const today = new Date().toISOString().slice(0, 10);
 const eventWhen = (datum: string) => {
   const date = new Date(`${datum}T12:00:00`);
@@ -23,19 +25,21 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Events | Movenda"
-  description="Komende en afgelopen events van Sportpraktijk Movenda en het Performance Centre."
+  title={pagina.seoTitle || "Events | Movenda"}
+  description={pagina.seoDescription || ""}
   path="/events"
   altPath="/en/events"
   jsonLd={jsonLd}
 >
   <section class="mx-auto max-w-3xl px-4 py-12">
     <SectionKicker n={1} />
-    <h1 class="text-3xl font-bold">Events</h1>
-    <p class="mt-3 text-brand-muted">Komende momenten staan bovenaan. Afgelopen events blijven staan.</p>
+    <h1 class="text-3xl font-bold">{pagina.titel}</h1>
+    {paginaAlineas(pagina).map((tekst) => (
+      <p class="mt-3 text-brand-muted"><LinkedText text={tekst} /></p>
+    ))}
 
     {events.length === 0 && (
-      <p class="mt-8 text-brand-muted">Er staan nog geen events online. Nieuwe events verschijnen hier zodra ze gepubliceerd zijn.</p>
+      <p class="mt-8 text-brand-muted">{pagina.legeTekst}</p>
     )}
 
     {upcoming.length > 0 && (

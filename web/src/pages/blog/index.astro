@@ -2,11 +2,13 @@
 import Layout from "../../layouts/Layout.astro";
 import BlogPostFeature from "../../components/BlogPostFeature.astro";
 import BlogPostCard from "../../components/BlogPostCard.astro";
-import { getBlogPosts } from "../../lib/content";
+import { getBlogPosts, getPagina, paginaAlineas } from "../../lib/content";
 import { blogListSchema, breadcrumbSchema } from "../../lib/schema";
 import SectionKicker from "../../components/SectionKicker.astro";
+import LinkedText from "../../components/LinkedText.astro";
 
 const posts = await getBlogPosts();
+const pagina = await getPagina("blog");
 const featured = posts[0];
 const rest = posts.slice(1);
 
@@ -20,8 +22,8 @@ const jsonLd = [
 ---
 
 <Layout
-  title="Blog | Tips over kinesitherapie, training en herstel | Movenda"
-  description="Praktische tips over blessurepreventie, training en herstel, geschreven door het team van Movenda."
+  title={pagina.seoTitle || "Blog | Movenda"}
+  description={pagina.seoDescription || ""}
   path="/blog"
   altPath="/en/blog"
   jsonLd={jsonLd}
@@ -32,21 +34,20 @@ const jsonLd = [
 >
   <section class="mx-auto max-w-6xl px-4 py-12 lg:py-16">
     <SectionKicker n={1} />
-    <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">Blog</p>
+    {pagina.ondertitel && <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">{pagina.ondertitel}</p>}
     <h1 class="mt-2 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
-      Tips van onze kinesisten en trainers
+      {pagina.titel}
     </h1>
     <form action="/zoeken" method="get" role="search" class="mt-6 max-w-md">
       <label class="sr-only" for="blog-search">Zoeken</label>
       <input id="blog-search" name="q" type="search" placeholder="Zoeken" class="w-full border-b border-brand-border bg-transparent px-1 py-2 text-lg outline-none" />
     </form>
-    <p class="mt-4 max-w-2xl text-lg text-brand-muted">
-      Praktische inzichten over blessurepreventie, herstel en training — recht uit de praktijk in
-      Hasselt.
-    </p>
+    {paginaAlineas(pagina).map((tekst) => (
+      <p class="mt-4 max-w-2xl text-lg text-brand-muted"><LinkedText text={tekst} /></p>
+    ))}
 
     {posts.length === 0 ? (
-      <p class="mt-10 text-brand-muted">Binnenkort verschijnen hier onze eerste blogposts.</p>
+      <p class="mt-10 text-brand-muted">{pagina.legeTekst}</p>
     ) : (
       <>
         {featured && (
