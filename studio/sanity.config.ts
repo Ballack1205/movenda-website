@@ -5,6 +5,7 @@ import { nlNLLocale } from "@sanity/locale-nl-nl";
 import { schemaTypes } from "./schemaTypes";
 import { deskStructure } from "./structure";
 import { resolvePreviewUrl } from "./preview";
+import { bulkPublishTool } from "./tools/bulkPublish";
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
@@ -50,6 +51,7 @@ export default defineConfig({
     nlNLLocale({ title: "Nederlands" }),
     ...(showVision ? [visionTool()] : []),
   ],
+  tools: (prev) => [...prev, bulkPublishTool],
   schema: { types: schemaTypes },
   document: {
     actions: (prev, context) => {
