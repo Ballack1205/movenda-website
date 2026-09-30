@@ -13,6 +13,7 @@ import {
   dienstSeoDescriptionEn,
   isGroepLes,
   isB2bDienst,
+  isRetiredDienst,
 } from "../../../lib/content";
 import { serviceNode, breadcrumbNode } from "../../../lib/schema";
 
@@ -20,7 +21,7 @@ export async function getStaticPaths() {
   const canonicalKine = new Set(["dry-needling", "cupping", "taping"]);
   const diensten = await getDienstenByCategorie("mpc");
   return diensten
-    .filter((dienst) => !isGroepLes(dienst) && !isB2bDienst(dienst) && dienst.slug !== "corporate-coaching" && !canonicalKine.has(dienst.slug))
+    .filter((dienst) => !isGroepLes(dienst) && !isB2bDienst(dienst) && !isRetiredDienst(dienst) && dienst.slug !== "corporate-coaching" && !canonicalKine.has(dienst.slug))
     .map((dienst) => ({ params: { slug: dienst.slug } }));
 }
 

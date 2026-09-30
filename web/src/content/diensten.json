@@ -685,7 +685,8 @@
     "seoTitle": "Running class Hasselt | Movenda Performance Centre",
     "seoDescription": "Gratis running class bij MPC Hasselt: begeleide loop van 5 tot 10 km.",
     "seoTitleEn": "Running class Hasselt | Movenda Performance Centre",
-    "seoDescriptionEn": "Free running class at MPC Hasselt: a guided run of 5 to 10 km."
+    "seoDescriptionEn": "Free running class at MPC Hasselt: a guided run of 5 to 10 km.",
+    "toonInMenu": false
   },
   {
     "slug": "core",

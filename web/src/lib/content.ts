@@ -565,7 +565,6 @@ const MPC_CATEGORIES: DienstCategorie[] = ["mpc-training", "mpc-rehab", "mpc-gro
 /** Group-class pages. Corporate coaching stays under /performance. */
 const GROEP_LES_SLUGS = new Set([
   "boxing",
-  "kleine-groepstraining",
   "hiit",
   "full-body",
   "powerplus",
@@ -574,6 +573,9 @@ const GROEP_LES_SLUGS = new Set([
   "core",
   "mxgp",
 ]);
+
+/** Retired overview. Its photo now lives on B2B teamtraining; old URLs go to the timetable. */
+const RETIRED_SLUGS = new Set(["kleine-groepstraining"]);
 
 /** B2B formulas live under /b2b, not under groepslessen or /performance. */
 const B2B_SLUGS = new Set(["teamtraining", "on-site-workouts"]);
@@ -591,6 +593,10 @@ export function isGroepLes(dienst: Pick<Dienst, "slug" | "categorie">): boolean 
 
 export function isB2bDienst(dienst: Pick<Dienst, "slug">): boolean {
   return B2B_SLUGS.has(dienst.slug);
+}
+
+export function isRetiredDienst(dienst: Pick<Dienst, "slug">): boolean {
+  return RETIRED_SLUGS.has(dienst.slug);
 }
 
 /**
@@ -613,6 +619,7 @@ export function rewriteMpcHref(href: string | undefined): string | undefined {
   const slug = rest.slice("/mpc/".length).replace(/\/$/, "");
   if (!slug || slug.includes("/")) return href;
   if (KINE_CANONICAL_SLUGS.has(slug)) return `${prefix}/kinesitherapie/${slug}${hash}`;
+  if (RETIRED_SLUGS.has(slug)) return `${prefix}/groepslessen${hash}`;
   if (GROEP_LES_SLUGS.has(slug)) return `${prefix}/groepslessen/${slug}${hash}`;
   if (slug === "corporate-coaching") return `${prefix}/b2b${hash}`;
   if (B2B_SLUGS.has(slug)) return `${prefix}/b2b/${slug}${hash}`;
@@ -626,6 +633,7 @@ export function dienstHref(dienst: Pick<Dienst, "slug" | "categorie">, lang: "nl
   }
   if (dienst.categorie === "training") return `${prefix}/training/${dienst.slug}`;
   if (dienst.slug === "corporate-coaching") return `${prefix}/b2b`;
+  if (isRetiredDienst(dienst)) return `${prefix}/groepslessen`;
   if (isB2bDienst(dienst)) return `${prefix}/b2b/${dienst.slug}`;
   if (isGroepLes(dienst)) return `${prefix}/groepslessen/${dienst.slug}`;
   return `${prefix}/performance/${dienst.slug}`;
@@ -893,7 +901,7 @@ export async function getDienstBySlug(
 
 // Old-site covers for diensten the media upload missed (no Sanity image yet).
 const dienstCoverFallback: Record<string, string> = {
-  "kleine-groepstraining": "/dienst-covers/kleine-groepstraining.jpg",
+  teamtraining: "/dienst-covers/kleine-groepstraining.jpg",
   skifit: "/dienst-covers/skifit.jpg",
   running: "/dienst-covers/running.jpg",
 };
@@ -1616,7 +1624,7 @@ export async function getLesrooster(): Promise<LesroosterItem[]> {
   return once("lesrooster", () => sanity.fetch(
     `*[_type == "lesrooster"] | order(volgorde asc) {
       les, dag, van, tot, volgorde,
-      "coachNaam": coach->voornaam + " " + coach->naam,
+      "coachNaam": coach->voornaam,
       "coachSlug": coach->slug.current,
       "dienstSlug": dienst->slug.current,
       "dienstCategorie": dienst->categorie

@@ -15,6 +15,7 @@ interface Props {
 }
 
 const { kicker, titel, alineaas, blokken = [], aanbodTitel, aanbod, lang = "nl", class: className } = Astro.props;
+const hasMedia = Astro.slots.has("media");
 
 function chunks(tekst: string): { kind: "p" | "ul"; lines: string[] }[] {
   const out: { kind: "p" | "ul"; lines: string[] }[] = [];
@@ -35,22 +36,22 @@ function chunks(tekst: string): { kind: "p" | "ul"; lines: string[] }[] {
 ---
 
 <section class:list={["mx-auto max-w-6xl px-4 py-16", className]}>
-  <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+  <div class:list={["grid gap-10", hasMedia && "lg:grid-cols-2 lg:items-center"]}>
     <div>
       {kicker && <p class="brief-kicker">{kicker}</p>}
-      <h1 class="mt-3 max-w-[16ch]">{titel}</h1>
+      <h1 class="mt-3">{titel}</h1>
       {alineaas.map((tekst) => (
-        <p class="mt-4 max-w-xl text-brand-muted">{tekst}</p>
+        <p class="mt-4 text-brand-muted">{tekst}</p>
       ))}
       <div class="mt-6 flex flex-wrap items-center gap-3">
         <slot name="actions" />
       </div>
     </div>
-    <slot name="media" />
+    {hasMedia && <slot name="media" />}
   </div>
 
   {blokken.map((blok) => (
-    <section class="mt-14 max-w-3xl">
+    <section class="mt-14">
       <h2>{paginaBlokKop(blok, lang)}</h2>
       {chunks(paginaBlokTekst(blok, lang)).map((chunk) =>
         chunk.kind === "ul" ? (

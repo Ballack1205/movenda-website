@@ -1,5 +1,5 @@
 import { DocumentsIcon } from "@sanity/icons";
-import { defineField, defineType } from "sanity";
+import { defineField, defineType, type SlugIsUniqueValidator } from "sanity";
 import { EN_FIELDSET, SLUG_DESCRIPTION } from "./helpers";
 
 const CATEGORIEEN = [
@@ -9,6 +9,22 @@ const CATEGORIEEN = [
   { title: "MPC — Sportrevalidatie", value: "mpc-rehab" },
   { title: "MPC — Groepslessen", value: "mpc-groep" },
 ] as const;
+
+// Each site has its own URL space (/kinesitherapie, /training, /performance),
+// so the same slug may exist once per site (e.g. dry needling at Olympia and MPC).
+const urlGroup = (categorie?: string) => (categorie?.startsWith("mpc-") ? "mpc-*" : categorie || "");
+
+const isUniqueWithinSite: SlugIsUniqueValidator = async (slug, context) => {
+  const { document, getClient } = context;
+  const id = document?._id.replace(/^drafts\./, "") || "";
+  const categorie = typeof document?.categorie === "string" ? document.categorie : undefined;
+  const group = urlGroup(categorie);
+  const others = await getClient({ apiVersion: "2025-01-01" }).fetch<{ categorie?: string }[]>(
+    `*[_type == "dienst" && slug.current == $slug && !(_id in [$id, "drafts." + $id]) && !(_id in path("versions.**"))]{ categorie }`,
+    { slug, id },
+  );
+  return !others.some((other) => urlGroup(other.categorie) === group);
+};
 
 export default defineType({
   name: "dienst",
@@ -30,7 +46,7 @@ export default defineType({
       title: "Slug (URL)",
       type: "slug",
       group: "inhoud",
-      options: { source: "titel" },
+      options: { source: "titel", isUnique: isUniqueWithinSite },
       description: SLUG_DESCRIPTION,
       validation: (Rule) => Rule.required(),
     }),

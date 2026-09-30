@@ -12,6 +12,7 @@ import {
   getSiteSettings,
   getTeamleden,
   isMpcCategorie,
+  isRetiredDienst,
   locatieKorteNamen,
   prijsNaam,
   prijsNootVolledig,
@@ -55,8 +56,9 @@ export const GET: APIRoute = async () => {
     getBlogPosts(),
   ]);
 
-  const olympiaDiensten = diensten.filter((d) => !isMpcCategorie(d.categorie));
-  const mpcDiensten = diensten.filter((d) => isMpcCategorie(d.categorie));
+  const listed = diensten.filter((d) => !isRetiredDienst(d));
+  const olympiaDiensten = listed.filter((d) => !isMpcCategorie(d.categorie));
+  const mpcDiensten = listed.filter((d) => isMpcCategorie(d.categorie));
 
   const locatieText = locaties
     .map((l) => {

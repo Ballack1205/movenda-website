@@ -166,6 +166,57 @@ html[data-theme="lab"] .page-ink a.bg-brand-primary:hover {
   color: #161513;
 }
 
+html[data-theme="lab"] .page-ink :is(h3, span, td, label) {
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .page-ink :is(.rounded-2xl, .rounded-xl) {
+  background: transparent;
+  border-color: rgb(244 247 251 / 0.18);
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .page-ink tr.bg-brand-surface {
+  background: rgb(244 247 251 / 0.06);
+}
+
+html[data-theme="lab"] .page-ink :is(input, textarea) {
+  color: #f4f7fb;
+  background: rgb(244 247 251 / 0.08);
+  border-color: rgb(244 247 251 / 0.28);
+}
+
+html[data-theme="lab"] .page-ink :is(input, textarea)::placeholder {
+  color: rgb(244 247 251 / 0.55);
+}
+
+html[data-theme="lab"] .page-ink button.bg-brand-primary {
+  background: #f3eee4;
+  color: #161513;
+}
+
+html[data-theme="lab"] .page-ink button.bg-brand-primary:hover {
+  background: #fffdf8;
+  color: #161513;
+}
+
+/* B2B overview: the small-group photo sits above the black copy, edge to edge. */
+html[data-theme="lab"] .b2b-cover {
+  position: relative;
+  height: clamp(16rem, 48vh, 36rem);
+  overflow: hidden;
+  background: #161513;
+}
+
+html[data-theme="lab"] .b2b-cover img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+}
+
 html[data-theme="lab"] h1 {
   font-size: clamp(2.25rem, 1.2rem + 3vw, 4rem);
   font-weight: 500;
@@ -1290,12 +1341,15 @@ html[data-theme="lab"] .brief-kicker {
   text-transform: uppercase;
 }
 
-html[data-theme="lab"] a.brief-kicker {
+html[data-theme="lab"] a.brief-kicker,
+html[data-theme="lab"] .brief-kicker a {
+  color: inherit;
   display: inline-block;
   text-decoration: none;
 }
 
-html[data-theme="lab"] a.brief-kicker:hover {
+html[data-theme="lab"] a.brief-kicker:hover,
+html[data-theme="lab"] .brief-kicker a:hover {
   text-decoration: underline;
   text-underline-offset: 0.22em;
 }

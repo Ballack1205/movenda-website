@@ -43,8 +43,10 @@ async function getLastmodMap() {
       );
       if (!res.ok) return map;
       const { result } = await res.json();
+      const groep = new Set(["boxing", "hiit", "full-body", "powerplus", "skifit", "running", "core", "mxgp"]);
+      const retired = new Set(["kleine-groepstraining"]);
       for (const d of result.diensten || []) {
-        const groep = new Set(["boxing", "kleine-groepstraining", "hiit", "full-body", "powerplus", "skifit", "running", "core", "mxgp"]);
+        if (retired.has(d.slug)) continue;
         const onKine = d.categorie === "kine" || ["dry-needling", "cupping", "taping"].includes(d.slug);
         const base = onKine
           ? "/kinesitherapie"
@@ -90,6 +92,16 @@ export default defineConfig({
   // URLs (/kinesitherapie/manuele-therapie). Output stays "directory"
   // (…/index.html) which Render serves for the slash-less path.
   trailingSlash: "never",
+  redirects: {
+    "/groepslessen/kleine-groepstraining": {
+      status: 301,
+      destination: "/groepslessen",
+    },
+    "/en/groepslessen/kleine-groepstraining": {
+      status: 301,
+      destination: "/en/groepslessen",
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },

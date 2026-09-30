@@ -65,7 +65,7 @@ export function locatieRoute(slug: string, nl: string | undefined, lang: Lang): 
 export function floorNote(note: string | undefined, lang: Lang): string | undefined {
   if (!note) return undefined;
   if (lang !== "en") return note;
-  if (/verdieping\s*-1/i.test(note)) return "PowerPlus takes place on floor −1.";
+  if (/verdieping\s*-1/i.test(note)) return "Group classes take place on floor −1, unless stated otherwise.";
   return note;
 }
 

@@ -31,7 +31,13 @@ const fallbackLabel = lang === "en" ? "Read our Google reviews" : "Lees onze Goo
     <section class="google-reviews-feed scroll-mt-24 px-4 pb-0" aria-labelledby="google-reviews-heading">
       <div class="mx-auto max-w-6xl">
         <h2 id="google-reviews-heading" class="brief-kicker">
-          {heading}
+          {olympiaReviews?.reviewUrl ? (
+            <a href={olympiaReviews.reviewUrl} target="_blank" rel="noopener noreferrer">
+              {heading}
+            </a>
+          ) : (
+            heading
+          )}
         </h2>
 
         <div class="google-reviews-widget mt-6">
