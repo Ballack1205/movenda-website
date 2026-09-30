@@ -139,6 +139,33 @@ html[data-theme="lab"] .locatie-page a.rounded-xl:hover {
   border-color: #f4f7fb;
 }
 
+/* Kinesitherapie overview uses the same black as the Aanbod bands. */
+html[data-theme="lab"] body:has(.kine-page) main {
+  display: flex;
+  flex-direction: column;
+  background: #161513;
+}
+
+html[data-theme="lab"] .kine-page {
+  flex: 1;
+  background: #161513;
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .kine-page :is(h1, h2, p, li, a, .brief-kicker, .text-brand-muted, .text-brand-primary, .text-brand-text) {
+  color: #f4f7fb;
+}
+
+html[data-theme="lab"] .kine-page a.bg-brand-primary {
+  background: #f3eee4;
+  color: #161513;
+}
+
+html[data-theme="lab"] .kine-page a.bg-brand-primary:hover {
+  background: #fffdf8;
+  color: #161513;
+}
+
 html[data-theme="lab"] h1 {
   font-size: clamp(2.25rem, 1.2rem + 3vw, 4rem);
   font-weight: 500;

@@ -11,9 +11,10 @@ interface Props {
   aanbodTitel: string;
   aanbod: NavLink[];
   lang?: Lang;
+  class?: string;
 }
 
-const { kicker, titel, alineaas, blokken = [], aanbodTitel, aanbod, lang = "nl" } = Astro.props;
+const { kicker, titel, alineaas, blokken = [], aanbodTitel, aanbod, lang = "nl", class: className } = Astro.props;
 
 function chunks(tekst: string): { kind: "p" | "ul"; lines: string[] }[] {
   const out: { kind: "p" | "ul"; lines: string[] }[] = [];
@@ -33,7 +34,7 @@ function chunks(tekst: string): { kind: "p" | "ul"; lines: string[] }[] {
 }
 ---
 
-<section class="mx-auto max-w-6xl px-4 py-16">
+<section class:list={["mx-auto max-w-6xl px-4 py-16", className]}>
   <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
     <div>
       {kicker && <p class="brief-kicker">{kicker}</p>}
