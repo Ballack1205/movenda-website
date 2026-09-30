@@ -122,15 +122,17 @@ const filters = [
 >
   <section class="mx-auto max-w-6xl px-4 pb-12 pt-8">
     <header>
-      <h1 class="max-w-[16ch]">{t.h1}</h1>
+      <h1 class="max-w-full text-balance">{t.h1}</h1>
       <p class="mt-4 max-w-2xl text-lg text-brand-muted">{t.intro}</p>
     </header>
 
-    <TeamGroupPhoto foto={settings.teamfoto} class="mt-8" />
+    <div class="mt-8">
+      <TeamGroupPhoto foto={settings.teamfoto} />
+    </div>
 
     <div id="keuzehulp" class="mt-8 flex flex-col gap-3 scroll-mt-24 sm:mt-10 sm:flex-row sm:items-center sm:justify-between">
       <div
-        class="flex flex-wrap gap-1.5 sm:inline-flex sm:max-w-full sm:gap-1 sm:rounded-full sm:border sm:border-brand-border sm:bg-brand-surface sm:p-1"
+        class="team-filters flex flex-wrap gap-1.5 sm:inline-flex sm:max-w-full sm:gap-1 sm:overflow-hidden sm:rounded-full sm:border sm:border-brand-border sm:bg-brand-surface sm:p-1"
         role="group"
         aria-label={t.filter}
         data-team-filters
@@ -140,7 +142,7 @@ const filters = [
             type="button"
             data-filter={f.key}
             aria-pressed={i === 0 ? "true" : "false"}
-            class="whitespace-nowrap rounded-full border border-brand-border bg-brand-surface px-3 py-1.5 text-[13px] font-medium sm:px-3.5 sm:text-sm text-brand-muted transition hover:text-brand-text aria-pressed:border-brand-header aria-pressed:bg-brand-header aria-pressed:text-white sm:border-0 sm:bg-transparent"
+            class="whitespace-nowrap rounded-full border border-brand-border bg-brand-surface px-3 py-1.5 text-[13px] font-medium sm:px-3.5 sm:text-sm text-brand-muted transition hover:text-brand-text aria-pressed:border-brand-header aria-pressed:bg-brand-header aria-pressed:text-brand-text sm:border-0 sm:bg-transparent"
           >
             {f.label}
           </button>
@@ -312,6 +314,18 @@ const filters = [
 </Layout>
 
 <style>
+  /* The lab theme squares every rounded-full control. This filter stays a pill,
+     so a selected option does not stick out as a square. */
+  :global(html[data-theme="lab"]) .team-filters,
+  :global(html[data-theme="lab"]) .team-filters button {
+    border-radius: 9999px;
+  }
+
+  :global(html[data-theme="lab"]) .team-filters button[aria-pressed="true"],
+  :global(html[data-theme="lab"]) .team-filters button[aria-pressed="true"]:hover {
+    color: var(--brand-text);
+  }
+
   /* Bio panel sits under the photo. Desktop (lg+) reveals it on hover/focus.
      Below lg the i-button toggles [data-bio-open] instead — hover would steal
      the first tap on tablets that report hover. */
