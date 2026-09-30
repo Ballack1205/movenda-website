@@ -110,6 +110,9 @@ export default defineConfig({
       filter: (url) => {
         const path = new URL(url).pathname.replace(/\/$/, "") || "/";
         if (SITEMAP_EXCLUDE.has(path)) return false;
+        // Redirects to /over-ons/… (the MPC host keeps its own visie page).
+        if (path === "/over" || path === "/en/over") return false;
+        if (!hostMode && (path === "/performance/visie" || path === "/en/performance/visie")) return false;
         // Old /mpc URLs are redirects. The pages live at /performance and /groepslessen.
         if (path === "/mpc" || path.startsWith("/mpc/") || path === "/en/mpc" || path.startsWith("/en/mpc/")) return false;
         if (!hostMode) return true;

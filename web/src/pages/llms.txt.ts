@@ -44,6 +44,8 @@ Both locations share info@movenda.be and work strictly by appointment.
 - Personal training (Hasselt): /training
 - Movenda Performance Centre: /performance
 - Team: /team
+- Our story: /over-ons/ons-verhaal
+- Our vision: /over-ons/onze-visie
 - Prices & reimbursement (practice): /prijzen
 - Performance prices: /performance/prijzen
 - FAQ: /faq

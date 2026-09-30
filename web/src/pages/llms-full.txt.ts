@@ -8,6 +8,7 @@ import {
   getDiensten,
   getFaqs,
   getLocaties,
+  getPagina,
   getPrijzen,
   getSiteSettings,
   getTeamleden,
@@ -18,6 +19,7 @@ import {
   prijsNootVolledig,
   specialisatieNaam,
   type Dienst,
+  type Pagina,
   type Prijsitem,
   type PrijsCategorie,
 } from "../lib/content";
@@ -45,7 +47,17 @@ function dienstBlock(dienst: Dienst, prijzen: Prijsitem[]): string {
   return lines.join("\n");
 }
 
+function overOnsBlock(pagina: Pagina, path: string): string {
+  const lines = [`### ${pagina.titel}`, `URL: ${SITE_URL}${path}`];
+  if (pagina.slogan) lines.push(`Tagline: ${pagina.slogan}`);
+  if (pagina.intro) lines.push("", pagina.intro.trim());
+  for (const blok of [...pagina.blokken, ...pagina.kenmerken]) lines.push("", `${blok.kop}: ${blok.tekst.trim()}`);
+  if (pagina.afsluiter) lines.push("", pagina.afsluiter);
+  return lines.join("\n");
+}
+
 export const GET: APIRoute = async () => {
+  const [verhaal, visie] = await Promise.all([getPagina("over"), getPagina("onze-visie")]);
   const [settings, locaties, team, diensten, prijzen, faqs, posts] = await Promise.all([
     getSiteSettings(),
     getLocaties(),
@@ -147,6 +159,7 @@ export const GET: APIRoute = async () => {
     NOINDEX ? "> Pre-launch preview — the permanent domain is movenda.be." : undefined,
     `> Generated from the practice's CMS on ${new Date().toISOString().slice(0, 10)}.`,
     "",
+    section("About — story and vision", [overOnsBlock(verhaal, "/over-ons/ons-verhaal"), overOnsBlock(visie, "/over-ons/onze-visie")].join("\n\n")),
     section("Locations", locatieText),
     section("Services — Movenda (physiotherapy & training, Hasselt)", olympiaDiensten.map((d) => dienstBlock(d, prijzen)).join("\n\n")),
     section("Services — Movenda Performance Centre (Kuringen)", mpcDiensten.map((d) => dienstBlock(d, prijzen)).join("\n\n")),

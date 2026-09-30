@@ -63,6 +63,20 @@ export function buildSearchIndex(input: {
       kind: "page",
     },
     {
+      title: en ? "Our story" : "Ons verhaal",
+      href: page(lang, "/over-ons/ons-verhaal"),
+      keys: en ? "about us story history andres niels" : "over ons verhaal geschiedenis andres niels",
+      text: "",
+      kind: "page",
+    },
+    {
+      title: en ? "Our vision" : "Onze visie",
+      href: page(lang, "/over-ons/onze-visie"),
+      keys: en ? "vision mission values principles move with purpose" : "visie missie waarden principes move with purpose",
+      text: "",
+      kind: "page",
+    },
+    {
       title: "Contact",
       href: page(lang, "/contact"),
       keys: en ? "contact appointment email phone" : "contact afspraak mail telefoon",

@@ -16,7 +16,8 @@ type PreviewDoc = {
 
 const PAGINA_PATHS: Record<string, string> = {
   home: "/",
-  over: "/over",
+  over: "/over-ons/ons-verhaal",
+  "onze-visie": "/over-ons/onze-visie",
   kinesitherapie: "/kinesitherapie",
   training: "/training",
   mpc: "/mpc",
