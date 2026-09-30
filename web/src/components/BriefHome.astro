@@ -50,6 +50,8 @@ const eventWhen = (event: { datum: string }) => {
 const eventPhoto = (foto: string) =>
   foto.startsWith("/") ? foto : `${foto}?w=480&h=320&fit=crop&auto=format`;
 const locaties = await getLocaties();
+const hasselt = locaties.find((loc) => loc.slug === "olympia");
+const kuringen = locaties.find((loc) => loc.slug === "mpc");
 const deurFallback: Record<string, ImageMetadata> = {
   "/kinesitherapie": kineHero,
   "/performance": homePerformance,
@@ -130,6 +132,29 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 </div>
 
 <LabStrip items={deuren} />
+
+<section class="brief-locs" data-reveal aria-label={brief.locatiesTitel}>
+  <div class="brief-locs__grid">
+    {hasselt && (
+      <a class="brief-loc brief-loc--dark" href="/locaties/olympia">
+        {hasselt.foto && <img src={hasselt.foto} alt="" class="brief-loc__photo" />}
+        <span class="brief-loc__veil" aria-hidden="true"></span>
+        <span class="brief-loc__copy">
+          <span class="brief-loc__name">Movenda Hasselt</span>
+        </span>
+      </a>
+    )}
+    {kuringen?.foto && (
+      <a class="brief-loc brief-loc--dark" href="/locaties/mpc">
+        <img src={kuringen.foto} alt="" class="brief-loc__photo" />
+        <span class="brief-loc__veil" aria-hidden="true"></span>
+        <span class="brief-loc__copy">
+          <span class="brief-loc__name">Performance Centre Kuringen</span>
+        </span>
+      </a>
+    )}
+  </div>
+</section>
 
 <div class="lab-sheet lab-sheet--ink brief-ink">
   <section class="brief-block" data-reveal>

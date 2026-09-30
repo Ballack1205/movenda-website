@@ -1285,7 +1285,11 @@ html[data-theme="lab"] .lab-intro .brief-proof__label {
 }
 
 html[data-theme="lab"] .brief-locs {
-  padding: 3.75rem 0 0;
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 3.5rem 0 0;
+  background: #161513;
 }
 
 html[data-theme="lab"] .brief-locs + .brief-block {
@@ -1423,7 +1427,11 @@ html[data-theme="lab"] .brief-loc--light::after {
 html[data-theme="lab"] .brief-loc__veil {
   position: absolute;
   inset: 0;
-  background: rgb(8 14 24 / 0.35);
+  background: linear-gradient(180deg, rgb(14 16 18 / 0.28) 0%, rgb(14 16 18 / 0.72) 100%);
+}
+
+html[data-theme="lab"] .brief-loc--dark .brief-loc__name {
+  color: #fff;
 }
 
 html[data-theme="lab"] .brief-loc__copy {
@@ -1441,6 +1449,10 @@ html[data-theme="lab"] .brief-loc__name {
   font-size: clamp(1.8rem, 1.2rem + 1.4vw, 2.6rem);
   letter-spacing: -0.03em;
   line-height: 1.05;
+}
+
+html[data-theme="lab"] .brief-loc__address {
+  font-size: 0.95rem;
 }
 
 html[data-theme="lab"] .brief-reviews {
