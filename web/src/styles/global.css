@@ -867,8 +867,9 @@ html[data-theme="lab"] [data-reveal].is-in {
 
   @media (max-width: 767px) {
     html[data-theme="lab"] .lab-strip__card,
-    html[data-theme="lab"] .lab-strip__card.is-open {
-      flex: 0 0 78% !important;
+    html[data-theme="lab"] .lab-strip__card.is-open,
+    html[data-theme="lab"] .lab-strip__grid:not(:has(.is-open)) .lab-strip__card:first-child {
+      height: max(20rem, 44svh) !important;
     }
   }
 
@@ -1135,34 +1136,23 @@ html[data-theme="lab"] input[type="submit"] {
     font-size: 1.05rem;
   }
 
-  /* Same door row as desktop: swipe to shift which one is wide. The
-     sentence on the photo stays off; the title is enough on a phone. */
-  html[data-theme="lab"] .lab-strip__grid {
-    display: flex;
-    height: 68svh;
-    min-height: 22rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-
-  html[data-theme="lab"] .lab-strip__grid::-webkit-scrollbar {
-    display: none;
+  /* Stacked doors. The one crossing the middle of the screen grows while you
+     scroll, the vertical version of the desktop hover shift. The sentence
+     on the photo stays off; the title is enough on a phone. */
+  html[data-theme="lab"] .lab-strip {
+    overflow-anchor: none;
   }
 
   html[data-theme="lab"] .lab-strip__card {
-    flex: 0 0 58%;
-    height: 100%;
+    height: max(11rem, 26svh);
     min-height: 0;
     aspect-ratio: auto;
-    scroll-snap-align: center;
-    scroll-snap-stop: always;
-    transition: flex-basis 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   html[data-theme="lab"] .lab-strip__card.is-open,
   html[data-theme="lab"] .lab-strip__grid:not(:has(.is-open)) .lab-strip__card:first-child {
-    flex-basis: 82%;
+    height: max(22rem, 60svh);
   }
 
   html[data-theme="lab"] .lab-strip__title {

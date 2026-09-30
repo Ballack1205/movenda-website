@@ -46,55 +46,55 @@ const { items } = Astro.props;
         </span>
       </a>
     ))}
-    </div>
+  </div>
 </section>
 
 <script>
-  // Phones have no hover. After a swipe settles, the door in the middle grows
-  // and the others give up width — the same shift as a desktop hover.
-  const desktop = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 768px)");
+  // Phones have no hover. The door crossing the middle of the screen grows
+  // while you scroll — the vertical version of the desktop hover shift.
+  const phone = window.matchMedia("(max-width: 767px)");
 
   document.querySelectorAll<HTMLElement>(".lab-strip__grid").forEach((grid) => {
     const cards = [...grid.querySelectorAll<HTMLElement>(".lab-strip__card")];
     if (cards.length === 0) return;
     let current = -1;
-    let timer = 0;
+    let queued = false;
+
+    const open = (index: number) => {
+      if (index === current) return;
+      current = index;
+      cards.forEach((card, i) => card.classList.toggle("is-open", i === index));
+    };
 
     const mark = () => {
-      if (desktop.matches) {
+      queued = false;
+      if (!phone.matches) {
         if (current !== -1) {
           current = -1;
           cards.forEach((card) => card.classList.remove("is-open"));
         }
         return;
       }
-      const mid = grid.getBoundingClientRect().left + grid.clientWidth / 2;
-      let best = 0;
-      let bestDist = Infinity;
-      cards.forEach((card, i) => {
+      const mid = window.innerHeight / 2;
+      const hit = cards.findIndex((card) => {
         const r = card.getBoundingClientRect();
-        const dist = Math.abs(r.left + r.width / 2 - mid);
-        if (dist < bestDist) {
-          best = i;
-          bestDist = dist;
-        }
+        return r.top <= mid && r.bottom > mid;
       });
-      if (best === current) return;
-      current = best;
-      cards.forEach((card, i) => card.classList.toggle("is-open", i === best));
+      if (hit !== -1) open(hit);
+      else if (current === -1) open(0);
+      else if (cards[0].getBoundingClientRect().top > mid) open(0);
+      else if (cards[cards.length - 1].getBoundingClientRect().bottom <= mid) open(cards.length - 1);
     };
 
     const schedule = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(mark, 140);
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(mark);
     };
 
-    grid.addEventListener("scroll", schedule, { passive: true });
-    grid.addEventListener("scrollend", () => {
-      window.clearTimeout(timer);
-      mark();
-    });
-    desktop.addEventListener("change", mark);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    phone.addEventListener("change", schedule);
     mark();
   });
 </script>
