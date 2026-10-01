@@ -151,8 +151,32 @@ async function notifyNewsletter(email) {
   }
 }
 
+const SANITY_PROJECT = process.env.SANITY_PROJECT_ID || "k73l2by8";
+const SANITY_DATASET = process.env.SANITY_DATASET || "production";
+
+/**
+ * Recipient Julie set on the popup in Sanity. Looked up here, never taken from
+ * the request, and limited to @movenda.be so the form cannot mail anyone else.
+ */
+async function popupRecipient(popupId) {
+  if (typeof popupId !== "string" || !/^[\w.-]+$/.test(popupId) || popupId.startsWith("drafts.")) return CONTACT_TO_EMAIL;
+  try {
+    const query = encodeURIComponent(`*[_type == "popup" && _id == $id][0].mailAdres`);
+    const res = await fetch(
+      `https://${SANITY_PROJECT}.apicdn.sanity.io/v2026-01-01/data/query/${SANITY_DATASET}?query=${query}&%24id=${encodeURIComponent(JSON.stringify(popupId))}`,
+    );
+    if (!res.ok) return CONTACT_TO_EMAIL;
+    const { result } = await res.json();
+    const adres = typeof result === "string" ? result.trim() : "";
+    return /^[^\s@]+@movenda\.be$/i.test(adres) ? adres : CONTACT_TO_EMAIL;
+  } catch {
+    return CONTACT_TO_EMAIL;
+  }
+}
+
 async function sendPopupSignupEmail(data) {
   const { naam, email, telefoon, popupTitel, extra } = data;
+  const to = await popupRecipient(data.popupId);
   const extraEntries =
     extra && typeof extra === "object"
       ? Object.entries(extra).filter(([, value]) => value != null && String(value).trim() !== "")
@@ -181,7 +205,7 @@ async function sendPopupSignupEmail(data) {
     },
     body: JSON.stringify({
       from: CONTACT_FROM,
-      to: [CONTACT_TO_EMAIL],
+      to: [to],
       reply_to: email,
       subject: `Inschrijving: ${eventName} — ${naam}`,
       html,

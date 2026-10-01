@@ -74,6 +74,7 @@ export default defineType({
         list: [
           { title: "Gaat naar een formulier-link (Google Form) — aanbevolen", value: "link" },
           { title: "Opent een inschrijfformulier op de site", value: "formulier" },
+          { title: "Opent een mail naar ons (bv. info@movenda.be)", value: "mail" },
         ],
         layout: "radio",
       },
@@ -96,6 +97,31 @@ export default defineType({
           return true;
         }),
       ],
+    }),
+    defineField({
+      name: "mailAdres",
+      title: "E-mailadres",
+      type: "string",
+      group: "inhoud",
+      description:
+        "Bij ‘mail’: naar dit adres opent de mail. Bij ‘inschrijfformulier’: hier komen de inschrijvingen binnen. Enkel @movenda.be-adressen, bv. info@movenda.be of julie@movenda.be.",
+      initialValue: "info@movenda.be",
+      hidden: ({ parent }) => parent?.actie !== "mail" && parent?.actie !== "formulier",
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const actie = (context.parent as { actie?: string } | undefined)?.actie;
+          if (actie === "mail" && !value) return metPlek(context, "nog leeg. Vul het e-mailadres in, bv. info@movenda.be.");
+          if (value && !/^[^\s@]+@movenda\.be$/i.test(value.trim())) return "Gebruik een @movenda.be-adres, bv. info@movenda.be.";
+          return true;
+        }),
+    }),
+    defineField({
+      name: "mailOnderwerp",
+      title: "Onderwerp van de mail",
+      type: "string",
+      group: "inhoud",
+      description: "Leeg = de titel van de pop-up, bv. ‘Inschrijving: Together we Move’.",
+      hidden: ({ parent }) => parent?.actie !== "mail",
     }),
     defineField({
       name: "extraVragen",

@@ -17,6 +17,10 @@ const inhoud = popup
 const bodyHtml = inhoud?.length ? toHTML(inhoud) : "";
 const extraVragen = popup?.extraVragen || [];
 const apiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
+const mailAdres = popup?.mailAdres?.trim();
+const mailHref = mailAdres
+  ? `mailto:${mailAdres}?subject=${encodeURIComponent(popup?.mailOnderwerp || `${isEn ? "Sign-up" : "Inschrijving"}: ${titel}`)}`
+  : undefined;
 const afbeelding = popup?.afbeelding
   ? `${popup.afbeelding}?w=960&h=540&fit=crop&auto=format`
   : undefined;
@@ -58,7 +62,20 @@ const afbeelding = popup?.afbeelding
           <p id="promo-popup-title" class="text-2xl font-bold tracking-tight">{titel}</p>
           {bodyHtml && <div class="promo-body mt-4 text-sm text-brand-text" set:html={bodyHtml} />}
 
-          {popup.actie === "link" && popup.knopUrl ? (
+          {popup.actie === "mail" && mailHref ? (
+            <div class="mt-6 flex flex-col items-center gap-2">
+              <a
+                href={mailHref}
+                data-promo-cta
+                class="inline-flex rounded-md bg-brand-primary px-8 py-3 font-semibold text-white transition hover:bg-brand-primary-dark"
+              >
+                {knopTekst}
+              </a>
+              <p class="text-sm text-brand-muted">
+                {isEn ? "or email" : "of mail naar"} <a class="underline" href={mailHref}>{mailAdres}</a>
+              </p>
+            </div>
+          ) : popup.actie === "link" && popup.knopUrl ? (
             <div class="mt-6 flex justify-center">
               <a
                 href={popup.knopUrl}

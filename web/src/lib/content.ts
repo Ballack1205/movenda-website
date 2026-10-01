@@ -531,7 +531,7 @@ export interface SportaanbodItem {
   volgorde: number;
 }
 
-export type PopupActie = "formulier" | "link";
+export type PopupActie = "formulier" | "link" | "mail";
 export type PopupTonenOp = "overal" | "home" | "mpc";
 
 export interface PopupVraag {
@@ -553,6 +553,9 @@ export interface Popup {
   knopTekstEn?: string;
   actie: PopupActie;
   knopUrl?: string;
+  /** "mail": mailto target. "formulier": where sign-ups go (read server-side, @movenda.be only). */
+  mailAdres?: string;
+  mailOnderwerp?: string;
   extraVragen: PopupVraag[];
   toonOp: PopupTonenOp;
   geldigVan?: string;
@@ -1972,7 +1975,7 @@ async function loadPopups(): Promise<Popup[]> {
       actief, titel, titelEn,
       "afbeelding": afbeelding.asset->url,
       inhoud, inhoudEn,
-      knopTekst, knopTekstEn, actie, knopUrl,
+      knopTekst, knopTekstEn, actie, knopUrl, mailAdres, mailOnderwerp,
       extraVragen[]{ label, type, opties, verplicht },
       toonOp, geldigVan, geldigTot, eenKeerPerBezoeker
     }`,
