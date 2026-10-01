@@ -1475,6 +1475,18 @@ html[data-theme="lab"] .lab-menu__sub a {
   text-decoration: none;
 }
 
+/* Same roles as the desktop columns: group name, small heading, link. */
+html[data-theme="lab"] .lab-menu__sub .lab-mega__title {
+  font-weight: 650;
+  opacity: 1;
+}
+
+html[data-theme="lab"] .lab-menu__sub .lab-mega__link {
+  font-size: 0.9rem;
+  font-weight: 450;
+  opacity: 0.72;
+}
+
 html[data-theme="lab"] .lab-menu__heading {
   margin-top: 0.7rem;
   font-size: 0.68rem;

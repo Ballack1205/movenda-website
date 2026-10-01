@@ -350,17 +350,18 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
                   <div class="lab-menu__sub">
                     {item.groups?.map((group) => (
                       <div>
-                        <a href={group.href}>{group.label}</a>
+                        <a href={group.href} class="lab-mega__title">{group.label}</a>
                         {group.children.map((child) =>
                           child.heading ? (
                             child.href ? (
-                              <a href={child.href} class="lab-menu__heading">{child.label}</a>
+                              <a href={child.href} class="lab-mega__label">{child.label}</a>
                             ) : (
-                              <p class="lab-menu__heading">{child.label}</p>
+                              <p class="lab-mega__label">{child.label}</p>
                             )
                           ) : (
                             <a
                               href={child.href}
+                              class="lab-mega__link"
                               target={child.external ? "_blank" : undefined}
                               rel={child.external ? "noopener noreferrer" : undefined}
                             >
