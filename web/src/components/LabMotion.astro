@@ -26,16 +26,22 @@
     });
   }
 
-  const sheet = document.querySelector("[data-lab-light]") || document.querySelector(".lab-sheet");
+  const sheets = [...document.querySelectorAll<HTMLElement>(".lab-sheet")];
   const ink = document.querySelector(".lab-sheet--ink");
   const cover = document.querySelector(".lab-cover, .dienst-hero");
   const arrow = document.querySelector<HTMLElement>(".lab-cover__arrow");
-  if (sheet) {
+  if (sheets.length) {
     const update = () => {
       const header = document.querySelector<HTMLElement>("[data-header]");
       const edge = header?.getBoundingClientRect().height ?? 80;
-      const past = sheet.getBoundingClientRect().top < edge;
+      const past = sheets[0].getBoundingClientRect().top < edge;
       document.body.classList.toggle("lab-past-cover", past);
+      // Black bands keep the ink bar; the light band (reviews, FAQ) keeps the cream bar.
+      const probe = document.elementFromPoint(12, Math.min(edge + 8, window.innerHeight - 1));
+      const band = probe?.closest(".lab-sheet");
+      const onDarkFooter = Boolean(probe?.closest("footer"));
+      const overInk = past && (onDarkFooter || Boolean(band?.classList.contains("lab-sheet--ink")));
+      document.body.classList.toggle("lab-over-ink", overInk);
       const inkTop = ink?.getBoundingClientRect().top ?? edge + 1;
       document.body.classList.toggle("lab-header-blur", !past && inkTop < edge);
       if (arrow && !reduce) {
