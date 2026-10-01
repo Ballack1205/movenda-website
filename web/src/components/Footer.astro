@@ -14,9 +14,13 @@ const locaties = await getLocaties();
 const settings = await getSiteSettings();
 const year = new Date().getFullYear();
 
+// The Movenda site always shows both practices, also on a location page.
+// Only the dedicated Performance Centre host keeps a single-location footer.
+const footerBrand = MPC_HOST ? "mpc" : brand === "mpc" && !lab ? "mpc" : "movenda";
+
 // Main practice (Olympia) first, MPC second. Sanity returns them ordered by slug.
 const ordered = [...locaties].sort((a, b) => (a.brand === "movenda" ? -1 : 0) - (b.brand === "movenda" ? -1 : 0));
-const shown = brand === "mpc" ? ordered.filter((l) => l.slug === "mpc") : ordered;
+const shown = footerBrand === "mpc" ? ordered.filter((l) => l.slug === "mpc") : ordered;
 const mpc = locaties.find((l) => l.slug === "mpc");
 
 // Info that is identical for every shown location is printed once (brand column) instead of per column.
@@ -72,7 +76,7 @@ const navLinks = MPC_HOST
         { href: "/en/kinesitherapie", label: "Services" },
         { href: "/en/over-ons/ons-verhaal", label: "Our story" },
         { href: "/en/over-ons/onze-visie", label: "Our vision" },
-        { href: brand === "mpc" ? "/en/performance/prijzen" : "/en/prijzen", label: "Prices" },
+        { href: footerBrand === "mpc" ? "/en/performance/prijzen" : "/en/prijzen", label: "Prices" },
         { href: "/en/faq", label: "FAQ" },
         { href: "/en/team", label: "Team" },
         { href: "/en/blog", label: lab ? "Insights/Blog" : "Blog" },
@@ -83,7 +87,7 @@ const navLinks = MPC_HOST
         { href: "/kinesitherapie", label: "Aanbod" },
         { href: "/over-ons/ons-verhaal", label: "Ons verhaal" },
         { href: "/over-ons/onze-visie", label: "Onze visie" },
-        { href: brand === "mpc" ? "/performance/prijzen" : "/prijzen", label: "Prijzen" },
+        { href: footerBrand === "mpc" ? "/performance/prijzen" : "/prijzen", label: "Prijzen" },
         { href: "/faq", label: "FAQ" },
         { href: "/team", label: "Team" },
         { href: "/blog", label: lab ? "Insights/Blog" : "Blog" },
@@ -93,7 +97,7 @@ const navLinks = MPC_HOST
 
 // One social row per footer: Movenda's channels on Movenda pages, MPC's own channels on MPC pages.
 const socials = (
-  brand === "mpc"
+  footerBrand === "mpc"
     ? [
         { kind: "instagram", label: "Instagram", href: mpc?.instagram },
         { kind: "facebook", label: "Facebook", href: mpc?.facebook },
@@ -133,10 +137,10 @@ const socialClass =
       </a>
       <p class="mt-4 max-w-xs">
         {lang === "en"
-          ? brand === "mpc"
+          ? footerBrand === "mpc"
             ? "Part of Movenda — physiotherapy & personal training in Hasselt, Belgium."
             : settings.footerTaglineEn
-          : brand === "mpc"
+          : footerBrand === "mpc"
             ? "Onderdeel van Movenda, kinesitherapie & personal training in Hasselt."
             : settings.footerTagline}
       </p>
@@ -182,7 +186,7 @@ const socialClass =
           <p class={labelClass}>{t.follow}</p>
           <div class="mt-2 flex gap-2">
             {socials.map((s) => (
-              <a href={s.href} target="_blank" rel="noopener" class={socialClass} aria-label={`${brand === "mpc" ? "Performance Centre" : "Movenda"} ${lang === "en" ? "on" : "op"} ${s.label}`}>
+              <a href={s.href} target="_blank" rel="noopener" class={socialClass} aria-label={`${footerBrand === "mpc" ? "Performance Centre" : "Movenda"} ${lang === "en" ? "on" : "op"} ${s.label}`}>
                 {s.kind === "instagram" && (
                   <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="5" />
