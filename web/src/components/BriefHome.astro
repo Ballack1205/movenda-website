@@ -134,23 +134,23 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 <section class="brief-locs" data-reveal aria-label={brief.locatiesTitel}>
   <div class="brief-locs__grid">
     {hasselt && (
-      <a class="brief-loc brief-loc--dark" href="/locaties/olympia">
-        {hasselt.foto && <img src={hasselt.foto} alt="" class="brief-loc__photo" />}
-        <span class="brief-loc__veil" aria-hidden="true"></span>
-        <span class="brief-loc__copy">
-          <span class="brief-loc__name">{brief.hasseltNaam}</span>
-          <span class="brief-loc__address">{hasselt.adres}</span>
-        </span>
+      <a class="brief-loc" href="/locaties/olympia">
+        {hasselt.foto && (
+          <span class="brief-loc__ring">
+            <img src={hasselt.foto} alt="" class="brief-loc__photo" loading="lazy" />
+          </span>
+        )}
+        <span class="brief-loc__name">{brief.hasseltNaam}</span>
+        <span class="brief-loc__address">{hasselt.adres}</span>
       </a>
     )}
     {kuringen?.foto && (
-      <a class="brief-loc brief-loc--dark" href="/locaties/mpc">
-        <img src={kuringen.foto} alt="" class="brief-loc__photo" />
-        <span class="brief-loc__veil" aria-hidden="true"></span>
-        <span class="brief-loc__copy">
-          <span class="brief-loc__name">{brief.kuringenNaam}</span>
-          <span class="brief-loc__address">{kuringen.adres}</span>
+      <a class="brief-loc" href="/locaties/mpc">
+        <span class="brief-loc__ring">
+          <img src={kuringen.foto} alt="" class="brief-loc__photo" loading="lazy" />
         </span>
+        <span class="brief-loc__name">{brief.kuringenNaam}</span>
+        <span class="brief-loc__address">{kuringen.adres}</span>
       </a>
     )}
   </div>
