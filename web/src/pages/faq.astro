@@ -25,7 +25,7 @@ import SectionKicker from "../components/SectionKicker.astro";
   altPath="/en/faq"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-3xl px-4 py-12">
+  <section class="page-ink mx-auto max-w-3xl px-4 py-12">
     <SectionKicker n={1} />
         <h1 class="text-3xl font-bold">{pagina.titel}</h1>
     {paginaAlineas(pagina, "nl", { email: settings.email }).map((tekst) => (

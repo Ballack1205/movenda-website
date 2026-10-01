@@ -32,9 +32,50 @@ import SectionKicker from "../../components/SectionKicker.astro";
   lang="en"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-4xl px-4 py-12">
-    <SectionKicker n={1} />
-        <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", "en")}</h1>
+  <div class="page-ink">
+  <section class="mx-auto max-w-4xl px-4 pb-4 pt-8">
+    <form class="grid gap-4" data-contact-form>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Name" required />
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="Email" required />
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Phone" required />
+        <select class="rounded-lg border border-brand-border px-4 py-3" name="locatie">
+          <option value="">Which location?</option>
+          <option value="Movenda — Kuringersteenweg">Movenda — Kuringersteenweg</option>
+          <option value="Performance Centre — Lammerweg">Performance Centre — Lammerweg</option>
+        </select>
+      </div>
+      <ContactVerwijsVraag opties={pagina.verwijsopties} lang="en" />
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">What would you like to come in for?</legend>
+        <div class="mt-2 flex flex-wrap gap-4 text-sm">
+          <label><input type="checkbox" name="waarvoor" value="Kinesitherapie" /> Physiotherapy</label>
+          <label><input type="checkbox" name="waarvoor" value="Personal Training" /> Personal training</label>
+          <label><input type="checkbox" name="waarvoor" value="Andere" /> Other</label>
+        </div>
+      </fieldset>
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">Do you have a doctor's prescription?</legend>
+        <p class="text-xs text-brand-muted">Only needed for physiotherapy</p>
+        <div class="mt-2 flex flex-wrap gap-4 text-sm">
+          <label><input type="radio" name="voorschrift" value="Ja" /> Yes</label>
+          <label><input type="radio" name="voorschrift" value="Nee" /> No</label>
+          <label><input type="radio" name="voorschrift" value="Niet van toepassing" /> Not applicable</label>
+        </div>
+      </fieldset>
+      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Your question or message" required minlength="5"></textarea>
+      <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
+      <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+        Send my question
+      </button>
+      <p class="text-sm" data-contact-status role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="mx-auto max-w-4xl px-4 pb-12">
+    <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", "en")}</h1>
     {paginaAlineas(pagina, "en").map((tekst) => (
       <p class="mt-2 max-w-2xl text-brand-muted">{tekst}</p>
     ))}
@@ -121,45 +162,8 @@ import SectionKicker from "../../components/SectionKicker.astro";
       />
     )}
 
-    <form class="mt-12 grid gap-4" data-contact-form>
-      <div class="grid gap-4 sm:grid-cols-2">
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Name" required />
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="Email" required />
-      </div>
-      <div class="grid gap-4 sm:grid-cols-2">
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Phone" required />
-        <select class="rounded-lg border border-brand-border px-4 py-3" name="locatie">
-          <option value="">Which location?</option>
-          <option value="Movenda — Kuringersteenweg">Movenda — Kuringersteenweg</option>
-          <option value="Performance Centre — Lammerweg">Performance Centre — Lammerweg</option>
-        </select>
-      </div>
-      <ContactVerwijsVraag opties={pagina.verwijsopties} lang="en" />
-      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
-        <legend class="px-1 text-sm font-semibold">What would you like to come in for?</legend>
-        <div class="mt-2 flex flex-wrap gap-4 text-sm">
-          <label><input type="checkbox" name="waarvoor" value="Kinesitherapie" /> Physiotherapy</label>
-          <label><input type="checkbox" name="waarvoor" value="Personal Training" /> Personal training</label>
-          <label><input type="checkbox" name="waarvoor" value="Andere" /> Other</label>
-        </div>
-      </fieldset>
-      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
-        <legend class="px-1 text-sm font-semibold">Do you have a doctor's prescription?</legend>
-        <p class="text-xs text-brand-muted">Only needed for physiotherapy</p>
-        <div class="mt-2 flex flex-wrap gap-4 text-sm">
-          <label><input type="radio" name="voorschrift" value="Ja" /> Yes</label>
-          <label><input type="radio" name="voorschrift" value="Nee" /> No</label>
-          <label><input type="radio" name="voorschrift" value="Niet van toepassing" /> Not applicable</label>
-        </div>
-      </fieldset>
-      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Your question or message" required minlength="5"></textarea>
-      <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
-      <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
-        Send my question
-      </button>
-      <p class="text-sm" data-contact-status role="status" aria-live="polite"></p>
-    </form>
   </section>
+  </div>
 </Layout>
 
 <script define:vars={{ apiUrl: contactApiUrl }} is:inline>
@@ -206,7 +210,7 @@ import SectionKicker from "../../components/SectionKicker.astro";
       form.reset();
     } catch {
       status.textContent =
-        "Something went wrong sending this. Please call or email us directly — see the details above.";
+        "Something went wrong sending this. Please call or email us directly — see the details below.";
       status.className = "text-sm font-semibold text-red-600";
     } finally {
       button.disabled = false;

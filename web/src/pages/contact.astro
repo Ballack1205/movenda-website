@@ -31,7 +31,49 @@ import SectionKicker from "../components/SectionKicker.astro";
   altPath="/en/contact"
   jsonLd={jsonLd}
 >
-  <section class="grid min-h-[70vh] md:grid-cols-2">
+  <div class="page-ink">
+  <section class="px-4 pb-4 pt-8 md:px-12">
+    <form class="grid gap-4" data-contact-form>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Naam" required />
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="E-mail" required />
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Telefoon" required />
+        <select class="rounded-lg border border-brand-border px-4 py-3" name="locatie">
+          <option value="">Voor welke vestiging?</option>
+          <option value="Movenda — Kuringersteenweg">Movenda — Kuringersteenweg</option>
+          <option value="Performance Centre — Lammerweg">Performance Centre — Lammerweg</option>
+        </select>
+      </div>
+      <ContactVerwijsVraag opties={pagina.verwijsopties} />
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">Waarvoor wil je langskomen?</legend>
+        <div class="mt-3 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="waarvoor" value="Kinesitherapie" /> Kinesitherapie</label>
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="waarvoor" value="Personal Training" /> Personal Training</label>
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="waarvoor" value="Andere" /> Andere</label>
+        </div>
+      </fieldset>
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">Heb je een voorschrift van je arts?</legend>
+        <p class="text-xs text-brand-muted">Enkel van toepassing voor kinesitherapie</p>
+        <div class="mt-3 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+          <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Ja" /> Ja</label>
+          <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Nee" /> Nee</label>
+          <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Niet van toepassing" /> Niet van toepassing</label>
+        </div>
+      </fieldset>
+      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Jouw vraag of bericht" required minlength="5"></textarea>
+      <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
+      <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+        Verstuur mijn vraag
+      </button>
+      <p class="text-sm" data-contact-status role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="grid md:grid-cols-2">
     {locaties.map((locatie) => (
         <div class="flex min-h-[24rem] flex-col border-brand-border md:border-r md:last:border-r-0">
           {locatie.foto && (
@@ -88,55 +130,15 @@ import SectionKicker from "../components/SectionKicker.astro";
       ))}
   </section>
 
-  <section class="px-4 py-12 md:px-12">
-
+  <section class="px-4 pb-12 md:px-12">
     {olympia && (
       <Routebeschrijving
         locatie={olympia}
         title="Eerste keer bij Movenda?"
-        class="mt-8"
       />
     )}
-
-    <form class="mt-12 grid gap-4" data-contact-form>
-      <div class="grid gap-4 sm:grid-cols-2">
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder="Naam" required />
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder="E-mail" required />
-      </div>
-      <div class="grid gap-4 sm:grid-cols-2">
-        <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder="Telefoon" required />
-        <select class="rounded-lg border border-brand-border px-4 py-3" name="locatie">
-          <option value="">Voor welke vestiging?</option>
-          <option value="Movenda — Kuringersteenweg">Movenda — Kuringersteenweg</option>
-          <option value="Performance Centre — Lammerweg">Performance Centre — Lammerweg</option>
-        </select>
-      </div>
-      <ContactVerwijsVraag opties={pagina.verwijsopties} />
-      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
-        <legend class="px-1 text-sm font-semibold">Waarvoor wil je langskomen?</legend>
-        <div class="mt-3 flex flex-wrap gap-x-6 gap-y-3 text-sm">
-          <label class="inline-flex items-center gap-2"><input type="checkbox" name="waarvoor" value="Kinesitherapie" /> Kinesitherapie</label>
-          <label class="inline-flex items-center gap-2"><input type="checkbox" name="waarvoor" value="Personal Training" /> Personal Training</label>
-          <label class="inline-flex items-center gap-2"><input type="checkbox" name="waarvoor" value="Andere" /> Andere</label>
-        </div>
-      </fieldset>
-      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
-        <legend class="px-1 text-sm font-semibold">Heb je een voorschrift van je arts?</legend>
-        <p class="text-xs text-brand-muted">Enkel van toepassing voor kinesitherapie</p>
-        <div class="mt-3 flex flex-wrap gap-x-6 gap-y-3 text-sm">
-          <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Ja" /> Ja</label>
-          <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Nee" /> Nee</label>
-          <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Niet van toepassing" /> Niet van toepassing</label>
-        </div>
-      </fieldset>
-      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder="Jouw vraag of bericht" required minlength="5"></textarea>
-      <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
-      <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
-        Verstuur mijn vraag
-      </button>
-      <p class="text-sm" data-contact-status role="status" aria-live="polite"></p>
-    </form>
   </section>
+  </div>
 </Layout>
 
 <script define:vars={{ apiUrl: contactApiUrl }} is:inline>
@@ -170,7 +172,7 @@ import SectionKicker from "../components/SectionKicker.astro";
       form.reset();
     } catch {
       status.textContent =
-        "Er ging iets mis bij het verzenden. Bel of mail ons gerust rechtstreeks — zie de gegevens hierboven.";
+        "Er ging iets mis bij het verzenden. Bel of mail ons gerust rechtstreeks — zie de gegevens hieronder.";
       status.className = "text-sm font-semibold text-red-600";
     } finally {
       button.disabled = false;
