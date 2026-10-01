@@ -1,6 +1,7 @@
 import { CalendarIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET, SLUG_DESCRIPTION } from "./helpers";
+import { verplicht } from "./regels";
 
 export default defineType({
   name: "event",
@@ -10,7 +11,7 @@ export default defineType({
   description: "Een event op /events. Afgelopen events blijven zichtbaar. Zet ‘Tonen op de homepage’ aan voor de strook op de home.",
   fieldsets: [EN_FIELDSET],
   fields: [
-    defineField({ name: "titel", title: "Titel (NL)", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "titel", title: "Titel (NL)", type: "string", validation: verplicht }),
     defineField({ name: "titelEn", title: "Titel (EN)", type: "string", fieldset: "en" }),
     defineField({
       name: "slug",
@@ -18,9 +19,9 @@ export default defineType({
       type: "slug",
       options: { source: "titel" },
       description: SLUG_DESCRIPTION,
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
-    defineField({ name: "datum", title: "Datum", type: "date", validation: (Rule) => Rule.required() }),
+    defineField({ name: "datum", title: "Datum", type: "date", validation: verplicht }),
     defineField({ name: "locatie", title: "Locatie", type: "string" }),
     defineField({ name: "foto", title: "Foto", type: "image", options: { hotspot: true } }),
     defineField({ name: "tekst", title: "Tekst (NL)", type: "text", rows: 4 }),

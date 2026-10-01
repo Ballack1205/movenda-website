@@ -1,5 +1,6 @@
 import { ImageIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { verplicht, webadres } from "./regels";
 
 export default defineType({
   name: "partner",
@@ -9,7 +10,7 @@ export default defineType({
   description:
     "Clubs, bedrijven en scholen in de bewegende partnerbalk op de site. Enkel externe partners — het Movenda- en MPC-logo horen hier niet in. Nieuwe partner = nieuw document.",
   fields: [
-    defineField({ name: "naam", title: "Naam", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "naam", title: "Naam", type: "string", validation: verplicht }),
     defineField({
       name: "logo",
       title: "Logo",
@@ -18,7 +19,7 @@ export default defineType({
       description:
         "Het logo van de partner zelf, nooit het Movenda- of MPC-logo. PNG of SVG met doorzichtige achtergrond werkt het mooiste. Zonder logo tonen we de naam als tekst.",
     }),
-    defineField({ name: "url", title: "Website", type: "url", description: "Optioneel. Het logo wordt dan aanklikbaar." }),
+    defineField({ name: "url", title: "Website", type: "string", validation: webadres, description: "Optioneel. Het logo wordt dan aanklikbaar." }),
     defineField({
       name: "type",
       title: "Type",

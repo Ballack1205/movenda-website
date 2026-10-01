@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { maxItems } from "./regels";
 
 // One "pijler" block on the homepage (Kinesitherapie / Personal training /
 // MPC). Julie owns the copy and the "waarvoor kom je" list; the technique
@@ -37,7 +38,7 @@ export default defineType({
       type: "array",
       of: [{ type: "string" }],
       description: "Max. 6 items. De rechterlijst met technieken komt automatisch uit 'Diensten'.",
-      validation: (rule) => rule.max(6),
+      validation: maxItems(6),
     }),
     defineField({ name: "lijstEn", title: "Linkerlijst (EN)", type: "array", of: [{ type: "string" }] }),
   ],

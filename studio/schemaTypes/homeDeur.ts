@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { maxTekens, pad, verplicht } from "./regels";
 
 // One photo-door on the lab homepage (SELF-style strip). Julie adds, removes
 // and reorders these; the navy homepage still uses the fixed homePijlers.
@@ -12,7 +13,7 @@ export default defineType({
       title: "Korte naam op de foto",
       type: "string",
       description: "Bv. Kine, Training, Performance.",
-      validation: (rule) => rule.required().max(24),
+      validation: (rule) => [verplicht(rule), maxTekens(24)(rule)],
     }),
     defineField({
       name: "korteNaamEn",
@@ -37,26 +38,21 @@ export default defineType({
       rows: 3,
       description:
         "Korte zin die op desktop verschijnt als je over de foto hovert (zoals bij SELF). Leeg = de deur wordt minder breed bij hover.",
-      validation: (rule) => rule.max(280),
+      validation: maxTekens(280),
     }),
     defineField({
       name: "tekstEn",
       title: "Tekst bij hover (EN)",
       type: "text",
       rows: 3,
-      validation: (rule) => rule.max(280),
+      validation: maxTekens(280),
     }),
     defineField({
       name: "href",
       title: "Link",
       type: "string",
       description: "Pad op de site, beginnend met / — bv. /kinesitherapie of /mpc/groepslessen. Engels krijgt automatisch /en ervoor.",
-      validation: (rule) =>
-        rule.required().custom((value) => {
-          if (!value) return "Vul een link in.";
-          if (!value.startsWith("/")) return "Begin met / (bv. /training).";
-          return true;
-        }),
+      validation: (rule) => [verplicht(rule), pad(rule)],
     }),
     defineField({
       name: "foto",

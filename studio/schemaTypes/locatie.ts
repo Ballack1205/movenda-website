@@ -1,11 +1,12 @@
 import { defineField, defineType } from "sanity";
+import { verplicht, webadres } from "./regels";
 
 export default defineType({
   name: "locatie",
   title: "Locatie",
   type: "document",
   fields: [
-    defineField({ name: "naam", title: "Naam", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "naam", title: "Naam", type: "string", validation: verplicht }),
     defineField({
       name: "korteNaam",
       title: "Korte naam",
@@ -17,7 +18,7 @@ export default defineType({
       title: "Slug (URL)",
       type: "slug",
       options: { source: "naam" },
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "brand",
@@ -26,7 +27,7 @@ export default defineType({
       options: { list: [{ title: "Movenda (licht)", value: "movenda" }, { title: "MPC (donker)", value: "mpc" }] },
     }),
     defineField({ name: "type", title: "Type / ondertitel", type: "string" }),
-    defineField({ name: "adres", title: "Adres", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "adres", title: "Adres", type: "string", validation: verplicht }),
     defineField({
       name: "geo",
       title: "GPS-coördinaten",
@@ -55,11 +56,12 @@ export default defineType({
     defineField({ name: "btw", title: "BTW-nummer", type: "string" }),
     defineField({ name: "iban", title: "IBAN", type: "string" }),
     defineField({ name: "bic", title: "BIC", type: "string" }),
-    defineField({ name: "mapsUrl", title: "Google Maps-link", type: "url" }),
+    defineField({ name: "mapsUrl", title: "Google Maps-link", type: "string", validation: webadres }),
     defineField({
       name: "googleBusinessUrl",
       title: "Google Bedrijfsprofiel-URL (deze vestiging)",
-      type: "url",
+      type: "string",
+      validation: webadres,
       description:
         "De vaste link naar jullie Google-vermelding (Google Maps → Delen → 'Link kopiëren', of de g.page/maps.app.goo.gl-link uit het Bedrijfsprofiel). Koppelt deze vestiging in de structured data aan Google Maps; belangrijk voor lokale SEO en AI-zoekmachines.",
     }),
@@ -73,8 +75,8 @@ export default defineType({
         "Foto bij de routebeschrijving op Contact en de locatiepagina (bij Olympia: de sportieve ingang). Zonder upload toont de site de foto van de oude website.",
     }),
     defineField({ name: "rpr", title: "RPR", type: "string" }),
-    defineField({ name: "instagram", title: "Instagram-URL (deze vestiging)", type: "url" }),
-    defineField({ name: "facebook", title: "Facebook-URL (deze vestiging)", type: "url" }),
+    defineField({ name: "instagram", title: "Instagram-URL (deze vestiging)", type: "string", validation: webadres }),
+    defineField({ name: "facebook", title: "Facebook-URL (deze vestiging)", type: "string", validation: webadres }),
     defineField({ name: "verdiepingNote", title: "Verdieping / extra locatie-noot", type: "string" }),
   ],
   preview: {

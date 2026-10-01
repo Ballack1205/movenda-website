@@ -1,6 +1,7 @@
 import { ComposeIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET, SLUG_DESCRIPTION } from "./helpers";
+import { maxItems, maxTekens, metPlek, uniek, verplicht, GOOGLE_OMSCHRIJVING, googleTitel } from "./regels";
 
 const BLOG_TAGS = [
   { title: "Rugpijn", value: "rugpijn" },
@@ -28,7 +29,7 @@ export default defineType({
   ],
   fieldsets: [EN_FIELDSET],
   fields: [
-    defineField({ name: "titel", title: "Titel (NL)", type: "string", group: "inhoud", validation: (Rule) => Rule.required() }),
+    defineField({ name: "titel", title: "Titel (NL)", type: "string", group: "inhoud", validation: verplicht }),
     defineField({ name: "titelEn", title: "Titel (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
       name: "slug",
@@ -37,7 +38,7 @@ export default defineType({
       group: "inhoud",
       options: { source: "titel" },
       description: SLUG_DESCRIPTION,
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({ name: "excerpt", title: "Korte samenvatting (NL)", type: "text", rows: 2, group: "inhoud" }),
     defineField({ name: "excerptEn", title: "Korte samenvatting (EN)", type: "text", rows: 2, group: "inhoud", fieldset: "en" }),
@@ -71,7 +72,7 @@ export default defineType({
       type: "array",
       group: "inhoud",
       of: [{ type: "block" }, { type: "image", options: { hotspot: true } }],
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "bodyEn",
@@ -93,7 +94,7 @@ export default defineType({
       title: "Publicatiedatum",
       type: "date",
       group: "inhoud",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "tags",
@@ -108,10 +109,12 @@ export default defineType({
       description:
         "Kies uit de lijst. Zelfde tags koppelen artikelen onderaan (‘Meer lezen’). Tag-pagina’s komen later.",
       validation: (Rule) =>
-        Rule.custom((tags) => {
+        Rule.custom((tags, context) => {
           if (!tags) return true;
           const unknown = tags.filter((tag): tag is string => typeof tag === "string" && !BLOG_TAG_VALUES.has(tag));
-          return unknown.length ? `Onbekende tag(s): ${unknown.join(", ")}. Kies tags uit de lijst.` : true;
+          return unknown.length
+            ? metPlek(context, `onbekende tag(s): ${unknown.join(", ")}. Verwijder ze en kies tags uit de lijst.`)
+            : true;
         }),
     }),
     defineField({
@@ -120,7 +123,7 @@ export default defineType({
       type: "array",
       group: "inhoud",
       of: [{ type: "reference", to: [{ type: "dienst" }] }],
-      validation: (Rule) => Rule.max(3).unique(),
+      validation: (Rule) => [maxItems(3)(Rule), uniek(Rule)],
       description:
         "Koppel 1 à 3 diensten. Onder het artikel komen dan knoppen naar die pagina’s, en op de dienstpagina verschijnt dit artikel onder ‘Lees ook’. Zo helpt elke blog de behandelpagina’s hoger in Google (bv. een artikel over dry needling → dienst Dry needling).",
     }),
@@ -130,7 +133,7 @@ export default defineType({
       type: "string",
       group: "seo",
       description: "Leeg = artikeltitel + ' | Movenda blog'. Hou het onder 60 tekens, anders kapt Google af.",
-      validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
+      validation: googleTitel,
     }),
     defineField({
       name: "seoDescription",
@@ -138,7 +141,7 @@ export default defineType({
       type: "text",
       group: "seo",
       rows: 2,
-      validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af."),
+      validation: maxTekens(160, GOOGLE_OMSCHRIJVING),
     }),
   ],
   orderings: [

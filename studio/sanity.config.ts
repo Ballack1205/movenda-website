@@ -6,6 +6,7 @@ import { schemaTypes } from "./schemaTypes";
 import { deskStructure } from "./structure";
 import { resolvePreviewUrl } from "./preview";
 import { bulkPublishTool } from "./tools/bulkPublish";
+import { withErrorList } from "./actions/publishWithErrors";
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
@@ -54,7 +55,8 @@ export default defineConfig({
   tools: (prev) => [...prev, bulkPublishTool],
   schema: { types: schemaTypes },
   document: {
-    actions: (prev, context) => {
+    actions: (input, context) => {
+      const prev = input.map((action) => (action.action === "publish" ? withErrorList(action) : action));
       if (NO_DELETE.has(context.schemaType)) {
         return prev.filter((action) => action.action !== "delete" && action.action !== "duplicate");
       }

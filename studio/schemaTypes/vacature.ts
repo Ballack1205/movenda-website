@@ -1,6 +1,7 @@
 import { CaseIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { SLUG_DESCRIPTION } from "./helpers";
+import { email, verplicht } from "./regels";
 
 // Currently empty in production: the old /join page never had real vacancy
 // content (it was still Squarespace demo copy). Julie adds real vacancies
@@ -14,14 +15,14 @@ export default defineType({
   description:
     "Lege lijst = de site toont 'geen vacatures op dit moment'. Nieuw = Nieuw document, publiceren. Zet Actief uit om een vacature te sluiten zonder te verwijderen.",
   fields: [
-    defineField({ name: "titel", title: "Functietitel", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "titel", title: "Functietitel", type: "string", validation: verplicht }),
     defineField({
       name: "slug",
       title: "Slug (URL)",
       type: "slug",
       options: { source: "titel" },
       description: SLUG_DESCRIPTION,
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "locatie",
@@ -29,13 +30,13 @@ export default defineType({
       type: "reference",
       to: [{ type: "locatie" }],
     }),
-    defineField({ name: "omschrijving", title: "Omschrijving", type: "text", rows: 8, validation: (Rule) => Rule.required() }),
+    defineField({ name: "omschrijving", title: "Omschrijving", type: "text", rows: 8, validation: verplicht }),
     defineField({
       name: "contactEmail",
       title: "Solliciteren via e-mail",
       type: "string",
       initialValue: "info@movenda.be",
-      validation: (Rule) => Rule.email(),
+      validation: email(),
     }),
     defineField({
       name: "actief",

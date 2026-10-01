@@ -51,10 +51,19 @@ function DraftRow({
               ? "Controleren…"
               : ok
                 ? `Gewijzigd ${new Date(draft._updatedAt).toLocaleString("nl-BE", { dateStyle: "short", timeStyle: "short" })}`
-                : "Niet klaar: open het document en los de rode velden op"}
+                : `Niet klaar: ${errors.length === 1 ? "1 probleem" : `${errors.length} problemen`}`}
           </Text>
         </Stack>
       </Flex>
+      {ok === false && (
+        <Stack space={2} paddingTop={3} paddingLeft={5}>
+          {errors.map((marker, i) => (
+            <Text key={i} size={1}>
+              • {marker.message}
+            </Text>
+          ))}
+        </Stack>
+      )}
     </Card>
   );
 }

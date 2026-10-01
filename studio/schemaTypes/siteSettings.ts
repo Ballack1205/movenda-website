@@ -1,5 +1,6 @@
 import { CogIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { email, maxItems, metPlek, webadres } from "./regels";
 
 export default defineType({
   name: "siteSettings",
@@ -25,16 +26,16 @@ export default defineType({
       description: "De korte regel onder het logo onderaan elke pagina.",
     }),
     defineField({ name: "footerTaglineEn", title: "Slogan in de footer (EN)", type: "string", group: "algemeen" }),
-    defineField({ name: "email", title: "Algemeen e-mailadres", type: "string", group: "algemeen", validation: (Rule) => Rule.email() }),
+    defineField({ name: "email", title: "Algemeen e-mailadres", type: "string", group: "algemeen", validation: email() }),
     defineField({
       name: "socials",
       title: "Social media",
       type: "object",
       group: "algemeen",
       fields: [
-        defineField({ name: "instagram", title: "Instagram-URL", type: "url" }),
-        defineField({ name: "facebook", title: "Facebook-URL", type: "url" }),
-        defineField({ name: "linkedin", title: "LinkedIn-URL", type: "url" }),
+        defineField({ name: "instagram", title: "Instagram-URL", type: "string", validation: webadres }),
+        defineField({ name: "facebook", title: "Facebook-URL", type: "string", validation: webadres }),
+        defineField({ name: "linkedin", title: "LinkedIn-URL", type: "string", validation: webadres }),
       ],
     }),
     defineField({
@@ -54,7 +55,7 @@ export default defineType({
       description: "Staat standaard UIT. Zet 'enabled' aan zodra jullie een agenda-tool kiezen.",
       fields: [
         defineField({ name: "enabled", title: "Boekknop tonen op de site", type: "boolean", initialValue: false }),
-        defineField({ name: "url", title: "Link naar de agenda-tool", type: "url" }),
+        defineField({ name: "url", title: "Link naar de agenda-tool", type: "string", validation: webadres }),
         defineField({ name: "label", title: "Tekst op de knop", type: "string", initialValue: "Maak een afspraak" }),
       ],
     }),
@@ -130,8 +131,10 @@ export default defineType({
           description:
             "Alleen nodig als Search Console vraagt om verificatie via een HTML-tag. Plak enkel de code (het stuk na content=\"…\"), niet de hele tag. Leeg = geen tag.",
           validation: (Rule) =>
-            Rule.custom((value) =>
-              !value || /^[A-Za-z0-9_-]+$/.test(value.trim()) ? true : "Plak enkel de code zelf, zonder <meta …> of aanhalingstekens.",
+            Rule.custom((value, context) =>
+              !value || /^[A-Za-z0-9_-]+$/.test(value.trim())
+                ? true
+                : metPlek(context, "plak enkel de code zelf, zonder <meta …> of aanhalingstekens."),
             ),
         }),
         defineField({
@@ -147,7 +150,8 @@ export default defineType({
             defineField({
               name: "scriptUrl",
               title: "Script-URL",
-              type: "url",
+              type: "string",
+              validation: webadres,
               description: "Standaard https://cloud.umami.is/script.js (EU-regio: https://eu.umami.is/script.js). Enkel wijzigen bij self-hosting.",
               initialValue: "https://cloud.umami.is/script.js",
             }),
@@ -238,7 +242,7 @@ export default defineType({
       type: "array",
       group: "homepage",
       of: [{ type: "homeDeur" }],
-      validation: (rule) => rule.max(6),
+      validation: maxItems(6),
     }),
     defineField({
       name: "homeAanbod",
@@ -248,7 +252,7 @@ export default defineType({
       type: "array",
       group: "homepage",
       of: [{ type: "homeDeur" }],
-      validation: (rule) => rule.max(5),
+      validation: maxItems(5),
     }),
     defineField({
       name: "homeBrief",

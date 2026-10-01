@@ -1,6 +1,7 @@
 import { CommentIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { verplicht } from "./regels";
 
 export default defineType({
   name: "getuigenis",
@@ -17,7 +18,7 @@ export default defineType({
       type: "text",
       rows: 4,
       description: "De woorden van de cliënt, zonder aanhalingstekens — die zet de site er zelf bij.",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "tekstEn",
@@ -32,7 +33,7 @@ export default defineType({
       title: "Naam",
       type: "string",
       description: "Zoals op de site, bv. 'Vanhees G.' Initialen zijn prima (privacy).",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "slug",

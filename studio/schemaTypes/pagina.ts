@@ -1,6 +1,7 @@
 import { DocumentTextIcon } from "@sanity/icons";
 import { defineField, defineType, type ConditionalPropertyCallbackContext } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { maxItems, maxTekens, verplicht, GOOGLE_OMSCHRIJVING, googleTitel } from "./regels";
 
 // Copy of the fixed pages (home, over, kine, …). One document per page, fixed
 // `key`, never created or deleted from the Studio. Julie edits the H1, intro,
@@ -56,8 +57,8 @@ const blok = {
   type: "object",
   name: "blok",
   fields: [
-    defineField({ name: "kop", title: "Kop (NL)", type: "string", validation: (Rule) => Rule.required() }),
-    defineField({ name: "tekst", title: "Tekst (NL)", type: "text", rows: 4, validation: (Rule) => Rule.required() }),
+    defineField({ name: "kop", title: "Kop (NL)", type: "string", validation: verplicht }),
+    defineField({ name: "tekst", title: "Tekst (NL)", type: "text", rows: 4, validation: verplicht }),
     defineField({ name: "kopEn", title: "Kop (EN)", type: "string" }),
     defineField({ name: "tekstEn", title: "Tekst (EN)", type: "text", rows: 4 }),
   ],
@@ -87,7 +88,7 @@ export default defineType({
       readOnly: true,
       group: "inhoud",
       options: { list: PAGINAS.map((p) => ({ title: p.title, value: p.key })) },
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "ondertitel",
@@ -98,7 +99,7 @@ export default defineType({
       description: "Bv. 'Kinesitherapie en personal training in Hasselt'.",
     }),
     defineField({ name: "ondertitelEn", title: "Kleine regel boven de titel (EN)", type: "string", group: "inhoud", fieldset: "en", hidden: only(...ONDERTITEL) }),
-    defineField({ name: "titel", title: "Titel (H1, NL)", type: "string", group: "inhoud", validation: (Rule) => Rule.required() }),
+    defineField({ name: "titel", title: "Titel (H1, NL)", type: "string", group: "inhoud", validation: verplicht }),
     defineField({ name: "titelEn", title: "Titel (H1, EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
       name: "slogan",
@@ -179,7 +180,7 @@ export default defineType({
       of: [blok],
       group: "blokken",
       hidden: only("onze-visie"),
-      validation: (Rule) => Rule.max(6),
+      validation: maxItems(6),
     }),
     defineField({
       name: "stappenTitel",
@@ -207,7 +208,7 @@ export default defineType({
       of: [blok],
       group: "blokken",
       hidden: only("mpc"),
-      validation: (Rule) => Rule.max(3),
+      validation: maxItems(3),
       description: "Alleen de titel en de korte tekst. De foto's en links komen automatisch uit de diensten.",
     }),
     defineField({
@@ -223,7 +224,7 @@ export default defineType({
           type: "object",
           name: "verwijsoptie",
           fields: [
-            defineField({ name: "label", title: "Keuze (NL)", type: "string", validation: (Rule) => Rule.required() }),
+            defineField({ name: "label", title: "Keuze (NL)", type: "string", validation: verplicht }),
             defineField({ name: "labelEn", title: "Keuze (EN)", type: "string" }),
             defineField({
               name: "vervolg",
@@ -286,11 +287,11 @@ export default defineType({
       type: "string",
       group: "seo",
       description: "De titel in het browsertabblad en in Google. Hou het onder 60 tekens.",
-      validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
+      validation: googleTitel,
     }),
-    defineField({ name: "seoDescription", title: "SEO-omschrijving (NL)", type: "text", rows: 2, group: "seo", validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af.") }),
-    defineField({ name: "seoTitleEn", title: "SEO-titel (EN)", type: "string", group: "seo", fieldset: "en", validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")] }),
-    defineField({ name: "seoDescriptionEn", title: "SEO-omschrijving (EN)", type: "text", rows: 2, group: "seo", fieldset: "en", validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af.") }),
+    defineField({ name: "seoDescription", title: "SEO-omschrijving (NL)", type: "text", rows: 2, group: "seo", validation: maxTekens(160, GOOGLE_OMSCHRIJVING) }),
+    defineField({ name: "seoTitleEn", title: "SEO-titel (EN)", type: "string", group: "seo", fieldset: "en", validation: googleTitel }),
+    defineField({ name: "seoDescriptionEn", title: "SEO-omschrijving (EN)", type: "text", rows: 2, group: "seo", fieldset: "en", validation: maxTekens(160, GOOGLE_OMSCHRIJVING) }),
   ],
   preview: {
     select: { key: "key", titel: "titel", media: "foto" },

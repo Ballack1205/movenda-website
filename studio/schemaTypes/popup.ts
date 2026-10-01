@@ -1,6 +1,7 @@
 import { RocketIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { link, metPlek, verplicht } from "./regels";
 
 export default defineType({
   name: "popup",
@@ -29,7 +30,7 @@ export default defineType({
       title: "Titel (NL)",
       type: "string",
       group: "inhoud",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({ name: "titelEn", title: "Titel (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
@@ -46,7 +47,7 @@ export default defineType({
       group: "inhoud",
       of: [{ type: "block" }],
       description: "Datum, plaats, opsommingen… Vet en lijstjes werken hier.",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "inhoudEn",
@@ -77,24 +78,24 @@ export default defineType({
         layout: "radio",
       },
       initialValue: "link",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "knopUrl",
       title: "Formulier-URL",
-      type: "url",
+      type: "string",
       group: "inhoud",
       description:
         "Plak hier de Google Form-link, bv. https://forms.gle/… De knop opent die in een nieuw tabblad.",
       hidden: ({ parent }) => parent?.actie !== "link",
-      validation: (Rule) =>
-        Rule.uri({ allowRelative: true, scheme: ["http", "https", "mailto"] }).custom(
-          (value, context) => {
-            const actie = (context.parent as { actie?: string } | undefined)?.actie;
-            if (actie === "link" && !value) return "Plak de formulier-URL (Google Form of andere pagina).";
-            return true;
-          },
-        ),
+      validation: (Rule) => [
+        link(Rule),
+        Rule.custom((value, context) => {
+          const actie = (context.parent as { actie?: string } | undefined)?.actie;
+          if (actie === "link" && !value) return metPlek(context, "nog leeg. Plak de formulier-URL (Google Form of andere pagina).");
+          return true;
+        }),
+      ],
     }),
     defineField({
       name: "extraVragen",
@@ -108,7 +109,7 @@ export default defineType({
           type: "object",
           name: "vraag",
           fields: [
-            defineField({ name: "label", title: "Vraag", type: "string", validation: (Rule) => Rule.required() }),
+            defineField({ name: "label", title: "Vraag", type: "string", validation: verplicht }),
             defineField({
               name: "type",
               title: "Type",

@@ -1,6 +1,7 @@
 import { DocumentsIcon } from "@sanity/icons";
 import { defineField, defineType, type SlugIsUniqueValidator } from "sanity";
 import { EN_FIELDSET, SLUG_DESCRIPTION } from "./helpers";
+import { maxTekens, verplicht, GOOGLE_OMSCHRIJVING, googleTitel } from "./regels";
 
 const CATEGORIEEN = [
   { title: "Kinesitherapie (Olympia)", value: "kine" },
@@ -39,7 +40,7 @@ export default defineType({
   ],
   fieldsets: [EN_FIELDSET],
   fields: [
-    defineField({ name: "titel", title: "Titel (NL)", type: "string", group: "inhoud", validation: (Rule) => Rule.required() }),
+    defineField({ name: "titel", title: "Titel (NL)", type: "string", group: "inhoud", validation: verplicht }),
     defineField({ name: "titelEn", title: "Titel (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
       name: "slug",
@@ -48,7 +49,7 @@ export default defineType({
       group: "inhoud",
       options: { source: "titel", isUnique: isUniqueWithinSite },
       description: SLUG_DESCRIPTION,
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "categorie",
@@ -56,7 +57,7 @@ export default defineType({
       type: "string",
       group: "inhoud",
       options: { list: [...CATEGORIEEN] },
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({ name: "intro", title: "Korte intro", type: "text", rows: 2, group: "inhoud" }),
     defineField({ name: "slogan", title: "Slogan (optioneel)", type: "string", group: "inhoud" }),
@@ -106,7 +107,7 @@ export default defineType({
       type: "string",
       group: "inhoud",
       description: "Leeg = de titel. Handig als de titel te lang is voor het uitklapmenu, bv. ‘Pre- en postnataal’.",
-      validation: (Rule) => Rule.max(32).warning("Hou het kort, anders past het niet in het menu."),
+      validation: maxTekens(32, "Anders past het niet in het menu."),
     }),
     defineField({ name: "menuLabelEn", title: "Korte naam voor het menu (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
@@ -114,7 +115,7 @@ export default defineType({
       title: "SEO-titel (NL)",
       type: "string",
       group: "seo",
-      validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
+      validation: googleTitel,
     }),
     defineField({
       name: "seoDescription",
@@ -122,7 +123,7 @@ export default defineType({
       type: "text",
       group: "seo",
       rows: 2,
-      validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af."),
+      validation: maxTekens(160, GOOGLE_OMSCHRIJVING),
     }),
     defineField({
       name: "seoTitleEn",
@@ -131,7 +132,7 @@ export default defineType({
       group: "seo",
       fieldset: "en",
       description: "Leeg = automatisch 'Titel (EN) in Hasselt | Movenda' (of Performance Centre voor MPC).",
-      validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
+      validation: googleTitel,
     }),
     defineField({
       name: "seoDescriptionEn",
@@ -141,7 +142,7 @@ export default defineType({
       fieldset: "en",
       rows: 2,
       description: "Leeg = eerste zin(nen) van de Engelse tekst.",
-      validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af."),
+      validation: maxTekens(160, GOOGLE_OMSCHRIJVING),
     }),
   ],
   orderings: [{ title: "Volgorde", name: "volgordeAsc", by: [{ field: "volgorde", direction: "asc" }] }],
