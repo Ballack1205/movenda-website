@@ -93,10 +93,10 @@ export default defineType({
       title: "Google reviews (badge)",
       type: "object",
       group: "homepage",
-      description: "Score en aantal op de homepage, locatiepagina's en contact. Geen betaalde reviews-API.",
+      description:
+        "Eén Google-profiel voor heel Movenda. De badge linkt hiernaartoe op elke pagina, ook bij Performance Centre en op gsm. Geen betaalde reviews-API.",
       fields: [
-        defineField({ name: "olympia", title: "Olympia", type: "googleReviewInfo" }),
-        defineField({ name: "mpc", title: "MPC", type: "googleReviewInfo" }),
+        defineField({ name: "olympia", title: "Movenda", type: "googleReviewInfo" }),
       ],
     }),
     defineField({

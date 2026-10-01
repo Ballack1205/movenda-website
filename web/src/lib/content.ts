@@ -347,7 +347,8 @@ export interface SiteSettings {
   email: string;
   booking: { enabled: boolean; url: string; label: string };
   teamfoto: Teamfoto;
-  googleReviews: Record<LocatieSlug, GoogleReviews>;
+  /** One Google profile for the whole practice. Key stays `olympia` in Sanity. */
+  googleReviews: { olympia: GoogleReviews };
   analytics: AnalyticsSettings;
   socials: { instagram: string; facebook: string; linkedin: string };
   prijzenInfo: PrijzenInfo;
@@ -1009,9 +1010,13 @@ async function loadSiteSettings(): Promise<SiteSettings> {
           alt: settings?.teamfoto?.alt || seedSettings.teamfoto.alt,
           bijschrift: settings?.teamfoto?.bijschrift || seedSettings.teamfoto.bijschrift,
         },
-    googleReviews: settings?.googleReviews || {
-      olympia: { rating: 0, count: "", reviewUrl: "", writeReviewUrl: "" },
-      mpc: { rating: 0, count: "", reviewUrl: "", writeReviewUrl: "" },
+    googleReviews: {
+      olympia: settings?.googleReviews?.olympia || {
+        rating: 0,
+        count: "",
+        reviewUrl: "",
+        writeReviewUrl: "",
+      },
     },
     analytics: {
       ...DEFAULT_ANALYTICS,
