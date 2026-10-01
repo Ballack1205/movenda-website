@@ -47,8 +47,6 @@ const eventWhen = (event: { datum: string }) => {
   return new Intl.DateTimeFormat("nl-BE", { day: "numeric", month: "long", year: "numeric" }).format(date);
 };
 
-const eventPhoto = (foto: string) =>
-  foto.startsWith("/") ? foto : `${foto}?w=480&h=320&fit=crop&auto=format`;
 const locaties = await getLocaties();
 const hasselt = locaties.find((loc) => loc.slug === "olympia");
 const kuringen = locaties.find((loc) => loc.slug === "mpc");
@@ -190,9 +188,6 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
         {homeEvents.map((event) => (
           <li>
             <a class="brief-event" href={event.link || "/events"}>
-              {event.foto && (
-                <img class="brief-event__photo" src={eventPhoto(event.foto)} alt="" width="240" height="160" loading="lazy" />
-              )}
               <span class="brief-event__copy">
                 <span class="brief-event__when">{eventWhen(event)}{event.locatie ? ` · ${event.locatie}` : ""}</span>
                 <span class="brief-event__title">{event.titel}</span>

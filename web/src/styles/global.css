@@ -1938,13 +1938,6 @@ html[data-theme="lab"] .brief-event:hover {
   transform: translateY(-2px);
 }
 
-html[data-theme="lab"] .brief-event__photo {
-  width: 8.5rem;
-  height: 6.75rem;
-  flex-shrink: 0;
-  object-fit: cover;
-}
-
 html[data-theme="lab"] .brief-event__copy {
   display: flex;
   min-width: 0;
