@@ -50,12 +50,12 @@ import SectionKicker from "../../components/SectionKicker.astro";
   lang="en"
   jsonLd={jsonLd}
 >
-  <section class="page-ink mx-auto max-w-4xl px-4 py-12">
+  <section class="page-ink mx-auto max-w-5xl px-4 py-12">
     <SectionKicker n={1} />
         <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", "en")}</h1>
-    <p class="mt-3 max-w-2xl text-brand-muted">{PRIJZEN_INFO_EN.intro}</p>
+    <p class="mt-3 text-brand-muted">{PRIJZEN_INFO_EN.intro}</p>
     {alineas("intro").map((tekst) => (
-      <p class="mt-2 max-w-2xl text-brand-muted"><LinkedText text={tekst} /></p>
+      <p class="mt-3 text-brand-muted"><LinkedText text={tekst} /></p>
     ))}
     {settings.slogans.prijzenKine && (
       <p class="mt-4 text-lg font-semibold text-brand-primary">{settings.slogans.prijzenKine}</p>

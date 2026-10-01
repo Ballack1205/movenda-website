@@ -72,7 +72,7 @@ export function floorNote(note: string | undefined, lang: Lang): string | undefi
 /** English copy for prices/reimbursement when the CMS field is still Dutch-only. */
 export const PRIJZEN_INFO_EN = {
   intro:
-    "Our fees are indexed annually and follow the recommendations of Axxon, the professional association for physiotherapists. All our therapists are deconventioned (not bound by the official RIZIV rates).",
+    "Our fees are indexed annually and follow the recommendations of Axxon, the professional association for physiotherapists.",
   basishonorarium:
     "Our base fee is {amount}. The exact rate depends on the treating therapist, specialisation and experience.",
   nomenclatuur: "Nomenclature",
