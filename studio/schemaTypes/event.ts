@@ -24,6 +24,14 @@ export default defineType({
     defineField({ name: "datum", title: "Datum", type: "date", validation: verplicht }),
     defineField({ name: "locatie", title: "Locatie", type: "string" }),
     defineField({ name: "foto", title: "Foto", type: "image", options: { hotspot: true } }),
+    defineField({
+      name: "video",
+      title: "Video",
+      type: "file",
+      options: { accept: "video/mp4,video/webm" },
+      description:
+        "Video bij dit event (mp4 of webm). Speelt op de eventspagina; de foto hierboven is het stilstaande beeld tot iemand op play drukt. Richtlijn: liggend (16:9), maximaal 20 MB. Leeg = alleen tekst en foto.",
+    }),
     defineField({ name: "tekst", title: "Tekst (NL)", type: "text", rows: 4 }),
     defineField({ name: "tekstEn", title: "Tekst (EN)", type: "text", rows: 4, fieldset: "en" }),
     defineField({

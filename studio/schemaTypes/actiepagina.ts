@@ -1,0 +1,124 @@
+import { BulbOutlineIcon } from "@sanity/icons";
+import { defineArrayMember, defineField, defineType } from "sanity";
+
+// Landing page for a campaign or event (Dwars door Hasselt Ready / Recovery).
+// Lives at movenda.be/<slug>. Julie fills the texts and photos; the layout
+// (black, same style as Ons verhaal) stays in code. A section without text,
+// tips, box or photo is not shown, so she can prepare a page step by step.
+
+// Top-level URLs that already belong to a fixed page of the site.
+const BEZET = new Set([
+  "b2b", "blog", "bookappointment", "contact", "en", "events", "faq", "groepslessen", "index", "jobs",
+  "kine-abonnement", "kinesitherapie", "locaties", "mpc", "over", "over-ons", "performance", "prijzen",
+  "privacy", "team", "training", "voorwaarden", "welkom", "zoeken", "rss.xml", "llms.txt", "robots.txt",
+]);
+
+const item = defineArrayMember({
+  type: "object",
+  name: "actieItem",
+  title: "Kaartje",
+  fields: [
+    defineField({ name: "label", title: "Kleine regel boven de kop", type: "string", description: "Bv. 'Voor de start'. Mag leeg." }),
+    defineField({ name: "kop", title: "Kop", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "tekst", title: "Tekst", type: "text", rows: 4 }),
+    defineField({
+      name: "video",
+      title: "Video (link naar YouTube of Vimeo)",
+      type: "url",
+      description: "Bv. een oefening voor thuis. Plak de gewone link van de video; de site toont de speler.",
+    }),
+  ],
+  preview: { select: { title: "kop", subtitle: "label" } },
+});
+
+const sectie = defineArrayMember({
+  type: "object",
+  name: "actieSectie",
+  title: "Blok",
+  fields: [
+    defineField({ name: "kicker", title: "Kleine regel boven de titel", type: "string", description: "Bv. 'Na de finish stopt het niet.'" }),
+    defineField({ name: "titel", title: "Titel", type: "string" }),
+    defineField({ name: "tekst", title: "Tekst", type: "text", rows: 6, description: "Een lege regel = nieuwe alinea." }),
+    defineField({
+      name: "items",
+      title: "Kaartjes (tips, stappen, oefeningen)",
+      type: "array",
+      of: [item],
+    }),
+    defineField({ name: "kaderTitel", title: "Kader: titel", type: "string", description: "Een opvallend vak, bv. 'Tip van onze kinesitherapeuten' of de praktische info." }),
+    defineField({ name: "kaderTekst", title: "Kader: tekst", type: "text", rows: 4, description: "Elke regel wordt een aparte lijn." }),
+    defineField({ name: "foto", title: "Foto bij dit blok", type: "cmsFoto" }),
+    defineField({ name: "knopLabel", title: "Knop: tekst", type: "string" }),
+    defineField({ name: "knopUrl", title: "Knop: link", type: "string", description: "Bv. /team#keuzehulp, /contact of https://…" }),
+  ],
+  preview: {
+    select: { title: "titel", subtitle: "kicker" },
+    prepare({ title, subtitle }) {
+      return { title: title || subtitle || "Blok", subtitle: title ? subtitle : undefined };
+    },
+  },
+});
+
+export default defineType({
+  name: "actiepagina",
+  title: "Actiepagina",
+  type: "document",
+  icon: BulbOutlineIcon,
+  description: "Een losse pagina voor een actie of event, bv. Dwars door Hasselt. Staat op movenda.be/<slug>, niet in het menu.",
+  groups: [
+    { name: "inhoud", title: "Bovenaan", default: true },
+    { name: "blokken", title: "Blokken" },
+    { name: "seo", title: "SEO" },
+  ],
+  fields: [
+    defineField({ name: "titel", title: "Titel (H1)", type: "string", group: "inhoud", validation: (Rule) => Rule.required() }),
+    defineField({
+      name: "slug",
+      title: "Adres (movenda.be/…)",
+      type: "slug",
+      group: "inhoud",
+      options: { source: "titel" },
+      description: "Bv. ddh-ready. Dit adres staat op flyers of QR-codes: na publicatie niet meer wijzigen.",
+      validation: (Rule) =>
+        Rule.required().custom((value) =>
+          value?.current && BEZET.has(value.current) ? "Dit adres is al van een andere pagina van de site." : true,
+        ),
+    }),
+    defineField({ name: "kicker", title: "Kleine regel boven de titel", type: "string", group: "inhoud", description: "Bv. 'Dwars door Hasselt x Sportpraktijk Movenda'." }),
+    defineField({ name: "slogan", title: "Slogan onder de titel", type: "string", group: "inhoud" }),
+    defineField({ name: "intro", title: "Introtekst", type: "text", rows: 5, group: "inhoud", description: "Een lege regel = nieuwe alinea." }),
+    defineField({ name: "datumRegel", title: "Datum en plaats", type: "string", group: "inhoud", description: "Bv. '11 oktober 2026 · Kolonel Dusartplein · Hasselt'." }),
+    defineField({ name: "foto", title: "Grote foto bovenaan", type: "cmsFoto", group: "inhoud" }),
+    defineField({ name: "logo", title: "Logo van de partner of het event", type: "image", group: "inhoud" }),
+    defineField({ name: "logoNaam", title: "Naam bij het logo", type: "string", group: "inhoud", description: "Voor schermlezers, bv. 'Dwars door Hasselt'." }),
+    defineField({ name: "logoUrl", title: "Link van het logo", type: "url", group: "inhoud" }),
+
+    defineField({ name: "secties", title: "Blokken (van boven naar onder)", type: "array", of: [sectie], group: "blokken" }),
+    defineField({
+      name: "galerij",
+      title: "Foto's (bewegende strook)",
+      type: "array",
+      of: [defineArrayMember({ type: "cmsFoto" })],
+      group: "blokken",
+      description: "Foto's van het event. Ze schuiven onderaan voorbij, zoals de partnerlogo's.",
+    }),
+    defineField({ name: "afsluiter", title: "Afsluitende zin onderaan", type: "text", rows: 2, group: "blokken", description: "Elke regel wordt een aparte lijn." }),
+
+    defineField({
+      name: "zichtbaarInGoogle",
+      title: "Zichtbaar in Google",
+      type: "boolean",
+      group: "seo",
+      initialValue: true,
+      description: "Uit = de pagina werkt via de link of QR-code, maar Google toont ze niet. Handig zolang ze nog niet af is.",
+    }),
+    defineField({ name: "seoTitle", title: "Titel in Google", type: "string", group: "seo", validation: (Rule) => Rule.max(60).warning("Google kort titels boven 60 tekens af.") }),
+    defineField({ name: "seoDescription", title: "Omschrijving in Google", type: "text", rows: 3, group: "seo", validation: (Rule) => Rule.max(160).warning("Google kort omschrijvingen boven 160 tekens af.") }),
+  ],
+  preview: {
+    select: { title: "titel", slug: "slug.current", media: "foto.afbeelding" },
+    prepare({ title, slug, media }) {
+      return { title, subtitle: slug ? `movenda.be/${slug}` : "Nog geen adres", media };
+    },
+  },
+});

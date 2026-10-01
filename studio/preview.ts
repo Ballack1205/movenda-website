@@ -58,6 +58,8 @@ export function resolvePreviewUrl(document: PreviewDoc): string | undefined {
       return slug ? `${PREVIEW_URL}/locaties/${slug}` : `${PREVIEW_URL}/contact`;
     case "dienst":
       return `${PREVIEW_URL}${dienstPath(document.categorie, slug)}`;
+    case "actiepagina":
+      return slug ? `${PREVIEW_URL}/${slug}` : PREVIEW_URL;
     case "faq":
       return `${PREVIEW_URL}/faq`;
     case "prijsitem":

@@ -20,9 +20,11 @@ import specialisatie from "./specialisatie";
 import pagina from "./pagina";
 import cmsFoto from "./cmsFoto";
 import event from "./event";
+import actiepagina from "./actiepagina";
 
 export const schemaTypes = [
   pagina,
+  actiepagina,
   cmsFoto,
   event,
   teamlid,

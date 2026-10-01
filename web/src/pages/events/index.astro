@@ -4,6 +4,7 @@ import { getEvents, getPagina, paginaAlineas } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
 import SectionKicker from "../../components/SectionKicker.astro";
 import LinkedText from "../../components/LinkedText.astro";
+import EventVideo from "../../components/EventVideo.astro";
 
 const events = await getEvents();
 const pagina = await getPagina("events");
@@ -31,7 +32,7 @@ const jsonLd = [
   altPath="/en/events"
   jsonLd={jsonLd}
 >
-  <section class="mx-auto max-w-3xl px-4 py-12">
+  <section class="page-ink mx-auto max-w-3xl px-4 py-12">
     <SectionKicker n={1} />
     <h1 class="text-3xl font-bold">{pagina.titel}</h1>
     {paginaAlineas(pagina).map((tekst) => (
@@ -51,6 +52,7 @@ const jsonLd = [
               <p class="text-sm text-brand-muted">{eventWhen(event.datum)}{event.locatie ? ` · ${event.locatie}` : ""}</p>
               <h3 class="text-lg font-semibold">{event.titel}</h3>
               {event.tekst && <p class="mt-1 text-brand-muted">{event.tekst}</p>}
+              <EventVideo video={event.video} foto={event.foto} titel={event.titel} />
             </li>
           ))}
         </ul>
@@ -66,6 +68,7 @@ const jsonLd = [
               <p class="text-sm text-brand-muted">{eventWhen(event.datum)}{event.locatie ? ` · ${event.locatie}` : ""}</p>
               <h3 class="text-lg font-semibold">{event.titel}</h3>
               {event.tekst && <p class="mt-1 text-brand-muted">{event.tekst}</p>}
+              <EventVideo video={event.video} foto={event.foto} titel={event.titel} />
             </li>
           ))}
         </ul>

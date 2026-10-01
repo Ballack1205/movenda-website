@@ -1,0 +1,36 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ActiePagina from "../components/ActiePagina.astro";
+import { getActiepaginas } from "../lib/content";
+import { breadcrumbSchema } from "../lib/schema";
+import { MPC_HOST } from "../lib/site";
+
+export async function getStaticPaths() {
+  if (MPC_HOST) return [];
+  const paginas = await getActiepaginas();
+  return paginas.map((pagina) => ({ params: { actie: pagina.slug }, props: { pagina } }));
+}
+
+const { pagina } = Astro.props;
+const path = `/${pagina.slug}`;
+const description =
+  pagina.seoDescription || [pagina.slogan, pagina.intro?.split("\n")[0]].filter(Boolean).join(" ").slice(0, 160);
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: pagina.titel, path },
+  ]),
+];
+---
+
+<Layout
+  title={pagina.seoTitle || `${pagina.titel} | Sportpraktijk Movenda`}
+  description={description}
+  path={path}
+  jsonLd={jsonLd}
+  noindex={!pagina.zichtbaarInGoogle}
+  ogImage={pagina.foto?.url}
+>
+  <ActiePagina pagina={pagina} />
+</Layout>

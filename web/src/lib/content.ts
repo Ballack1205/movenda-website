@@ -1756,6 +1756,8 @@ export interface SiteEvent {
   datum: string;
   locatie?: string;
   foto?: string;
+  /** Sanity CDN URL of an uploaded mp4/webm. Plays on the events page. */
+  video?: string;
   tekst?: string;
   tekstEn?: string;
   tonenOpHome: boolean;
@@ -1777,11 +1779,85 @@ export async function getEvents(): Promise<SiteEvent[]> {
     const rows = await sanity.fetch(
       `*[_type == "event" && actief != false] | order(datum desc) {
         "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, tonenOpHome,
-        "foto": foto.asset->url
+        "foto": foto.asset->url,
+        "video": video.asset->url
       }`,
     );
     const live = (rows || []).filter((row: SiteEvent) => row.slug && row.titel && row.datum);
     return live.length > 0 ? live : [PLACEHOLDER_EVENT];
+  });
+}
+
+export interface ActieItem {
+  label?: string;
+  kop: string;
+  tekst?: string;
+  video?: string;
+}
+
+export interface ActieSectie {
+  kicker?: string;
+  titel?: string;
+  tekst?: string;
+  items: ActieItem[];
+  kaderTitel?: string;
+  kaderTekst?: string;
+  foto?: CmsFoto;
+  knopLabel?: string;
+  knopUrl?: string;
+}
+
+/** Campaign / event landing page at /<slug> (Dwars door Hasselt Ready, Recovery). */
+export interface Actiepagina {
+  slug: string;
+  titel: string;
+  kicker?: string;
+  slogan?: string;
+  intro?: string;
+  datumRegel?: string;
+  foto?: CmsFoto;
+  logo?: string;
+  logoNaam?: string;
+  logoUrl?: string;
+  secties: ActieSectie[];
+  galerij: CmsFoto[];
+  afsluiter?: string;
+  zichtbaarInGoogle: boolean;
+  seoTitle?: string;
+  seoDescription?: string;
+}
+
+/** A section is shown once Julie gave it more than a heading. */
+export function actieSectieGevuld(s: ActieSectie): boolean {
+  return Boolean(s.tekst?.trim() || s.items.length || s.kaderTekst?.trim() || s.foto || (s.knopLabel && s.knopUrl));
+}
+
+export async function getActiepaginas(): Promise<Actiepagina[]> {
+  return once("actiepaginas", async () => {
+    const rows = await sanity.fetch(
+      `*[_type == "actiepagina" && defined(slug.current) && !(_id in path("drafts.**"))] {
+        "slug": slug.current, titel, kicker, slogan, intro, datumRegel,
+        "foto": foto${CMS_FOTO_PROJECTION},
+        "logo": logo.asset->url, logoNaam, logoUrl,
+        secties[]{ kicker, titel, tekst, items[]{ label, kop, tekst, video }, kaderTitel, kaderTekst,
+          "foto": foto${CMS_FOTO_PROJECTION}, knopLabel, knopUrl },
+        "galerij": galerij[]${CMS_FOTO_PROJECTION},
+        afsluiter, zichtbaarInGoogle, seoTitle, seoDescription
+      }`,
+    );
+    return (rows || [])
+      .filter((row: { slug?: string; titel?: string }) => row.slug && row.titel)
+      .map((row: Actiepagina & { foto?: unknown; secties?: (ActieSectie & { foto?: unknown })[] | null; galerij?: unknown[] | null }) => ({
+        ...row,
+        foto: toCmsFoto(row.foto as Parameters<typeof toCmsFoto>[0]),
+        secties: (row.secties || []).map((s) => ({
+          ...s,
+          items: (s.items || []).filter((i) => i?.kop),
+          foto: toCmsFoto(s.foto as Parameters<typeof toCmsFoto>[0]),
+        })),
+        galerij: (row.galerij || []).map((f) => toCmsFoto(f as Parameters<typeof toCmsFoto>[0])).filter((f): f is CmsFoto => Boolean(f)),
+        zichtbaarInGoogle: row.zichtbaarInGoogle !== false,
+      }));
   });
 }
 

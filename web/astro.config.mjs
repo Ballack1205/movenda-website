@@ -26,6 +26,8 @@ const SITEMAP_EXCLUDE = new Set([
  * @type {Promise<Map<string, string>> | undefined}
  */
 let lastmodMap;
+/** Actiepagina's Julie keeps out of Google (zichtbaarInGoogle off). Filled by getLastmodMap. */
+const noindexPaths = new Set();
 async function getLastmodMap() {
   if (lastmodMap) return lastmodMap;
   lastmodMap = (async () => {
@@ -36,7 +38,8 @@ async function getLastmodMap() {
         "diensten": *[_type == "dienst"]{ "slug": slug.current, categorie, "u": _updatedAt },
         "team": *[_type == "teamlid" && actief == true]{ "slug": slug.current, "u": _updatedAt },
         "blog": *[_type == "blogPost"]{ "slug": slug.current, "u": _updatedAt },
-        "locaties": *[_type == "locatie"]{ "slug": slug.current, "u": _updatedAt }
+        "locaties": *[_type == "locatie"]{ "slug": slug.current, "u": _updatedAt },
+        "acties": *[_type == "actiepagina" && !(_id in path("drafts.**"))]{ "slug": slug.current, zichtbaarInGoogle, "u": _updatedAt }
       }`;
       const res = await fetch(
         `https://${SANITY_PROJECT}.apicdn.sanity.io/v2026-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`,
@@ -69,6 +72,10 @@ async function getLastmodMap() {
       for (const l of result.locaties || []) {
         map.set(`/locaties/${l.slug}`, l.u);
         map.set(`/en/locaties/${l.slug}`, l.u);
+      }
+      for (const a of result.acties || []) {
+        map.set(`/${a.slug}`, a.u);
+        if (a.zichtbaarInGoogle === false) noindexPaths.add(`/${a.slug}`);
       }
       /** @param {{ u: string }[]} rows */
       const newest = (rows) => rows.map((r) => r.u).sort().at(-1) || "";
@@ -132,6 +139,7 @@ export default defineConfig({
       serialize: async (item) => {
         const path = new URL(item.url).pathname.replace(/\/$/, "") || "/";
         const lastmod = (await getLastmodMap()).get(path);
+        if (noindexPaths.has(path)) return undefined;
         if (lastmod) item.lastmod = lastmod;
         return item;
       },
