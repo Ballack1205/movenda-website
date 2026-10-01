@@ -189,7 +189,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       <ul class="brief-events">
         {homeEvents.map((event) => (
           <li>
-            <a class="brief-event" href="/events">
+            <a class="brief-event" href={event.link || "/events"}>
               {event.foto && (
                 <img class="brief-event__photo" src={eventPhoto(event.foto)} alt="" width="240" height="160" loading="lazy" />
               )}

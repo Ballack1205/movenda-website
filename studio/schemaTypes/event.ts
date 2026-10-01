@@ -35,6 +35,13 @@ export default defineType({
     defineField({ name: "tekst", title: "Tekst (NL)", type: "text", rows: 4 }),
     defineField({ name: "tekstEn", title: "Tekst (EN)", type: "text", rows: 4, fieldset: "en" }),
     defineField({
+      name: "link",
+      title: "Link voor meer info",
+      type: "string",
+      description: "Waar de knop bij dit event naartoe gaat, bv. /ddh-ready (een actiepagina) of https://… Leeg = geen knop.",
+    }),
+    defineField({ name: "linkLabel", title: "Tekst op de knop", type: "string", description: "Leeg = ‘Meer info’." }),
+    defineField({
       name: "tonenOpHome",
       title: "Tonen op de homepage",
       type: "boolean",

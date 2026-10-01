@@ -1756,10 +1756,14 @@ export interface SiteEvent {
   datum: string;
   locatie?: string;
   foto?: string;
+  fotoHotspot?: { x: number; y: number };
   /** Sanity CDN URL of an uploaded mp4/webm. Plays on the events page. */
   video?: string;
   tekst?: string;
   tekstEn?: string;
+  /** "Meer info" target: an actiepagina (/ddh-ready) or an external URL. */
+  link?: string;
+  linkLabel?: string;
   tonenOpHome: boolean;
 }
 
@@ -1778,8 +1782,9 @@ export async function getEvents(): Promise<SiteEvent[]> {
   return once("events", async () => {
     const rows = await sanity.fetch(
       `*[_type == "event" && actief != false] | order(datum desc) {
-        "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, tonenOpHome,
+        "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, link, linkLabel, tonenOpHome,
         "foto": foto.asset->url,
+        "fotoHotspot": foto.hotspot{ x, y },
         "video": video.asset->url
       }`,
     );
