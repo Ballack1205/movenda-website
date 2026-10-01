@@ -1,0 +1,418 @@
+---
+// Campaign / event landing page (Dwars door Hasselt Ready, Recovery, …).
+// Every text and photo is Julie's: Studio → Actiepagina's. Layout lives here.
+import { actieSectieGevuld, localizeActie, type Actiepagina, type CmsFoto } from "../lib/content";
+import { withLang, type Lang } from "../lib/i18n";
+
+interface Props {
+  pagina: Actiepagina;
+  lang?: Lang;
+}
+
+const { pagina: bron, lang = "nl" } = Astro.props;
+const pagina = localizeActie(bron, lang);
+const en = lang === "en";
+const alineas = (tekst?: string) => (tekst || "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+const regels = (tekst?: string) => (tekst || "").split("\n").map((r) => r.trim()).filter(Boolean);
+const secties = pagina.secties.filter(actieSectieGevuld);
+
+function cdn(foto: CmsFoto, w: number, h: number): string {
+  const fp = foto.hotspot ? `&crop=focalpoint&fp-x=${foto.hotspot.x.toFixed(3)}&fp-y=${foto.hotspot.y.toFixed(3)}` : "";
+  return `${foto.url}?w=${w}&h=${h}&fit=crop${fp}&auto=format`;
+}
+
+function srcset(foto: CmsFoto, ratio: number, widths: number[]): string {
+  return widths.map((w) => `${cdn(foto, w, Math.round(w * ratio))} ${w}w`).join(", ");
+}
+
+/** YouTube / Vimeo link → privacy-friendly embed URL; anything else stays a plain link. */
+function embedUrl(url: string): string | undefined {
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/);
+  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}?rel=0`;
+  const vimeo = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}?dnt=1`;
+  return undefined;
+}
+---
+
+<article class="actie header-ink">
+  <header class="dienst-hero actie-hero">
+    {pagina.foto && (
+      <img
+        src={cdn(pagina.foto, 1600, 900)}
+        srcset={srcset(pagina.foto, 900 / 1600, [800, 1200, 1600, 2400])}
+        sizes="100vw"
+        alt={pagina.foto.alt || ""}
+        width="1600"
+        height="900"
+        fetchpriority="high"
+      />
+    )}
+    <div class="actie-hero__copy">
+      {pagina.logo && (
+        pagina.logoUrl ? (
+          <a href={pagina.logoUrl} target="_blank" rel="noopener" class="actie-logo">
+            <img src={`${pagina.logo}?h=160&fit=max&auto=format`} alt={pagina.logoNaam || ""} height="80" />
+          </a>
+        ) : (
+          <span class="actie-logo">
+            <img src={`${pagina.logo}?h=160&fit=max&auto=format`} alt={pagina.logoNaam || ""} height="80" />
+          </span>
+        )
+      )}
+      {pagina.kicker && <p class="actie-kicker">{pagina.kicker}</p>}
+      <h1>{pagina.titel}</h1>
+      {pagina.slogan && <p class="actie-slogan">{pagina.slogan}</p>}
+      {pagina.datumRegel && <p class="actie-datum">{pagina.datumRegel}</p>}
+    </div>
+  </header>
+
+  <div class="actie-ink">
+    {pagina.intro && (
+      <div class="actie-copy mx-auto box-content max-w-3xl px-4">
+        {alineas(pagina.intro).map((p, i) => <p class:list={["actie-regels", i === 0 && "actie-lead"]}>{p}</p>)}
+      </div>
+    )}
+
+    {secties.map((s) => (
+      <section class="actie-sectie mx-auto max-w-6xl px-4">
+        <div class="actie-copy mx-auto max-w-3xl">
+          {s.kicker && <p class="actie-kicker">{s.kicker}</p>}
+          {s.titel && <h2>{s.titel}</h2>}
+          {alineas(s.tekst).map((p) => <p class="actie-regels">{p}</p>)}
+        </div>
+
+        {s.items.length > 0 && (
+          <ul class:list={["actie-items", s.items.length === 2 && "actie-items--twee", s.items.length === 4 && "actie-items--vier"]}>
+            {s.items.map((item) => {
+              const embed = item.video ? embedUrl(item.video) : undefined;
+              return (
+                <li>
+                  {item.label && <p class="actie-kicker">{item.label}</p>}
+                  <h3>{item.kop}</h3>
+                  {alineas(item.tekst).map((p) => <p class="actie-regels">{p}</p>)}
+                  {embed && (
+                    <div class="actie-video">
+                      <iframe src={embed} title={item.kop} loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen />
+                    </div>
+                  )}
+                  {item.video && !embed && <a href={item.video} target="_blank" rel="noopener" class="actie-link">{en ? "Watch the video" : "Bekijk de video"}</a>}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {s.kaderTekst?.trim() && (
+          <aside class="actie-kader mx-auto max-w-3xl">
+            {s.kaderTitel && <p class="actie-kicker">{s.kaderTitel}</p>}
+            {regels(s.kaderTekst).map((r, i) => <p class:list={[i === 0 && "actie-kader__eerste"]}>{r}</p>)}
+          </aside>
+        )}
+
+        {s.foto && (
+          <img
+            class="actie-foto"
+            src={cdn(s.foto, 1200, 675)}
+            srcset={srcset(s.foto, 675 / 1200, [600, 900, 1200, 1800])}
+            sizes="(min-width: 1152px) 1152px, 100vw"
+            alt={s.foto.alt || ""}
+            width="1200"
+            height="675"
+            loading="lazy"
+          />
+        )}
+
+        {s.knopLabel && s.knopUrl && (
+          <div class="actie-copy mx-auto max-w-3xl">
+            <a
+              href={withLang(s.knopUrl, lang)}
+              class="actie-knop"
+              {...(/^https?:/.test(s.knopUrl) ? { target: "_blank", rel: "noopener" } : {})}
+            >{s.knopLabel}</a>
+          </div>
+        )}
+      </section>
+    ))}
+
+    {pagina.galerij.length > 0 && (
+      <div class="photo-band actie-galerij" aria-hidden="true">
+        <div class="photo-band__track">
+          {[...pagina.galerij, ...pagina.galerij].map((foto) => (
+            <img src={cdn(foto, 640, 420)} alt="" width="320" height="210" loading="lazy" class="h-56 w-auto max-w-none object-cover" />
+          ))}
+        </div>
+      </div>
+    )}
+
+    {pagina.afsluiter && (
+      <p class="actie-afsluiter mx-auto box-content max-w-3xl px-4">
+        {regels(pagina.afsluiter).map((r) => <span>{r}</span>)}
+      </p>
+    )}
+  </div>
+</article>
+
+<style>
+  .actie {
+    background: #161513;
+    color: #f4f7fb;
+  }
+
+  .actie-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 78vh;
+    color: #f4f7fb;
+    background: #161513;
+  }
+
+  .actie-hero > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .actie-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgb(14 16 18 / 0.5), transparent 28%),
+      linear-gradient(to top, rgb(14 16 18 / 0.88), rgb(14 16 18 / 0.2) 65%);
+  }
+
+  .actie-hero__copy {
+    position: relative;
+    z-index: 1;
+    width: min(72rem, 100%);
+    margin-inline: auto;
+    padding: 7.5rem 1rem 2.75rem;
+  }
+
+  /* Partner logos are usually made for a white background. */
+  .actie-logo {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.5rem;
+    background: #f4f7fb;
+  }
+
+  .actie-logo img {
+    display: block;
+    width: auto;
+    height: clamp(2.75rem, 2.2rem + 1.8vw, 4.25rem);
+  }
+
+  .actie-kicker {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(244 247 251 / 0.72);
+  }
+
+  .actie-hero h1 {
+    max-width: 18ch;
+    margin-top: 0.75rem;
+    font-size: clamp(2.4rem, 1.4rem + 3.4vw, 4.75rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .actie-slogan {
+    margin-top: 0.85rem;
+    font-size: clamp(1.3rem, 1rem + 1.2vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .actie-datum {
+    margin-top: 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .actie-ink {
+    padding-bottom: 5rem;
+  }
+
+  .actie-regels {
+    white-space: pre-line;
+  }
+
+  .actie-copy p {
+    margin-top: 1rem;
+    line-height: 1.75;
+    color: rgb(244 247 251 / 0.86);
+  }
+
+  .actie-copy > .actie-kicker {
+    margin-top: 0;
+    line-height: 1.4;
+    color: rgb(244 247 251 / 0.72);
+  }
+
+  .actie-ink > .actie-copy {
+    padding-top: 3rem;
+  }
+
+  .actie-copy .actie-lead {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #f4f7fb;
+  }
+
+  .actie-sectie {
+    margin-top: 4.5rem;
+  }
+
+  .actie-sectie h2 {
+    margin-top: 0.6rem;
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .actie-items {
+    display: grid;
+    gap: 1px;
+    margin-top: 2rem;
+    background: rgb(244 247 251 / 0.16);
+    border: 1px solid rgb(244 247 251 / 0.16);
+  }
+
+  @media (min-width: 640px) {
+    .actie-items {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .actie-items {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .actie-items--twee {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .actie-items--vier {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .actie-items li {
+    padding: 1.75rem 1.5rem;
+    background: #161513;
+  }
+
+  .actie-items h3 {
+    margin-top: 0.4rem;
+    font-size: 1.15rem;
+    font-weight: 650;
+  }
+
+  .actie-items li > .actie-kicker {
+    font-size: 0.72rem;
+  }
+
+  .actie-items li p:not(.actie-kicker) {
+    margin-top: 0.6rem;
+    line-height: 1.65;
+    color: rgb(244 247 251 / 0.8);
+  }
+
+  .actie-video {
+    position: relative;
+    margin-top: 1rem;
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
+
+  .actie-video iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .actie-kader {
+    margin-top: 2rem;
+    padding: 1.5rem 1.5rem 1.6rem;
+    border-left: 3px solid #f4f7fb;
+    background: rgb(244 247 251 / 0.06);
+  }
+
+  .actie-kader p:not(.actie-kicker) {
+    margin-top: 0.35rem;
+    line-height: 1.6;
+    color: rgb(244 247 251 / 0.86);
+  }
+
+  .actie-kader .actie-kader__eerste {
+    margin-top: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f4f7fb;
+  }
+
+  .actie-foto {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 2rem;
+  }
+
+  .actie-knop {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    margin-top: 1.75rem;
+    padding: 0 1.5rem;
+    border: 1px solid #f4f7fb;
+    border-radius: 9999px;
+    font-weight: 600;
+    background: #f4f7fb;
+    color: #161513;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .actie-knop:hover {
+    background: transparent;
+    color: #f4f7fb;
+  }
+
+  .actie-link {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .actie-galerij {
+    margin-top: 4.5rem;
+  }
+
+  .actie-afsluiter {
+    display: grid;
+    margin-top: 4.5rem;
+    font-size: clamp(1.9rem, 1.2rem + 2.6vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+</style>

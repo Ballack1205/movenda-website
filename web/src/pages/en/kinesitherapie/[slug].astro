@@ -11,6 +11,7 @@ import {
   dienstHref,
   dienstSeoTitleEn,
   dienstSeoDescriptionEn,
+  teamVoorDienst,
 } from "../../../lib/content";
 import { serviceNode, breadcrumbNode } from "../../../lib/schema";
 
@@ -28,7 +29,7 @@ if (!dienst) {
 
 const locatie = (await getLocatieBySlug("olympia"))!;
 const alleTeamleden = await getTeamleden();
-const team = alleTeamleden.filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
+const team = teamVoorDienst(dienst, alleTeamleden);
 const path = dienstHref(dienst, "en");
 const prijs = findPrijsVoorDienst(dienst, await getPrijzen());
 

@@ -10,16 +10,19 @@
 import {
   dienstHref,
   dienstMenuLabel,
+  isB2bDienst,
   getDiensten,
   getLocaties,
   getSiteSettings,
   getSportaanbod,
+  localizeInternalHref,
   type Dienst,
   type DienstCategorie,
   type Locatie,
   type SiteSettings,
   type SportaanbodItem,
 } from "./content";
+import { movendaHomeHref, THEME } from "./site";
 
 export type Brand = "movenda" | "mpc";
 export type Lang = "nl" | "en";
@@ -28,6 +31,14 @@ export interface NavLink {
   href: string;
   label: string;
   external?: boolean;
+  /** Section label, same style as Train and Test en analyse. A heading with an href stays a link. */
+  heading?: boolean;
+}
+
+export interface NavGroup {
+  label: string;
+  href: string;
+  children: NavLink[];
 }
 
 export interface NavItem extends NavLink {
@@ -35,6 +46,12 @@ export interface NavItem extends NavLink {
   emphasize?: boolean;
   /** Dropdown entries. The first entry should be the overview page. */
   children?: NavLink[];
+  /** Wide menu: one column per domain. Lab/brief header only. */
+  groups?: NavGroup[];
+  /** Lab/brief header: sits left of the logo. */
+  side?: "start";
+  /** Lab/brief header: the strong Afspraak control. */
+  button?: boolean;
 }
 
 export type NavCta = NavLink;
@@ -74,9 +91,176 @@ function dienstLinks(diensten: Dienst[], categorie: DienstCategorie | DienstCate
   // Category order as passed in, then Julie's volgorde within a category.
   // "Tonen in het menu" off (Studio → Diensten) hides a dienst here only; its page stays live.
   return diensten
-    .filter((d) => cats.includes(d.categorie) && d.toonInMenu !== false)
+    .filter((d) => cats.includes(d.categorie) && d.toonInMenu !== false && !isB2bDienst(d))
     .sort((a, b) => cats.indexOf(a.categorie) - cats.indexOf(b.categorie) || a.volgorde - b.volgorde)
     .map((d) => ({ href: dienstHref(d, lang), label: dienstMenuLabel(d, lang) }));
+}
+
+function linksBySlugs(
+  diensten: Dienst[],
+  picks: { slug: string; categorie: DienstCategorie; label?: string }[],
+  lang: Lang,
+): NavLink[] {
+  return picks.flatMap((pick) => {
+    const dienst = diensten.find((d) => d.slug === pick.slug && d.categorie === pick.categorie);
+    if (!dienst || dienst.toonInMenu === false) return [];
+    return [{ href: dienstHref(dienst, lang), label: pick.label || dienstMenuLabel(dienst, lang) }];
+  });
+}
+
+/** Julie's header (lab/brief). Only pages that already exist. Rehab is one URL. */
+function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
+  const p = (href: string) => localizeInternalHref(href, lang);
+  const en = lang === "en";
+  const rehabHref = p("/performance/sportrevalidatie");
+  const kine: NavLink[] = [
+    ...linksBySlugs(
+      diensten,
+      [
+        { slug: "manuele-therapie", categorie: "kine" },
+        { slug: "oefentherapie", categorie: "kine" },
+        { slug: "algemene-kinesitherapie", categorie: "kine" },
+      ],
+      lang,
+    ),
+    { href: rehabHref, label: en ? "Sports physiotherapy and rehab" : "Sportkinesitherapie" },
+    ...linksBySlugs(
+      diensten,
+      [
+        { slug: "pre-en-postnatale-kinesitherapie", categorie: "kine" },
+        { slug: "bekkenbodemtherapie", categorie: "kine" },
+        { slug: "lymfedrainage", categorie: "kine" },
+        { slug: "acupunctuur", categorie: "kine" },
+        { slug: "dry-needling", categorie: "kine" },
+        { slug: "cupping", categorie: "kine" },
+        { slug: "auriculotherapie", categorie: "kine" },
+        { slug: "cardiovasculaire-revalidatie", categorie: "kine" },
+        { slug: "taping", categorie: "kine" },
+        { slug: "barefoot", categorie: "kine" },
+      ],
+      lang,
+    ),
+  ];
+  const train = linksBySlugs(
+    diensten,
+    [
+      { slug: "personal-training", categorie: "mpc-training", label: en ? "Personal training" : "Personal Training" },
+      { slug: "performance-training", categorie: "mpc-training", label: en ? "Performance coaching" : "Performance Coaching" },
+      { slug: "high-performance-coaching", categorie: "mpc-training", label: en ? "High performance coaching" : "High Performance Coaching" },
+      { slug: "duotraining", categorie: "mpc-training", label: en ? "Duo training" : "Duo Training" },
+      { slug: "boxing-1-on-1", categorie: "mpc-training", label: "Boxing 1-on-1" },
+      { slug: "pre-en-postnatale-training", categorie: "training" },
+    ],
+    lang,
+  );
+  const test = linksBySlugs(
+    diensten,
+    [
+      { slug: "sportspecifieke-screening", categorie: "training", label: en ? "Performance screening" : "Performance Screening" },
+      { slug: "inspanningstesten", categorie: "training" },
+      { slug: "loopanalyse-ontracx", categorie: "mpc-training", label: en ? "Running analysis with OnTracx" : "Loopanalyse met OnTracx" },
+      { slug: "vald-screening", categorie: "mpc-training", label: en ? "VALD screening" : "VALD Screening" },
+    ],
+    lang,
+  );
+  const b2b = linksBySlugs(
+    diensten,
+    [
+      { slug: "teamtraining", categorie: "mpc-groep", label: en ? "Team training at Movenda" : "Teamtraining bij Movenda" },
+      { slug: "on-site-workouts", categorie: "mpc-groep", label: "On-site workouts" },
+    ],
+    lang,
+  );
+  const gx = [
+    ...linksBySlugs(
+      diensten,
+      [
+        { slug: "full-body", categorie: "mpc-groep" },
+        { slug: "hiit", categorie: "mpc-groep" },
+        { slug: "powerplus", categorie: "mpc-groep" },
+        { slug: "boxing", categorie: "mpc-groep" },
+        { slug: "skifit", categorie: "mpc-groep" },
+        { slug: "running", categorie: "mpc-groep" },
+        { slug: "core", categorie: "mpc-groep" },
+        { slug: "mxgp", categorie: "mpc-groep" },
+      ],
+      lang,
+    ),
+    { href: p("/groepslessen"), label: en ? "Timetable" : "Lessenrooster" },
+  ];
+  const keuzehulp = `${p("/team")}#keuzehulp`;
+  const afspraak: NavItem = {
+    href: keuzehulp,
+    label: en ? "Book" : "Afspraak",
+    button: true,
+  };
+
+  return {
+    items: [
+      {
+        href: p("/kinesitherapie"),
+        label: en ? "Offer" : "Aanbod",
+        side: "start",
+        groups: [
+          { label: en ? "Physiotherapy" : "Kinesitherapie", href: p("/kinesitherapie"), children: kine },
+          {
+            label: "Performance",
+            href: p("/performance"),
+            children: [
+              { href: "", label: "Train", heading: true },
+              ...train,
+              { href: "", label: en ? "Test and analysis" : "Test en analyse", heading: true },
+              ...test,
+              { href: rehabHref, label: en ? "Rehab" : "Revalidatie", heading: true },
+            ],
+          },
+          { label: "GX", href: p("/groepslessen"), children: gx },
+          { label: "B2B", href: p("/b2b"), children: b2b },
+          {
+            label: "Olympia",
+            href: p("/locaties/olympia"),
+            children: [
+              { href: p("/kine-abonnement"), label: en ? "Physio membership" : "Kiné-abonnement" },
+              {
+                href: "https://www.oly.be",
+                label: en ? "About this location" : "Over deze locatie",
+                external: true,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        href: p("/team"),
+        label: "Team",
+      },
+      {
+        href: p("/over-ons/ons-verhaal"),
+        label: en ? "About us" : "Over ons",
+        children: [
+          { href: p("/over-ons/ons-verhaal"), label: en ? "Our story" : "Ons verhaal" },
+          { href: p("/over-ons/onze-visie"), label: en ? "Our vision" : "Onze visie" },
+          { href: p("/team"), label: "Team" },
+          { href: p("/events"), label: "Events" },
+          { href: p("/prijzen"), label: en ? "Prices" : "Prijzen" },
+          { href: p("/faq"), label: "FAQ" },
+          { href: p("/jobs"), label: en ? "Jobs" : "Vacatures" },
+        ],
+      },
+      contact,
+      afspraak,
+    ],
+    cta: afspraak,
+    contact,
+  };
+}
+
+/** Same Aanbod lists the header uses, so overview pages do not keep a second copy. */
+export async function getBriefAanbod(lang: Lang): Promise<NavGroup[]> {
+  const { diensten } = await loadNavData();
+  const contact: NavLink =
+    lang === "en" ? { href: "/en/contact", label: "Contact" } : { href: "/contact", label: "Contact" };
+  return briefNav(diensten, lang, contact).items[0]?.groups ?? [];
 }
 
 function sportaanbodLinks(items: SportaanbodItem[], lang: Lang = "nl"): NavLink[] {
@@ -105,45 +289,53 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
   // When booking is the CTA, Contact goes back into the list as a plain link.
   const contactItem: NavItem[] = cta === contact ? [] : [contact];
 
+  if (THEME === "lab") {
+    const model = briefNav(diensten, lang, contact);
+    return { ...model, phone };
+  }
+
   if (brand === "mpc") {
     if (lang === "en") {
       return {
         items: [
           {
-            href: "/en/mpc#training",
+            href: "/en/performance#training",
             label: "Training",
             children: [
-              { href: "/en/mpc#training", label: "All training" },
+              { href: "/en/performance#training", label: "All training" },
               ...dienstLinks(diensten, "mpc-training", "en"),
             ],
           },
           {
-            href: "/en/mpc#sportrevalidatie",
+            href: "/en/performance#sportrevalidatie",
             label: "Sports rehabilitation",
             children: [
-              { href: "/en/mpc#sportrevalidatie", label: "All sports rehabilitation" },
+              { href: "/en/performance#sportrevalidatie", label: "All sports rehabilitation" },
               ...dienstLinks(diensten, "mpc-rehab", "en"),
             ],
           },
           {
-            href: "/en/mpc/groepslessen",
+            href: "/en/groepslessen",
             label: "Group classes",
             children: [
-              { href: "/en/mpc/groepslessen", label: "Timetable & all classes" },
+              { href: "/en/groepslessen", label: "Timetable & all classes" },
               ...dienstLinks(diensten, "mpc-groep", "en"),
             ],
           },
-          { href: "/en/mpc/prijzen", label: "Prices" },
+          { href: "/en/performance/prijzen", label: "Prices" },
           { href: "/en/team", label: "Team" },
           {
-            href: "/en/mpc/visie",
+            href: "/en/performance/visie",
             label: "About MPC",
             children: [
-              { href: "/en/mpc/visie", label: "Vision" },
-              { href: "/en/mpc#faq", label: "FAQ" },
+              { href: "/en/performance/visie", label: "Vision" },
+              { href: "/en/performance#faq", label: "FAQ" },
             ],
           },
-          { href: "/en", label: "Movenda", emphasize: true },
+          (() => {
+            const href = movendaHomeHref("en");
+            return { href, label: "Movenda", emphasize: true, external: /^https?:/.test(href) };
+          })(),
           ...contactItem,
         ],
         cta,
@@ -154,40 +346,43 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
     return {
       items: [
         {
-          href: "/mpc#training",
+          href: "/performance#training",
           label: "Training",
           children: [
-            { href: "/mpc#training", label: "Alle training" },
+            { href: "/performance#training", label: "Alle training" },
             ...dienstLinks(diensten, "mpc-training", "nl"),
           ],
         },
         {
-          href: "/mpc#sportrevalidatie",
+          href: "/performance#sportrevalidatie",
           label: "Sportrevalidatie",
           children: [
-            { href: "/mpc#sportrevalidatie", label: "Alle sportrevalidatie" },
+            { href: "/performance#sportrevalidatie", label: "Alle sportrevalidatie" },
             ...dienstLinks(diensten, "mpc-rehab", "nl"),
           ],
         },
         {
-          href: "/mpc/groepslessen",
+          href: "/groepslessen",
           label: "Groepslessen",
           children: [
-            { href: "/mpc/groepslessen", label: "Lesrooster & alle lessen" },
+            { href: "/groepslessen", label: "Lesrooster & alle lessen" },
             ...dienstLinks(diensten, "mpc-groep", "nl"),
           ],
         },
-        { href: "/mpc/prijzen", label: "Prijzen" },
+        { href: "/performance/prijzen", label: "Prijzen" },
         { href: "/team", label: "Team" },
         {
-          href: "/mpc/visie",
+          href: "/performance/visie",
           label: "Over MPC",
           children: [
-            { href: "/mpc/visie", label: "Visie" },
-            { href: "/mpc#faq", label: "Veelgestelde vragen" },
+            { href: "/performance/visie", label: "Visie" },
+            { href: "/performance#faq", label: "Veelgestelde vragen" },
           ],
         },
-        { href: "/", label: "Movenda", emphasize: true },
+        (() => {
+          const href = movendaHomeHref("nl");
+          return { href, label: "Movenda", emphasize: true, external: /^https?:/.test(href) };
+        })(),
         ...contactItem,
       ],
       cta,
@@ -215,17 +410,18 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
         { href: "/en/team", label: "Team" },
         { href: "/en/prijzen", label: "Prices" },
         {
-          href: "/en/over",
+          href: "/en/over-ons/ons-verhaal",
           label: "About us",
           children: [
-            { href: "/en/over", label: "About Movenda" },
+            { href: "/en/over-ons/ons-verhaal", label: "Our story" },
+            { href: "/en/over-ons/onze-visie", label: "Our vision" },
             { href: "/en/faq", label: "FAQ" },
             { href: "/en/blog", label: "Blog" },
             { href: "/en/jobs", label: "Jobs" },
             ...sportaanbodLinks(sportaanbod, "en"),
           ],
         },
-        { href: "/en/mpc", label: "MPC", emphasize: true },
+        { href: "/en/performance", label: "MPC", emphasize: true },
         ...contactItem,
       ],
       cta,
@@ -252,17 +448,18 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
       { href: "/team", label: "Team" },
       { href: "/prijzen", label: "Prijzen" },
       {
-        href: "/over",
+        href: "/over-ons/ons-verhaal",
         label: "Over ons",
         children: [
-          { href: "/over", label: "Over Movenda" },
+          { href: "/over-ons/ons-verhaal", label: "Ons verhaal" },
+          { href: "/over-ons/onze-visie", label: "Onze visie" },
           { href: "/faq", label: "Veelgestelde vragen" },
           { href: "/blog", label: "Blog" },
           { href: "/jobs", label: "Vacatures" },
           ...sportaanbodLinks(sportaanbod, "nl"),
         ],
       },
-      { href: "/mpc", label: "MPC", emphasize: true },
+      { href: "/performance", label: "MPC", emphasize: true },
       ...contactItem,
     ],
     cta,
@@ -283,8 +480,8 @@ function normalizePath(href: string): string {
  */
 export function isCurrentPath(href: string, path: string): boolean {
   if (/^https?:/.test(href)) return false;
-  // Section anchors (/mpc#training) are never "the current page": on /mpc
-  // every anchor would light up, and /mpc/* pages would match them by prefix.
+  // Section anchors (/performance#training) are never "the current page": on /performance
+  // every anchor would light up, and /performance/* pages would match them by prefix.
   if (href.includes("#")) return false;
   const target = normalizePath(href);
   const current = normalizePath(path);
@@ -295,5 +492,10 @@ export function isCurrentPath(href: string, path: string): boolean {
 /** Active if the item itself or one of its children matches the current page. */
 export function isActiveItem(item: NavItem, path: string): boolean {
   if (isCurrentPath(item.href, path)) return true;
-  return (item.children || []).some((child) => isCurrentPath(child.href, path));
+  if ((item.children || []).some((child) => child.href && isCurrentPath(child.href, path))) return true;
+  return (item.groups || []).some(
+    (group) =>
+      isCurrentPath(group.href, path) ||
+      group.children.some((child) => child.href && isCurrentPath(child.href, path)),
+  );
 }

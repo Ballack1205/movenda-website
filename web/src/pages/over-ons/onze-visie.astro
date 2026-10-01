@@ -1,0 +1,26 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import OverOnsPagina from "../../components/OverOnsPagina.astro";
+import { getPagina } from "../../lib/content";
+import { breadcrumbSchema } from "../../lib/schema";
+import visieHero from "../../assets/marketing/home-performance.jpg";
+
+const pagina = await getPagina("onze-visie");
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Onze visie", path: "/over-ons/onze-visie" },
+  ]),
+];
+---
+
+<Layout
+  title={pagina.seoTitle || "Onze visie | Sportpraktijk Movenda"}
+  description={pagina.seoDescription || ""}
+  path="/over-ons/onze-visie"
+  altPath="/en/over-ons/onze-visie"
+  jsonLd={jsonLd}
+>
+  <OverOnsPagina pagina={pagina} soort="visie" fallback={visieHero} fotoPositie="center 62%" fallbackAlt="Kinesitherapeut werpt een bal naar een springende sporter" />
+</Layout>

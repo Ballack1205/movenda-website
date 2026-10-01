@@ -1,0 +1,35 @@
+---
+// Optional event clip from Sanity (Events → Video). The photo is the poster.
+// Playback is on purpose: controls, no autoplay, so it stays quiet until play.
+interface Props {
+  video?: string;
+  foto?: string;
+  titel: string;
+}
+
+const { video, foto, titel } = Astro.props;
+const path = video?.split("?")[0].toLowerCase() ?? "";
+const type = path.endsWith(".webm") ? "video/webm" : "video/mp4";
+const poster = foto ? `${foto}?w=1280&fit=max&auto=format` : undefined;
+---
+
+{
+  video && (
+    <video class="event-video" controls playsinline preload="metadata" poster={poster} aria-label={titel}>
+      <source src={video} type={type} />
+    </video>
+  )
+}
+
+<style>
+  .event-video {
+    display: block;
+    width: 100%;
+    max-height: 28rem;
+    margin-top: 0.75rem;
+    border-radius: 1rem;
+    background: #111;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+  }
+</style>

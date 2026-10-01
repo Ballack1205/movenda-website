@@ -42,16 +42,18 @@ Both locations share info@movenda.be and work strictly by appointment.
 - Home: /
 - Physiotherapy (Hasselt): /kinesitherapie
 - Personal training (Hasselt): /training
-- Movenda Performance Centre: /mpc
+- Movenda Performance Centre: /performance
 - Team: /team
+- Our story: /over-ons/ons-verhaal
+- Our vision: /over-ons/onze-visie
 - Prices & reimbursement (practice): /prijzen
-- MPC prices: /mpc/prijzen
+- Performance prices: /performance/prijzen
 - FAQ: /faq
 - Blog: /blog
 - Blog (Markdown index): /blog.md
 - Blog RSS: /rss.xml
 - Contact: /contact
-- English: /en (full bilingual site: /en/kinesitherapie, /en/training, /en/mpc, /en/team, /en/prijzen, /en/faq, /en/blog, /en/jobs, /en/contact, …)
+- English: /en (full bilingual site: /en/kinesitherapie, /en/training, /en/performance, /en/team, /en/prijzen, /en/faq, /en/blog, /en/jobs, /en/contact, …)
 
 ## Blog
 

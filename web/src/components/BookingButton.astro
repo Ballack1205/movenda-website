@@ -25,6 +25,6 @@ const sizeClasses = size === "sm" ? "px-3 py-1.5 text-sm" : "px-5 py-2.5 text-ba
     class={`rounded-full bg-brand-primary font-semibold text-white transition hover:bg-brand-primary-dark ${sizeClasses} ${className}`}
     data-cta="booking"
   >
-    {lang === "en" ? "Book an appointment" : booking.label}
+    {lang === "en" ? booking.labelEn || "Book an appointment" : booking.label}
   </a>
 )}

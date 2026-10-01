@@ -7,7 +7,6 @@ import {
   dienstHref,
   locatieKorteNamen,
   specialisatieNaam,
-  formatEuro,
   rolKort,
   truncateAtSentence,
 } from "../../../lib/content";
@@ -40,6 +39,7 @@ const jsonLd = [
 ];
 
 const title = `${lid.voornaam} ${lid.naam} | ${rolKort(rol)} Hasselt | Movenda`;
+import SectionKicker from "../../../components/SectionKicker.astro";
 ---
 
 <Layout
@@ -53,7 +53,7 @@ const title = `${lid.voornaam} ${lid.naam} | ${rolKort(rol)} Hasselt | Movenda`;
   ogImageShape="square"
   ogImageAlt={`${lid.voornaam} ${lid.naam}, ${rol} at Movenda`}
 >
-  <article class="mx-auto max-w-3xl px-4 py-12">
+  <article class="page-ink mx-auto max-w-3xl px-4 py-12">
     <a href="/en/team" class="text-sm font-medium text-brand-primary hover:underline">← Back to the team</a>
 
     <div class="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start">
@@ -73,17 +73,10 @@ const title = `${lid.voornaam} ${lid.naam} | ${rolKort(rol)} Hasselt | Movenda`;
         )}
       </div>
       <div>
+        <SectionKicker n={1} />
         <h1 class="text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
         <p class="mt-1 text-lg font-medium text-brand-primary">{rol}</p>
         <p class="mt-2 text-sm text-brand-muted">{locatieKorteNamen(lid.locaties, locaties).join(" · ")}</p>
-        {(lid.tariefKine || lid.tariefPt || lid.tariefPtMpc || lid.tariefPerformance) && (
-          <p class="mt-2 text-sm">
-            {lid.tariefKine && <span>Physio {formatEuro(lid.tariefKine)}</span>}
-            {lid.tariefPt && <span> · PT Olympia {formatEuro(lid.tariefPt)}</span>}
-            {lid.tariefPtMpc && <span> · PT MPC {formatEuro(lid.tariefPtMpc)}</span>}
-            {lid.tariefPerformance && <span> · Performance {formatEuro(lid.tariefPerformance)}</span>}
-          </p>
-        )}
       </div>
     </div>
 

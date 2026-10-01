@@ -1,0 +1,89 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getEvents, getPagina, paginaAlineas, paginaTekst } from "../lib/content";
+import { breadcrumbSchema } from "../lib/schema";
+import SectionKicker from "./SectionKicker.astro";
+import LinkedText from "./LinkedText.astro";
+import EventKaart from "./EventKaart.astro";
+import type { Lang } from "../lib/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "nl" } = Astro.props;
+const en = lang === "en";
+const prefix = en ? "/en" : "";
+
+const events = await getEvents();
+const pagina = await getPagina("events");
+const today = new Date().toISOString().slice(0, 10);
+const nieuwsteEerst = (a: { datum: string }, b: { datum: string }) => b.datum.localeCompare(a.datum);
+const upcoming = events.filter((event) => event.datum >= today).sort(nieuwsteEerst);
+const past = events.filter((event) => event.datum < today).sort(nieuwsteEerst);
+
+const upcomingLabel = en ? "Upcoming" : "Komend";
+const pastLabel = en ? "Past" : "Afgelopen";
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: prefix || "/" },
+    { name: "Events", path: `${prefix}/events` },
+  ]),
+];
+---
+
+<Layout
+  title={paginaTekst(pagina, "seoTitle", lang) || "Events | Movenda"}
+  description={paginaTekst(pagina, "seoDescription", lang)}
+  path={`${prefix}/events`}
+  altPath={en ? "/events" : "/en/events"}
+  lang={lang}
+  jsonLd={jsonLd}
+>
+  <section class="page-ink">
+    <div class="mx-auto max-w-5xl px-4 py-12 md:py-16">
+      <SectionKicker n={1} />
+      <h1 class="font-heading text-4xl font-bold md:text-5xl">{paginaTekst(pagina, "titel", lang)}</h1>
+      {paginaAlineas(pagina, lang).map((tekst) => (
+        <p class="mt-3 max-w-2xl text-brand-muted"><LinkedText text={tekst} /></p>
+      ))}
+
+      {events.length === 0 && (
+        <p class="mt-8 text-brand-muted">{paginaTekst(pagina, "legeTekst", lang)}</p>
+      )}
+
+      {upcoming.length > 0 && (
+        <div class="mt-12">
+          <h2 class="events-kop">{upcomingLabel}</h2>
+          <ul class="mt-5 space-y-4">
+            {upcoming.map((event) => (
+              <li><EventKaart event={event} lang={lang} /></li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {past.length > 0 && (
+        <div class="mt-14">
+          <h2 class="events-kop">{pastLabel}</h2>
+          <ul class="mt-5 space-y-3">
+            {past.map((event) => (
+              <li><EventKaart event={event} lang={lang} afgelopen /></li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .events-kop {
+    font-size: 0.8rem;
+    font-weight: 650;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+</style>

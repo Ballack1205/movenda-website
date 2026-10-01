@@ -1,6 +1,7 @@
 ---
 import { dienstHref, dienstIntro, type Dienst } from "../lib/content";
 import { dienstPhotoSrc } from "../lib/images";
+import { THEME } from "../lib/site";
 
 interface Props {
   dienst: Dienst;
@@ -11,11 +12,15 @@ const { dienst, lang = "nl" } = Astro.props;
 const href = dienstHref(dienst, lang);
 const titel = lang === "en" ? dienst.titelEn || dienst.titel : dienst.titel;
 const foto = dienst.afbeelding || dienst.galerij[0];
+const lab = THEME === "lab";
 ---
 
 <a
   href={href}
-  class="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-brand-border bg-brand-surface transition hover:border-brand-primary"
+  class:list={[
+    "flex min-w-0 flex-col overflow-hidden border border-brand-border bg-brand-surface transition",
+    lab ? "lab-card rounded-[2px] hover:border-brand-text" : "rounded-2xl hover:border-brand-primary",
+  ]}
 >
   {foto && (
     <img
@@ -30,7 +35,7 @@ const foto = dienst.afbeelding || dienst.galerij[0];
   <div class="flex flex-1 flex-col p-5">
     <h2 class="font-semibold text-pretty">{titel}</h2>
     <p class="mt-1 line-clamp-3 text-sm text-brand-muted">{dienstIntro(dienst, lang)}</p>
-    <span class="mt-3 inline-block text-sm font-semibold text-brand-primary">
+    <span class:list={["mt-3 inline-block text-sm font-semibold text-brand-primary", lab && "min-h-11 items-center"]}>
       {lang === "en" ? "More info →" : "Meer info →"}
     </span>
   </div>

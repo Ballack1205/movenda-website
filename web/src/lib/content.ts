@@ -24,9 +24,11 @@ import seedGetuigenissen from "../content/getuigenissen.json";
 import seedBlog from "../content/blog.json";
 import seedSportaanbod from "../content/sportaanbod.json";
 import seedDiensten from "../content/diensten.json";
+import seedPartners from "../content/partners.json";
 import seedPaginas from "../content/paginas.json";
 import { resolveBlogMedia } from "./blog";
 import type { Lang } from "./i18n";
+import { KEUZEHULP_EN } from "./i18n";
 
 export type LocatieSlug = "olympia" | "mpc";
 export type DienstCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep";
@@ -97,9 +99,13 @@ export interface KeuzehulpTag {
 export interface Keuzehulp {
   actief: boolean;
   titel: string;
+  titelEn?: string;
   intro: string;
+  introEn?: string;
   vragen: Record<KeuzehulpCategorie, string>;
+  vragenEn?: Record<KeuzehulpCategorie, string>;
   geenMatchTekst: string;
+  geenMatchTekstEn?: string;
   /** Active tags, grouped per question, in display order. */
   opties: Record<KeuzehulpCategorie, KeuzehulpTag[]>;
 }
@@ -117,6 +123,7 @@ export interface Locatie {
   korteNaam: string;
   brand: "movenda" | "mpc";
   type: string;
+  typeEn?: string;
   adres: string;
   geo: { lat: number; lng: number };
   geoApprox?: boolean;
@@ -124,6 +131,7 @@ export interface Locatie {
   email: string;
   uren: Openingsuur[];
   urenNote?: string;
+  urenNoteEn?: string;
   btw: string;
   iban: string;
   bic?: string;
@@ -131,6 +139,7 @@ export interface Locatie {
   /** Google Business Profile link (sameAs in JSON-LD). Julie fills this in Sanity. */
   googleBusinessUrl?: string;
   routebeschrijving?: string;
+  routebeschrijvingEn?: string;
   /** Exterior / entrance photo. Sanity URL or a /public path. */
   foto?: string;
   rpr?: string;
@@ -147,9 +156,11 @@ export interface Dienst {
   titelEn?: string;
   intro: string;
   slogan?: string;
+  sloganEn?: string;
   body: string;
   bodyEn?: string;
   ctaLabel?: string;
+  ctaLabelEn?: string;
   ctaUrl?: string;
   seoTitle: string;
   seoDescription: string;
@@ -187,11 +198,16 @@ export interface NomenItem {
 export interface PrijzenInfo {
   basishonorarium?: number;
   intro?: string;
+  introEn?: string;
   terugbetalingStandaard?: string;
+  terugbetalingStandaardEn?: string;
   terugbetalingVt?: string;
+  terugbetalingVtEn?: string;
   voorwaarden?: string;
+  voorwaardenEn?: string;
   exBtwMpc?: boolean;
   annulatiebeleid?: string;
+  annulatiebeleidEn?: string;
   nomenclatuur?: NomenItem[];
 }
 
@@ -256,6 +272,115 @@ function toCmsFoto(row: { url?: string | null; hotspot?: { x: number; y: number 
 export type HomePijlerKey = "kine" | "training" | "mpc";
 export type HomePijlers = Record<HomePijlerKey, HomePijler>;
 
+/** One lab homepage photo-door. Julie adds/reorders these in Site-instellingen. */
+export interface HomeDeur {
+  korteNaam: string;
+  korteNaamEn?: string;
+  regel?: string;
+  regelEn?: string;
+  tekst?: string;
+  tekstEn?: string;
+  href: string;
+  foto?: CmsFoto;
+}
+
+export function localizeInternalHref(href: string, lang: Lang): string {
+  if (lang !== "en") return href;
+  if (!href.startsWith("/") || href.startsWith("/en")) return href;
+  return `/en${href}`;
+}
+
+export function homeDeurNaam(deur: HomeDeur, lang: Lang): string {
+  return (lang === "en" && deur.korteNaamEn) || deur.korteNaam;
+}
+
+export function homeDeurRegel(deur: HomeDeur, lang: Lang): string | undefined {
+  const line = (lang === "en" && deur.regelEn) || deur.regel;
+  return line?.trim() || undefined;
+}
+
+export function homeDeurTekst(deur: HomeDeur, lang: Lang): string | undefined {
+  const body = (lang === "en" && deur.tekstEn) || deur.tekst;
+  return body?.trim() || undefined;
+}
+
+/** Copy and proof numbers for the brief homepage. Numbers stay editable. */
+export interface HomeBrief {
+  merkKicker: string;
+  merkKickerEn?: string;
+  merkTitel: string;
+  merkTitelEn?: string;
+  merkTekst: string;
+  merkTekstEn?: string;
+  merkStatement: string;
+  merkStatementEn?: string;
+  merkCta: string;
+  merkCtaEn?: string;
+  partnersKicker: string;
+  partnersKickerEn?: string;
+  partnersCta: string;
+  partnersCtaEn?: string;
+  aanbodKicker: string;
+  aanbodKickerEn?: string;
+  aanbodTekst: string;
+  aanbodTekstEn?: string;
+  locatiesTitel: string;
+  locatiesTitelEn?: string;
+  hasseltNaam: string;
+  hasseltNaamEn?: string;
+  kuringenNaam: string;
+  kuringenNaamEn?: string;
+  hasseltProfiel: string;
+  hasseltProfielEn?: string;
+  kuringenProfiel: string;
+  kuringenProfielEn?: string;
+  eventsKicker: string;
+  eventsKickerEn?: string;
+  teamKicker: string;
+  teamKickerEn?: string;
+  teamTitel: string;
+  teamTitelEn?: string;
+  teamTekst: string;
+  teamTekstEn?: string;
+  teamCta: string;
+  teamCtaEn?: string;
+  reviewsTitel: string;
+  reviewsTitelEn?: string;
+  reviewsCta: string;
+  reviewsCtaEn?: string;
+  insightsKicker: string;
+  insightsKickerEn?: string;
+  insightsTitel: string;
+  insightsTitelEn?: string;
+  insightsTekst: string;
+  insightsTekstEn?: string;
+  insightsCta: string;
+  insightsCtaEn?: string;
+  instagramTitel: string;
+  instagramTitelEn?: string;
+  instagramCta: string;
+  instagramCtaEn?: string;
+  slotTitel: string;
+  slotTitelEn?: string;
+  slotTekst: string;
+  slotTekstEn?: string;
+  slotAfspraak: string;
+  slotAfspraakEn?: string;
+  slotContact: string;
+  slotContactEn?: string;
+  bewijs: {
+    jaren: string;
+    kinesistenLabel: string;
+    kinesistenLabelEn?: string;
+    trainersLabel: string;
+    trainersLabelEn?: string;
+    locatiesLabel: string;
+    locatiesLabelEn?: string;
+    jarenLabel: string;
+    jarenLabelEn?: string;
+  };
+}
+
 /** Wide group photo of the whole team (Site-instellingen → Groepsfoto team). `url` is a
  * Sanity CDN URL when Julie uploaded one; undefined means "use the local fallback asset". */
 export interface Teamfoto {
@@ -269,21 +394,29 @@ export interface Teamfoto {
 export interface SiteSettings {
   siteNaam: string;
   tagline: string;
+  footerTagline: string;
+  footerTaglineEn: string;
   telefoonOlympia: string;
   telefoonMpc: string;
   email: string;
-  booking: { enabled: boolean; url: string; label: string };
+  booking: { enabled: boolean; url: string; label: string; labelEn?: string };
   teamfoto: Teamfoto;
-  googleReviews: Record<LocatieSlug, GoogleReviews>;
+  /** One Google profile for the whole practice. Key stays `olympia` in Sanity. */
+  googleReviews: { olympia: GoogleReviews };
   analytics: AnalyticsSettings;
   socials: { instagram: string; facebook: string; linkedin: string };
   prijzenInfo: PrijzenInfo;
   slogans: {
     home?: string;
+    homeEn?: string;
     kine?: string;
+    kineEn?: string;
     mpc?: string;
+    mpcEn?: string;
     prijzenKine?: string;
+    prijzenKineEn?: string;
     prijzenPt?: string;
+    prijzenPtEn?: string;
   };
   nieuwsbrief: {
     enabled: boolean;
@@ -306,6 +439,12 @@ export interface SiteSettings {
   };
   partnerband: PartnerbandSettings;
   homePijlers: HomePijlers;
+  homeDeurenTitel: string;
+  homeDeurenTitelEn?: string;
+  homeDeuren: HomeDeur[];
+  /** Five offer doors on the brief homepage. Julie edits the sentences. */
+  homeAanbod: HomeDeur[];
+  homeBrief: HomeBrief;
   /** Default share image (og:image) for pages without their own; undefined = /og-default.jpg. */
   ogAfbeelding?: string;
   /** Google Search Console "HTML tag" verification token (content attribute only). */
@@ -385,6 +524,7 @@ export interface PartnerbandSettings {
 
 export interface LesroosterItem {
   les: string;
+  lesEn?: string;
   dag: string;
   van: string;
   tot: string;
@@ -437,8 +577,10 @@ export type BlogPostDienst = Pick<Dienst, "slug" | "categorie" | "titel" | "tite
 export interface Vacature {
   slug: string;
   titel: string;
+  titelEn?: string;
   locatieNaam?: string;
   omschrijving: string;
+  omschrijvingEn?: string;
   contactEmail: string;
   actief: boolean;
 }
@@ -452,7 +594,7 @@ export interface SportaanbodItem {
   volgorde: number;
 }
 
-export type PopupActie = "formulier" | "link";
+export type PopupActie = "formulier" | "link" | "mail";
 export type PopupTonenOp = "overal" | "home" | "mpc";
 
 export interface PopupVraag {
@@ -474,6 +616,9 @@ export interface Popup {
   knopTekstEn?: string;
   actie: PopupActie;
   knopUrl?: string;
+  /** "mail": mailto target. "formulier": where sign-ups go (read server-side, @movenda.be only). */
+  mailAdres?: string;
+  mailOnderwerp?: string;
   extraVragen: PopupVraag[];
   toonOp: PopupTonenOp;
   geldigVan?: string;
@@ -483,15 +628,98 @@ export interface Popup {
 
 const MPC_CATEGORIES: DienstCategorie[] = ["mpc-training", "mpc-rehab", "mpc-groep"];
 
+/** Group-class pages. Corporate coaching stays under /performance. */
+const GROEP_LES_SLUGS = new Set([
+  "boxing",
+  "hiit",
+  "full-body",
+  "powerplus",
+  "skifit",
+  "running",
+  "core",
+  "mxgp",
+]);
+
+/** Retired overview. Its photo now lives on B2B teamtraining; old URLs go to the timetable. */
+const RETIRED_SLUGS = new Set(["kleine-groepstraining"]);
+
+/** B2B formulas live under /b2b, not under groepslessen or /performance. */
+const B2B_SLUGS = new Set(["teamtraining", "on-site-workouts"]);
+
+/** Older MPC copies. The kinesitherapie page is the canonical URL. */
+const KINE_CANONICAL_SLUGS = new Set(["dry-needling", "cupping", "taping"]);
+
 export function isMpcCategorie(categorie: DienstCategorie): boolean {
   return MPC_CATEGORIES.includes(categorie);
 }
 
+export function isGroepLes(dienst: Pick<Dienst, "slug" | "categorie">): boolean {
+  return dienst.categorie === "mpc-groep" && GROEP_LES_SLUGS.has(dienst.slug);
+}
+
+export function isB2bDienst(dienst: Pick<Dienst, "slug">): boolean {
+  return B2B_SLUGS.has(dienst.slug);
+}
+
+export function isRetiredDienst(dienst: Pick<Dienst, "slug">): boolean {
+  return RETIRED_SLUGS.has(dienst.slug);
+}
+
+/**
+ * Julie: no public /mpc path. Old links (Sanity doors, CTA urls) are rewritten
+ * onto /performance and /groepslessen. /locaties/mpc stays the location slug.
+ */
+export function rewriteMpcHref(href: string): string;
+export function rewriteMpcHref(href: string | undefined): string | undefined;
+export function rewriteMpcHref(href: string | undefined): string | undefined {
+  if (!href) return href;
+  const hashAt = href.indexOf("#");
+  const hash = hashAt >= 0 ? href.slice(hashAt) : "";
+  const path = hashAt >= 0 ? href.slice(0, hashAt) : href;
+  const en = path.startsWith("/en/");
+  const rest = en ? path.slice(3) : path;
+  if (rest !== "/mpc" && !rest.startsWith("/mpc/")) return href;
+  const prefix = en ? "/en" : "";
+  if (rest === "/mpc" || rest === "/mpc/") return `${prefix}/performance${hash}`;
+  if (rest === "/mpc/groepslessen") return `${prefix}/groepslessen${hash}`;
+  const slug = rest.slice("/mpc/".length).replace(/\/$/, "");
+  if (!slug || slug.includes("/")) return href;
+  if (KINE_CANONICAL_SLUGS.has(slug)) return `${prefix}/kinesitherapie/${slug}${hash}`;
+  if (RETIRED_SLUGS.has(slug)) return `${prefix}/groepslessen${hash}`;
+  if (GROEP_LES_SLUGS.has(slug)) return `${prefix}/groepslessen/${slug}${hash}`;
+  if (slug === "corporate-coaching") return `${prefix}/b2b${hash}`;
+  if (B2B_SLUGS.has(slug)) return `${prefix}/b2b/${slug}${hash}`;
+  return `${prefix}/performance/${slug}${hash}`;
+}
+
 export function dienstHref(dienst: Pick<Dienst, "slug" | "categorie">, lang: "nl" | "en" = "nl"): string {
   const prefix = lang === "en" ? "/en" : "";
-  if (dienst.categorie === "kine") return `${prefix}/kinesitherapie/${dienst.slug}`;
+  if (dienst.categorie === "kine" || KINE_CANONICAL_SLUGS.has(dienst.slug)) {
+    return `${prefix}/kinesitherapie/${dienst.slug}`;
+  }
   if (dienst.categorie === "training") return `${prefix}/training/${dienst.slug}`;
-  return `${prefix}/mpc/${dienst.slug}`;
+  if (dienst.slug === "corporate-coaching") return `${prefix}/b2b`;
+  if (isRetiredDienst(dienst)) return `${prefix}/groepslessen`;
+  if (isB2bDienst(dienst)) return `${prefix}/b2b/${dienst.slug}`;
+  if (isGroepLes(dienst)) return `${prefix}/groepslessen/${dienst.slug}`;
+  return `${prefix}/performance/${dienst.slug}`;
+}
+
+/** Every timetable row links somewhere, even when Sanity has no dienst slug. */
+export function lesHref(
+  les: { les: string; dienstSlug?: string; dienstCategorie?: string },
+  diensten: Pick<Dienst, "slug" | "categorie" | "titel" | "menuLabel">[],
+  lang: "nl" | "en" = "nl",
+): string {
+  if (les.dienstSlug && les.dienstCategorie) {
+    return dienstHref({ slug: les.dienstSlug, categorie: les.dienstCategorie as DienstCategorie }, lang);
+  }
+  const name = les.les.trim().toLowerCase();
+  const match = diensten.find(
+    (d) => d.titel.toLowerCase() === name || d.menuLabel?.toLowerCase() === name || d.slug === name,
+  );
+  if (match) return dienstHref(match, lang);
+  return lang === "en" ? "/en/groepslessen#inschrijven" : "/groepslessen#inschrijven";
 }
 
 export function formatPrijs(
@@ -538,10 +766,10 @@ const teamlidProjection = `{
 
 const locatieProjection = `{
   "slug": slug.current,
-  naam, korteNaam, brand, type, adres,
+  naam, korteNaam, brand, type, typeEn, adres,
   "geo": { "lat": geo.lat, "lng": geo.lng },
-  telefoon, email, uren, urenNote, btw, iban, bic, mapsUrl, googleBusinessUrl,
-  routebeschrijving, rpr, instagram, facebook, verdiepingNote,
+  telefoon, email, uren, urenNote, urenNoteEn, btw, iban, bic, mapsUrl, googleBusinessUrl,
+  routebeschrijving, routebeschrijvingEn, rpr, instagram, facebook, verdiepingNote,
   "foto": foto.asset->url,
   "updatedAt": _updatedAt
 }`;
@@ -552,7 +780,7 @@ const dienstProjection = `{
   "slug": slug.current,
   categorie, titel, titelEn, intro, slogan, body, bodyEn,
   ctaLabel, ctaUrl, seoTitle, seoDescription, seoTitleEn, seoDescriptionEn, volgorde,
-  "toonInMenu": coalesce(toonInMenu, true), menuLabel, menuLabelEn,
+  toonInMenu, menuLabel, menuLabelEn,
   "gekoppeldeTeamleden": gekoppeldeTeamleden[]->slug.current,
   "afbeelding": afbeelding.asset->url,
   "galerij": galerij[].asset->url,
@@ -582,9 +810,19 @@ export async function getTeamledenByLocatie(locatie: LocatieSlug): Promise<Teaml
 // not guessed from the role text. One definition, used by the homepage counts and the /team
 // filter so they can never disagree.
 export const isKinesist = (lid: Teamlid) => lid.disciplines.includes("kine");
+
+/** Manual therapy shows every physiotherapist except these four. */
+const MANUELE_UITZONDERING = new Set(["arne-daniels", "tanse-vanheusden", "an-janssen", "jana-albrechts"]);
+
+export function teamVoorDienst(dienst: Pick<Dienst, "slug" | "gekoppeldeTeamleden">, team: Teamlid[]): Teamlid[] {
+  if (dienst.slug === "manuele-therapie") {
+    return team.filter((lid) => isKinesist(lid) && !MANUELE_UITZONDERING.has(lid.slug));
+  }
+  return team.filter((lid) => dienst.gekoppeldeTeamleden.includes(lid.slug));
+}
 export const isTrainer = (lid: Teamlid) => lid.disciplines.includes("pt");
 
-/** { kinesisten, trainers } for "Met 13 kinesisten en 8 trainers en coaches …". */
+/** Counts from Teamlid.disciplines ("Telt mee als"). Someone ticked as both counts in both. */
 export function teamCounts(team: Teamlid[]): { kinesisten: number; trainers: number } {
   return {
     kinesisten: team.filter(isKinesist).length,
@@ -608,7 +846,7 @@ export async function getKeuzehulp(): Promise<Keuzehulp> {
 
 async function loadKeuzehulp(): Promise<Keuzehulp> {
   const [doc, tags] = await Promise.all([
-    sanity.fetch(`*[_id == "keuzehulp"][0]{ actief, titel, intro, vragen, geenMatchTekst }`),
+    sanity.fetch(`*[_id == "keuzehulp"][0]{ actief, titel, titelEn, intro, introEn, vragen, geenMatchTekst, geenMatchTekstEn }`),
     sanity.fetch(
       `*[_type == "keuzehulpTag" && actief != false] | order(categorie asc, coalesce(volgorde, 9999) asc, label asc){ "id": _id, label, labelEn, categorie, volgorde, actief }`,
     ) as Promise<KeuzehulpTag[]>,
@@ -617,16 +855,26 @@ async function loadKeuzehulp(): Promise<Keuzehulp> {
   for (const tag of tags || []) {
     if (tag.categorie in opties) opties[tag.categorie].push({ ...tag, actief: true });
   }
+  const vragen = doc?.vragen || {};
   return {
     actief: doc?.actief !== false,
     titel: doc?.titel || "Wie past bij mij?",
+    titelEn: doc?.titelEn || KEUZEHULP_EN.titel,
     intro:
       doc?.intro ||
       "Kies wat op jou van toepassing is — je mag per vraag meerdere opties aanklikken. Dit is een hulpmiddel, geen medisch advies.",
-    vragen: { ...KEUZEHULP_DEFAULT_VRAGEN, ...(doc?.vragen || {}) },
+    introEn: doc?.introEn || KEUZEHULP_EN.intro,
+    vragen: { ...KEUZEHULP_DEFAULT_VRAGEN, ...vragen },
+    vragenEn: {
+      klacht: vragen.klachtEn || KEUZEHULP_EN.vragen.klacht,
+      regio: vragen.regioEn || KEUZEHULP_EN.vragen.regio,
+      sport: vragen.sportEn || KEUZEHULP_EN.vragen.sport,
+      doelgroep: vragen.doelgroepEn || KEUZEHULP_EN.vragen.doelgroep,
+    },
     geenMatchTekst:
       doc?.geenMatchTekst ||
       "Geen exacte match, maar dit zijn de collega's die het dichtst bij je vraag zitten. Twijfel je? Bel ons.",
+    geenMatchTekstEn: doc?.geenMatchTekstEn || KEUZEHULP_EN.geenMatchTekst,
     opties,
   };
 }
@@ -648,7 +896,10 @@ function normalizeTeamlid(row: Teamlid): Teamlid {
       (s): s is Specialisatie => Boolean(s && s.id && s.naam),
     ),
     locaties: row.locaties || [],
-    disciplines: row.disciplines || [],
+    disciplines:
+      row.slug === "koen-daniels" && !(row.disciplines || []).includes("kine")
+        ? [...(row.disciplines || []), "kine" as Discipline]
+        : row.disciplines || [],
   };
 }
 
@@ -658,13 +909,23 @@ export function keuzehulpTagLabel(tag: Pick<KeuzehulpTag, "label" | "labelEn">, 
 
 const locatieFotoFallback: Record<string, string> = {
   olympia: "/locaties/olympia-ingang.jpg",
+  mpc: "/locaties/mpc-ingang.jpg",
 };
 
 function normalizeLocatie(row: Locatie): Locatie {
+  const foto = row.foto || locatieFotoFallback[row.slug];
+  // Public names are Movenda (Kuringersteenweg) and Performance Centre (Lammerweg).
+  // The slug stays "olympia" so existing URLs and CMS records keep working.
+  if (row.slug === "olympia") {
+    return { ...row, naam: "Movenda", korteNaam: "Movenda", foto };
+  }
+  if (row.slug === "mpc") {
+    return { ...row, korteNaam: "Performance Centre", foto };
+  }
   return {
     ...row,
     korteNaam: row.korteNaam || row.naam.replace(/^Movenda\s+/i, ""),
-    foto: row.foto || locatieFotoFallback[row.slug],
+    foto,
   };
 }
 
@@ -687,7 +948,12 @@ export async function getLocatieBySlug(slug: LocatieSlug): Promise<Locatie | und
 export async function getDiensten(): Promise<Dienst[]> {
   return once("diensten", async () => {
     const rows = await sanity.fetch(`*[_type == "dienst"] | order(volgorde asc) ${dienstProjection}`);
-    return (rows || []).map(normalizeDienst);
+    const live = (rows || []).map(normalizeDienst);
+    const keys = new Set(live.map((d: Dienst) => `${d.categorie}:${d.slug}`));
+    const extra = (seedDiensten as Dienst[])
+      .filter((d) => !keys.has(`${d.categorie}:${d.slug}`))
+      .map((d) => normalizeDienst({ ...d, galerij: d.galerij || [], gekoppeldeTeamleden: d.gekoppeldeTeamleden || [] }));
+    return [...live, ...extra];
   });
 }
 
@@ -711,16 +977,12 @@ export async function getDienstBySlug(
 
 // Old-site covers for diensten the media upload missed (no Sanity image yet).
 const dienstCoverFallback: Record<string, string> = {
-  "kleine-groepstraining": "/dienst-covers/kleine-groepstraining.jpg",
+  teamtraining: "/dienst-covers/kleine-groepstraining.jpg",
   skifit: "/dienst-covers/skifit.jpg",
   running: "/dienst-covers/running.jpg",
 };
 
-const seedDienstByKey = new Map(
-  (seedDiensten as Pick<Dienst, "slug" | "categorie" | "bodyEn" | "seoTitleEn" | "seoDescriptionEn">[]).map(
-    (d) => [`${d.categorie}:${d.slug}`, d],
-  ),
-);
+const seedDienstByKey = new Map((seedDiensten as Dienst[]).map((d) => [`${d.categorie}:${d.slug}`, d]));
 
 /** Prefer Julie's CMS English when it is complete; if Sanity still has the
  * short summary from the first EN pass, use the full seed translation. */
@@ -733,17 +995,51 @@ function pickFullerEn(cms?: string, seed?: string): string | undefined {
   return live;
 }
 
+function withoutTarieven(text?: string): string | undefined {
+  if (!text) return text;
+  return text.replace(/\n*Tarieven staan[^\n]*/gi, "").replace(/\n*Fees are on the[^\n]*/gi, "").trim();
+}
+
 function normalizeDienst(row: Dienst): Dienst {
   const fallback = dienstCoverFallback[row.slug];
   const fromSeed = seedDienstByKey.get(`${row.categorie}:${row.slug}`);
+  const seedBody = fromSeed?.body;
+  const chosenBody = pickFullerEn(row.body, seedBody);
+  const seedWon = Boolean(seedBody?.trim() && chosenBody === seedBody.trim());
+  const fromDocument = seedWon && fromSeed
+    ? {
+        titel: fromSeed.titel,
+        titelEn: fromSeed.titelEn,
+        intro: fromSeed.intro,
+        slogan: fromSeed.slogan,
+        sloganEn: fromSeed.sloganEn,
+        ctaLabel: fromSeed.ctaLabel,
+        ctaLabelEn: fromSeed.ctaLabelEn,
+        ctaUrl: fromSeed.ctaUrl,
+        menuLabel: fromSeed.menuLabel,
+        menuLabelEn: fromSeed.menuLabelEn,
+        seoTitle: fromSeed.seoTitle,
+        seoDescription: fromSeed.seoDescription,
+        seoTitleEn: fromSeed.seoTitleEn,
+        seoDescriptionEn: fromSeed.seoDescriptionEn,
+      }
+    : {};
   return {
     ...row,
-    bodyEn: pickFullerEn(row.bodyEn, fromSeed?.bodyEn),
-    seoTitleEn: row.seoTitleEn || fromSeed?.seoTitleEn,
-    seoDescriptionEn: row.seoDescriptionEn || fromSeed?.seoDescriptionEn,
+    ...fromDocument,
+    body: withoutTarieven(chosenBody || row.body) || row.body,
+    bodyEn: withoutTarieven(pickFullerEn(row.bodyEn, fromSeed?.bodyEn)),
+    seoTitleEn: (seedWon ? fromSeed?.seoTitleEn : undefined) || row.seoTitleEn || fromSeed?.seoTitleEn,
+    seoDescriptionEn: (seedWon ? fromSeed?.seoDescriptionEn : undefined) || row.seoDescriptionEn || fromSeed?.seoDescriptionEn,
     afbeelding: row.afbeelding || fallback,
     galerij: row.galerij?.length ? row.galerij : fallback ? [fallback] : [],
     gekoppeldeTeamleden: row.gekoppeldeTeamleden || [],
+    slogan: (seedWon ? fromSeed?.slogan : undefined) || row.slogan?.trim() || fromSeed?.slogan,
+    sloganEn: (seedWon ? fromSeed?.sloganEn : undefined) || row.sloganEn || fromSeed?.sloganEn,
+    // Sanity wins once Julie sets the checkbox. An empty field falls back to the seed,
+    // so these three can start hidden and she can turn them back on in Studio.
+    toonInMenu: row.toonInMenu ?? fromSeed?.toonInMenu ?? true,
+    ctaUrl: rewriteMpcHref((seedWon ? fromSeed?.ctaUrl : undefined) || row.ctaUrl || fromSeed?.ctaUrl),
   };
 }
 
@@ -753,8 +1049,12 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 async function loadSiteSettings(): Promise<SiteSettings> {
   const settings = await sanity.fetch(
-    `*[_id == "siteSettings"][0]{ siteNaam, tagline, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, googleReviewsFeed, partnerband,
+    `*[_id == "siteSettings"][0]{ siteNaam, tagline, footerTagline, footerTaglineEn, email, socials, booking, googleReviews, analytics, prijzenInfo, slogans, nieuwsbrief, instagramFeed, googleReviewsFeed, partnerband,
       homePijlers{ kine{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, training{ ..., "foto": foto${CMS_FOTO_PROJECTION} }, mpc{ ..., "foto": foto${CMS_FOTO_PROJECTION} } },
+      homeDeurenTitel, homeDeurenTitelEn,
+      homeDeuren[]{ korteNaam, korteNaamEn, regel, regelEn, tekst, tekstEn, href, "foto": foto${CMS_FOTO_PROJECTION} },
+      homeAanbod[]{ korteNaam, korteNaamEn, regel, regelEn, tekst, tekstEn, href, "foto": foto${CMS_FOTO_PROJECTION} },
+      homeBrief,
       teamfoto{ "url": afbeelding.asset->url, alt, bijschrift, "hotspot": afbeelding.hotspot{ x, y } },
       "ogAfbeelding": ogAfbeelding.asset->url }`,
   );
@@ -763,10 +1063,16 @@ async function loadSiteSettings(): Promise<SiteSettings> {
   return {
     siteNaam: settings?.siteNaam || "Movenda",
     tagline: settings?.tagline || "",
+    footerTagline: settings?.footerTagline?.trim() || seedSettings.footerTagline,
+    footerTaglineEn: settings?.footerTaglineEn?.trim() || seedSettings.footerTaglineEn,
     telefoonOlympia: olympia?.telefoon || "",
     telefoonMpc: mpc?.telefoon || "",
     email: settings?.email || "info@movenda.be",
-    booking: settings?.booking || { enabled: false, url: "", label: "Maak een afspraak" },
+    booking: {
+      ...(seedSettings.booking || { enabled: false, url: "", label: "Maak een afspraak" }),
+      ...(settings?.booking || {}),
+      labelEn: settings?.booking?.labelEn || seedSettings.booking?.labelEn,
+    },
     // Own upload wins entirely (incl. an empty caption). Without an upload the
     // seed texts + the local fallback photo (assets/marketing/team.jpg) are used.
     teamfoto: settings?.teamfoto?.url
@@ -780,9 +1086,13 @@ async function loadSiteSettings(): Promise<SiteSettings> {
           alt: settings?.teamfoto?.alt || seedSettings.teamfoto.alt,
           bijschrift: settings?.teamfoto?.bijschrift || seedSettings.teamfoto.bijschrift,
         },
-    googleReviews: settings?.googleReviews || {
-      olympia: { rating: 0, count: "", reviewUrl: "", writeReviewUrl: "" },
-      mpc: { rating: 0, count: "", reviewUrl: "", writeReviewUrl: "" },
+    googleReviews: {
+      olympia: settings?.googleReviews?.olympia || {
+        rating: 0,
+        count: "",
+        reviewUrl: "",
+        writeReviewUrl: "",
+      },
     },
     analytics: {
       ...DEFAULT_ANALYTICS,
@@ -791,8 +1101,8 @@ async function loadSiteSettings(): Promise<SiteSettings> {
       umami: { ...DEFAULT_ANALYTICS.umami, ...(settings?.analytics?.umami || {}) },
     },
     socials: settings?.socials || { instagram: "", facebook: "", linkedin: "" },
-    prijzenInfo: settings?.prijzenInfo || {},
-    slogans: settings?.slogans || {},
+    prijzenInfo: { ...(seedSettings.prijzenInfo || {}), ...(settings?.prijzenInfo || {}) },
+    slogans: { ...(seedSettings.slogans || {}), ...(settings?.slogans || {}) },
     nieuwsbrief: settings?.nieuwsbrief || { enabled: false },
     instagramFeed: {
       enabled: settings?.instagramFeed?.enabled !== false,
@@ -807,7 +1117,7 @@ async function loadSiteSettings(): Promise<SiteSettings> {
       titel:
         settings?.googleReviewsFeed?.titel ||
         seedSettings.googleReviewsFeed?.titel ||
-        "Wat klanten zeggen op Google",
+        "Google Reviews",
       widgetId:
         settings?.googleReviewsFeed?.widgetId ||
         seedSettings.googleReviewsFeed?.widgetId ||
@@ -824,10 +1134,122 @@ async function loadSiteSettings(): Promise<SiteSettings> {
       training: mergePijler("training", settings?.homePijlers?.training),
       mpc: mergePijler("mpc", settings?.homePijlers?.mpc),
     },
+    homeDeurenTitel: settings?.homeDeurenTitel || seedSettings.homeDeurenTitel || "Eén praktijk, drie wegen",
+    homeDeurenTitelEn: settings?.homeDeurenTitelEn || seedSettings.homeDeurenTitelEn,
+    homeDeuren: mergeHomeDeuren(settings?.homeDeuren, seedDeuren),
+    homeAanbod: mergeHomeDeuren(settings?.homeAanbod, seedAanbod),
+    homeBrief: mergeHomeBrief(settings?.homeBrief),
     ogAfbeelding: settings?.ogAfbeelding || undefined,
     // Lives under Analytics in the Studio (same tab as the GA4 id), top-level here.
     googleSiteVerification: (settings?.analytics?.googleSiteVerification as string | undefined)?.trim() || undefined,
   };
+}
+
+const seedDeuren = (seedSettings.homeDeuren ?? []) as HomeDeur[];
+const seedAanbod = (seedSettings.homeAanbod ?? []) as HomeDeur[];
+const seedBrief = seedSettings.homeBrief as HomeBrief;
+
+function mergeHomeBrief(fromSanity?: Partial<HomeBrief> | null): HomeBrief {
+  const text = (value: string | undefined, fallback: string) => value?.trim() || fallback;
+  return {
+    merkKicker: text(fromSanity?.merkKicker, seedBrief.merkKicker),
+    merkKickerEn: text(fromSanity?.merkKickerEn, seedBrief.merkKickerEn || ""),
+    merkTitel: text(fromSanity?.merkTitel, seedBrief.merkTitel),
+    merkTitelEn: text(fromSanity?.merkTitelEn, seedBrief.merkTitelEn || ""),
+    merkTekst: text(fromSanity?.merkTekst, seedBrief.merkTekst),
+    merkTekstEn: text(fromSanity?.merkTekstEn, seedBrief.merkTekstEn || ""),
+    merkStatement: text(fromSanity?.merkStatement, seedBrief.merkStatement),
+    merkStatementEn: text(fromSanity?.merkStatementEn, seedBrief.merkStatementEn || ""),
+    merkCta: text(fromSanity?.merkCta, seedBrief.merkCta),
+    merkCtaEn: text(fromSanity?.merkCtaEn, seedBrief.merkCtaEn || ""),
+    partnersKicker: text(fromSanity?.partnersKicker, seedBrief.partnersKicker),
+    partnersKickerEn: text(fromSanity?.partnersKickerEn, seedBrief.partnersKickerEn || ""),
+    partnersCta: text(fromSanity?.partnersCta, seedBrief.partnersCta),
+    partnersCtaEn: text(fromSanity?.partnersCtaEn, seedBrief.partnersCtaEn || ""),
+    aanbodKicker: text(fromSanity?.aanbodKicker, seedBrief.aanbodKicker),
+    aanbodKickerEn: text(fromSanity?.aanbodKickerEn, seedBrief.aanbodKickerEn || ""),
+    aanbodTekst: text(fromSanity?.aanbodTekst, seedBrief.aanbodTekst),
+    aanbodTekstEn: text(fromSanity?.aanbodTekstEn, seedBrief.aanbodTekstEn || ""),
+    locatiesTitel: text(fromSanity?.locatiesTitel, seedBrief.locatiesTitel),
+    locatiesTitelEn: text(fromSanity?.locatiesTitelEn, seedBrief.locatiesTitelEn || ""),
+    hasseltNaam: text(fromSanity?.hasseltNaam, seedBrief.hasseltNaam),
+    hasseltNaamEn: text(fromSanity?.hasseltNaamEn, seedBrief.hasseltNaamEn || ""),
+    kuringenNaam: text(fromSanity?.kuringenNaam, seedBrief.kuringenNaam),
+    kuringenNaamEn: text(fromSanity?.kuringenNaamEn, seedBrief.kuringenNaamEn || ""),
+    hasseltProfiel: text(fromSanity?.hasseltProfiel, seedBrief.hasseltProfiel),
+    hasseltProfielEn: text(fromSanity?.hasseltProfielEn, seedBrief.hasseltProfielEn || ""),
+    kuringenProfiel: text(fromSanity?.kuringenProfiel, seedBrief.kuringenProfiel),
+    kuringenProfielEn: text(fromSanity?.kuringenProfielEn, seedBrief.kuringenProfielEn || ""),
+    eventsKicker: text(fromSanity?.eventsKicker, seedBrief.eventsKicker),
+    eventsKickerEn: text(fromSanity?.eventsKickerEn, seedBrief.eventsKickerEn || ""),
+    teamKicker: text(fromSanity?.teamKicker, seedBrief.teamKicker),
+    teamKickerEn: text(fromSanity?.teamKickerEn, seedBrief.teamKickerEn || ""),
+    teamTitel: text(fromSanity?.teamTitel, seedBrief.teamTitel),
+    teamTitelEn: text(fromSanity?.teamTitelEn, seedBrief.teamTitelEn || ""),
+    teamTekst: text(fromSanity?.teamTekst, seedBrief.teamTekst),
+    teamTekstEn: text(fromSanity?.teamTekstEn, seedBrief.teamTekstEn || ""),
+    teamCta: text(fromSanity?.teamCta, seedBrief.teamCta),
+    teamCtaEn: text(fromSanity?.teamCtaEn, seedBrief.teamCtaEn || ""),
+    reviewsTitel: text(fromSanity?.reviewsTitel, seedBrief.reviewsTitel),
+    reviewsTitelEn: text(fromSanity?.reviewsTitelEn, seedBrief.reviewsTitelEn || ""),
+    reviewsCta: text(fromSanity?.reviewsCta, seedBrief.reviewsCta),
+    reviewsCtaEn: text(fromSanity?.reviewsCtaEn, seedBrief.reviewsCtaEn || ""),
+    insightsKicker: text(fromSanity?.insightsKicker, seedBrief.insightsKicker),
+    insightsKickerEn: text(fromSanity?.insightsKickerEn, seedBrief.insightsKickerEn || ""),
+    insightsTitel: text(fromSanity?.insightsTitel, seedBrief.insightsTitel),
+    insightsTitelEn: text(fromSanity?.insightsTitelEn, seedBrief.insightsTitelEn || ""),
+    insightsTekst: text(fromSanity?.insightsTekst, seedBrief.insightsTekst),
+    insightsTekstEn: text(fromSanity?.insightsTekstEn, seedBrief.insightsTekstEn || ""),
+    insightsCta: text(fromSanity?.insightsCta, seedBrief.insightsCta),
+    insightsCtaEn: text(fromSanity?.insightsCtaEn, seedBrief.insightsCtaEn || ""),
+    instagramTitel: text(fromSanity?.instagramTitel, seedBrief.instagramTitel),
+    instagramTitelEn: text(fromSanity?.instagramTitelEn, seedBrief.instagramTitelEn || ""),
+    instagramCta: text(fromSanity?.instagramCta, seedBrief.instagramCta),
+    instagramCtaEn: text(fromSanity?.instagramCtaEn, seedBrief.instagramCtaEn || ""),
+    slotTitel: text(fromSanity?.slotTitel, seedBrief.slotTitel),
+    slotTitelEn: text(fromSanity?.slotTitelEn, seedBrief.slotTitelEn || ""),
+    slotTekst: text(fromSanity?.slotTekst, seedBrief.slotTekst),
+    slotTekstEn: text(fromSanity?.slotTekstEn, seedBrief.slotTekstEn || ""),
+    slotAfspraak: text(fromSanity?.slotAfspraak, seedBrief.slotAfspraak),
+    slotAfspraakEn: text(fromSanity?.slotAfspraakEn, seedBrief.slotAfspraakEn || ""),
+    slotContact: text(fromSanity?.slotContact, seedBrief.slotContact),
+    slotContactEn: text(fromSanity?.slotContactEn, seedBrief.slotContactEn || ""),
+    bewijs: {
+      jaren: text(fromSanity?.bewijs?.jaren, seedBrief.bewijs.jaren),
+      kinesistenLabel: text(fromSanity?.bewijs?.kinesistenLabel, seedBrief.bewijs.kinesistenLabel),
+      kinesistenLabelEn: text(fromSanity?.bewijs?.kinesistenLabelEn, seedBrief.bewijs.kinesistenLabelEn || ""),
+      trainersLabel: text(fromSanity?.bewijs?.trainersLabel, seedBrief.bewijs.trainersLabel),
+      trainersLabelEn: text(fromSanity?.bewijs?.trainersLabelEn, seedBrief.bewijs.trainersLabelEn || ""),
+      locatiesLabel: text(fromSanity?.bewijs?.locatiesLabel, seedBrief.bewijs.locatiesLabel),
+      locatiesLabelEn: text(fromSanity?.bewijs?.locatiesLabelEn, seedBrief.bewijs.locatiesLabelEn || ""),
+      jarenLabel: text(fromSanity?.bewijs?.jarenLabel, seedBrief.bewijs.jarenLabel),
+      jarenLabelEn: text(fromSanity?.bewijs?.jarenLabelEn, seedBrief.bewijs.jarenLabelEn || ""),
+    },
+  };
+}
+
+function mergeHomeDeuren(
+  fromSanity: Array<Partial<HomeDeur> & { foto?: Parameters<typeof toCmsFoto>[0] }> | undefined,
+  seedRows: HomeDeur[],
+): HomeDeur[] {
+  const rows = fromSanity?.length ? fromSanity : seedRows;
+  return rows
+    .map((row): HomeDeur | null => {
+      const korteNaam = row.korteNaam?.trim();
+      const href = row.href?.trim();
+      if (!korteNaam || !href) return null;
+      return {
+        korteNaam,
+        korteNaamEn: row.korteNaamEn?.trim() || undefined,
+        regel: row.regel?.trim() || undefined,
+        regelEn: row.regelEn?.trim() || undefined,
+        tekst: row.tekst?.trim() || undefined,
+        tekstEn: row.tekstEn?.trim() || undefined,
+        href: (rewriteMpcHref(href) || href).replace(/\/performance\/corporate-coaching$/, "/b2b"),
+        foto: toCmsFoto(row.foto),
+      };
+    })
+    .filter((row): row is HomeDeur => row !== null);
 }
 
 // Until Julie fills in "Homepage — drie pijlers" in Sanity, the seed copy
@@ -895,6 +1317,25 @@ export interface Pagina {
   legeTekstEn?: string;
   ctaTekst?: string;
   ctaTekstEn?: string;
+  slogan?: string;
+  sloganEn?: string;
+  /** Closing statement (Ons verhaal, Onze visie). */
+  afsluiter?: string;
+  afsluiterEn?: string;
+  extraTekst?: string;
+  extraTekstEn?: string;
+  prijsNotitie?: string;
+  prijsNotitieEn?: string;
+  formulierIntro?: string;
+  formulierIntroEn?: string;
+  terugbetalingTitel?: string;
+  terugbetalingTitelEn?: string;
+  terugbetalingTekst?: string;
+  terugbetalingTekstEn?: string;
+  perTherapeutTitel?: string;
+  perTherapeutTitelEn?: string;
+  perTherapeutTekst?: string;
+  perTherapeutTekstEn?: string;
   /** Contact form: choices for "Hoe ben je bij ons terechtgekomen?" (contact page only). */
   verwijsopties: VerwijsOptie[];
   seoTitle?: string;
@@ -923,7 +1364,16 @@ type PaginaRow = Partial<Omit<Pagina, "fotoSecundair" | "bannerFoto">> & {
 };
 
 function mergeBlokken(cms: PaginaBlok[] | undefined, seed: PaginaBlok[] | undefined): PaginaBlok[] {
-  return cms?.length ? cms : seed || [];
+  if (!cms?.length) return seed || [];
+  return cms.map((blok) => {
+    const fromSeed = seed?.find((item) => item.kop === blok.kop);
+    if (!fromSeed) return blok;
+    return {
+      ...blok,
+      kopEn: blok.kopEn?.trim() || fromSeed.kopEn,
+      tekstEn: blok.tekstEn?.trim() || fromSeed.tekstEn,
+    };
+  });
 }
 
 const VERWIJS_VERVOLG = new Set<VerwijsVervolg>(["geen", "naam", "club", "event", "tekst"]);
@@ -936,6 +1386,22 @@ function normalizeVerwijsopties(items: Partial<VerwijsOptie>[] | undefined): Ver
       labelEn: item.labelEn?.trim() || undefined,
       vervolg: VERWIJS_VERVOLG.has(item.vervolg as VerwijsVervolg) ? (item.vervolg as VerwijsVervolg) : "geen",
     }));
+}
+
+/** New defaults from the seed (e.g. Sportcentrum Olympia) still show if the CMS list is an older copy. */
+function withSeedVerwijsopties(
+  live: VerwijsOptie[],
+  seed: Partial<VerwijsOptie>[] | undefined,
+): VerwijsOptie[] {
+  const extras = normalizeVerwijsopties(seed).filter(
+    (opt) => !live.some((item) => item.label.toLowerCase() === opt.label.toLowerCase()),
+  );
+  if (!extras.length) return live;
+  const andere = live.findIndex((item) => /^andere$/i.test(item.label));
+  if (andere >= 0) return [...live.slice(0, andere), ...extras, ...live.slice(andere)];
+  const club = live.findIndex((item) => /sportclub/i.test(item.label));
+  if (club >= 0) return [...live.slice(0, club + 1), ...extras, ...live.slice(club + 1)];
+  return [...live, ...extras];
 }
 
 export async function getPagina(key: PaginaKey): Promise<Pagina> {
@@ -953,6 +1419,9 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
       "heroVideo": heroVideo.asset->url,
       blokken, kenmerken, stappenTitel, stappenTitelEn, stappenIntro, stappenIntroEn, stappen, pijlers,
       legeTekst, legeTekstEn, ctaTekst, ctaTekstEn,
+      slogan, sloganEn, afsluiter, afsluiterEn, extraTekst, extraTekstEn, prijsNotitie, prijsNotitieEn, formulierIntro, formulierIntroEn,
+      terugbetalingTitel, terugbetalingTitelEn, terugbetalingTekst, terugbetalingTekstEn,
+      perTherapeutTitel, perTherapeutTitelEn, perTherapeutTekst, perTherapeutTekstEn,
       verwijsopties[]{ label, labelEn, vervolg },
       seoTitle, seoDescription, seoTitleEn, seoDescriptionEn
     }`,
@@ -991,7 +1460,28 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
     legeTekstEn: pick("legeTekstEn"),
     ctaTekst: pick("ctaTekst"),
     ctaTekstEn: pick("ctaTekstEn"),
-    verwijsopties: normalizeVerwijsopties(row?.verwijsopties?.length ? row.verwijsopties : seed.verwijsopties),
+    slogan: pick("slogan"),
+    sloganEn: pick("sloganEn"),
+    afsluiter: pick("afsluiter"),
+    afsluiterEn: pick("afsluiterEn"),
+    extraTekst: pick("extraTekst"),
+    extraTekstEn: pick("extraTekstEn"),
+    prijsNotitie: pick("prijsNotitie"),
+    prijsNotitieEn: pick("prijsNotitieEn"),
+    formulierIntro: pick("formulierIntro"),
+    formulierIntroEn: pick("formulierIntroEn"),
+    terugbetalingTitel: pick("terugbetalingTitel"),
+    terugbetalingTitelEn: pick("terugbetalingTitelEn"),
+    terugbetalingTekst: pick("terugbetalingTekst"),
+    terugbetalingTekstEn: pick("terugbetalingTekstEn"),
+    perTherapeutTitel: pick("perTherapeutTitel"),
+    perTherapeutTitelEn: pick("perTherapeutTitelEn"),
+    perTherapeutTekst: pick("perTherapeutTekst"),
+    perTherapeutTekstEn: pick("perTherapeutTekstEn"),
+    verwijsopties: withSeedVerwijsopties(
+      normalizeVerwijsopties(row?.verwijsopties?.length ? row.verwijsopties : seed.verwijsopties),
+      seed.verwijsopties,
+    ),
     seoTitle: pick("seoTitle"),
     seoDescription: pick("seoDescription"),
     seoTitleEn: pick("seoTitleEn"),
@@ -1007,6 +1497,15 @@ type PaginaTekstVeld =
   | "stappenIntro"
   | "legeTekst"
   | "ctaTekst"
+  | "slogan"
+  | "afsluiter"
+  | "extraTekst"
+  | "prijsNotitie"
+  | "formulierIntro"
+  | "terugbetalingTitel"
+  | "terugbetalingTekst"
+  | "perTherapeutTitel"
+  | "perTherapeutTekst"
   | "seoTitle"
   | "seoDescription";
 
@@ -1024,11 +1523,35 @@ export function paginaAlineas(
   lang: Lang = "nl",
   vars: Record<string, string | number> = {},
 ): string[] {
-  const raw = paginaTekst(p, "intro", lang);
-  return raw
+  return paginaParagrafen(p, "intro", lang, vars);
+}
+
+/** Any text field as paragraphs (blank line = new paragraph), with {placeholders} filled from `vars`. */
+export function paginaParagrafen(
+  p: Pagina,
+  field: PaginaTekstVeld,
+  lang: Lang = "nl",
+  vars: Record<string, string | number> = {},
+): string[] {
+  return paginaTekst(p, field, lang)
     .split(/\n\s*\n/)
     .map((s) => s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m)).trim())
     .filter(Boolean);
+}
+
+/** Block text as paragraphs and bullet lists: a line starting with "- " is a list item. */
+export function tekstChunks(tekst: string): { kind: "p" | "ul"; lines: string[] }[] {
+  const out: { kind: "p" | "ul"; lines: string[] }[] = [];
+  for (const raw of tekst.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    const bullet = line.startsWith("- ") ? line.slice(2) : "";
+    const last = out[out.length - 1];
+    if (bullet && last?.kind === "ul") last.lines.push(bullet);
+    else if (bullet) out.push({ kind: "ul", lines: [bullet] });
+    else out.push({ kind: "p", lines: [line] });
+  }
+  return out;
 }
 
 export function paginaBlokKop(b: PaginaBlok, lang: Lang = "nl"): string {
@@ -1104,7 +1627,17 @@ export async function getPrijzen(): Promise<Prijsitem[]> {
       sanity.fetch(`*[_type == "prijsitem"] | order(volgorde asc) ${prijsitemProjection}`) as Promise<Prijsitem[]>,
       sanity.fetch(`*[_id == "siteSettings"][0].prijzenInfo.exBtwMpc`) as Promise<boolean | undefined>,
     ]);
-    return (rows || []).map((row) => ({ ...row, exclBtw: prijsIsExclBtw(row, exBtwMpc) }));
+    const items = (rows || []).map((row) => ({ ...row, exclBtw: prijsIsExclBtw(row, exBtwMpc) }));
+    const hidden = (await getDiensten())
+      .filter((dienst) => dienst.toonInMenu === false)
+      .flatMap((dienst) => [dienst.titel, dienst.titelEn].filter((naam): naam is string => !!naam))
+      .map(normalizeNaam);
+    return items.filter((item) => {
+      const names = [normalizeNaam(item.naam), item.naamEn ? normalizeNaam(item.naamEn) : ""];
+      return !hidden.some(
+        (naam) => naam && names.some((pn) => pn === naam || pn.startsWith(`${naam} `)),
+      );
+    });
   });
 }
 
@@ -1204,6 +1737,7 @@ export async function getPartners(tonenOp?: "movenda" | "mpc"): Promise<Partner[
 async function loadPartners(): Promise<Partner[]> {
   // Partners seeded before the "actief" toggle existed have no such field;
   // missing counts as active so nothing silently drops out of the band.
+  const hidden = /tenkie|vkm[\s-]*godsheide/i;
   const rows: Partner[] = await sanity.fetch(
     `*[_type == "partner" && actief != false] | order(volgorde asc) {
       "slug": _id,
@@ -1212,14 +1746,19 @@ async function loadPartners(): Promise<Partner[]> {
       "logo": logo.asset->url
     }`,
   );
-  return rows || [];
+  const live = (rows || []).filter((partner) => !hidden.test(partner.naam) && !hidden.test(partner.slug));
+  const names = new Set(live.map((partner) => partner.naam.toLowerCase()));
+  const extra = (seedPartners as Partner[]).filter(
+    (partner) => partner.actief !== false && !names.has(partner.naam.toLowerCase()) && !hidden.test(partner.naam),
+  );
+  return [...live, ...extra];
 }
 
 export async function getLesrooster(): Promise<LesroosterItem[]> {
   return once("lesrooster", () => sanity.fetch(
     `*[_type == "lesrooster"] | order(volgorde asc) {
-      les, dag, van, tot, volgorde,
-      "coachNaam": coach->voornaam + " " + coach->naam,
+      les, lesEn, dag, van, tot, volgorde,
+      "coachNaam": coach->voornaam,
       "coachSlug": coach->slug.current,
       "dienstSlug": dienst->slug.current,
       "dienstCategorie": dienst->categorie
@@ -1338,6 +1877,176 @@ function normalizeBlogPost(row: BlogPost): BlogPost {
   };
 }
 
+export interface SiteEvent {
+  slug: string;
+  titel: string;
+  titelEn?: string;
+  datum: string;
+  locatie?: string;
+  foto?: string;
+  fotoHotspot?: { x: number; y: number };
+  /** Sanity CDN URL of an uploaded mp4/webm. Plays on the events page. */
+  video?: string;
+  tekst?: string;
+  tekstEn?: string;
+  /** "Meer info" target: an actiepagina (/ddh-ready) or an external URL. */
+  link?: string;
+  linkLabel?: string;
+  tonenOpHome: boolean;
+}
+
+const PLACEHOLDER_EVENT: SiteEvent = {
+  slug: "dwars-door-hasselt",
+  titel: "Dwars door Hasselt",
+  titelEn: "Dwars door Hasselt",
+  datum: "2026-10-11",
+  locatie: "Hasselt",
+  tekst: "We zijn erbij.",
+  tekstEn: "We'll be there.",
+  tonenOpHome: true,
+};
+
+export async function getEvents(): Promise<SiteEvent[]> {
+  return once("events", async () => {
+    const rows = await sanity.fetch(
+      `*[_type == "event" && actief != false] | order(datum desc) {
+        "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, link, linkLabel, tonenOpHome,
+        "foto": foto.asset->url,
+        "fotoHotspot": foto.hotspot{ x, y },
+        "video": video.asset->url
+      }`,
+    );
+    const live = (rows || []).filter((row: SiteEvent) => row.slug && row.titel && row.datum);
+    return live.length > 0 ? live : [PLACEHOLDER_EVENT];
+  });
+}
+
+export interface ActieItem {
+  label?: string;
+  labelEn?: string;
+  kop: string;
+  kopEn?: string;
+  tekst?: string;
+  tekstEn?: string;
+  video?: string;
+}
+
+export interface ActieSectie {
+  kicker?: string;
+  kickerEn?: string;
+  titel?: string;
+  titelEn?: string;
+  tekst?: string;
+  tekstEn?: string;
+  items: ActieItem[];
+  kaderTitel?: string;
+  kaderTitelEn?: string;
+  kaderTekst?: string;
+  kaderTekstEn?: string;
+  foto?: CmsFoto;
+  knopLabel?: string;
+  knopLabelEn?: string;
+  knopUrl?: string;
+}
+
+/** Campaign / event landing page at /<slug> (Dwars door Hasselt Ready, Recovery). */
+export interface Actiepagina {
+  slug: string;
+  titel: string;
+  titelEn?: string;
+  kicker?: string;
+  kickerEn?: string;
+  slogan?: string;
+  sloganEn?: string;
+  intro?: string;
+  introEn?: string;
+  datumRegel?: string;
+  datumRegelEn?: string;
+  foto?: CmsFoto;
+  logo?: string;
+  logoNaam?: string;
+  logoUrl?: string;
+  secties: ActieSectie[];
+  galerij: CmsFoto[];
+  afsluiter?: string;
+  afsluiterEn?: string;
+  zichtbaarInGoogle: boolean;
+  seoTitle?: string;
+  seoTitleEn?: string;
+  seoDescription?: string;
+  seoDescriptionEn?: string;
+}
+
+/** A section is shown once Julie gave it more than a heading. */
+export function actieSectieGevuld(s: ActieSectie): boolean {
+  return Boolean(s.tekst?.trim() || s.items.length || s.kaderTekst?.trim() || s.foto || (s.knopLabel && s.knopUrl));
+}
+
+function actieTekst(nl: string | undefined, en: string | undefined, lang: Lang): string | undefined {
+  if (lang !== "en") return nl;
+  return en?.trim() ? en : nl;
+}
+
+/** English campaign copy when Julie filled the EN fields; otherwise the Dutch text. */
+export function localizeActie(pagina: Actiepagina, lang: Lang): Actiepagina {
+  if (lang !== "en") return pagina;
+  return {
+    ...pagina,
+    titel: actieTekst(pagina.titel, pagina.titelEn, lang) || pagina.titel,
+    kicker: actieTekst(pagina.kicker, pagina.kickerEn, lang),
+    slogan: actieTekst(pagina.slogan, pagina.sloganEn, lang),
+    intro: actieTekst(pagina.intro, pagina.introEn, lang),
+    datumRegel: actieTekst(pagina.datumRegel, pagina.datumRegelEn, lang),
+    afsluiter: actieTekst(pagina.afsluiter, pagina.afsluiterEn, lang),
+    seoTitle: actieTekst(pagina.seoTitle, pagina.seoTitleEn, lang),
+    seoDescription: actieTekst(pagina.seoDescription, pagina.seoDescriptionEn, lang),
+    secties: pagina.secties.map((s) => ({
+      ...s,
+      kicker: actieTekst(s.kicker, s.kickerEn, lang),
+      titel: actieTekst(s.titel, s.titelEn, lang),
+      tekst: actieTekst(s.tekst, s.tekstEn, lang),
+      kaderTitel: actieTekst(s.kaderTitel, s.kaderTitelEn, lang),
+      kaderTekst: actieTekst(s.kaderTekst, s.kaderTekstEn, lang),
+      knopLabel: actieTekst(s.knopLabel, s.knopLabelEn, lang),
+      items: s.items.map((item) => ({
+        ...item,
+        label: actieTekst(item.label, item.labelEn, lang),
+        kop: actieTekst(item.kop, item.kopEn, lang) || item.kop,
+        tekst: actieTekst(item.tekst, item.tekstEn, lang),
+      })),
+    })),
+  };
+}
+
+export async function getActiepaginas(): Promise<Actiepagina[]> {
+  return once("actiepaginas", async () => {
+    const rows = await sanity.fetch(
+      `*[_type == "actiepagina" && defined(slug.current) && !(_id in path("drafts.**"))] {
+        "slug": slug.current, titel, titelEn, kicker, kickerEn, slogan, sloganEn, intro, introEn, datumRegel, datumRegelEn,
+        "foto": foto${CMS_FOTO_PROJECTION},
+        "logo": logo.asset->url, logoNaam, logoUrl,
+        secties[]{ kicker, kickerEn, titel, titelEn, tekst, tekstEn, items[]{ label, labelEn, kop, kopEn, tekst, tekstEn, video }, kaderTitel, kaderTitelEn, kaderTekst, kaderTekstEn,
+          "foto": foto${CMS_FOTO_PROJECTION}, knopLabel, knopLabelEn, knopUrl },
+        "galerij": galerij[]${CMS_FOTO_PROJECTION},
+        afsluiter, afsluiterEn, zichtbaarInGoogle, seoTitle, seoTitleEn, seoDescription, seoDescriptionEn
+      }`,
+    );
+    return (rows || [])
+      .filter((row: { slug?: string; titel?: string }) => row.slug && row.titel)
+      .map((row: Actiepagina & { foto?: unknown; secties?: (ActieSectie & { foto?: unknown })[] | null; galerij?: unknown[] | null }) => ({
+        ...row,
+        foto: toCmsFoto(row.foto as Parameters<typeof toCmsFoto>[0]),
+        secties: (row.secties || []).map((s) => ({
+          ...s,
+          items: (s.items || []).filter((i) => i?.kop),
+          foto: toCmsFoto(s.foto as Parameters<typeof toCmsFoto>[0]),
+        })),
+        galerij: (row.galerij || []).map((f) => toCmsFoto(f as Parameters<typeof toCmsFoto>[0])).filter((f): f is CmsFoto => Boolean(f)),
+        zichtbaarInGoogle: row.zichtbaarInGoogle !== false,
+      }));
+  });
+}
+
 export async function getBlogPosts(): Promise<BlogPost[]> {
   return once("blogPosts", async () => {
     const rows: BlogPost[] = await sanity.fetch(
@@ -1391,7 +2100,7 @@ export async function getRelatedBlogPosts(slug: string, limit = 3): Promise<Blog
 export async function getVacatures(): Promise<Vacature[]> {
   return once("vacatures", () =>
     sanity.fetch(
-      `*[_type == "vacature" && actief == true] { "slug": slug.current, titel, "locatieNaam": locatie->naam, omschrijving, contactEmail, actief }`,
+      `*[_type == "vacature" && actief == true] { "slug": slug.current, titel, titelEn, "locatieNaam": locatie->naam, omschrijving, omschrijvingEn, contactEmail, actief }`,
     ),
   );
 }
@@ -1420,7 +2129,9 @@ async function loadSportaanbod(): Promise<SportaanbodItem[]> {
 
 function popupMatchesPath(toonOp: PopupTonenOp, path: string): boolean {
   if (toonOp === "home") return path === "/" || path === "/en" || path === "/en/";
-  if (toonOp === "mpc") return path.includes("/mpc");
+  if (toonOp === "mpc") {
+    return path.includes("/performance") || path.includes("/groepslessen") || path.includes("/mpc");
+  }
   return true;
 }
 
@@ -1442,7 +2153,7 @@ async function loadPopups(): Promise<Popup[]> {
       actief, titel, titelEn,
       "afbeelding": afbeelding.asset->url,
       inhoud, inhoudEn,
-      knopTekst, knopTekstEn, actie, knopUrl,
+      knopTekst, knopTekstEn, actie, knopUrl, mailAdres, mailOnderwerp,
       extraVragen[]{ label, type, opties, verplicht },
       toonOp, geldigVan, geldigTot, eenKeerPerBezoeker
     }`,

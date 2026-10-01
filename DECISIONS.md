@@ -25,10 +25,56 @@ The site is static: visitors never hit Sanity. The Free 250k **live API** quota 
 - **Render Static Site** (Hobby/free) for the pitch preview and, if chosen, production. DNS for `movenda.be` already lives on Cloudflare nameservers — moving hosting later to Cloudflare Pages is a small change (~30 min) if ever needed, but not required: Render supports custom domains + free TLS directly.
 - Preview URL: `https://movenda-preview.onrender.com` (or Render-assigned name), served with `X-Robots-Tag: noindex, nofollow` until Movenda confirms and we go live on `movenda.be`.
 
+### Three hosts, one repo (2026-09-21)
+
+| Host | Theme | Index | Role |
+|---|---|---|---|
+| `movenda-preview.onrender.com` | `PUBLIC_THEME=current` | noindex | QR in the offer PDF. Do not close. Do not point at lab. |
+| `movenda-mpc.onrender.com` → later `mpc.movenda.be` | `current`, then `lab` after OK | **noindex until Friday 25 Sep 2026 + explicit OK** | MPC only. `PUBLIC_HOST_MODE=mpc`. Movenda links → `https://www.movenda.be`. Dashboard: https://dashboard.render.com/static/srv-daof86rtqb8s73f3s1j0 |
+| `movenda-lab.onrender.com` | `PUBLIC_THEME=lab` | noindex | Frozen LAB/Brick look. Git branch `archive/lab-look`, not `main`. Dashboard: https://dashboard.render.com/static/srv-daof86ugekts73c27peg |
+
+Switches live in `web/src/lib/site.ts`: `PUBLIC_THEME`, `PUBLIC_HOST_MODE`, `PUBLIC_NOINDEX`, `PUBLIC_SITE_URL`, `PUBLIC_MOVENDA_URL`.
+
+### LAB stays online; the spec continues from that look (2026-09-23)
+
+Movenda can be shown two noindex URLs at the same time. One repo, no second copy of `web/`, no DNS change on `movenda.be`.
+
+| What | Where | Rule |
+|---|---|---|
+| Navy site (QR in the offer) | `main` → `movenda-preview.onrender.com`, `PUBLIC_THEME=current` | Do not restyle. |
+| LAB look | Branch `archive/lab-look`. URL: `https://movenda-lab.onrender.com` (`PUBLIC_THEME=lab`, noindex). Local: `git switch archive/lab-look`, then `npm run dev:lab --workspace web`. | Keep this URL on this branch. Do not overwrite it with the spec. |
+| Movenda's spec | Branch `brief`, from `archive/lab-look`. URL: `https://movenda-brief.onrender.com` (`PUBLIC_THEME=lab`, noindex). Friday slice: her header and homepage tone. Inner pages stay as they are. | Do not commit this on `archive/lab-look`. Do not attach a `movenda.be` subdomain. Both links can be sent together. |
+
+`movenda-mpc` stays `PUBLIC_THEME=current` on `main`. Do not point it at `archive/lab-look`.
+
+**DNS (Cloudflare, mpc only):** CNAME `mpc` → `<movenda-mpc>.onrender.com`. Leave `movenda.be` / `www` on Squarespace. After the CNAME exists, set `PUBLIC_SITE_URL=https://mpc.movenda.be` on the MPC service and attach the custom domain in Render (TLS).
+
+**Index flip (not before Friday 25 Sep 2026):** `PUBLIC_NOINDEX=false` on `movenda-mpc` and remove `X-Robots-Tag`. Only after Jonas confirms that day. No automatic flip.
+
+**Theme switch:** superseded 2026-09-23. Do not set `PUBLIC_THEME=lab` on `movenda-mpc`. The LAB look stays on `movenda-lab` / `archive/lab-look`. The spec continues from that branch onto `movenda-brief`, so both URLs stay up. QR preview stays `current`.
+
+### Friday walkthrough (brief, 2026-09-23)
+
+Julie asked for the header from her document and the tone of voice. The other pages she will write herself. This host shows that slice only. Open points to confirm with her:
+
+- Insights on the homepage, or not. She wrote “is dit nodig?”. The block is on the brief homepage so she can see it. It is not in the header.
+- Proof counts follow Sanity (2026-09-24). Kinesitherapeuten and trainers are `teamCounts()` from Teamlid “Telt mee als”. Locations are the number of locatie records. “10+” stays the one editorial field, Site-instellingen → Homepage → bewijsstrook → jaar ervaring. Do not keep a second handwritten 13 / 5.
+- Prices follow Sanity. `/prijzen` reads prijsitems plus each colleague’s `tariefKine`, `tariefPt` (Olympia) and `tariefPerformance` / `tariefPtMpc` (Performance Centre). The prices page is linked, not rewritten.
+- Rehab’s canonical page is still `/mpc/sportrevalidatie`. Performance → Revalidatie and the kinesitherapie menu both open that one page. Whether it later moves under Kinesitherapie is a go-live decision, not a second URL.
+- Booking tool, a general phone number, and which GX lessons are public. Running and MXGP stay out of the menu. Boxing 1 on 1, Monitoring/Whoop, Core, Algemene kinesitherapie, Bekkenbodemtherapie and Barefoot have no page yet, so they are not in the menu.
+- Partners and algemene voorwaarden stay out of the menu and the footer until those pages exist. The homepage partner band links to `/over` for now.
+- Afspraak opens a choice, Movenda Hasselt or Performance Centre Kuringen, then `/contact`. A real scheduler URL still uses `siteSettings.booking`.
+
+**Later cutover of www.movenda.be:** `PUBLIC_HOST_MODE=full`, `PUBLIC_SITE_URL=https://www.movenda.be` (or `https://movenda.be`), attach apex + www to the same service, `PUBLIC_NOINDEX=false`. Then 301 `mpc.movenda.be/*` → `https://www.movenda.be/mpc/*`. Squarespace can be cancelled after a watch period. Do **not** move `movenda.be` DNS until that meeting.
+
+### Restyle meeting (blok 2)
+
+Blok 1 covers “MPC back online on the look behind the QR”. A full LAB/Brick restyle for both brands is more than the 10 hours in blok 2. Agenda: moodboard (LAB Antwerp + The Brick), which pages must match first, what fits in 10 hours, what is extra at €50/h. Do not promise the whole restyle inside blok 2.
+
 ## SEO / structured data / AI (2026-09-10)
 
-- **One switch:** `PUBLIC_SITE_URL` + `PUBLIC_NOINDEX` (Render env vars) drive canonical, hreflang, OG, the JSON-LD `@id`s, `robots.txt` (generated by `src/pages/robots.txt.ts`, no static file), `llms.txt` and the sitemap. `src/lib/site.ts` is the only place that reads them.
-- **Go-live checklist:** set `PUBLIC_SITE_URL=https://movenda.be`, `PUBLIC_NOINDEX=false`, remove the `X-Robots-Tag` header from `render.yaml`, redeploy. Nothing else to edit.
+- **Switches:** `PUBLIC_SITE_URL` + `PUBLIC_NOINDEX` drive canonical, hreflang, OG, the JSON-LD `@id`s, `robots.txt` (generated by `src/pages/robots.txt.ts`, no static file), `llms.txt` and the sitemap. `PUBLIC_THEME` (`current` \| `lab`) and `PUBLIC_HOST_MODE` (`full` \| `mpc`) are the layout/host switches. `src/lib/site.ts` is the only place that reads them.
+- **Go-live checklist (full movenda.be, later):** set `PUBLIC_SITE_URL=https://movenda.be`, `PUBLIC_HOST_MODE=full`, `PUBLIC_NOINDEX=false`, remove the `X-Robots-Tag` header from `render.yaml`, redeploy. Theme flip is a separate `PUBLIC_THEME=lab` if they have approved the look.
 - **URLs have no trailing slash** (`trailingSlash: "never"`); sitemap, canonical and JSON-LD agree.
 - **JSON-LD:** one `@graph` per page (built in `Layout.astro`): `Organization` (+`sameAs` from siteSettings socials and per-location Instagram/Facebook/Google Business Profile), `WebSite`, both locations (`MedicalBusiness`/`Physiotherapy` and `SportsActivityLocation`, structured address, `openingHoursSpecification` with English `dayOfWeek`), plus per page `Person` (photo, `knowsAbout`), `Service` (`provider` → location `@id`, `offers` from the linked or name-matched prijsitem, `performer` → team), `BlogPosting`, `FAQPage`, `BreadcrumbList`, `ItemList` on `/team`. Still no `AggregateRating` (see Google Business Profile / reviews).
 - **Julie's inputs:** Locatie → "Google Bedrijfsprofiel-URL" (both locations, strongest `sameAs`); Dienst → "Prijs (prijsitem)" reference and EN SEO title/description for MPC services. All optional; sensible fallbacks apply.
@@ -37,7 +83,7 @@ The site is static: visitors never hit Sanity. The Free 250k **live API** quota 
 
 ## Google Business Profile / reviews
 
-- Movenda has **30+ five-star Google reviews**. A visible badge (score, count, link to reviews, "write a review" link) is shown on the homepage, both location pages, and contact — sourced from `siteSettings.googleReviews` (per location), edited by Julie, not a paid reviews API.
+- Movenda has **30+ five-star Google reviews**. A visible badge (score, count, link to reviews) is shown on the homepage, both location pages, and the old homepages — sourced from `siteSettings.googleReviews.olympia`, edited by Julie, not a paid reviews API. There is one Google profile for the whole practice: the Performance Centre location links to the same Movenda reviews.
 - No `AggregateRating` JSON-LD is added for the site's own `LocalBusiness` markup (Google no longer shows self-reported aggregate ratings as a rich result for local businesses; the real signal lives on the Google Business Profile itself).
 - **Update (2026-09-13):** the curated getuigenissen carousel is hand-picked photo quotes, not a substitute for real reviews, and the placeholder rows ("Naam volgt") were leaking through on the Dutch homepage — fixed in `getGetuigenissen()` to filter placeholders in every language, not just English. The founder also asked for the **real, live Google reviews** the old movenda.be showed. That was the **Elfsight "Google Reviews" widget** (`elfsight-app-4574da10-a0e4-4c28-9f62-93e57d02ef76`, same Elfsight plan already reused for the Instagram feed — no new SaaS). Re-added as `GoogleReviewsFeed.astro`, homepage only, directly below the getuigenissen carousel (`siteSettings.googleReviewsFeed`, Julie can hide it or swap the widget ID). This reverses the 2026-09-10 call above to skip it.
 

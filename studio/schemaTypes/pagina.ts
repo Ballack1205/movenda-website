@@ -1,6 +1,7 @@
 import { DocumentTextIcon } from "@sanity/icons";
 import { defineField, defineType, type ConditionalPropertyCallbackContext } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { maxItems, maxTekens, verplicht, GOOGLE_OMSCHRIJVING, googleTitel } from "./regels";
 
 // Copy of the fixed pages (home, over, kine, …). One document per page, fixed
 // `key`, never created or deleted from the Studio. Julie edits the H1, intro,
@@ -9,13 +10,25 @@ import { EN_FIELDSET } from "./helpers";
 
 export const PAGINAS = [
   { key: "home", title: "Homepage", path: "/" },
-  { key: "over", title: "Over ons", path: "/over" },
+  { key: "over", title: "Ons verhaal", path: "/over-ons/ons-verhaal" },
+  { key: "onze-visie", title: "Onze visie", path: "/over-ons/onze-visie" },
   { key: "kinesitherapie", title: "Kinesitherapie (overzicht)", path: "/kinesitherapie" },
   { key: "training", title: "Training (overzicht)", path: "/training" },
+  { key: "performance", title: "Performance (overzicht)", path: "/performance" },
+  { key: "b2b", title: "B2B (overzicht)", path: "/b2b" },
   { key: "mpc", title: "MPC (overzicht)", path: "/mpc" },
   { key: "mpc-visie", title: "MPC — Visie", path: "/mpc/visie" },
   { key: "contact", title: "Contact", path: "/contact" },
   { key: "jobs", title: "Vacatures", path: "/jobs" },
+  { key: "team", title: "Team", path: "/team" },
+  { key: "groepslessen", title: "Groepslessen (GX)", path: "/groepslessen" },
+  { key: "kine-abonnement", title: "Kiné-abonnement", path: "/kine-abonnement" },
+  { key: "prijzen", title: "Prijzen (Movenda)", path: "/prijzen" },
+  { key: "performance-prijzen", title: "Prijzen (Performance Centre)", path: "/performance/prijzen" },
+  { key: "faq", title: "FAQ", path: "/faq" },
+  { key: "blog", title: "Blog (overzicht)", path: "/blog" },
+  { key: "events", title: "Events (overzicht)", path: "/events" },
+  { key: "welkom", title: "Welkom (QR-formulier)", path: "/welkom" },
 ] as const;
 
 export type PaginaKey = (typeof PAGINAS)[number]["key"];
@@ -26,12 +39,26 @@ const only =
   ({ document }: ConditionalPropertyCallbackContext) =>
     !keys.includes(((document as { key?: string } | undefined)?.key || "") as PaginaKey);
 
+const ONDERTITEL: PaginaKey[] = ["home", "kinesitherapie", "performance", "b2b", "groepslessen", "kine-abonnement", "performance-prijzen", "blog"];
+
+// NL field + its EN twin, only on the listed pages.
+const tekstVeld = (name: string, title: string, keys: PaginaKey[], kort = false) =>
+  kort
+    ? [
+        defineField({ name, title: `${title} (NL)`, type: "string", group: "blokken", hidden: only(...keys) }),
+        defineField({ name: `${name}En`, title: `${title} (EN)`, type: "string", group: "blokken", fieldset: "en", hidden: only(...keys) }),
+      ]
+    : [
+        defineField({ name, title: `${title} (NL)`, type: "text", rows: 3, group: "blokken", hidden: only(...keys) }),
+        defineField({ name: `${name}En`, title: `${title} (EN)`, type: "text", rows: 3, group: "blokken", fieldset: "en", hidden: only(...keys) }),
+      ];
+
 const blok = {
   type: "object",
   name: "blok",
   fields: [
-    defineField({ name: "kop", title: "Kop (NL)", type: "string", validation: (Rule) => Rule.required() }),
-    defineField({ name: "tekst", title: "Tekst (NL)", type: "text", rows: 4, validation: (Rule) => Rule.required() }),
+    defineField({ name: "kop", title: "Kop (NL)", type: "string", validation: verplicht }),
+    defineField({ name: "tekst", title: "Tekst (NL)", type: "text", rows: 4, validation: verplicht }),
     defineField({ name: "kopEn", title: "Kop (EN)", type: "string" }),
     defineField({ name: "tekstEn", title: "Tekst (EN)", type: "text", rows: 4 }),
   ],
@@ -61,19 +88,27 @@ export default defineType({
       readOnly: true,
       group: "inhoud",
       options: { list: PAGINAS.map((p) => ({ title: p.title, value: p.key })) },
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "ondertitel",
       title: "Kleine regel boven de titel (NL)",
       type: "string",
       group: "inhoud",
-      hidden: only("home"),
+      hidden: only(...ONDERTITEL),
       description: "Bv. 'Kinesitherapie en personal training in Hasselt'.",
     }),
-    defineField({ name: "ondertitelEn", title: "Kleine regel boven de titel (EN)", type: "string", group: "inhoud", fieldset: "en", hidden: only("home") }),
-    defineField({ name: "titel", title: "Titel (H1, NL)", type: "string", group: "inhoud", validation: (Rule) => Rule.required() }),
+    defineField({ name: "ondertitelEn", title: "Kleine regel boven de titel (EN)", type: "string", group: "inhoud", fieldset: "en", hidden: only(...ONDERTITEL) }),
+    defineField({ name: "titel", title: "Titel (H1, NL)", type: "string", group: "inhoud", validation: verplicht }),
     defineField({ name: "titelEn", title: "Titel (H1, EN)", type: "string", group: "inhoud", fieldset: "en" }),
+    defineField({
+      name: "slogan",
+      title: "Slogan onder de titel (NL)",
+      type: "string",
+      group: "inhoud",
+      hidden: only("groepslessen", "welkom"),
+    }),
+    defineField({ name: "sloganEn", title: "Slogan onder de titel (EN)", type: "string", group: "inhoud", fieldset: "en", hidden: only("groepslessen", "welkom") }),
     defineField({
       name: "intro",
       title: "Introtekst (NL)",
@@ -81,7 +116,7 @@ export default defineType({
       rows: 8,
       group: "inhoud",
       description:
-        "Een lege regel = nieuwe alinea. Op de homepage mag je {kinesisten} en {trainers} gebruiken; de site vult de aantallen in.",
+        "Een lege regel = nieuwe alinea. Link: [tekst](https://…). Automatisch ingevuld: {kinesisten} en {trainers} (homepage), {aantal} (team), {basishonorarium} (prijzen), {email} (FAQ), {telefoon} (welkom).",
     }),
     defineField({ name: "introEn", title: "Introtekst (EN)", type: "text", rows: 8, group: "inhoud", fieldset: "en" }),
     defineField({
@@ -90,7 +125,7 @@ export default defineType({
       type: "image",
       group: "inhoud",
       options: { hotspot: true },
-      hidden: only("home", "over", "kinesitherapie", "training", "mpc"),
+      hidden: only("home", "over", "onze-visie", "kinesitherapie", "training", "mpc"),
       description: "Grote foto bovenaan. Leeg = de huidige foto van de site blijft staan. Kies een focuspunt op de persoon.",
     }),
     defineField({
@@ -98,7 +133,7 @@ export default defineType({
       title: "Beschrijving van de foto (voor schermlezers en Google)",
       type: "string",
       group: "inhoud",
-      hidden: only("home", "over", "kinesitherapie", "training", "mpc"),
+      hidden: only("home", "over", "onze-visie", "kinesitherapie", "training", "mpc"),
     }),
     defineField({
       name: "heroVideo",
@@ -131,38 +166,39 @@ export default defineType({
     // --- Blocks per page -------------------------------------------------
     defineField({
       name: "blokken",
-      title: "Uitklapblokken (Movenda Rehabilitation, Training, MPC, Partnerships…)",
+      title: "Tekstblokken onder de intro",
       type: "array",
       of: [blok],
       group: "blokken",
-      hidden: only("over"),
+      hidden: only("over", "onze-visie", "kinesitherapie", "performance", "b2b", "groepslessen"),
+      description: "Kop en tekst. Een regel die begint met '- ' wordt een opsomming.",
     }),
     defineField({
       name: "kenmerken",
-      title: "Kenmerken (zes korte kaartjes)",
+      title: "Principes (maximaal zes kaartjes)",
       type: "array",
       of: [blok],
       group: "blokken",
-      hidden: only("over"),
-      validation: (Rule) => Rule.max(6),
+      hidden: only("onze-visie"),
+      validation: maxItems(6),
     }),
     defineField({
       name: "stappenTitel",
       title: "Titel boven de stappen (NL)",
       type: "string",
       group: "blokken",
-      hidden: only("over"),
+      hidden: true,
     }),
-    defineField({ name: "stappenTitelEn", title: "Titel boven de stappen (EN)", type: "string", group: "blokken", fieldset: "en", hidden: only("over") }),
-    defineField({ name: "stappenIntro", title: "Tekst boven de stappen (NL)", type: "text", rows: 3, group: "blokken", hidden: only("over") }),
-    defineField({ name: "stappenIntroEn", title: "Tekst boven de stappen (EN)", type: "text", rows: 3, group: "blokken", fieldset: "en", hidden: only("over") }),
+    defineField({ name: "stappenTitelEn", title: "Titel boven de stappen (EN)", type: "string", group: "blokken", fieldset: "en", hidden: true }),
+    defineField({ name: "stappenIntro", title: "Tekst boven de stappen (NL)", type: "text", rows: 3, group: "blokken", hidden: true }),
+    defineField({ name: "stappenIntroEn", title: "Tekst boven de stappen (EN)", type: "text", rows: 3, group: "blokken", fieldset: "en", hidden: true }),
     defineField({
       name: "stappen",
       title: "Stappen van een eerste bezoek",
       type: "array",
       of: [blok],
       group: "blokken",
-      hidden: only("over"),
+      hidden: true,
       description: "De nummering komt automatisch.",
     }),
     defineField({
@@ -172,7 +208,7 @@ export default defineType({
       of: [blok],
       group: "blokken",
       hidden: only("mpc"),
-      validation: (Rule) => Rule.max(3),
+      validation: maxItems(3),
       description: "Alleen de titel en de korte tekst. De foto's en links komen automatisch uit de diensten.",
     }),
     defineField({
@@ -188,7 +224,7 @@ export default defineType({
           type: "object",
           name: "verwijsoptie",
           fields: [
-            defineField({ name: "label", title: "Keuze (NL)", type: "string", validation: (Rule) => Rule.required() }),
+            defineField({ name: "label", title: "Keuze (NL)", type: "string", validation: verplicht }),
             defineField({ name: "labelEn", title: "Keuze (EN)", type: "string" }),
             defineField({
               name: "vervolg",
@@ -219,14 +255,22 @@ export default defineType({
     }),
     defineField({
       name: "legeTekst",
-      title: "Tekst als er geen vacatures zijn (NL)",
+      title: "Tekst als de lijst leeg is (NL)",
       type: "text",
       rows: 3,
       group: "blokken",
-      hidden: only("jobs"),
-      description: "De eerste regel wordt vet. Het e-mailadres komt automatisch uit Site-instellingen.",
+      hidden: only("jobs", "blog", "events"),
+      description: "Verschijnt als er geen vacatures, blogposts of events zijn. Bij vacatures wordt de eerste regel vet en komt het e-mailadres automatisch uit Site-instellingen.",
     }),
-    defineField({ name: "legeTekstEn", title: "Tekst als er geen vacatures zijn (EN)", type: "text", rows: 3, group: "blokken", fieldset: "en", hidden: only("jobs") }),
+    defineField({ name: "legeTekstEn", title: "Tekst als de lijst leeg is (EN)", type: "text", rows: 3, group: "blokken", fieldset: "en", hidden: only("jobs", "blog", "events") }),
+    ...tekstVeld("afsluiter", "Afsluitende zin onderaan", ["over", "onze-visie"], true),
+    ...tekstVeld("extraTekst", "Tekst onder de blokken", ["groepslessen"]),
+    ...tekstVeld("prijsNotitie", "Tekst bij de prijzen", ["groepslessen"]),
+    ...tekstVeld("formulierIntro", "Tekst boven het inschrijfformulier", ["groepslessen"]),
+    ...tekstVeld("terugbetalingTitel", "Terugbetaling — titel", ["prijzen"], true),
+    ...tekstVeld("terugbetalingTekst", "Terugbetaling — uitleg", ["prijzen"]),
+    ...tekstVeld("perTherapeutTitel", "Tarieven per therapeut of coach — titel", ["prijzen", "performance-prijzen"], true),
+    ...tekstVeld("perTherapeutTekst", "Tarieven per therapeut — uitleg", ["prijzen"]),
     defineField({
       name: "ctaTekst",
       title: "Tekst op de knop onderaan (NL)",
@@ -243,11 +287,11 @@ export default defineType({
       type: "string",
       group: "seo",
       description: "De titel in het browsertabblad en in Google. Hou het onder 60 tekens.",
-      validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
+      validation: googleTitel,
     }),
-    defineField({ name: "seoDescription", title: "SEO-omschrijving (NL)", type: "text", rows: 2, group: "seo", validation: (Rule) => Rule.max(160) }),
-    defineField({ name: "seoTitleEn", title: "SEO-titel (EN)", type: "string", group: "seo", fieldset: "en", validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")] }),
-    defineField({ name: "seoDescriptionEn", title: "SEO-omschrijving (EN)", type: "text", rows: 2, group: "seo", fieldset: "en", validation: (Rule) => Rule.max(160) }),
+    defineField({ name: "seoDescription", title: "SEO-omschrijving (NL)", type: "text", rows: 2, group: "seo", validation: maxTekens(160, GOOGLE_OMSCHRIJVING) }),
+    defineField({ name: "seoTitleEn", title: "SEO-titel (EN)", type: "string", group: "seo", fieldset: "en", validation: googleTitel }),
+    defineField({ name: "seoDescriptionEn", title: "SEO-omschrijving (EN)", type: "text", rows: 2, group: "seo", fieldset: "en", validation: maxTekens(160, GOOGLE_OMSCHRIJVING) }),
   ],
   preview: {
     select: { key: "key", titel: "titel", media: "foto" },

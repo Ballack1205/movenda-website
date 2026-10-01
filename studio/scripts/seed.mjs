@@ -199,12 +199,6 @@ async function seedSiteSettings() {
         reviewUrl: googleReviews.olympia.reviewUrl,
         writeReviewUrl: googleReviews.olympia.writeReviewUrl,
       },
-      mpc: {
-        rating: googleReviews.mpc.rating,
-        count: googleReviews.mpc.count,
-        reviewUrl: googleReviews.mpc.reviewUrl,
-        writeReviewUrl: googleReviews.mpc.writeReviewUrl,
-      },
     },
     analytics: rest.analytics,
     prijzenInfo: {

@@ -1,0 +1,39 @@
+---
+import AanbodOverzicht from "../../components/AanbodOverzicht.astro";
+import Layout from "../../layouts/Layout.astro";
+import { getPagina, paginaAlineas } from "../../lib/content";
+import { getBriefAanbod } from "../../lib/nav";
+import { breadcrumbSchema } from "../../lib/schema";
+
+const pagina = await getPagina("performance");
+const aanbod = (await getBriefAanbod("nl")).find((group) => group.label === "Performance")?.children ?? [];
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Performance", path: "/performance" },
+  ]),
+];
+---
+
+<Layout
+  title={pagina.seoTitle || "Performance training Hasselt | Movenda"}
+  description={pagina.seoDescription || ""}
+  path="/performance"
+  altPath="/en/performance"
+  jsonLd={jsonLd}
+>
+  <AanbodOverzicht
+    class="page-ink"
+    kicker={pagina.ondertitel}
+    titel={pagina.titel}
+    alineaas={paginaAlineas(pagina)}
+    blokken={pagina.blokken}
+    aanbodTitel="Aanbod"
+    aanbod={aanbod}
+  >
+    <a slot="actions" href="/team#keuzehulp" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
+      Plan jouw performancetraject
+    </a>
+  </AanbodOverzicht>
+</Layout>

@@ -1,6 +1,7 @@
 import { DocumentsIcon } from "@sanity/icons";
-import { defineField, defineType } from "sanity";
+import { defineField, defineType, type SlugIsUniqueValidator } from "sanity";
 import { EN_FIELDSET, SLUG_DESCRIPTION } from "./helpers";
+import { maxTekens, verplicht, GOOGLE_OMSCHRIJVING, googleTitel } from "./regels";
 
 const CATEGORIEEN = [
   { title: "Kinesitherapie (Olympia)", value: "kine" },
@@ -9,6 +10,22 @@ const CATEGORIEEN = [
   { title: "MPC — Sportrevalidatie", value: "mpc-rehab" },
   { title: "MPC — Groepslessen", value: "mpc-groep" },
 ] as const;
+
+// Each site has its own URL space (/kinesitherapie, /training, /performance),
+// so the same slug may exist once per site (e.g. dry needling at Olympia and MPC).
+const urlGroup = (categorie?: string) => (categorie?.startsWith("mpc-") ? "mpc-*" : categorie || "");
+
+const isUniqueWithinSite: SlugIsUniqueValidator = async (slug, context) => {
+  const { document, getClient } = context;
+  const id = document?._id.replace(/^drafts\./, "") || "";
+  const categorie = typeof document?.categorie === "string" ? document.categorie : undefined;
+  const group = urlGroup(categorie);
+  const others = await getClient({ apiVersion: "2025-01-01" }).fetch<{ categorie?: string }[]>(
+    `*[_type == "dienst" && slug.current == $slug && !(_id in [$id, "drafts." + $id]) && !(_id in path("versions.**"))]{ categorie }`,
+    { slug, id },
+  );
+  return !others.some((other) => urlGroup(other.categorie) === group);
+};
 
 export default defineType({
   name: "dienst",
@@ -23,16 +40,16 @@ export default defineType({
   ],
   fieldsets: [EN_FIELDSET],
   fields: [
-    defineField({ name: "titel", title: "Titel (NL)", type: "string", group: "inhoud", validation: (Rule) => Rule.required() }),
+    defineField({ name: "titel", title: "Titel (NL)", type: "string", group: "inhoud", validation: verplicht }),
     defineField({ name: "titelEn", title: "Titel (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
       name: "slug",
       title: "Slug (URL)",
       type: "slug",
       group: "inhoud",
-      options: { source: "titel" },
+      options: { source: "titel", isUnique: isUniqueWithinSite },
       description: SLUG_DESCRIPTION,
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "categorie",
@@ -40,7 +57,7 @@ export default defineType({
       type: "string",
       group: "inhoud",
       options: { list: [...CATEGORIEEN] },
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({ name: "intro", title: "Korte intro", type: "text", rows: 2, group: "inhoud" }),
     defineField({ name: "slogan", title: "Slogan (optioneel)", type: "string", group: "inhoud" }),
@@ -52,6 +69,8 @@ export default defineType({
       title: "Fotogalerij",
       type: "array",
       group: "inhoud",
+      description:
+        "De fotostrook onderaan de dienstpagina. Slepen = volgorde. Foto weghalen: ⋯ → Verwijderen. Een foto die al bij een andere dienst staat: Toevoegen → kies uit mediabibliotheek. Leeg = de hoofdafbeelding.",
       of: [{ type: "image", options: { hotspot: true } }],
     }),
     defineField({ name: "ctaLabel", title: "CTA-tekst", type: "string", group: "inhoud" }),
@@ -80,7 +99,7 @@ export default defineType({
       group: "inhoud",
       initialValue: true,
       description:
-        "Uit = de pagina blijft bestaan en vindbaar, maar staat niet in het uitklapmenu bovenaan (bv. bij een tijdelijk aanbod of een te lange lijst).",
+        "Uit = de pagina blijft bestaan, maar verdwijnt uit het menu én uit de prijslijst. Zo pauzer je een rubriek (bv. acupunctuur) zonder de pagina te wissen.",
     }),
     defineField({
       name: "menuLabel",
@@ -88,7 +107,7 @@ export default defineType({
       type: "string",
       group: "inhoud",
       description: "Leeg = de titel. Handig als de titel te lang is voor het uitklapmenu, bv. ‘Pre- en postnataal’.",
-      validation: (Rule) => Rule.max(32).warning("Hou het kort, anders past het niet in het menu."),
+      validation: maxTekens(32, "Anders past het niet in het menu."),
     }),
     defineField({ name: "menuLabelEn", title: "Korte naam voor het menu (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
@@ -96,7 +115,7 @@ export default defineType({
       title: "SEO-titel (NL)",
       type: "string",
       group: "seo",
-      validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
+      validation: googleTitel,
     }),
     defineField({
       name: "seoDescription",
@@ -104,7 +123,7 @@ export default defineType({
       type: "text",
       group: "seo",
       rows: 2,
-      validation: (Rule) => Rule.max(160),
+      validation: maxTekens(160, GOOGLE_OMSCHRIJVING),
     }),
     defineField({
       name: "seoTitleEn",
@@ -113,7 +132,7 @@ export default defineType({
       group: "seo",
       fieldset: "en",
       description: "Leeg = automatisch 'Titel (EN) in Hasselt | Movenda' (of Performance Centre voor MPC).",
-      validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
+      validation: googleTitel,
     }),
     defineField({
       name: "seoDescriptionEn",
@@ -123,7 +142,7 @@ export default defineType({
       fieldset: "en",
       rows: 2,
       description: "Leeg = eerste zin(nen) van de Engelse tekst.",
-      validation: (Rule) => Rule.max(160),
+      validation: maxTekens(160, GOOGLE_OMSCHRIJVING),
     }),
   ],
   orderings: [{ title: "Volgorde", name: "volgordeAsc", by: [{ field: "volgorde", direction: "asc" }] }],

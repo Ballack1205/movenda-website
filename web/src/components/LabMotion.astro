@@ -1,0 +1,70 @@
+---
+// Quiet motion for the lab theme: ken-burns lives in CSS; this only reveals
+// [data-reveal] blocks on scroll. No GSAP. Honors prefers-reduced-motion.
+---
+
+<script>
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const nodes = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  const reveal = (el: HTMLElement) => el.classList.add("is-in");
+  if (reduce) {
+    nodes.forEach(reveal);
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          reveal(entry.target as HTMLElement);
+          io.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.01, rootMargin: "0px 0px -8% 0px" },
+    );
+    // Paint the hidden state first so adding .is-in actually transitions.
+    requestAnimationFrame(() => {
+      nodes.forEach((el) => io.observe(el));
+    });
+  }
+
+  const sheets = [...document.querySelectorAll<HTMLElement>(".lab-sheet")];
+  const ink = document.querySelector(".lab-sheet--ink");
+  const cover = document.querySelector(".lab-cover, .dienst-hero");
+  const arrow = document.querySelector<HTMLElement>(".lab-cover__arrow");
+  if (sheets.length) {
+    const update = () => {
+      const header = document.querySelector<HTMLElement>("[data-header]");
+      const edge = header?.getBoundingClientRect().height ?? 80;
+      const past = sheets[0].getBoundingClientRect().top < edge;
+      document.body.classList.toggle("lab-past-cover", past);
+      // Black bands keep the ink bar; the light band (reviews, FAQ) keeps the cream bar.
+      const probe = document.elementFromPoint(12, Math.min(edge + 8, window.innerHeight - 1));
+      const band = probe?.closest(".lab-sheet");
+      const onDarkFooter = Boolean(probe?.closest("footer"));
+      const overInk = past && (onDarkFooter || Boolean(band?.classList.contains("lab-sheet--ink")));
+      document.body.classList.toggle("lab-over-ink", overInk);
+      const inkTop = ink?.getBoundingClientRect().top ?? edge + 1;
+      document.body.classList.toggle("lab-header-blur", !past && inkTop < edge);
+      if (arrow && !reduce) {
+        const shift = Math.min(window.scrollY * 0.45, window.innerHeight * 0.42);
+        arrow.style.setProperty("--arrow-shift", `${-shift}px`);
+      }
+      // The cover stays sticky under the whole page. Once it has scrolled
+      // out of its own slot, later fade-ins should reveal black, not the photo.
+      const hero = document.querySelector<HTMLElement>(".lab-cover");
+      if (hero && document.querySelector(".brief-ink")) {
+        document.body.classList.toggle("lab-cover-gone", window.scrollY >= hero.offsetHeight - 1);
+      }
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+  } else if (cover) {
+    const coverIo = new IntersectionObserver(
+      ([entry]) => {
+        document.body.classList.toggle("lab-past-cover", !entry.isIntersecting);
+      },
+      { threshold: 0.08 },
+    );
+    coverIo.observe(cover);
+  }
+</script>

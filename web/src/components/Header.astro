@@ -6,7 +6,11 @@
 //   MPC:     7 items with long Dutch labels (Sportrevalidatie, Groepslessen) ≈ 800px
 //            → desktop nav from `lg` (1024). iPad portrait gets the grouped panel.
 // Nav structure lives in src/lib/nav.ts; dropdown contents come from the CMS.
+import { getBlogPosts, getDiensten, getEvents, getTeamleden } from "../lib/content";
 import { getNavModel, isActiveItem, isCurrentPath } from "../lib/nav";
+import { buildSearchIndex } from "../lib/search-index";
+import NavCluster from "./NavCluster.astro";
+import { mpcHomePath, movendaHomeHref, THEME } from "../lib/site";
 
 export interface Props {
   brand?: "movenda" | "mpc";
@@ -18,16 +22,33 @@ export interface Props {
 
 const { brand = "movenda", lang = "nl", path = "/", altPath } = Astro.props;
 const { items, cta, phone, contact } = await getNavModel(brand, lang);
+const lab = THEME === "lab";
+const brief = lab;
+const leftItems = items.filter((item) => item.side === "start");
+const rightItems = items.filter((item) => item.side !== "start");
+const logoHref = brief ? movendaHomeHref(lang) : brand === "mpc" ? mpcHomePath(lang) : movendaHomeHref(lang);
+const logoExternal = /^https?:/.test(logoHref);
 
 const langSwitchHref = lang === "en" ? altPath || "/" : altPath || "/en";
-// `md:` for Movenda, `lg:` for MPC — everything that flips between bar and panel uses these.
-const desktop = brand === "mpc" ? "lg" : "md";
-const showDesktop = desktop === "lg" ? "lg:flex" : "md:flex";
-const hideDesktop = desktop === "lg" ? "lg:hidden" : "md:hidden";
+// `md:` for Movenda, `lg:` for MPC. The brief bar (centered wordmark plus
+// Aanbod and Over ons / Contact / Afspraak / EN) only fits from 960px;
+// narrower widths keep the hamburger.
+const desktop = brief ? "brief" : brand === "mpc" ? "lg" : "md";
+const showDesktop =
+  desktop === "lg" ? "lg:flex" : desktop === "brief" ? "min-[960px]:flex" : "md:flex";
+const hideDesktop =
+  desktop === "lg" ? "lg:hidden" : desktop === "brief" ? "min-[960px]:hidden" : "md:hidden";
+const hideBarExtra =
+  desktop === "lg" ? "max-lg:hidden" : desktop === "brief" ? "max-[959px]:hidden" : "max-md:hidden";
 // Sticky only while the hamburger is in use, so the overlay panel is always
 // anchored to a visible bar. Desktop keeps the static header.
-const stickyMobile = desktop === "lg" ? "sticky top-0 lg:static" : "sticky top-0 md:static";
-const desktopMinWidth = desktop === "lg" ? "64rem" : "48rem";
+const stickyMobile =
+  desktop === "lg"
+    ? "sticky top-0 lg:static"
+    : desktop === "brief"
+      ? "sticky top-0 min-[960px]:static"
+      : "sticky top-0 md:static";
+const desktopMinWidth = desktop === "lg" ? "64rem" : desktop === "brief" ? "60rem" : "48rem";
 
 const t = {
   openMenu: lang === "en" ? "Open menu" : "Menu openen",
@@ -41,26 +62,90 @@ const t = {
 
 const slug = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 const telHref = (nr: string) => `tel:${nr.replace(/\s+/g, "")}`;
+const searchItems = buildSearchIndex({
+  lang,
+  diensten: await getDiensten(),
+  team: await getTeamleden(),
+  posts: await getBlogPosts(),
+  events: await getEvents(),
+});
+const searchJson = JSON.stringify(searchItems).replace(/</g, "\\u003c");
+const searchLabels =
+  lang === "en"
+    ? { page: "Page", dienst: "Treatment", team: "Team", blog: "Article", event: "Event", empty: "No results", hint: "Type at least 3 letters" }
+    : { page: "Pagina", dienst: "Behandeling", team: "Team", blog: "Artikel", event: "Event", empty: "Geen resultaten", hint: "Typ minstens 3 letters" };
 
 // Groups (items with children) drive the panel columns; plain links are pooled in one list.
 const groups = items.filter((i) => i.children && i.children.length > 0);
 const plain = items.filter((i) => !i.children || i.children.length === 0);
 ---
 
-<header class:list={["relative z-40 bg-brand-header text-white", stickyMobile]} data-header data-desktop-min={desktopMinWidth}>
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 xl:gap-6">
+<header
+  class:list={[
+    "relative z-40",
+    lab ? "border-b border-brand-border bg-brand-bg text-brand-text" : "bg-brand-header text-white",
+    stickyMobile,
+  ]}
+  data-header
+  data-lang={lang}
+  data-desktop-min={desktopMinWidth}
+>
+  <div
+    class:list={[
+      "relative z-50 mx-auto items-center gap-3 px-4 py-4",
+      brief
+        ? "grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
+        : "flex max-w-6xl justify-between xl:gap-6",
+    ]}
+  >
+    {brief && (
+      <div class:list={["hidden min-w-0 items-center gap-4", showDesktop]}>
+        <nav
+          class="min-w-0 text-[13px] font-medium xl:text-sm"
+          aria-label={lang === "en" ? "Offer" : "Aanbod"}
+        >
+          <NavCluster items={leftItems} path={path} lab={lab} externalLabel={t.external} />
+        </nav>
+        <form action={lang === "en" ? "/en/zoeken" : "/zoeken"} method="get" role="search" class="relative shrink-0" data-site-search>
+          <label class="sr-only" for="site-search">{lang === "en" ? "Search" : "Zoeken"}</label>
+          <input id="site-search" name="q" type="search" autocomplete="off" placeholder={lang === "en" ? "Search" : "Zoeken"} aria-autocomplete="list" aria-controls="site-search-list" aria-expanded="false" class="w-36 border-b border-current bg-transparent px-1 py-1 text-sm outline-none placeholder:text-current/60" />
+          <ul id="site-search-list" data-search-list hidden class="search-suggest" role="listbox"></ul>
+        </form>
+      </div>
+    )}
     <a
-      href={lang === "en" ? (brand === "mpc" ? "/en/mpc" : "/en") : brand === "mpc" ? "/mpc" : "/"}
-      class="flex shrink-0 items-center gap-2"
+      href={logoHref}
+      data-logo
+      class:list={["flex shrink-0 items-center gap-2", brief && "col-start-2 justify-self-center"]}
       aria-label={t.brandName}
+      target={logoExternal ? "_blank" : undefined}
+      rel={logoExternal ? "noopener noreferrer" : undefined}
     >
-      {brand === "mpc" ? (
+      {brand === "mpc" && !brief ? (
         <img src="/brand/logo-mpc.png" alt="MPC" width="40" height="40" class="h-10 w-10" />
+      ) : lab ? (
+        <>
+          <img
+            src="/brand/logo-wordmark-on-light.png"
+            alt="Movenda"
+            width="140"
+            height="30"
+            class="logo-on-light h-6 w-auto xl:h-7"
+          />
+          <img
+            src="/brand/logo-wordmark-on-dark.png"
+            alt=""
+            width="140"
+            height="30"
+            class="logo-on-dark hidden h-6 w-auto xl:h-7"
+          />
+        </>
       ) : (
         <img src="/brand/logo-wordmark.png" alt="Movenda" width="140" height="30" class="h-6 w-auto xl:h-7" />
       )}
     </a>
 
+    {!brief && (
     <nav
       class:list={["hidden min-w-0 flex-1 items-center justify-center text-[13px] font-medium xl:text-sm", showDesktop]}
       aria-label={lang === "en" ? "Main navigation" : "Hoofdnavigatie"}
@@ -70,13 +155,31 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
           const active = isActiveItem(item, path);
           const base = [
             "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-1.5 transition xl:px-3",
-            item.emphasize ? "font-bold text-white" : "text-white/80 hover:text-white",
-            active ? "bg-white/10 text-white" : "hover:bg-white/10",
+            lab
+              ? item.emphasize
+                ? "font-bold text-brand-text"
+                : "text-brand-text/80 hover:text-brand-text"
+              : item.emphasize
+                ? "font-bold text-white"
+                : "text-white/80 hover:text-white",
+            lab
+              ? active
+                ? "bg-black/5 text-brand-text"
+                : "hover:bg-black/5"
+              : active
+                ? "bg-white/10 text-white"
+                : "hover:bg-white/10",
           ];
           if (!item.children || item.children.length === 0) {
             return (
               <li>
-                <a href={item.href} class:list={base} aria-current={isCurrentPath(item.href, path) ? "page" : undefined}>
+                <a
+                  href={item.href}
+                  class:list={base}
+                  aria-current={isCurrentPath(item.href, path) ? "page" : undefined}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
+                >
                   {item.label}
                 </a>
               </li>
@@ -155,28 +258,50 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
         })}
       </ul>
     </nav>
+    )}
 
-    <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+    <div class:list={["flex shrink-0 items-center gap-2 sm:gap-3", brief && "col-start-3 justify-self-end"]}>
+      {brief && (
+        <nav
+          class:list={["hidden text-[13px] font-medium xl:text-sm", showDesktop]}
+          aria-label={lang === "en" ? "Main navigation" : "Hoofdnavigatie"}
+        >
+          <NavCluster items={rightItems} path={path} lab={lab} externalLabel={t.external} align="end" />
+        </nav>
+      )}
       <a
         href={langSwitchHref}
-        class="rounded-full border border-white/30 px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white hover:text-white"
+        class:list={[
+          "inline-flex items-center rounded-full border border-white/30 px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-white hover:text-white",
+          lab && "min-h-11",
+          lab && hideBarExtra,
+        ]}
         aria-label={t.langSwitch}
+        data-lab-bar-extra
       >
         {lang === "en" ? "NL" : "EN"}
       </a>
+      {!brief && (
       <a
         href={cta.href}
         target={cta.external ? "_blank" : undefined}
         rel={cta.external ? "noopener noreferrer" : undefined}
-        class="hidden whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-brand-header transition hover:bg-white/90 min-[360px]:inline-flex xl:px-3.5 xl:text-sm"
+        class:list={[
+          "hidden whitespace-nowrap rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-brand-header transition hover:bg-white/90 min-[360px]:inline-flex xl:px-3.5 xl:text-sm",
+          lab && "min-h-11 items-center",
+          lab && (desktop === "lg" ? "max-lg:!hidden lg:!inline-flex" : "max-md:!hidden md:!inline-flex"),
+        ]}
         data-cta={cta === contact ? "contact" : "booking"}
+        data-lab-bar-extra
       >
         {cta.label}
       </a>
+      )}
       <button
         type="button"
         class:list={[
-          "inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-white transition hover:border-white",
+          "inline-flex items-center justify-center rounded-full border border-white/30 text-white transition hover:border-white",
+          lab ? "h-11 w-11" : "h-9 w-9",
           hideDesktop,
         ]}
         aria-label={t.openMenu}
@@ -196,7 +321,90 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
     </div>
   </div>
 
-  {/* Phone / tablet panel: overlays the page, grouped in columns, phone + CTA at the bottom. */}
+  {lab ? (
+  <nav
+    id="mobile-nav"
+    class:list={[
+      "lab-menu fixed inset-0 top-0 z-30 hidden overflow-y-auto pt-[5.5rem]",
+      hideDesktop,
+    ]}
+    aria-label={lang === "en" ? "Menu" : "Menu"}
+    data-mobile-nav
+  >
+    <div class="mx-auto flex min-h-[calc(100dvh-5.5rem)] max-w-lg flex-col px-5 pb-[max(2rem,env(safe-area-inset-bottom))]">
+      <form action={lang === "en" ? "/en/zoeken" : "/zoeken"} method="get" role="search" class="relative mb-6" data-site-search>
+        <label class="sr-only" for="site-search-mobile">{lang === "en" ? "Search" : "Zoeken"}</label>
+        <input id="site-search-mobile" name="q" type="search" autocomplete="off" placeholder={lang === "en" ? "Search" : "Zoeken"} aria-autocomplete="list" aria-controls="site-search-list-mobile" aria-expanded="false" class="w-full border-b border-current bg-transparent px-1 py-2 text-lg outline-none" />
+        <ul id="site-search-list-mobile" data-search-list hidden class="search-suggest search-suggest--wide" role="listbox"></ul>
+      </form>
+      <ol class="flex flex-col gap-1">
+        {items.map((item) => {
+          const nested = (item.groups && item.groups.length > 0) || (item.children && item.children.length > 0);
+          return (
+            <li>
+              {nested ? (
+                <details>
+                  <summary class="lab-menu__item">
+                    <span class="lab-menu__label">{item.label}</span>
+                  </summary>
+                  <div class="lab-menu__sub">
+                    {item.groups?.map((group) => (
+                      <div>
+                        <a href={group.href} class="lab-mega__title">{group.label}</a>
+                        {group.children.map((child) =>
+                          child.heading ? (
+                            child.href ? (
+                              <a href={child.href} class="lab-mega__label">{child.label}</a>
+                            ) : (
+                              <p class="lab-mega__label">{child.label}</p>
+                            )
+                          ) : (
+                            <a
+                              href={child.href}
+                              class="lab-mega__link"
+                              target={child.external ? "_blank" : undefined}
+                              rel={child.external ? "noopener noreferrer" : undefined}
+                            >
+                              {child.label}
+                            </a>
+                          ),
+                        )}
+                      </div>
+                    ))}
+                    {item.children?.map((child) => (
+                      <a href={child.href}>{child.label}</a>
+                    ))}
+                  </div>
+                </details>
+              ) : (
+                <a
+                  href={item.href}
+                  aria-current={isCurrentPath(item.href, path) ? "page" : undefined}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
+                  class:list={["lab-menu__item", item.button && "lab-menu__item--cta"]}
+                >
+                  <span class="lab-menu__label">{item.label}</span>
+                </a>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+      <div class="mt-auto flex flex-col gap-3 border-t border-brand-border pt-8">
+        {!brief && (
+        <a href={cta.href} class="lab-menu__cta" data-cta={cta === contact ? "contact" : "booking"}>
+          {cta.label}
+        </a>
+        )}
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+          <a href={langSwitchHref}>{lang === "en" ? "Nederlands" : "English"}</a>
+          {phone && <a href={telHref(phone)}>{phone}</a>}
+        </div>
+      </div>
+    </div>
+  </nav>
+  ) : (
   <nav
     id="mobile-nav"
     class:list={[
@@ -269,6 +477,8 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
                 <a
                   href={item.href}
                   aria-current={isCurrentPath(item.href, path) ? "page" : undefined}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
                   class:list={[
                     "flex items-center justify-between rounded-lg px-2 py-2 font-heading text-base text-white transition hover:bg-white/10",
                     item.emphasize ? "font-bold" : "font-semibold",
@@ -309,9 +519,13 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
       </div>
     </div>
   </nav>
+  )}
+  <script type="application/json" id="site-search-index" set:html={searchJson} />
+  <script type="application/json" id="site-search-labels" set:html={JSON.stringify(searchLabels)} />
 </header>
 
 <script>
+  import { rankSearch, type SearchItem } from "../lib/search";
   const header = document.querySelector<HTMLElement>("[data-header]");
 
   // --- Desktop dropdowns -------------------------------------------------
@@ -456,4 +670,156 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
       if (isOpen(g) && !g.contains(target)) setOpen(g, false);
     });
   });
+
+  // Live suggestions from 3 letters. Enter opens the highlighted result.
+  const indexNode = document.getElementById("site-search-index");
+  const labelNode = document.getElementById("site-search-labels");
+  if (indexNode && labelNode) {
+    const items = JSON.parse(indexNode.textContent || "[]") as SearchItem[];
+    const labels = JSON.parse(labelNode.textContent || "{}") as Record<string, string>;
+    const kindLabel = (kind: SearchItem["kind"]) => labels[kind] || "";
+
+    const option = (hit: SearchItem, id: string, selected: boolean) => {
+      const link = document.createElement("a");
+      link.href = hit.href;
+      link.id = id;
+      link.setAttribute("role", "option");
+      if (selected) link.setAttribute("aria-selected", "true");
+      const kind = document.createElement("span");
+      kind.className = "search-suggest__kind";
+      kind.textContent = kindLabel(hit.kind);
+      const title = document.createElement("span");
+      title.className = "search-suggest__title";
+      title.textContent = hit.title;
+      link.append(kind, title);
+      return link;
+    };
+
+    document.querySelectorAll<HTMLFormElement>("[data-site-search]").forEach((form) => {
+      const input = form.querySelector<HTMLInputElement>("input[type='search']");
+      const list = form.querySelector<HTMLElement>("[data-search-list]");
+      if (!input || !list) return;
+      let hits: SearchItem[] = [];
+      let active = 0;
+
+      const close = () => {
+        hits = [];
+        list.hidden = true;
+        list.replaceChildren();
+        input.setAttribute("aria-expanded", "false");
+        input.removeAttribute("aria-activedescendant");
+      };
+
+      const show = (query: string, keepActive = false) => {
+        if (query.trim().length < 3) {
+          close();
+          return;
+        }
+        hits = rankSearch(items, query, 7);
+        if (!keepActive) active = 0;
+        if (active >= hits.length) active = 0;
+        list.replaceChildren();
+        if (hits.length === 0) {
+          const empty = document.createElement("li");
+          empty.className = "search-suggest__empty";
+          empty.textContent = labels.empty || "";
+          list.append(empty);
+        } else {
+          hits.forEach((hit, index) => {
+            const item = document.createElement("li");
+            item.append(option(hit, `${list.id}-opt-${index}`, index === active));
+            list.append(item);
+          });
+          const current = list.querySelector<HTMLAnchorElement>("[aria-selected='true']");
+          if (current) input.setAttribute("aria-activedescendant", current.id);
+        }
+        list.hidden = false;
+        input.setAttribute("aria-expanded", "true");
+      };
+
+      input.addEventListener("input", () => show(input.value));
+      input.addEventListener("focus", () => {
+        if (input.value.trim().length >= 3) show(input.value);
+      });
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !list.hidden) {
+          event.stopPropagation();
+          close();
+          return;
+        }
+        if (list.hidden || hits.length === 0) return;
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          active = event.key === "ArrowDown" ? (active + 1) % hits.length : (active - 1 + hits.length) % hits.length;
+          show(input.value, true);
+          return;
+        }
+        if (event.key === "Enter") {
+          event.preventDefault();
+          const href = hits[active]?.href;
+          if (href) window.location.href = href;
+        }
+      });
+      form.addEventListener("submit", (event) => {
+        const href = hits[active]?.href || hits[0]?.href;
+        if (!href) return;
+        event.preventDefault();
+        window.location.href = href;
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (!form.contains(event.target as Node)) close();
+      });
+    });
+
+    const pageInput = document.querySelector<HTMLInputElement>("#q");
+    const pageList = document.querySelector<HTMLElement>("#zoek-results");
+    if (pageInput && pageList) {
+      const renderPage = () => {
+        const query = pageInput.value.trim();
+        pageList.replaceChildren();
+        if (!query) return;
+        if (query.length < 3) {
+          const hint = document.createElement("li");
+          hint.className = "search-page__hint";
+          hint.textContent = labels.hint || "";
+          pageList.append(hint);
+          return;
+        }
+        const hits = rankSearch(items, query, 12);
+        if (hits.length === 0) {
+          const empty = document.createElement("li");
+          empty.className = "search-page__hint";
+          empty.textContent = labels.empty || "";
+          pageList.append(empty);
+          return;
+        }
+        hits.forEach((hit) => {
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = hit.href;
+          link.className = "search-page__hit";
+          const kind = document.createElement("span");
+          kind.className = "search-suggest__kind";
+          kind.textContent = kindLabel(hit.kind);
+          const title = document.createElement("span");
+          title.className = "search-page__title";
+          title.textContent = hit.title;
+          link.append(kind, title);
+          item.append(link);
+          pageList.append(item);
+        });
+      };
+      const params = new URLSearchParams(location.search);
+      if (params.get("q")) pageInput.value = params.get("q") || "";
+      pageInput.addEventListener("input", () => {
+        const next = new URL(location.href);
+        const value = pageInput.value.trim();
+        if (value) next.searchParams.set("q", value);
+        else next.searchParams.delete("q");
+        history.replaceState(null, "", `${next.pathname}${next.search}`);
+        renderPage();
+      });
+      renderPage();
+    }
+  }
 </script>

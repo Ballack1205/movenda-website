@@ -1,0 +1,100 @@
+---
+// Three-up magazine strip (LAB 01–03 / Brick club cards). Photos from Sanity.
+import type { ImageMetadata } from "astro";
+import CmsFoto from "./CmsFoto.astro";
+import type { CmsFoto as CmsFotoType } from "../lib/content";
+
+interface Item {
+  n: number;
+  href: string;
+  title: string;
+  line?: string;
+  body?: string;
+  /** Wider at rest. Kinesitherapie and Performance on the brief homepage. */
+  lead?: boolean;
+  foto?: CmsFotoType;
+  fallback: ImageMetadata;
+  alt: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="lab-strip" data-reveal>
+  <div class="lab-strip__grid" style={`--doors: ${items.length}`}>
+    {items.map((item) => (
+      <a href={item.href} class:list={["lab-strip__card", item.body && "lab-strip__card--copy", item.lead && "lab-strip__card--lead"]}>
+        <CmsFoto
+          foto={item.foto}
+          fallback={item.fallback}
+          alt={item.alt}
+          width={900}
+          height={1200}
+          class="lab-strip__photo"
+        />
+        {item.body && <span class="lab-strip__body">{item.body}</span>}
+        <span class="lab-strip__copy">
+          <span class="lab-strip__meta">
+            <span class="lab-shout lab-strip__title">{item.title}</span>
+            {item.line && <span class="lab-strip__line">{item.line}</span>}
+          </span>
+          <span class="lab-strip__arrow" aria-hidden="true">↗</span>
+        </span>
+      </a>
+    ))}
+  </div>
+</section>
+
+<script>
+  // Phones have no hover. The door crossing the middle of the screen grows
+  // while you scroll — the vertical version of the desktop hover shift.
+  const phone = window.matchMedia("(max-width: 767px)");
+
+  document.querySelectorAll<HTMLElement>(".lab-strip__grid").forEach((grid) => {
+    const cards = [...grid.querySelectorAll<HTMLElement>(".lab-strip__card")];
+    if (cards.length === 0) return;
+    let current = -1;
+    let queued = false;
+
+    const open = (index: number) => {
+      if (index === current) return;
+      current = index;
+      cards.forEach((card, i) => card.classList.toggle("is-open", i === index));
+    };
+
+    const mark = () => {
+      queued = false;
+      if (!phone.matches) {
+        if (current !== -1) {
+          current = -1;
+          cards.forEach((card) => card.classList.remove("is-open"));
+        }
+        return;
+      }
+      const mid = window.innerHeight / 2;
+      const hit = cards.findIndex((card) => {
+        const r = card.getBoundingClientRect();
+        return r.top <= mid && r.bottom > mid;
+      });
+      if (hit !== -1) open(hit);
+      else if (current === -1) open(0);
+      else if (cards[0].getBoundingClientRect().top > mid) open(0);
+      else if (cards[cards.length - 1].getBoundingClientRect().bottom <= mid) open(cards.length - 1);
+    };
+
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(mark);
+    };
+
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    phone.addEventListener("change", schedule);
+    mark();
+  });
+</script>

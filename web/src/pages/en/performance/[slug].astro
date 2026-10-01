@@ -1,0 +1,69 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import DienstDetail from "../../../components/DienstDetail.astro";
+import {
+  getDienstenByCategorie,
+  getDienstBySlug,
+  getLocatieBySlug,
+  getTeamleden,
+  getPrijzen,
+  findPrijsVoorDienst,
+  dienstHref,
+  dienstSeoTitleEn,
+  dienstSeoDescriptionEn,
+  isGroepLes,
+  isB2bDienst,
+  isRetiredDienst,
+} from "../../../lib/content";
+import { serviceNode, breadcrumbNode } from "../../../lib/schema";
+
+export async function getStaticPaths() {
+  const canonicalKine = new Set(["dry-needling", "cupping", "taping"]);
+  const diensten = await getDienstenByCategorie("mpc");
+  return diensten
+    .filter((dienst) => !isGroepLes(dienst) && !isB2bDienst(dienst) && !isRetiredDienst(dienst) && dienst.slug !== "corporate-coaching" && !canonicalKine.has(dienst.slug))
+    .map((dienst) => ({ params: { slug: dienst.slug } }));
+}
+
+const { slug } = Astro.params;
+const dienst = await getDienstBySlug(slug!, "mpc");
+
+if (!dienst) {
+  return Astro.redirect("/en/performance");
+}
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const alleTeamleden = await getTeamleden();
+const team = alleTeamleden.filter((t) => dienst.gekoppeldeTeamleden.includes(t.slug));
+const path = dienstHref(dienst, "en");
+const prijs = findPrijsVoorDienst(dienst, await getPrijzen());
+
+const jsonLd = [
+  serviceNode(dienst, locatie, { path, prijs, team, lang: "en" }),
+  breadcrumbNode([
+    { name: "Home", path: "/en" },
+    { name: "Movenda Performance Centre", path: "/en/performance" },
+    { name: dienst.titelEn || dienst.titel, path },
+  ]),
+];
+---
+
+<Layout
+  title={dienstSeoTitleEn(dienst)}
+  description={dienstSeoDescriptionEn(dienst)}
+  path={path}
+  altPath={dienstHref(dienst)}
+  lang="en"
+  jsonLd={jsonLd}
+  ogImage={dienst.afbeelding}
+  ogImageAlt={`${dienst.titelEn || dienst.titel} at the Movenda Performance Centre`}
+>
+  <DienstDetail
+    dienst={dienst}
+    team={team}
+    locatie={locatie}
+    backHref="/en/performance"
+    backLabel="← Back to Performance"
+    lang="en"
+  />
+</Layout>

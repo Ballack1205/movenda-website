@@ -1,0 +1,19 @@
+---
+interface Props {
+  href?: string;
+  class?: string;
+}
+
+const { href, class: extra = "" } = Astro.props;
+const cls = ["lab-card overflow-hidden border border-brand-border bg-brand-surface", extra].filter(Boolean).join(" ");
+---
+
+{href ? (
+  <a href={href} class={cls}>
+    <slot />
+  </a>
+) : (
+  <div class={cls}>
+    <slot />
+  </div>
+)}

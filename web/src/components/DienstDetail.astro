@@ -1,5 +1,5 @@
 ---
-import { formatEuro, getBlogPostsVoorDienst, type Dienst, type Locatie, type Teamlid } from "../lib/content";
+import { getBlogPostsVoorDienst, isB2bDienst, rewriteMpcHref, type Dienst, type Locatie, type Teamlid } from "../lib/content";
 import { dienstPhotoSrc, teamPhotoSrc } from "../lib/images";
 import { localizeHref, withLang } from "../lib/i18n";
 import BlogPostCard from "./BlogPostCard.astro";
@@ -14,69 +14,207 @@ interface Props {
 }
 
 const { dienst, team, locatie, backHref, backLabel, lang = "nl" } = Astro.props;
-const titel = lang === "en" ? dienst.titelEn || dienst.titel : dienst.titel;
+const rawTitel = lang === "en" ? dienst.titelEn || dienst.titel : dienst.titel;
+const titel = rawTitel.replace(/\s+(in\s+)?Hasselt$/i, "");
+function zinCase(text: string): string {
+  const trimmed = text.trim();
+  if (!trimmed || trimmed !== trimmed.toLocaleUpperCase("nl")) return trimmed;
+  const lower = trimmed.toLocaleLowerCase("nl");
+  return lower.replace(/(^|[.!?]\s+)(\p{L})/gu, (_lead, lead: string, letter: string) => lead + letter.toLocaleUpperCase("nl"));
+}
+const slogan = zinCase((lang === "en" ? dienst.sloganEn || dienst.slogan : dienst.slogan) || "");
 const body = lang === "en" ? dienst.bodyEn || dienst.body : dienst.body;
-const paragraphs = (body || "").split(/\n\n+/).filter(Boolean);
+const manueel = dienst.slug === "manuele-therapie";
+const listLabel = /^(Voor wie|Zo werken we|Zo ziet de les eruit|Who it's for|How we work|What a session looks like)\s*:?\s*/i;
+const expectLabel = /^(Wat je mag verwachten|What to expect)\s*:?\s*/i;
+const duurStart = /^(elke behandeling duurt|each (treatment|session) lasts)/i;
+const duurLabel = /^(Duur|Duration)\s*:?\s*/i;
+const locLabel = /^(Locatie|Location)\s*:?\s*/i;
+const relatedLabel = /^(Gerelateerd|Ontdek ook|Related|Discover more)\s*:?\s*/i;
+const intro: string[] = [];
+const lists: { title: string; items: string[] }[] = [];
+let verwacht: { title: string; text: string } | undefined;
+let duurTekst = "";
+let locatieTekst = "";
+const related: { label: string; href: string }[] = [];
+const listItems = (rest: string) => {
+  const parts = rest.includes("\n") ? rest.split(/\n+/) : rest.split(/(?<!-),\s+/);
+  return parts.map((item) => item.replace(/^en\s+/i, "").replace(/\.$/, "").trim()).filter(Boolean);
+};
+for (const raw of (body || "").split(/\n\n+/).map((p) => p.trim()).filter(Boolean)) {
+  if (duurStart.test(raw)) {
+    duurTekst = raw.replace(/\s*Locatie:[\s\S]*$/i, "").trim();
+    const loc = raw.match(/\bLocatie:\s*([\s\S]*)$/i);
+    if (loc) locatieTekst = loc[1].trim();
+    continue;
+  }
+  if (duurLabel.test(raw)) {
+    duurTekst = raw.replace(duurLabel, "").trim();
+    continue;
+  }
+  if (locLabel.test(raw)) {
+    locatieTekst = raw.replace(locLabel, "").trim();
+    continue;
+  }
+  const expected = raw.match(expectLabel);
+  if (expected) {
+    verwacht = { title: expected[1], text: raw.slice(expected[0].length).trim() };
+    continue;
+  }
+  if (relatedLabel.test(raw)) {
+    for (const line of raw.replace(relatedLabel, "").split(/\n+/)) {
+      const [label, href] = line.split("|").map((part) => part.trim());
+      if (label && href) related.push({ label, href: localizeHref(rewriteMpcHref(href) || href, lang) });
+    }
+    continue;
+  }
+  const match = raw.match(listLabel);
+  if (!match) {
+    intro.push(raw);
+    continue;
+  }
+  lists.push({ title: match[1], items: listItems(raw.slice(match[0].length)) });
+}
+if (manueel) {
+  duurTekst = lang === "en"
+    ? "Each treatment lasts about 30 minutes, including administration and changing. Extra independent practice time is possible when it fits the programme."
+    : "Elke behandeling duurt +/- 30 minuten, inclusief administratie en omkleden. Aanvullende zelfstandige oefentijd is mogelijk wanneer dit binnen je traject past.";
+}
+const knownLocaties = [
+  { href: withLang("/locaties/olympia", lang), label: "Sportpraktijk Movenda Hasselt", test: /hasselt/i },
+  { href: withLang("/locaties/mpc", lang), label: "Performance Centre Kuringen", test: /kuringen|performance\s*cent(?:re|er)/i },
+];
+const locatieLinks = manueel && !locatieTekst
+  ? knownLocaties
+  : knownLocaties.filter((link) => link.test.test(locatieTekst));
+const isPrijsLink = (link: { label: string; href: string }) =>
+  /^(prijzen|prices)$/i.test(link.label) || /\/prijzen(?:$|[?#])/.test(link.href);
+const prijsLink = related.find(isPrijsLink);
+const ontdek = related.filter((link) => link !== prijsLink);
+const showPraktisch = manueel || Boolean(duurTekst) || locatieLinks.length > 0;
 const dutchCta = /afspraak|contacteer|boek/i.test(dienst.ctaLabel || "");
-const ctaLabel =
-  lang === "en"
-    ? dienst.ctaLabel && !dutchCta
-      ? dienst.ctaLabel
-      : "Contact us"
+const ctaLabel = manueel
+  ? lang === "en"
+    ? "Book an appointment for manual therapy"
+    : "Plan je afspraak voor manuele therapie"
+  : lang === "en"
+    ? dienst.ctaLabelEn || (dienst.ctaLabel && !dutchCta ? dienst.ctaLabel : "Contact us")
     : dienst.ctaLabel || "Maak een afspraak";
-const ctaUrl = localizeHref(dienst.ctaUrl, lang);
+const rawCta = localizeHref(dienst.ctaUrl, lang);
+const toContact = /\/contact(?:$|[?#])/.test(rawCta);
+const ctaUrl = toContact && !isB2bDienst(dienst) ? withLang("/team#keuzehulp", lang) : rawCta;
 // "Lees ook": articles Julie linked to this dienst (Blogpost → "Gaat over deze behandelingen"),
 // topped up with posts that mention it. Internal links dienst ↔ blog are what make the blog
 // count for the ranking of the treatment pages.
 const posts = await getBlogPostsVoorDienst(dienst, 3);
+const heroFallback = manueel && !dienst.afbeelding;
+const heroSrc = dienst.afbeelding
+  ? dienstPhotoSrc(dienst.afbeelding, "hero")
+  : heroFallback
+    ? "/marketing/manuele-therapie.jpg"
+    : "";
 
-function tariefFor(lid: Teamlid): string | undefined {
-  if (dienst.categorie === "kine") return formatEuro(lid.tariefKine);
-  if (dienst.categorie === "training") return formatEuro(lid.tariefPt);
-  return formatEuro(lid.tariefPerformance || lid.tariefPtMpc);
-}
 ---
 
-<article class="mx-auto max-w-3xl px-4 py-16">
-  <a href={backHref} class="text-sm font-medium text-brand-primary">{backLabel}</a>
-  <h1 class="mt-4 text-3xl font-bold sm:text-4xl">{titel}</h1>
-  {dienst.slogan && <p class="mt-3 text-lg font-medium text-brand-primary">{dienst.slogan}</p>}
+<article class="header-ink">
+  <header class="dienst-hero">
+    {heroSrc && (
+      <img
+        src={heroSrc}
+        alt={manueel ? (lang === "en" ? "A therapist treats a back with manual therapy" : "Therapeut behandelt een rug met manuele therapie") : ""}
+        width={heroFallback ? 2200 : 1600}
+        height={heroFallback ? 1467 : 900}
+        class:list={[heroFallback && "dienst-hero__bw"]}
+      />
+    )}
+    <div class="dienst-hero__copy">
+      <a href={backHref} class="text-sm font-medium">{backLabel}</a>
+      <h1 class="mt-4">{titel}</h1>
+      {slogan && <p>{slogan}</p>}
+    </div>
+  </header>
 
-  {dienst.afbeelding && (
-    <img
-      src={dienstPhotoSrc(dienst.afbeelding, "hero")}
-      alt=""
-      width="960"
-      height="640"
-      class="mt-8 aspect-[16/10] w-full rounded-3xl object-cover"
-    />
-  )}
-
-  <div class="mt-8 space-y-4 leading-relaxed text-brand-muted">
-    {paragraphs.map((p) => (
+  <div class="dienst-ink">
+  <div class="dienst-copy mx-auto max-w-3xl px-4">
+    {intro.map((p) => (
       <p>{p}</p>
     ))}
+    {lists.map((list) => (
+      <section>
+        <h2>{list.title}</h2>
+        <ul>
+          {list.items.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </section>
+    ))}
+    {verwacht && (
+      <section>
+        <h2>{verwacht.title}</h2>
+        <p>{verwacht.text}</p>
+      </section>
+    )}
+    {showPraktisch && (
+      <section>
+        <h2>{lang === "en" ? "Practical" : "Praktisch"}</h2>
+        {duurTekst && (
+          <>
+            <h3>{lang === "en" ? "Duration" : "Duur"}</h3>
+            <p>{duurTekst}</p>
+          </>
+        )}
+        {locatieLinks.length > 0 && (
+          <>
+            <h3>{lang === "en" ? "Location" : "Locatie"}</h3>
+            <p class="dienst-locs">
+              {locatieLinks.map((link, index) =>
+                index === 0 ? (
+                  <a href={link.href}>{link.label}</a>
+                ) : (
+                  <span class="dienst-locs__more">
+                    <span aria-hidden="true">×</span>
+                    <a href={link.href}>{link.label}</a>
+                  </span>
+                ),
+              )}
+            </p>
+          </>
+        )}
+        {ontdek.length > 0 && (
+          <>
+            <h3>{lang === "en" ? "Discover more" : "Ontdek ook"}</h3>
+            <ul>
+              {ontdek.map((link) => (
+                <li><a href={link.href}>{link.label}</a></li>
+              ))}
+            </ul>
+          </>
+        )}
+        {prijsLink && (
+          <h3><a href={prijsLink.href}>{lang === "en" ? "Prices" : "Prijzen"}</a></h3>
+        )}
+      </section>
+    )}
   </div>
 
   {dienst.galerij.length > 0 && (
-    <div class="mt-10 grid gap-3 sm:grid-cols-2">
-      {dienst.galerij.map((src) => (
-        <img
-          src={dienstPhotoSrc(src, "gallery")}
-          alt=""
-          width="720"
-          height="540"
-          loading="lazy"
-          class="aspect-[4/3] w-full rounded-2xl object-cover"
-        />
-      ))}
+    <div class="photo-band mt-10" aria-hidden="true">
+      <div class="photo-band__track">
+        {[...dienst.galerij, ...dienst.galerij].map((src) => (
+          <img src={dienstPhotoSrc(src, "gallery")} alt="" width="640" height="420" loading="lazy" class="h-56 w-auto max-w-none object-cover" />
+        ))}
+      </div>
     </div>
   )}
+  </div>
 
+  <div class="dienst-close">
+  <div class="mx-auto max-w-3xl px-4">
   {team.length > 0 && (
     <div class="mt-10">
       <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">
-        {lang === "en" ? "Guided by" : "Begeleid door"}
+        {lang === "en" ? "Our specialists" : "Onze specialisten"}
       </h2>
       <div class="mt-3 flex flex-wrap gap-3">
         {team.map((lid) => (
@@ -94,7 +232,6 @@ function tariefFor(lid: Teamlid): string | undefined {
               )}
             </span>
             {lid.voornaam} {lid.naam}
-            {tariefFor(lid) && <span class="text-brand-muted">{tariefFor(lid)}</span>}
           </a>
         ))}
       </div>
@@ -105,21 +242,176 @@ function tariefFor(lid: Teamlid): string | undefined {
     <a href={ctaUrl} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
       {ctaLabel}
     </a>
+    {dienst.categorie === "mpc-groep" && dienst.slug !== "corporate-coaching" && !isB2bDienst(dienst) && (
+      <a href={localizeHref("/groepslessen#inschrijven", lang)} class="text-sm font-semibold text-brand-primary hover:underline">
+        {lang === "en" ? "Book a trial class" : "Boek een proefles"}
+      </a>
+    )}
     <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="text-sm font-semibold text-brand-primary hover:underline">
       {locatie.telefoon}
     </a>
   </div>
+  </div>
+  </div>
 
   {posts.length > 0 && (
-    <aside class="mt-14 border-t border-brand-border pt-10">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">
-        {lang === "en" ? "Read more about this" : "Lees ook"}
-      </h2>
-      <div class={`mt-4 grid gap-6 ${posts.length > 1 ? "sm:grid-cols-2" : ""}`}>
-        {posts.map((post) => (
-          <BlogPostCard post={post} lang={lang} />
-        ))}
-      </div>
-    </aside>
+    <div class="mx-auto max-w-3xl px-4 pb-16">
+      <aside class="mt-14 border-t border-brand-border pt-10">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">
+          {lang === "en" ? "Read more about this" : "Lees ook"}
+        </h2>
+        <div class={`mt-4 grid gap-6 ${posts.length > 1 ? "sm:grid-cols-2" : ""}`}>
+          {posts.map((post) => (
+            <BlogPostCard post={post} lang={lang} />
+          ))}
+        </div>
+      </aside>
+    </div>
   )}
 </article>
+
+<style>
+  .dienst-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 72vh;
+    color: #f4f7fb;
+    background: #161513;
+  }
+
+  .dienst-hero img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .dienst-hero__bw {
+    object-position: center 62%;
+  }
+
+  .dienst-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgb(14 16 18 / 0.78), rgb(14 16 18 / 0.12) 58%);
+  }
+
+  .dienst-hero__copy {
+    position: relative;
+    z-index: 1;
+    width: min(72rem, 100%);
+    margin-inline: auto;
+    padding: 7.5rem 1.25rem 2.75rem;
+  }
+
+  .dienst-hero a {
+    color: inherit;
+  }
+
+  .dienst-hero h1 {
+    max-width: 16ch;
+    font-size: clamp(2.6rem, 1.5rem + 3.4vw, 4.75rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .dienst-hero p {
+    max-width: 100%;
+    margin-top: 0.85rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .dienst-copy {
+    padding-top: 2.5rem;
+  }
+
+  .dienst-copy p,
+  .dienst-copy li {
+    margin-top: 0.85rem;
+    line-height: 1.7;
+    color: var(--brand-muted);
+  }
+
+  .dienst-copy h2 {
+    margin-top: 2.25rem;
+    font-size: 1.45rem;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: var(--brand-text);
+  }
+
+  .dienst-copy h3 {
+    margin-top: 1.15rem;
+    font-size: 1rem;
+    font-weight: 650;
+    color: var(--brand-text);
+  }
+
+  .dienst-copy h3 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .dienst-copy h3 a:hover {
+    text-decoration: underline;
+  }
+
+  .dienst-copy ul {
+    margin-top: 0.35rem;
+    padding-left: 1.15rem;
+    list-style: disc;
+  }
+
+  .dienst-locs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.55rem;
+  }
+
+  .dienst-locs__more {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.55rem;
+  }
+
+  .dienst-copy a {
+    color: var(--brand-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .dienst-ink {
+    padding-bottom: 3.5rem;
+  }
+
+  .dienst-close {
+    display: flow-root;
+    padding-bottom: 4rem;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-ink {
+    background: #161513;
+    color: #f4f7fb;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy :is(p, li) {
+    color: #f4f7fb;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy :is(h2, h3),
+  :global(html[data-theme="lab"]) .dienst-ink .dienst-copy a {
+    color: #f4f7fb;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-close {
+    background: #e6d9c4;
+    color: #161513;
+  }
+</style>

@@ -1,6 +1,7 @@
 import { TagIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { verplicht } from "./regels";
 
 // One specialisation a teamlid can carry ("Manuele therapie", "Boxing coaching").
 // Julie manages the vocabulary here; therapists pick from it via
@@ -18,7 +19,7 @@ export default defineType({
       name: "naam",
       title: "Naam (NL)",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "naamEn",

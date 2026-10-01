@@ -1,0 +1,57 @@
+---
+// Full-viewport cover in the LAB / Brick language: the photo is the statement.
+// Centered condensed shout + Newsreader line. No body copy, no CTAs (header has those).
+import type { ImageMetadata } from "astro";
+import type { Pagina } from "../lib/content";
+import HeroVideo from "./HeroVideo.astro";
+
+interface Props {
+  pagina: Pick<Pagina, "foto" | "fotoHotspot" | "fotoAlt" | "heroVideo">;
+  fallback: ImageMetadata;
+  alt: string;
+  shout?: string;
+  line?: string;
+  nextHref?: string;
+  nextLabel?: string;
+  /** object-position utility. Default keeps other covers; the homepage aims lower in the photo so the shirt text stays in frame. */
+  crop?: string;
+}
+
+const {
+  pagina,
+  fallback,
+  alt,
+  shout,
+  line,
+  nextHref = "#lab-next",
+  nextLabel = "Verder",
+  crop = "object-[center_32%]",
+} = Astro.props;
+---
+
+<section class="lab-cover">
+  <div class="lab-cover__media" aria-hidden="true">
+    <HeroVideo
+      pagina={pagina}
+      fallback={fallback}
+      alt=""
+      width={1920}
+      height={1200}
+      class={`absolute inset-0 h-full w-full object-cover ${crop}`}
+      priority
+      flush
+    />
+  </div>
+  <div class="lab-cover__veil" aria-hidden="true"></div>
+  {(shout || line) && (
+    <h1 class="lab-cover__copy">
+      {shout && <span class="lab-shout lab-cover__shout">{shout}</span>}
+      {line && <span class="lab-cover__line">{line}</span>}
+    </h1>
+  )}
+  {/* Scroll arrow stays out until someone explicitly asks for it again.
+  <a class="lab-cover__arrow" href={nextHref} aria-label={nextLabel}>
+    <span aria-hidden="true">↓</span>
+  </a>
+  */}
+</section>

@@ -1,6 +1,7 @@
 import { UsersIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET, SLUG_DESCRIPTION } from "./helpers";
+import { email, link, minItems, verplicht } from "./regels";
 
 export default defineType({
   name: "teamlid",
@@ -23,14 +24,14 @@ export default defineType({
       title: "Voornaam",
       type: "string",
       group: "wie",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "naam",
       title: "Naam",
       type: "string",
       group: "wie",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "slug",
@@ -39,7 +40,7 @@ export default defineType({
       group: "wie",
       options: { source: (doc) => `${(doc as { voornaam?: string; naam?: string }).voornaam}-${(doc as { voornaam?: string; naam?: string }).naam}` },
       description: SLUG_DESCRIPTION,
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "foto",
@@ -55,7 +56,7 @@ export default defineType({
       type: "string",
       group: "wie",
       description: "Bv. 'Kinesitherapeut' of 'Personal trainer'.",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "rolEn",
@@ -94,7 +95,7 @@ export default defineType({
         ],
         layout: "grid",
       },
-      validation: (Rule) => Rule.required().min(1),
+      validation: minItems(1),
     }),
     defineField({
       name: "specialisaties",
@@ -125,7 +126,7 @@ export default defineType({
       title: "E-mailadres",
       type: "string",
       group: "bio",
-      validation: (Rule) => Rule.email().warning("Gebruik een geldig e-mailadres, of laat leeg."),
+      validation: email("Of laat het leeg."),
     }),
     defineField({ name: "tariefKine", title: "Tarief kinesitherapie (€ / 30 min)", type: "number", group: "tarieven" }),
     defineField({
@@ -157,7 +158,7 @@ export default defineType({
           name: "club",
           fields: [
             { name: "naam", type: "string", title: "Naam" },
-            { name: "url", type: "url", title: "Link" },
+            { name: "url", type: "string", title: "Link", validation: link },
           ],
           preview: {
             select: { title: "naam", subtitle: "url" },

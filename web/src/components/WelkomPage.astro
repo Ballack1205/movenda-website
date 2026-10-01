@@ -1,0 +1,130 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SectionKicker from "./SectionKicker.astro";
+import { getLocatieBySlug, getPagina, paginaAlineas, paginaTekst } from "../lib/content";
+import type { Lang } from "../lib/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "nl" } = Astro.props;
+const en = lang === "en";
+const prefix = en ? "/en" : "";
+const locatie = (await getLocatieBySlug("olympia"))!;
+const pagina = await getPagina("welkom");
+const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
+const copy = en
+  ? {
+      name: "Name",
+      email: "Email",
+      phone: "Phone",
+      reason: "What would you like to come in for?",
+      physio: "Physiotherapy",
+      training: "Personal training",
+      other: "Other",
+      prescription: "Do you have a doctor's prescription?",
+      hint: "No prescription? No problem, we're happy to help.",
+      yes: "Yes",
+      no: "No",
+      na: "Not applicable",
+      message: "Your question",
+      send: "Send",
+      sending: "Sending…",
+      thanks: "Thanks for your message. We've received your question.",
+      fail: "Something went wrong. Please call us.",
+    }
+  : {
+      name: "Naam",
+      email: "E-mail",
+      phone: "Telefoon",
+      reason: "Waarvoor wil je langskomen?",
+      physio: "Kinesitherapie",
+      training: "Personal training",
+      other: "Andere",
+      prescription: "Heb je een voorschrift van je arts?",
+      hint: "Geen voorschrift? Geen enkel probleem, we helpen je graag verder.",
+      yes: "Ja",
+      no: "Nee",
+      na: "Niet van toepassing",
+      message: "Stel hier je vraag",
+      send: "Versturen",
+      sending: "Verzenden…",
+      thanks: "Bedankt voor je mail. We hebben je vraag goed ontvangen.",
+      fail: "Er ging iets mis. Bel ons gerust.",
+    };
+---
+
+<Layout
+  title={paginaTekst(pagina, "seoTitle", lang) || paginaTekst(pagina, "titel", lang)}
+  description={paginaTekst(pagina, "seoDescription", lang)}
+  path={`${prefix}/welkom`}
+  altPath={en ? "/welkom" : "/en/welkom"}
+  lang={lang}
+  noindex
+>
+  <section class="mx-auto max-w-xl px-4 py-16">
+    <SectionKicker n={1} />
+    <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", lang)}</h1>
+    {paginaTekst(pagina, "slogan", lang) && <p class="mt-2 text-lg font-medium text-brand-primary">{paginaTekst(pagina, "slogan", lang)}</p>}
+    {paginaAlineas(pagina, lang, { telefoon: locatie.telefoon }).map((tekst) => (
+      <p class="mt-2 text-sm text-brand-muted">{tekst}</p>
+    ))}
+
+    <form class="mt-8 grid gap-4" data-contact-form>
+      <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder={copy.name} required />
+      <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder={copy.email} required />
+      <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder={copy.phone} required />
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">{copy.reason}</legend>
+        <div class="mt-2 flex flex-col gap-2 text-sm">
+          <label><input type="checkbox" name="waarvoor" value="Kinesitherapie" /> {copy.physio}</label>
+          <label><input type="checkbox" name="waarvoor" value="Personal training" /> {copy.training}</label>
+          <label><input type="checkbox" name="waarvoor" value="Andere" /> {copy.other}</label>
+        </div>
+      </fieldset>
+      <fieldset class="rounded-lg border border-brand-border px-4 py-3">
+        <legend class="px-1 text-sm font-semibold">{copy.prescription}</legend>
+        <p class="text-xs text-brand-muted">{copy.hint}</p>
+        <div class="mt-2 flex flex-wrap gap-4 text-sm">
+          <label><input type="radio" name="voorschrift" value="Ja" /> {copy.yes}</label>
+          <label><input type="radio" name="voorschrift" value="Nee" /> {copy.no}</label>
+          <label><input type="radio" name="voorschrift" value="Niet van toepassing" /> {copy.na}</label>
+        </div>
+      </fieldset>
+      <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="4" placeholder={copy.message} required minlength="5"></textarea>
+      <input type="hidden" name="locatie" value="Movenda (QR / placemat)" />
+      <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
+      <button type="submit" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">{copy.send}</button>
+      <p class="text-sm" data-contact-status role="status" aria-live="polite"></p>
+    </form>
+  </section>
+</Layout>
+
+<script define:vars={{ apiUrl: contactApiUrl, sending: copy.sending, thanks: copy.thanks, fail: copy.fail }} is:inline>
+  const form = document.querySelector("[data-contact-form]");
+  const status = document.querySelector("[data-contact-status]");
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const data = Object.fromEntries(fd.entries());
+    data.waarvoor = fd.getAll("waarvoor").join(", ");
+    const button = form.querySelector("button[type=submit]");
+    button.disabled = true;
+    status.textContent = sending;
+    try {
+      const res = await fetch(`${apiUrl}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("failed");
+      status.textContent = thanks;
+      form.reset();
+    } catch {
+      status.textContent = fail;
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>

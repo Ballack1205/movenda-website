@@ -1,0 +1,61 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LinkedText from "./LinkedText.astro";
+import SectionKicker from "./SectionKicker.astro";
+import { getFaqs, getPagina, getSiteSettings, paginaAlineas, paginaTekst } from "../lib/content";
+import { breadcrumbSchema, faqPageSchema } from "../lib/schema";
+import { faqCopy, type Lang } from "../lib/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "nl" } = Astro.props;
+const en = lang === "en";
+const prefix = en ? "/en" : "";
+const faqs = (await getFaqs("movenda")).map((faq) => ({ ...faq, ...faqCopy(faq, lang) }));
+const settings = await getSiteSettings();
+const pagina = await getPagina("faq");
+const path = `${prefix}/faq`;
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: prefix || "/" },
+    { name: "FAQ", path },
+  ]),
+  ...(faqs.length > 0 ? [faqPageSchema(faqs, path)] : []),
+];
+---
+
+<Layout
+  title={paginaTekst(pagina, "seoTitle", lang) || (en ? "Frequently asked questions | Movenda Hasselt" : "Veelgestelde vragen | Movenda Hasselt")}
+  description={paginaTekst(pagina, "seoDescription", lang)}
+  path={path}
+  altPath={en ? "/faq" : "/en/faq"}
+  lang={lang}
+  jsonLd={jsonLd}
+>
+  <section class="page-ink mx-auto max-w-3xl px-4 py-12">
+    <SectionKicker n={1} />
+    <h1 class="text-3xl font-bold">{paginaTekst(pagina, "titel", lang)}</h1>
+    {paginaAlineas(pagina, lang, { email: settings.email }).map((tekst) => (
+      <p class="mt-2 text-brand-muted">
+        <LinkedText text={tekst} linkClass="font-semibold text-brand-primary hover:underline" />
+      </p>
+    ))}
+
+    <div class="mt-8 divide-y divide-brand-border rounded-2xl border border-brand-border bg-brand-surface">
+      {faqs.map((faq) => (
+        <details class="group px-6 py-4">
+          <summary class="cursor-pointer list-none font-semibold [&::-webkit-details-marker]:hidden">
+            <span class="flex items-center justify-between gap-4">
+              {faq.vraag}
+              <span class="text-brand-primary transition group-open:rotate-45">+</span>
+            </span>
+          </summary>
+          <p class="mt-3 text-sm text-brand-muted">{faq.antwoord}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+</Layout>

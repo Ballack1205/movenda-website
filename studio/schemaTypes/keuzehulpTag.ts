@@ -1,6 +1,7 @@
 import { TagIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { verplicht } from "./regels";
 
 // One answer option in the "Wie past bij mij?" chooser on /team. Julie
 // manages the vocabulary here (add/rename/reorder); therapists are tagged
@@ -24,7 +25,7 @@ export default defineType({
       name: "label",
       title: "Label (zoals bezoekers het zien)",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "labelEn",
@@ -38,7 +39,7 @@ export default defineType({
       title: "Vraag waar deze tag bij hoort",
       type: "string",
       options: { list: [...KEUZEHULP_CATEGORIEEN], layout: "radio" },
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "volgorde",

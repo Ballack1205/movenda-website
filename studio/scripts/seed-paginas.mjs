@@ -65,3 +65,32 @@ for (const [key, fields] of Object.entries(seed)) {
 }
 
 console.log(`Pagina's: ${created} aangemaakt, ${patched} aangevuld. Studio → Pagina's (teksten & foto's).`);
+
+// Site-instellingen: the homepage texts and the footer slogan, empty fields only.
+// Julie's open draft gets the same fill so publishing it does not blank them again.
+const settingsSeed = JSON.parse(
+  await readFile(new URL("../../web/src/content/site-settings.json", import.meta.url), "utf8"),
+);
+for (const id of ["siteSettings", "drafts.siteSettings"]) {
+  const doc = await client.getDocument(id).catch(() => null);
+  if (!doc) continue;
+  const set = {};
+  for (const field of ["footerTagline", "footerTaglineEn"]) {
+    if (!doc[field] && settingsSeed[field]) set[field] = settingsSeed[field];
+  }
+  const brief = doc.homeBrief || {};
+  for (const [field, value] of Object.entries(settingsSeed.homeBrief || {})) {
+    if (field === "bewijs") {
+      for (const [sub, subValue] of Object.entries(value)) {
+        if (!brief.bewijs?.[sub]) set[`homeBrief.bewijs.${sub}`] = subValue;
+      }
+    } else if (!brief[field] && value) {
+      set[`homeBrief.${field}`] = value;
+    }
+  }
+  if (Object.keys(set).length === 0) continue;
+  await client.patch(id).setIfMissing({ homeBrief: {} }).commit();
+  await client.patch(id).setIfMissing({ "homeBrief.bewijs": {} }).commit();
+  await client.patch(id).set(set).commit();
+  console.log(`${id}: ${Object.keys(set).length} velden aangevuld.`);
+}

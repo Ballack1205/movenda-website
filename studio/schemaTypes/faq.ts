@@ -1,6 +1,7 @@
 import { HelpCircleIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { verplicht } from "./regels";
 
 const CATEGORIEEN = [
   { title: "Behandelingen", value: "behandelingen" },
@@ -23,9 +24,9 @@ export default defineType({
   description: "Vraag + antwoord. Kies op welke site (Olympia, MPC of beide) de vraag verschijnt.",
   fieldsets: [EN_FIELDSET],
   fields: [
-    defineField({ name: "vraag", title: "Vraag (NL)", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "vraag", title: "Vraag (NL)", type: "string", validation: verplicht }),
     defineField({ name: "vraagEn", title: "Vraag (EN)", type: "string", fieldset: "en" }),
-    defineField({ name: "antwoord", title: "Antwoord (NL)", type: "text", rows: 4, validation: (Rule) => Rule.required() }),
+    defineField({ name: "antwoord", title: "Antwoord (NL)", type: "text", rows: 4, validation: verplicht }),
     defineField({ name: "antwoordEn", title: "Antwoord (EN)", type: "text", rows: 4, fieldset: "en" }),
     defineField({
       name: "categorie",

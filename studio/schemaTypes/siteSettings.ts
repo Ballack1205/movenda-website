@@ -1,5 +1,7 @@
 import { CogIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { EN_FIELDSET } from "./helpers";
+import { email, maxItems, metPlek, webadres } from "./regels";
 
 export default defineType({
   name: "siteSettings",
@@ -17,16 +19,24 @@ export default defineType({
   fields: [
     defineField({ name: "siteNaam", title: "Sitenaam", type: "string", initialValue: "Movenda", group: "algemeen" }),
     defineField({ name: "tagline", title: "Tagline", type: "string", group: "algemeen" }),
-    defineField({ name: "email", title: "Algemeen e-mailadres", type: "string", group: "algemeen", validation: (Rule) => Rule.email() }),
+    defineField({
+      name: "footerTagline",
+      title: "Slogan in de footer (NL)",
+      type: "string",
+      group: "algemeen",
+      description: "De korte regel onder het logo onderaan elke pagina.",
+    }),
+    defineField({ name: "footerTaglineEn", title: "Slogan in de footer (EN)", type: "string", group: "algemeen" }),
+    defineField({ name: "email", title: "Algemeen e-mailadres", type: "string", group: "algemeen", validation: email() }),
     defineField({
       name: "socials",
       title: "Social media",
       type: "object",
       group: "algemeen",
       fields: [
-        defineField({ name: "instagram", title: "Instagram-URL", type: "url" }),
-        defineField({ name: "facebook", title: "Facebook-URL", type: "url" }),
-        defineField({ name: "linkedin", title: "LinkedIn-URL", type: "url" }),
+        defineField({ name: "instagram", title: "Instagram-URL", type: "string", validation: webadres }),
+        defineField({ name: "facebook", title: "Facebook-URL", type: "string", validation: webadres }),
+        defineField({ name: "linkedin", title: "LinkedIn-URL", type: "string", validation: webadres }),
       ],
     }),
     defineField({
@@ -46,8 +56,9 @@ export default defineType({
       description: "Staat standaard UIT. Zet 'enabled' aan zodra jullie een agenda-tool kiezen.",
       fields: [
         defineField({ name: "enabled", title: "Boekknop tonen op de site", type: "boolean", initialValue: false }),
-        defineField({ name: "url", title: "Link naar de agenda-tool", type: "url" }),
+        defineField({ name: "url", title: "Link naar de agenda-tool", type: "string", validation: webadres }),
         defineField({ name: "label", title: "Tekst op de knop", type: "string", initialValue: "Maak een afspraak" }),
+        defineField({ name: "labelEn", title: "Tekst op de knop (EN)", type: "string" }),
       ],
     }),
     defineField({
@@ -84,10 +95,10 @@ export default defineType({
       title: "Google reviews (badge)",
       type: "object",
       group: "homepage",
-      description: "Score en aantal op de homepage, locatiepagina's en contact. Geen betaalde reviews-API.",
+      description:
+        "Eén Google-profiel voor heel Movenda. De badge linkt hiernaartoe op elke pagina, ook bij Performance Centre en op gsm. Geen betaalde reviews-API.",
       fields: [
-        defineField({ name: "olympia", title: "Olympia", type: "googleReviewInfo" }),
-        defineField({ name: "mpc", title: "MPC", type: "googleReviewInfo" }),
+        defineField({ name: "olympia", title: "Movenda", type: "googleReviewInfo" }),
       ],
     }),
     defineField({
@@ -122,8 +133,10 @@ export default defineType({
           description:
             "Alleen nodig als Search Console vraagt om verificatie via een HTML-tag. Plak enkel de code (het stuk na content=\"…\"), niet de hele tag. Leeg = geen tag.",
           validation: (Rule) =>
-            Rule.custom((value) =>
-              !value || /^[A-Za-z0-9_-]+$/.test(value.trim()) ? true : "Plak enkel de code zelf, zonder <meta …> of aanhalingstekens.",
+            Rule.custom((value, context) =>
+              !value || /^[A-Za-z0-9_-]+$/.test(value.trim())
+                ? true
+                : metPlek(context, "plak enkel de code zelf, zonder <meta …> of aanhalingstekens."),
             ),
         }),
         defineField({
@@ -139,7 +152,8 @@ export default defineType({
             defineField({
               name: "scriptUrl",
               title: "Script-URL",
-              type: "url",
+              type: "string",
+              validation: webadres,
               description: "Standaard https://cloud.umami.is/script.js (EU-regio: https://eu.umami.is/script.js). Enkel wijzigen bij self-hosting.",
               initialValue: "https://cloud.umami.is/script.js",
             }),
@@ -155,11 +169,16 @@ export default defineType({
       fields: [
         defineField({ name: "basishonorarium", title: "Basishonorarium (€)", type: "number" }),
         defineField({ name: "intro", title: "Introtekst boven de tabellen", type: "text", rows: 3 }),
+        defineField({ name: "introEn", title: "Introtekst boven de tabellen (EN)", type: "text", rows: 3 }),
         defineField({ name: "terugbetalingStandaard", title: "Terugbetaling — standaard verzekerde", type: "string" }),
+        defineField({ name: "terugbetalingStandaardEn", title: "Terugbetaling — standaard verzekerde (EN)", type: "string" }),
         defineField({ name: "terugbetalingVt", title: "Terugbetaling — verhoogde tegemoetkoming (VT/BIM)", type: "string" }),
+        defineField({ name: "terugbetalingVtEn", title: "Terugbetaling — verhoogde tegemoetkoming (EN)", type: "string" }),
         defineField({ name: "voorwaarden", title: "Voorwaarden voor terugbetaling", type: "text", rows: 4 }),
+        defineField({ name: "voorwaardenEn", title: "Voorwaarden voor terugbetaling (EN)", type: "text", rows: 4 }),
         defineField({ name: "exBtwMpc", title: "MPC-prijzen exclusief BTW", type: "boolean", initialValue: true }),
         defineField({ name: "annulatiebeleid", title: "Annulatiebeleid", type: "text", rows: 3 }),
+        defineField({ name: "annulatiebeleidEn", title: "Annulatiebeleid (EN)", type: "text", rows: 3 }),
         defineField({
           name: "nomenclatuur",
           title: "Nomenclatuurtabel (kine)",
@@ -188,10 +207,15 @@ export default defineType({
       group: "homepage",
       fields: [
         defineField({ name: "home", title: "Homepage", type: "string" }),
+        defineField({ name: "homeEn", title: "Homepage (EN)", type: "string" }),
         defineField({ name: "kine", title: "Kinesitherapie", type: "string" }),
+        defineField({ name: "kineEn", title: "Kinesitherapie (EN)", type: "string" }),
         defineField({ name: "mpc", title: "MPC", type: "string" }),
+        defineField({ name: "mpcEn", title: "MPC (EN)", type: "string" }),
         defineField({ name: "prijzenKine", title: "Prijzen kine", type: "string" }),
+        defineField({ name: "prijzenKineEn", title: "Prijzen kine (EN)", type: "string" }),
         defineField({ name: "prijzenPt", title: "Prijzen PT", type: "string" }),
+        defineField({ name: "prijzenPtEn", title: "Prijzen PT (EN)", type: "string" }),
       ],
     }),
     defineField({
@@ -207,6 +231,124 @@ export default defineType({
         defineField({ name: "mpc", title: "Movenda Performance Centre", type: "homePijler" }),
       ],
       options: { collapsible: true, collapsed: true },
+    }),
+    defineField({
+      name: "homeDeurenTitel",
+      title: "Kop boven de fotodeuren",
+      type: "string",
+      group: "homepage",
+      description: "Bv. 'Eén praktijk, drie wegen'. Schrijf de zin zelf — zo vermijden we rare meervouden als er een deur bijkomt.",
+      initialValue: "Eén praktijk, drie wegen",
+    }),
+    defineField({
+      name: "homeDeurenTitelEn",
+      title: "Kop boven de fotodeuren (EN)",
+      type: "string",
+      group: "homepage",
+    }),
+    defineField({
+      name: "homeDeuren",
+      title: "Homepage — fotodeuren (lab)",
+      description:
+        "De grote foto's halverwege de lab-homepage. Sleep om te herschikken. Voeg er een toe als er een rubriek bijkomt (dan worden het er 4). Houd het klein: meer dan vijf deuren wordt onoverzichtelijk.",
+      type: "array",
+      group: "homepage",
+      of: [{ type: "homeDeur" }],
+      validation: maxItems(6),
+    }),
+    defineField({
+      name: "homeAanbod",
+      title: "Homepage — vijf aanboddeuren (brief)",
+      description:
+        "De vijf toegangspoorten op de brief-homepage. Tekst is de zin op de deur. Leeg laten = de starttekst uit de site.",
+      type: "array",
+      group: "homepage",
+      of: [{ type: "homeDeur" }],
+      validation: maxItems(5),
+    }),
+    defineField({
+      name: "homeBrief",
+      title: "Homepage — teksten (brief)",
+      description: "Merkintro en de korte titels op de brief-homepage. De aantallen in de strook komen uit Team en Locaties.",
+      type: "object",
+      group: "homepage",
+      options: { collapsible: true, collapsed: true },
+      fieldsets: [EN_FIELDSET],
+      fields: [
+        defineField({ name: "merkKicker", title: "Merkintro — bovenkop", type: "string" }),
+        defineField({ name: "merkTitel", title: "Merkintro — titel", type: "string" }),
+        defineField({ name: "merkTekst", title: "Merkintro — tekst", type: "text", rows: 5 }),
+        defineField({ name: "merkStatement", title: "Merkintro — statement", type: "string" }),
+        defineField({ name: "merkCta", title: "Merkintro — knop", type: "string" }),
+        defineField({ name: "partnersKicker", title: "Partners — bovenkop", type: "string" }),
+        defineField({ name: "partnersCta", title: "Partners — knop", type: "string" }),
+        defineField({ name: "aanbodKicker", title: "Aanbod — titel", type: "string" }),
+        defineField({ name: "aanbodTekst", title: "Aanbod — tekst", type: "text", rows: 2 }),
+        defineField({ name: "locatiesTitel", title: "Locaties — titel", type: "string" }),
+        defineField({ name: "hasseltNaam", title: "Locaties — naam op de foto Hasselt", type: "string" }),
+        defineField({ name: "kuringenNaam", title: "Locaties — naam op de foto Kuringen", type: "string" }),
+        defineField({ name: "hasseltProfiel", title: "Movenda Hasselt — profiel", type: "string" }),
+        defineField({ name: "kuringenProfiel", title: "Performance Centre Kuringen — profiel", type: "string" }),
+        defineField({ name: "teamKicker", title: "Team — bovenkop", type: "string" }),
+        defineField({ name: "teamTitel", title: "Team — titel", type: "string" }),
+        defineField({ name: "teamTekst", title: "Team — tekst", type: "text", rows: 3 }),
+        defineField({ name: "teamCta", title: "Team — knop", type: "string" }),
+        defineField({ name: "eventsKicker", title: "Events — bovenkop", type: "string" }),
+        defineField({ name: "reviewsTitel", title: "Reviews — titel", type: "string" }),
+        defineField({ name: "reviewsCta", title: "Reviews — knop", type: "string" }),
+        defineField({ name: "insightsKicker", title: "Insights — bovenkop", type: "string" }),
+        defineField({ name: "insightsTitel", title: "Insights — titel", type: "string" }),
+        defineField({ name: "insightsTekst", title: "Insights — tekst", type: "text", rows: 2 }),
+        defineField({ name: "insightsCta", title: "Insights — knop", type: "string" }),
+        defineField({ name: "instagramTitel", title: "Instagram — titel", type: "string" }),
+        defineField({ name: "instagramCta", title: "Instagram — knop", type: "string" }),
+        defineField({ name: "slotTitel", title: "Slot — titel", type: "string" }),
+        defineField({ name: "slotTekst", title: "Slot — tekst", type: "text", rows: 3 }),
+        defineField({ name: "slotAfspraak", title: "Slot — afspraakknop", type: "string" }),
+        defineField({ name: "slotContact", title: "Slot — contactknop", type: "string" }),
+        defineField({ name: "merkKickerEn", title: "Merkintro — bovenkop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "merkTitelEn", title: "Merkintro — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "merkTekstEn", title: "Merkintro — tekst (EN)", type: "text", rows: 5, fieldset: "en" }),
+        defineField({ name: "merkStatementEn", title: "Merkintro — statement (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "merkCtaEn", title: "Merkintro — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "partnersCtaEn", title: "Partners — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "aanbodKickerEn", title: "Aanbod — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "aanbodTekstEn", title: "Aanbod — tekst (EN)", type: "text", rows: 2, fieldset: "en" }),
+        defineField({ name: "locatiesTitelEn", title: "Locaties — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "hasseltProfielEn", title: "Movenda Hasselt — profiel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "kuringenProfielEn", title: "Performance Centre Kuringen — profiel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "teamTitelEn", title: "Team — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "teamTekstEn", title: "Team — tekst (EN)", type: "text", rows: 3, fieldset: "en" }),
+        defineField({ name: "teamCtaEn", title: "Team — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "reviewsTitelEn", title: "Reviews — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "reviewsCtaEn", title: "Reviews — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "insightsTitelEn", title: "Insights — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "insightsTekstEn", title: "Insights — tekst (EN)", type: "text", rows: 2, fieldset: "en" }),
+        defineField({ name: "insightsCtaEn", title: "Insights — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "instagramCtaEn", title: "Instagram — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "slotTitelEn", title: "Slot — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "slotTekstEn", title: "Slot — tekst (EN)", type: "text", rows: 3, fieldset: "en" }),
+        defineField({ name: "slotAfspraakEn", title: "Slot — afspraakknop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "slotContactEn", title: "Slot — contactknop (EN)", type: "string", fieldset: "en" }),
+        defineField({
+          name: "bewijs",
+          title: "Bewijsstrook",
+          description: "De aantallen kinesitherapeuten, trainers en locaties worden geteld uit Team (Telt mee als) en Locaties. Hier staan het ervaringscijfer en de woorden onder de cijfers.",
+          type: "object",
+          fieldsets: [EN_FIELDSET],
+          fields: [
+            defineField({ name: "jaren", title: "Jaar ervaring", type: "string", initialValue: "10+" }),
+            defineField({ name: "kinesistenLabel", title: "Woord onder het aantal kinesitherapeuten", type: "string" }),
+            defineField({ name: "trainersLabel", title: "Woord onder het aantal trainers", type: "string" }),
+            defineField({ name: "locatiesLabel", title: "Woord onder het aantal locaties", type: "string" }),
+            defineField({ name: "jarenLabel", title: "Woord onder het ervaringscijfer", type: "string" }),
+            defineField({ name: "kinesistenLabelEn", title: "Woord onder het aantal kinesitherapeuten (EN)", type: "string", fieldset: "en" }),
+            defineField({ name: "trainersLabelEn", title: "Woord onder het aantal trainers (EN)", type: "string", fieldset: "en" }),
+            defineField({ name: "locatiesLabelEn", title: "Woord onder het aantal locaties (EN)", type: "string", fieldset: "en" }),
+            defineField({ name: "jarenLabelEn", title: "Woord onder het ervaringscijfer (EN)", type: "string", fieldset: "en" }),
+          ],
+        }),
+      ],
     }),
     defineField({
       name: "partnerband",

@@ -390,7 +390,7 @@ export const blogListSchema = blogListNode;
 export const breadcrumbSchema = breadcrumbNode;
 export const localBusinessSchema = localBusinessNode;
 export function serviceSchema(dienst: Dienst, locatie: Locatie, path?: string): JsonLdNode {
-  return serviceNode(dienst, locatie, { path: path || `/mpc/${dienst.slug}` });
+  return serviceNode(dienst, locatie, { path: path || `/performance/${dienst.slug}` });
 }
 
 /** Wrap nodes into a single JSON-LD document, deduplicated by @id (later wins). */

@@ -1,0 +1,106 @@
+{
+  "people": {
+    "andres": { "naam": "Andres Ruttens", "slug": "andres-ruttens", "book": "https://book.crossuite.app/18404f1b-e6a7-46f8-820e-db312c0e9d50" },
+    "josje": { "naam": "Josje Bazelmans", "slug": "josje-bazelmans" },
+    "koen": { "naam": "Koen Daniëls", "slug": "koen-daniels" },
+    "jens": { "naam": "Jens Hendrickx", "slug": "jens-hendrickx" },
+    "simon": { "naam": "Simon Cornelissen", "slug": "simon-cornelissen" },
+    "tanse": { "naam": "Tanse Vanheusden", "slug": "tanse-vanheusden" },
+    "miel": { "naam": "Miel Briers", "slug": "miel-briers" },
+    "maarten": { "naam": "Maarten Bernaerts", "slug": "maarten-bernaerts" },
+    "jana": { "naam": "Jana Albrechts", "slug": "jana-albrechts" },
+    "stijn": { "naam": "Stijn De Meyer", "slug": "stijn-de-meyer" },
+    "an": { "naam": "An Janssen", "slug": "an-janssen" },
+    "cedriek": { "naam": "Cedriek Swinnen", "slug": "cedriek-swinnen" },
+    "arne": { "naam": "Arne Daniëls", "slug": "arne-daniels" },
+    "charlotte": { "naam": "Charlotte Vorstenbosch", "slug": "charlotte-vorstenbosch" },
+    "yannick": { "naam": "Yannick Glorieux", "slug": "yannick-glorieux" },
+    "quinten": { "naam": "Quinten Beckers", "slug": "quinten-beckers" },
+    "dimitri": { "naam": "Dimitri Vanempten", "slug": "dimitri-vanempten" }
+  },
+  "contexts": [
+    { "id": "ctx-operatie", "label": "Operatie (pre- en postoperatief)", "next": "regio" },
+    { "id": "ctx-algemeen", "label": "Algemene klacht", "next": "regio" },
+    { "id": "ctx-sportblessure", "label": "Sportblessure", "next": "sport" },
+    { "id": "ctx-chronisch", "label": "Chronisch", "next": "regio" },
+    { "id": "ctx-prenataal", "label": "Pre- en postnataal", "people": ["tanse"] },
+    { "id": "ctx-bekkenbodem", "label": "Bekkenbodem / pelvische reëducatie", "people": ["tanse"] },
+    { "id": "ctx-complex", "label": "Complex of terugkerend", "people": ["andres", "josje", "koen", "jens", "miel", "stijn"] },
+    { "id": "ctx-lymfe", "label": "Lymfedrainage", "people": ["an"] },
+    { "id": "ctx-preventie", "label": "Preventie", "people": ["andres", "josje", "jens", "simon", "miel", "maarten", "jana", "stijn"] },
+    { "id": "ctx-jeugd", "label": "Jeugd", "people": ["josje", "koen", "jens", "simon", "miel", "maarten", "jana", "stijn"] },
+    { "id": "ctx-dryneedling", "label": "Dry needling", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "maarten", "jana", "stijn"] },
+    { "id": "ctx-oefentherapie", "label": "Oefentherapie", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "maarten", "jana", "stijn"] },
+    { "id": "ctx-manueel", "label": "Manuele therapie", "next": "regio" },
+    { "id": "ctx-osteopathie", "label": "Osteopathie", "people": ["miel"] },
+    { "id": "ctx-inspanningstest", "label": "Inspanningstesten", "people": ["jens", "stijn"] },
+    { "id": "ctx-looptest", "label": "Looptesten", "people": ["jens", "jana", "stijn"] },
+    { "id": "ctx-hoofdpijn", "label": "Hoofdpijnen", "people": ["josje", "koen", "simon", "miel", "stijn"] },
+    { "id": "ctx-stress", "label": "Stressgerelateerde klachten", "people": ["miel"] }
+  ],
+  "regions": [
+    { "id": "reg-lagerug", "label": "Lage rug", "people": ["andres", "koen", "jens", "miel", "maarten", "jana", "stijn"], "places": [
+      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/8a47e100-d16b-4de3-949f-356878628fd2" },
+      { "label": "Lammerweg", "href": "https://book.crossuite.app/cf18e6d3-0904-44a5-828d-08ed7ed38735" }
+    ]},
+    { "id": "reg-middenrug", "label": "Middenrug / nek / schouder", "people": ["andres", "josje", "jens", "simon", "miel", "maarten", "jana", "stijn"], "places": [
+      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/bec024d6-5dce-4c6e-8366-73dfa2cfa2ed" },
+      { "label": "Lammerweg", "href": "https://book.crossuite.app/e40ca65e-58a4-404d-9570-88add9829f89" }
+    ]},
+    { "id": "reg-schouder", "label": "Schouder", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "jana", "stijn"], "places": [
+      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/6a48f7f9-1e89-4e79-9809-8025d15083e1" },
+      { "label": "Lammerweg", "href": "https://book.crossuite.app/18aaf001-fa71-497f-b249-951622a5a6cb" }
+    ]},
+    { "id": "reg-elleboog", "label": "Elleboog", "people": ["josje", "jens", "stijn"], "places": [
+      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/843ed399-7239-4d16-990b-48fb82f13de8" },
+      { "label": "Lammerweg", "href": "https://book.crossuite.app/4e4d3381-cfea-4702-8371-fc8d66001d86" }
+    ]},
+    { "id": "reg-pols", "label": "Pols", "people": ["josje", "jens", "stijn"], "places": [
+      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/e235578f-08b9-441b-86b8-a751e54bef06" },
+      { "label": "Lammerweg", "href": "https://book.crossuite.app/6bf62c23-c9d0-4300-8096-cc6c77b0f0fb" }
+    ]},
+    { "id": "reg-knie", "label": "Knie", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "maarten", "jana", "stijn"], "places": [
+      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/e358f41f-0f44-423e-988a-077f3f2b6053" },
+      { "label": "Lammerweg", "href": "https://book.crossuite.app/09385905-3c67-4741-9ea9-eec894f25112" }
+    ]},
+    { "id": "reg-heup", "label": "Heup", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "maarten", "jana"] },
+    { "id": "reg-voetenkel", "label": "Voet / enkel", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "maarten", "jana", "stijn"] },
+    { "id": "reg-kaak", "label": "Kaak", "people": ["josje", "miel", "stijn"] },
+    { "id": "reg-acl", "label": "ACL (knie)", "people": ["andres", "josje", "koen", "jens", "simon", "maarten", "jana", "stijn"] },
+    { "id": "reg-bekken", "label": "Bekken", "people": ["andres", "tanse", "miel", "stijn"] }
+  ],
+  "sports": [
+    { "id": "spo-gymnastiek", "label": "Gymnastiek", "people": ["josje", "simon", "jana"] },
+    { "id": "spo-lopen", "label": "Lopen", "people": ["josje", "koen", "jens", "simon", "maarten", "jana", "stijn"] },
+    { "id": "spo-hyrox", "label": "Hyrox", "people": ["andres", "josje", "jens", "simon", "maarten", "jana"] },
+    { "id": "spo-fitness", "label": "Fitness", "people": ["andres", "josje", "koen", "simon", "maarten", "jana"] },
+    { "id": "spo-balsporten", "label": "Balsporten", "people": ["andres", "koen", "jens", "simon", "maarten", "jana", "stijn"] },
+    { "id": "spo-slagsporten", "label": "Slagsporten", "people": ["andres", "koen", "simon", "jana", "stijn"] },
+    { "id": "spo-fietsen", "label": "Fietsen", "people": ["jens", "simon", "jana", "stijn"] },
+    { "id": "spo-motorcross", "label": "Motorcross", "people": ["jens"] },
+    { "id": "spo-bmx", "label": "BMX", "people": ["jens"] },
+    { "id": "spo-basket", "label": "Basket", "people": ["andres", "simon", "maarten", "jana", "stijn"] },
+    { "id": "spo-allesporten", "label": "Alle sporten", "people": ["andres", "josje", "koen", "jens", "simon", "maarten", "jana"] },
+    { "id": "spo-autosport", "label": "Autosport", "people": ["andres", "jens"] },
+    { "id": "spo-dansen", "label": "Dansen", "people": ["josje", "jana"] }
+  ],
+  "training": [
+    { "id": "spec-topsport", "label": "Topsport", "people": ["cedriek", "jens", "yannick"] },
+    { "id": "spec-voetbal", "label": "Voetbal", "people": ["cedriek"] },
+    { "id": "spec-ondernemers", "label": "Ondernemers", "people": ["andres", "koen", "charlotte"] },
+    { "id": "spec-sporters", "label": "Sporters (algemeen)", "people": ["andres"] },
+    { "id": "spec-gymnastiek2", "label": "Gymnastiek", "people": ["josje"] },
+    { "id": "spec-hyrox2", "label": "Hyrox", "people": ["josje"] },
+    { "id": "spec-lopers", "label": "Lopers", "people": ["josje", "jens"] },
+    { "id": "spec-recreatief", "label": "Recreatieve sporters", "people": ["koen", "jens", "maarten", "quinten"] },
+    { "id": "spec-motorcross2", "label": "Motorcross", "people": ["jens"] },
+    { "id": "spec-jongeatleten", "label": "Jonge atleten", "people": ["simon", "quinten"] },
+    { "id": "spec-bovenhands", "label": "Bovenhandse slagsporten", "people": ["simon"] },
+    { "id": "spec-prepostnataal", "label": "Pre- en postnatale training", "people": ["tanse"] },
+    { "id": "spec-balsporten2", "label": "Balsporten", "people": ["maarten"] },
+    { "id": "spec-allesporten2", "label": "Alle sporten", "people": ["arne", "jana", "quinten"] },
+    { "id": "spec-corporate", "label": "Corporate coaching", "people": ["charlotte", "yannick"] },
+    { "id": "spec-dames", "label": "Dames", "people": ["charlotte"] },
+    { "id": "spec-boksen", "label": "Boksen", "people": ["dimitri"] }
+  ]
+}

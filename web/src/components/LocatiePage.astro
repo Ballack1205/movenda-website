@@ -1,0 +1,105 @@
+---
+import Layout from "../layouts/Layout.astro";
+import GoogleReviewBadge from "./GoogleReviewBadge.astro";
+import Routebeschrijving from "./Routebeschrijving.astro";
+import SectionKicker from "./SectionKicker.astro";
+import { getLocatieBySlug, getTeamledenByLocatie, type LocatieSlug } from "../lib/content";
+import { breadcrumbNode } from "../lib/schema";
+import { byAppointment, floorNote, legalCourt, locatieType, weekday, withLang, type Lang } from "../lib/i18n";
+
+interface Props {
+  lang?: Lang;
+  slug: string;
+}
+
+const { lang = "nl", slug } = Astro.props;
+const en = lang === "en";
+const prefix = en ? "/en" : "";
+const locatie = (await getLocatieBySlug(slug as LocatieSlug))!;
+const team = await getTeamledenByLocatie(slug as LocatieSlug);
+const brand = locatie.brand === "mpc" ? "mpc" : "movenda";
+const path = `${prefix}/locaties/${locatie.slug}`;
+const typeLabel = en ? locatie.typeEn || locatieType(locatie.type, "en") : locatie.type;
+const urenNote = en ? locatie.urenNoteEn || byAppointment(locatie.urenNote, "en") : locatie.urenNote;
+const route = en ? locatie.routebeschrijvingEn || locatie.routebeschrijving : locatie.routebeschrijving;
+const locatieForRoute = route === locatie.routebeschrijving ? locatie : { ...locatie, routebeschrijving: route };
+---
+
+<Layout
+  title={en ? `${locatie.naam} | Address & opening hours` : `${locatie.naam} | Adres & openingsuren`}
+  description={en
+    ? `${locatie.naam} — ${typeLabel}, ${locatie.adres}. Opening hours, phone, directions and the team at this location.`
+    : `${locatie.naam} — ${locatie.type}, ${locatie.adres}. Openingsuren, telefoon, route en het team op deze locatie.`}
+  path={path}
+  altPath={en ? `/locaties/${locatie.slug}` : `/en/locaties/${locatie.slug}`}
+  brand={brand}
+  lang={lang}
+  jsonLd={[breadcrumbNode([{ name: "Home", path: prefix || "/" }, { name: locatie.naam, path }])]}
+>
+  <div class="locatie-page">
+  <section class="mx-auto max-w-4xl px-4 py-12">
+    <SectionKicker n={1} />
+    <h1 class="text-3xl font-bold">{locatie.naam}</h1>
+    <p class="mt-1 text-brand-muted">{typeLabel}</p>
+
+    <div class="mt-6">
+      <GoogleReviewBadge lang={lang} />
+    </div>
+
+    <div class="mt-8 grid gap-8 sm:grid-cols-2">
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{en ? "Address" : "Adres"}</h2>
+        <p class="mt-2">{locatie.adres}</p>
+        <a href={locatie.mapsUrl} target="_blank" rel="noopener noreferrer" class="mt-1 inline-block text-sm font-semibold text-brand-primary hover:underline">
+          {en ? "View on Google Maps →" : "Bekijk op Google Maps →"}
+        </a>
+
+        <h2 class="mt-6 text-sm font-semibold uppercase tracking-wide text-brand-muted">Contact</h2>
+        <p class="mt-2">
+          <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="text-brand-primary hover:underline">{locatie.telefoon}</a>
+        </p>
+        <p>
+          <a href={`mailto:${locatie.email}`} class="text-brand-primary hover:underline">{locatie.email}</a>
+        </p>
+      </div>
+
+      <div>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{en ? "Opening hours" : "Openingsuren"}</h2>
+        {urenNote && <p class="mt-2 text-sm text-brand-muted">{urenNote}</p>}
+        <ul class="mt-2 space-y-1 text-sm">
+          {locatie.uren.map((u) => (
+            <li class="flex justify-between gap-4">
+              <span>{weekday(u.dag, lang)}</span>
+              <span>{u.van} – {u.tot}</span>
+            </li>
+          ))}
+        </ul>
+        {locatie.verdiepingNote && <p class="mt-2 text-xs text-brand-muted">{floorNote(locatie.verdiepingNote, lang)}</p>}
+      </div>
+    </div>
+
+    <Routebeschrijving locatie={locatieForRoute} lang={lang} title={en ? "Directions" : "Route"} class="mt-8" />
+
+    <p class="mt-8 text-xs text-brand-muted">
+      {en ? "VAT" : "BTW"} {locatie.btw}
+      {locatie.iban && <> · IBAN {locatie.iban}</>}
+      {locatie.bic && <> · BIC {locatie.bic}</>}
+      {legalCourt(locatie.rpr, lang) && <> · {legalCourt(locatie.rpr, lang)}</>}
+    </p>
+
+    {team.length > 0 && (
+      <div class="mt-12">
+        <h2 class="text-xl font-bold">{en ? "Team at this location" : "Team op deze locatie"}</h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          {team.map((lid) => (
+            <a href={withLang(`/team/${lid.slug}`, lang)} class="rounded-xl border border-brand-border p-4 transition hover:border-brand-primary">
+              <p class="font-semibold">{lid.voornaam} {lid.naam}</p>
+              <p class="text-sm text-brand-muted">{en ? lid.rolEn || lid.rol : lid.rol}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </section>
+  </div>
+</Layout>

@@ -4,6 +4,7 @@ import dienst from "./dienst";
 import siteSettings from "./siteSettings";
 import googleReviewInfo from "./googleReviewInfo";
 import homePijler from "./homePijler";
+import homeDeur from "./homeDeur";
 import faq from "./faq";
 import blogPost from "./blogPost";
 import vacature from "./vacature";
@@ -18,10 +19,14 @@ import keuzehulpTag from "./keuzehulpTag";
 import specialisatie from "./specialisatie";
 import pagina from "./pagina";
 import cmsFoto from "./cmsFoto";
+import event from "./event";
+import actiepagina from "./actiepagina";
 
 export const schemaTypes = [
   pagina,
+  actiepagina,
   cmsFoto,
+  event,
   teamlid,
   specialisatie,
   locatie,
@@ -29,6 +34,7 @@ export const schemaTypes = [
   siteSettings,
   googleReviewInfo,
   homePijler,
+  homeDeur,
   faq,
   blogPost,
   vacature,

@@ -1,0 +1,246 @@
+---
+// One event on /events: big date, title, place, text, photo and an optional
+// "Meer info" button (Studio → Events → Link). Past events render compact.
+import type { SiteEvent } from "../lib/content";
+import EventVideo from "./EventVideo.astro";
+
+interface Props {
+  event: SiteEvent;
+  lang?: "nl" | "en";
+  afgelopen?: boolean;
+}
+
+const { event, lang = "nl", afgelopen = false } = Astro.props;
+const en = lang === "en";
+const titel = (en && event.titelEn) || event.titel;
+const tekst = (en && event.tekstEn) || event.tekst;
+const locale = en ? "en-GB" : "nl-BE";
+const date = new Date(`${event.datum}T12:00:00`);
+const geldig = !Number.isNaN(date.getTime());
+const dag = geldig ? String(date.getDate()) : "";
+const maand = geldig ? new Intl.DateTimeFormat(locale, { month: "short" }).format(date).replace(".", "") : "";
+const jaar = geldig ? String(date.getFullYear()) : "";
+const weekdag = geldig ? new Intl.DateTimeFormat(locale, { weekday: "long" }).format(date) : "";
+const volledig = geldig
+  ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(date)
+  : event.datum;
+const extern = Boolean(event.link && /^https?:/.test(event.link));
+const knop = event.linkLabel || (en ? "More info" : "Meer info");
+const fp = event.fotoHotspot ? `&crop=focalpoint&fp-x=${event.fotoHotspot.x.toFixed(3)}&fp-y=${event.fotoHotspot.y.toFixed(3)}` : "";
+const foto = event.foto ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` : undefined;
+---
+
+<article class:list={["event-kaart", afgelopen && "event-kaart--afgelopen", foto && !afgelopen && "event-kaart--foto"]}>
+  <time class="event-kaart__datum" datetime={event.datum} aria-label={volledig}>
+    <span class="event-kaart__dag">{dag}</span>
+    <span class="event-kaart__maand">{maand}</span>
+    <span class="event-kaart__jaar">{jaar}</span>
+  </time>
+
+  <div class="event-kaart__body">
+    <p class="event-kaart__meta">
+      {weekdag}{event.locatie && ` · ${event.locatie}`}
+    </p>
+    <h3 class="event-kaart__titel">{titel}</h3>
+    {tekst && <p class="event-kaart__tekst">{tekst}</p>}
+    {event.link && !afgelopen && (
+      <a href={event.link} class="event-kaart__knop" {...(extern ? { target: "_blank", rel: "noopener" } : {})}>
+        {knop}
+      </a>
+    )}
+    <EventVideo video={event.video} foto={event.foto} titel={titel} />
+  </div>
+
+  {foto && !event.video && (
+    <img class="event-kaart__foto" src={foto} alt="" width="450" height="320" loading="lazy" />
+  )}
+</article>
+
+<style>
+  .event-kaart {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1.25rem;
+    padding: 1.25rem;
+    border: 1px solid rgb(244 247 251 / 0.16);
+    border-radius: 1.25rem;
+    background: rgb(244 247 251 / 0.05);
+  }
+
+  @media (max-width: 767px) {
+    .event-kaart {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+    }
+
+    .event-kaart .event-kaart__datum {
+      flex-direction: row;
+      align-items: baseline;
+      justify-self: start;
+      gap: 0.45rem;
+      min-width: 0;
+      padding: 0.55rem 0.9rem;
+    }
+
+    .event-kaart .event-kaart__datum .event-kaart__dag {
+      font-size: 1.6rem;
+    }
+
+    .event-kaart .event-kaart__datum :is(.event-kaart__maand, .event-kaart__jaar) {
+      margin-top: 0;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .event-kaart {
+      gap: 2rem;
+      padding: 1.75rem;
+    }
+
+    .event-kaart--foto {
+      grid-template-columns: auto minmax(0, 1fr) minmax(0, 18rem);
+    }
+  }
+
+  .event-kaart__datum {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-self: start;
+    min-width: 5.25rem;
+    padding: 0.85rem 0.75rem 0.7rem;
+    border-radius: 0.9rem;
+    background: #f3eee4;
+    line-height: 1;
+    text-align: center;
+  }
+
+  /* The lab .page-ink rules paint every span light; the date chip is cream. */
+  .event-kaart__datum span {
+    color: #161513 !important;
+  }
+
+  .event-kaart__dag {
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .event-kaart__maand {
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .event-kaart__jaar {
+    margin-top: 0.25rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.6;
+  }
+
+  .event-kaart__meta {
+    font-size: 0.78rem;
+    font-weight: 650;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .event-kaart__titel {
+    margin-top: 0.45rem;
+    font-family: var(--font-heading);
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .event-kaart__tekst {
+    margin-top: 0.75rem;
+    max-width: 38rem;
+    line-height: 1.6;
+    white-space: pre-line;
+    opacity: 0.85;
+  }
+
+  .event-kaart__knop {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    padding: 0 1.35rem;
+    border-radius: 9999px;
+    font-weight: 650;
+    background: #f3eee4;
+    color: #161513 !important;
+    transition: background-color 0.2s;
+  }
+
+  .event-kaart__knop::after {
+    content: "→";
+  }
+
+  .event-kaart__knop:hover {
+    background: #fffdf8;
+  }
+
+  .event-kaart__foto {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    border-radius: 0.9rem;
+    object-fit: cover;
+  }
+
+  @media (min-width: 768px) {
+    .event-kaart__foto {
+      grid-column: auto;
+      height: 100%;
+      aspect-ratio: auto;
+      min-height: 12rem;
+    }
+  }
+
+  .event-kaart--afgelopen {
+    padding: 1rem 1.25rem;
+    background: transparent;
+  }
+
+  .event-kaart--afgelopen .event-kaart__datum {
+    min-width: 4.25rem;
+    padding: 0.6rem 0.6rem 0.5rem;
+    background: rgb(244 247 251 / 0.12);
+  }
+
+  .event-kaart--afgelopen .event-kaart__datum span {
+    color: #f4f7fb !important;
+  }
+
+  .event-kaart--afgelopen .event-kaart__dag {
+    font-size: 1.8rem;
+  }
+
+  .event-kaart--afgelopen .event-kaart__titel {
+    font-size: 1.3rem;
+  }
+
+  .event-kaart--afgelopen .event-kaart__tekst {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+  }
+
+  .event-kaart--afgelopen .event-kaart__foto {
+    display: none;
+  }
+</style>

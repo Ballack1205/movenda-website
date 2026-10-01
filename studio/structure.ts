@@ -1,6 +1,7 @@
 import type { StructureResolver } from "sanity/structure";
 import {
   BillIcon,
+  BulbOutlineIcon,
   CalendarIcon,
   CaseIcon,
   CogIcon,
@@ -45,6 +46,7 @@ export const deskStructure: StructureResolver = (S) =>
             .initialValueTemplates([])
             .defaultOrdering([{ field: "_createdAt", direction: "asc" }]),
         ),
+      S.documentTypeListItem("actiepagina").title("Actiepagina's (bv. Dwars door Hasselt)").icon(BulbOutlineIcon),
       S.documentTypeListItem("popup").title("Pop-ups").icon(RocketIcon),
       S.divider(),
 
@@ -99,6 +101,7 @@ export const deskStructure: StructureResolver = (S) =>
 
       S.documentTypeListItem("faq").title("FAQ").icon(HelpCircleIcon),
       S.documentTypeListItem("getuigenis").title("Getuigenissen").icon(CommentIcon),
+      S.documentTypeListItem("event").title("Events").icon(CalendarIcon),
       S.listItem()
         .title("Blogposts")
         .icon(ComposeIcon)

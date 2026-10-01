@@ -1,5 +1,6 @@
 import { CalendarIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { tijd, verplicht } from "./regels";
 
 const DAGEN = ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag", "Zondag"];
 
@@ -11,29 +12,28 @@ export default defineType({
   description:
     "Groepslessen op MPC. Eén document per lesmoment. Verschijnt op /mpc/groepslessen. Coach en dienst koppelen is optioneel.",
   fields: [
-    defineField({ name: "les", title: "Les", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "les", title: "Les", type: "string", validation: verplicht }),
+    defineField({ name: "lesEn", title: "Les (EN)", type: "string" }),
     defineField({
       name: "dag",
       title: "Dag",
       type: "string",
       options: { list: DAGEN },
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "van",
       title: "Van (uu:mm)",
       type: "string",
       placeholder: "09:30",
-      validation: (Rule) =>
-        Rule.required().regex(/^([01]\d|2[0-3]):[0-5]\d$/, { name: "tijd", invert: false }).error("Gebruik uu:mm, bv. 09:30."),
+      validation: (Rule) => [verplicht(Rule), tijd("09:30")(Rule)],
     }),
     defineField({
       name: "tot",
       title: "Tot (uu:mm)",
       type: "string",
       placeholder: "10:30",
-      validation: (Rule) =>
-        Rule.required().regex(/^([01]\d|2[0-3]):[0-5]\d$/, { name: "tijd", invert: false }).error("Gebruik uu:mm, bv. 10:30."),
+      validation: (Rule) => [verplicht(Rule), tijd("10:30")(Rule)],
     }),
     defineField({ name: "coach", title: "Coach", type: "reference", to: [{ type: "teamlid" }] }),
     defineField({ name: "dienst", title: "Gekoppelde dienst", type: "reference", to: [{ type: "dienst" }] }),

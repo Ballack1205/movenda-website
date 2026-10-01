@@ -1,0 +1,35 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { breadcrumbSchema } from "../lib/schema";
+import { withLang, type Lang } from "../lib/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "nl" } = Astro.props;
+const en = lang === "en";
+const prefix = en ? "/en" : "";
+const path = `${prefix}/bookappointment`;
+---
+
+<Layout
+  title={en ? "Appointment | Movenda" : "Afspraak | Movenda"}
+  description={en ? "Book an appointment at Movenda or the Performance Centre." : "Plan een afspraak bij Movenda of het Performance Centre."}
+  path={path}
+  altPath={en ? "/bookappointment" : "/en/bookappointment"}
+  lang={lang}
+  jsonLd={[breadcrumbSchema([{ name: "Home", path: prefix || "/" }, { name: en ? "Appointment" : "Afspraak", path }])]}
+>
+  <section class="mx-auto max-w-2xl px-4 py-16">
+    <h1 class="text-3xl font-bold">{en ? "Appointment" : "Afspraak"}</h1>
+    <p class="mt-4 text-brand-muted">
+      {en
+        ? "The booking module will go here once the page is shared. Until then, book through the contact form."
+        : "De afspraakmodule wordt hier geplaatst zodra de pagina gedeeld is. Tot dan plan je een afspraak via het contactformulier."}
+    </p>
+    <p class="mt-6">
+      <a class="font-semibold underline" href={withLang("/contact", lang)}>{en ? "Go to contact" : "Naar contact"}</a>
+    </p>
+  </section>
+</Layout>

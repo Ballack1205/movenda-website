@@ -1,6 +1,7 @@
 import { RocketIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { link, metPlek, verplicht } from "./regels";
 
 export default defineType({
   name: "popup",
@@ -29,7 +30,7 @@ export default defineType({
       title: "Titel (NL)",
       type: "string",
       group: "inhoud",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({ name: "titelEn", title: "Titel (EN)", type: "string", group: "inhoud", fieldset: "en" }),
     defineField({
@@ -46,7 +47,7 @@ export default defineType({
       group: "inhoud",
       of: [{ type: "block" }],
       description: "Datum, plaats, opsommingen… Vet en lijstjes werken hier.",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "inhoudEn",
@@ -73,28 +74,54 @@ export default defineType({
         list: [
           { title: "Gaat naar een formulier-link (Google Form) — aanbevolen", value: "link" },
           { title: "Opent een inschrijfformulier op de site", value: "formulier" },
+          { title: "Opent een mail naar ons (bv. info@movenda.be)", value: "mail" },
         ],
         layout: "radio",
       },
       initialValue: "link",
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
     defineField({
       name: "knopUrl",
       title: "Formulier-URL",
-      type: "url",
+      type: "string",
       group: "inhoud",
       description:
         "Plak hier de Google Form-link, bv. https://forms.gle/… De knop opent die in een nieuw tabblad.",
       hidden: ({ parent }) => parent?.actie !== "link",
+      validation: (Rule) => [
+        link(Rule),
+        Rule.custom((value, context) => {
+          const actie = (context.parent as { actie?: string } | undefined)?.actie;
+          if (actie === "link" && !value) return metPlek(context, "nog leeg. Plak de formulier-URL (Google Form of andere pagina).");
+          return true;
+        }),
+      ],
+    }),
+    defineField({
+      name: "mailAdres",
+      title: "E-mailadres",
+      type: "string",
+      group: "inhoud",
+      description:
+        "Bij ‘mail’: naar dit adres opent de mail. Bij ‘inschrijfformulier’: hier komen de inschrijvingen binnen. Enkel @movenda.be-adressen, bv. info@movenda.be of julie@movenda.be.",
+      initialValue: "info@movenda.be",
+      hidden: ({ parent }) => parent?.actie !== "mail" && parent?.actie !== "formulier",
       validation: (Rule) =>
-        Rule.uri({ allowRelative: true, scheme: ["http", "https", "mailto"] }).custom(
-          (value, context) => {
-            const actie = (context.parent as { actie?: string } | undefined)?.actie;
-            if (actie === "link" && !value) return "Plak de formulier-URL (Google Form of andere pagina).";
-            return true;
-          },
-        ),
+        Rule.custom((value, context) => {
+          const actie = (context.parent as { actie?: string } | undefined)?.actie;
+          if (actie === "mail" && !value) return metPlek(context, "nog leeg. Vul het e-mailadres in, bv. info@movenda.be.");
+          if (value && !/^[^\s@]+@movenda\.be$/i.test(value.trim())) return "Gebruik een @movenda.be-adres, bv. info@movenda.be.";
+          return true;
+        }),
+    }),
+    defineField({
+      name: "mailOnderwerp",
+      title: "Onderwerp van de mail",
+      type: "string",
+      group: "inhoud",
+      description: "Leeg = de titel van de pop-up, bv. ‘Inschrijving: Together we Move’.",
+      hidden: ({ parent }) => parent?.actie !== "mail",
     }),
     defineField({
       name: "extraVragen",
@@ -108,7 +135,7 @@ export default defineType({
           type: "object",
           name: "vraag",
           fields: [
-            defineField({ name: "label", title: "Vraag", type: "string", validation: (Rule) => Rule.required() }),
+            defineField({ name: "label", title: "Vraag", type: "string", validation: verplicht }),
             defineField({
               name: "type",
               title: "Type",

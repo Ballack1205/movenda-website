@@ -1,6 +1,7 @@
 import { BillIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { verplicht } from "./regels";
 
 // Which page/section a price appears in follows from the category alone — no
 // name matching. Adding "Kickboxing — 10 lessen" under "MPC — groepslessen"
@@ -23,7 +24,7 @@ export default defineType({
   description: "Eén rij in een prijstabel. De categorie bepaalt op welke pagina de prijs staat.",
   fieldsets: [EN_FIELDSET],
   fields: [
-    defineField({ name: "naam", title: "Behandeling / formule (NL)", type: "string", validation: (Rule) => Rule.required() }),
+    defineField({ name: "naam", title: "Behandeling / formule (NL)", type: "string", validation: verplicht }),
     defineField({
       name: "naamEn",
       title: "Behandeling / formule (EN)",
@@ -36,9 +37,9 @@ export default defineType({
       title: "Categorie (bepaalt op welke pagina en in welke tabel de prijs staat)",
       type: "string",
       options: { list: [...PRIJS_CATEGORIEEN] },
-      validation: (Rule) => Rule.required(),
+      validation: verplicht,
     }),
-    defineField({ name: "bedrag", title: "Bedrag (€)", type: "number", validation: (Rule) => Rule.required() }),
+    defineField({ name: "bedrag", title: "Bedrag (€)", type: "number", validation: verplicht }),
     defineField({ name: "eenheid", title: "Eenheid (bv. '30 min')", type: "string" }),
     defineField({ name: "vanaf", title: "\"Vanaf\"-prijs (kan variëren per therapeut)", type: "boolean", initialValue: true }),
     defineField({ name: "opAanvraag", title: "Prijs op aanvraag (negeert bedrag)", type: "boolean", initialValue: false }),
