@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { locatie, lang = "nl", title, class: className = "" } = Astro.props;
-const tekst = locatieRoute(locatie.slug, locatie.routebeschrijving, lang);
+const tekst = locatieRoute(locatie.slug, locatie.routebeschrijving, lang, locatie.routebeschrijvingEn);
 const fotoAlt =
   locatie.slug === "olympia"
     ? lang === "en"

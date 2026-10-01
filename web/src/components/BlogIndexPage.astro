@@ -1,0 +1,67 @@
+---
+import Layout from "../layouts/Layout.astro";
+import BlogPostCard from "./BlogPostCard.astro";
+import { getBlogPosts, getPagina, paginaAlineas, paginaTekst } from "../lib/content";
+import { blogListSchema, breadcrumbSchema } from "../lib/schema";
+import SectionKicker from "./SectionKicker.astro";
+import LinkedText from "./LinkedText.astro";
+import { withLang, type Lang } from "../lib/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "nl" } = Astro.props;
+const en = lang === "en";
+const prefix = en ? "/en" : "";
+const posts = await getBlogPosts();
+const pagina = await getPagina("blog");
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: prefix || "/" },
+    { name: "Blog", path: `${prefix}/blog` },
+  ]),
+  blogListSchema(posts, lang),
+];
+---
+
+<Layout
+  title={paginaTekst(pagina, "seoTitle", lang) || "Blog | Movenda"}
+  description={paginaTekst(pagina, "seoDescription", lang)}
+  path={`${prefix}/blog`}
+  altPath={en ? "/blog" : "/en/blog"}
+  lang={lang}
+  jsonLd={jsonLd}
+  extraLinks={[
+    { rel: "alternate", type: "application/rss+xml", href: "/rss.xml", title: "Movenda blog" },
+    { rel: "alternate", type: "text/markdown", href: "/blog.md", title: "Blog (Markdown)" },
+  ]}
+>
+  <section class="page-ink mx-auto max-w-6xl px-4 py-12 lg:py-16">
+    <SectionKicker n={1} />
+    {paginaTekst(pagina, "ondertitel", lang) && (
+      <p class="text-sm font-semibold uppercase tracking-wide text-brand-primary">{paginaTekst(pagina, "ondertitel", lang)}</p>
+    )}
+    <h1 class="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
+      {paginaTekst(pagina, "titel", lang)}
+    </h1>
+    <form action={withLang("/zoeken", lang)} method="get" role="search" class="mt-6 max-w-md">
+      <label class="sr-only" for="blog-search">{en ? "Search" : "Zoeken"}</label>
+      <input id="blog-search" name="q" type="search" placeholder={en ? "Search" : "Zoeken"} class="w-full border-b border-brand-border bg-transparent px-1 py-2 text-lg outline-none" />
+    </form>
+    {paginaAlineas(pagina, lang).map((tekst) => (
+      <p class="mt-4 max-w-2xl text-lg text-brand-muted"><LinkedText text={tekst} /></p>
+    ))}
+
+    {posts.length === 0 ? (
+      <p class="mt-10 text-brand-muted">{paginaTekst(pagina, "legeTekst", lang)}</p>
+    ) : (
+      <div class="mt-10 grid gap-6 md:grid-cols-2">
+        {posts.map((post) => (
+          <BlogPostCard post={post} lang={lang} />
+        ))}
+      </div>
+    )}
+  </section>
+</Layout>

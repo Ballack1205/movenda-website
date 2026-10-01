@@ -425,18 +425,23 @@
     "titel": "GX (small) group training",
     "titelEn": "Group classes",
     "slogan": "Samen trainen. Persoonlijk blijven groeien.",
+    "sloganEn": "Train together. Keep growing as yourself.",
     "intro": "GX combineert de energie van een groep met de kwaliteit van gerichte coaching. Elke sessie telt maximaal acht deelnemers. Daardoor kan de coach techniek opvolgen, oefeningen aanpassen en iedereen uitdagen op een niveau dat past. Je traint samen, maar je progressie blijft persoonlijk.",
     "introEn": "Small groups, maximum 8 people, coached. First running class is free; PowerPlus has a free trial lesson.",
     "blokken": [
       {
         "kop": "Waarom GX",
-        "tekst": "- Maximaal acht deelnemers per sessie\n- Professionele coaching en technische correctie\n- Schaalbare oefeningen binnen één groepsformat\n- Vaste trainingsmomenten die regelmaat ondersteunen\n- Gedeelde energie, persoonlijke aandacht en ruimte om te groeien"
+        "kopEn": "Why GX",
+        "tekst": "- Maximaal acht deelnemers per sessie\n- Professionele coaching en technische correctie\n- Schaalbare oefeningen binnen één groepsformat\n- Vaste trainingsmomenten die regelmaat ondersteunen\n- Gedeelde energie, persoonlijke aandacht en ruimte om te groeien",
+        "tekstEn": "- Maximum eight people per session\n- Professional coaching and technical correction\n- Scalable exercises inside one group format\n- Fixed training times that support a routine\n- Shared energy, personal attention and room to grow"
       }
     ],
     "extraTekst": "Coach, dag, uur, duur, locatie en vrije plaatsen staan alleen in het lessenrooster hieronder. Locatie: Performance Centre Kuringen, Lammerweg 33, 3511 Kuringen.",
+    "extraTekstEn": "Coach, day, time, duration, location and free spots are listed only in the timetable below. Location: Performance Centre Kuringen, Lammerweg 33, 3511 Kuringen.",
     "prijsNotitie": "Prijzen exclusief BTW. Annuleren tot 24u op voorhand.",
     "prijsNotitieEn": "Prices exclusive of VAT. Cancel up to 24 hours in advance.",
     "formulierIntro": "Zonder betaling. Je aanvraag komt bij ons binnen per mail.",
+    "formulierIntroEn": "No payment. Your request reaches us by email.",
     "seoTitle": "Groepslessen & lesrooster | Movenda Performance Centre",
     "seoDescription": "GX small group training in Kuringen: maximaal acht deelnemers, met coaching op techniek en niveau. Lesrooster van het Movenda Performance Centre.",
     "seoTitleEn": "Group classes & timetable | Movenda Performance Centre",
@@ -444,10 +449,15 @@
   },
   "kine-abonnement": {
     "ondertitel": "Kiné-abonnement",
+    "ondertitelEn": "Physio membership",
     "titel": "Revalideer verder, ook buiten je kine sessies.",
+    "titelEn": "Keep recovering, also outside your physiotherapy sessions.",
     "intro": "Daarom bieden we, in samenwerking met [Olympia Hasselt](https://www.oly.be), een kine-fitnessabonnement aan voor mensen met een lopende revalidatie.\n\nVoor €40 per maand krijg je toegang tot de volledige fitnessruimte van Olympia Hasselt, zodat je ook buiten je kinesitherapiebehandelingen verder kan werken aan je herstel. De Milon Cirkel is niet inbegrepen.\n\nVraag dit speciale abonnement aan via jouw therapeut.",
+    "introEn": "Together with [Olympia Hasselt](https://www.oly.be), we offer a physio fitness membership for people in ongoing rehabilitation.\n\nFor €40 a month you get access to the full gym at Olympia Hasselt, so you can keep working on your recovery outside your physiotherapy sessions. The Milon circuit is not included.\n\nAsk your therapist about this membership.",
     "seoTitle": "Kiné-fitnessabonnement | Movenda Hasselt",
-    "seoDescription": "Met een lopende revalidatie bij Movenda oefen je voor €40 per maand verder in de fitnessruimte van Olympia Hasselt. De Milon Cirkel is niet inbegrepen."
+    "seoTitleEn": "Physio fitness membership | Movenda Hasselt",
+    "seoDescription": "Met een lopende revalidatie bij Movenda oefen je voor €40 per maand verder in de fitnessruimte van Olympia Hasselt. De Milon Cirkel is niet inbegrepen.",
+    "seoDescriptionEn": "With ongoing rehabilitation at Movenda you can keep training for €40 a month in the Olympia Hasselt gym. The Milon circuit is not included."
   },
   "prijzen": {
     "titel": "Tarieven & terugbetaling",
@@ -459,6 +469,7 @@
     "terugbetalingTekst": "Al onze therapeuten zijn gedeconventioneerd. Dit betekent dat wij onze tarieven zelf bepalen op basis van onze expertise, specialisaties en bijscholingen — in lijn met de aanbevelingen van onze beroepsvereniging Axxon.\n\nJe ontvangt na elke sessie een getuigschrift voor verstrekte hulp. Daarmee kan je zelf een terugbetaling aanvragen bij jouw ziekenfonds via de app (Mijn CM, Mijn Helan, Mijn VNZ…) of op het kantoor van je mutualiteit.",
     "terugbetalingTekstEn": "All our therapists are deconventioned. We set our own fees based on our expertise, specialisations and further training, in line with the recommendations of our professional association Axxon.\n\nAfter each session you receive a certificate of provided care. You can claim reimbursement from your health insurance fund yourself, via the app or at the office of your fund.",
     "perTherapeutTitel": "Tarieven per therapeut",
+    "perTherapeutTitelEn": "Fees per therapist",
     "seoTitle": "Tarieven kinesitherapie & personal training | Movenda",
     "seoDescription": "Overzicht van de tarieven voor kinesitherapie en personal training bij Movenda Hasselt, en hoeveel je terugkrijgt van je ziekenfonds.",
     "seoTitleEn": "Fees for physiotherapy & personal training | Movenda",

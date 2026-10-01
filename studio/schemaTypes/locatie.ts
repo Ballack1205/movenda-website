@@ -27,6 +27,7 @@ export default defineType({
       options: { list: [{ title: "Movenda (licht)", value: "movenda" }, { title: "MPC (donker)", value: "mpc" }] },
     }),
     defineField({ name: "type", title: "Type / ondertitel", type: "string" }),
+    defineField({ name: "typeEn", title: "Type / ondertitel (EN)", type: "string" }),
     defineField({ name: "adres", title: "Adres", type: "string", validation: verplicht }),
     defineField({
       name: "geo",
@@ -53,6 +54,7 @@ export default defineType({
       ],
     }),
     defineField({ name: "urenNote", title: "Extra noot bij openingsuren", type: "string" }),
+    defineField({ name: "urenNoteEn", title: "Extra noot bij openingsuren (EN)", type: "string" }),
     defineField({ name: "btw", title: "BTW-nummer", type: "string" }),
     defineField({ name: "iban", title: "IBAN", type: "string" }),
     defineField({ name: "bic", title: "BIC", type: "string" }),
@@ -66,6 +68,7 @@ export default defineType({
         "De vaste link naar jullie Google-vermelding (Google Maps → Delen → 'Link kopiëren', of de g.page/maps.app.goo.gl-link uit het Bedrijfsprofiel). Koppelt deze vestiging in de structured data aan Google Maps; belangrijk voor lokale SEO en AI-zoekmachines.",
     }),
     defineField({ name: "routebeschrijving", title: "Routebeschrijving eerste bezoek", type: "text", rows: 4 }),
+    defineField({ name: "routebeschrijvingEn", title: "Routebeschrijving eerste bezoek (EN)", type: "text", rows: 4 }),
     defineField({
       name: "foto",
       title: "Foto van het gebouw / de ingang",

@@ -20,7 +20,7 @@ import Verwijskompas from "./Verwijskompas.astro";
 import { teamPhotoSrc } from "../lib/images";
 import { THEME } from "../lib/site";
 import { breadcrumbNode, teamListNode } from "../lib/schema";
-import { KEUZEHULP_EN, withLang, type Lang } from "../lib/i18n";
+import { withLang, type Lang } from "../lib/i18n";
 
 interface Props {
   lang?: Lang;
@@ -52,15 +52,15 @@ const locatieLabel = (slugs: typeof team[number]["locaties"]) => locatieKorteNam
 const tagLabels: Record<string, string> = {};
 for (const cat of vragen) for (const t of keuzehulp.opties[cat]) tagLabels[t.id] = keuzehulpTagLabel(t, lang);
 
-const khTitel = lang === "en" ? KEUZEHULP_EN.titel : keuzehulp.titel;
+const khTitel = lang === "en" ? keuzehulp.titelEn || keuzehulp.titel : keuzehulp.titel;
 const khIntro = lang === "en"
-  ? KEUZEHULP_EN.intro
+  ? keuzehulp.introEn || keuzehulp.intro
   : (keuzehulp.intro || "").replace(
       /één keuze per vraag is genoeg/i,
       "je mag per vraag meerdere opties aanklikken",
     ) || keuzehulp.intro;
-const khVragen = lang === "en" ? KEUZEHULP_EN.vragen : keuzehulp.vragen;
-const khGeenMatch = lang === "en" ? KEUZEHULP_EN.geenMatchTekst : keuzehulp.geenMatchTekst;
+const khVragen = lang === "en" ? keuzehulp.vragenEn || keuzehulp.vragen : keuzehulp.vragen;
+const khGeenMatch = lang === "en" ? keuzehulp.geenMatchTekstEn || keuzehulp.geenMatchTekst : keuzehulp.geenMatchTekst;
 
 const payload = {
   tagLabels,

@@ -9,7 +9,8 @@
   "booking": {
     "enabled": false,
     "url": "",
-    "label": "Maak een afspraak"
+    "label": "Maak een afspraak",
+    "labelEn": "Book an appointment"
   },
   "teamfoto": {
     "alt": "Het team van Movenda, samen in de praktijk",
@@ -42,11 +43,16 @@
   "prijzenInfo": {
     "basishonorarium": 37,
     "intro": "Onze tarieven worden jaarlijks geïndexeerd en zijn in lijn met de aanbevelingen van Axxon, de beroepsvereniging voor kinesitherapeuten.",
+    "introEn": "Our fees are indexed annually and follow the recommendations of Axxon, the professional association for physiotherapists.",
     "terugbetalingStandaard": "±€18 à €20 per sessie",
+    "terugbetalingStandaardEn": "±€18 to €20 per session",
     "terugbetalingVt": "Gunstigere tarieven — vraag na bij je ziekenfonds",
+    "terugbetalingVtEn": "More favourable rates — ask your health insurance fund",
     "voorwaarden": "Voorwaarden voor terugbetaling: je hebt een doktersvoorschrift nodig. Je behandeling start binnen de 2 maanden na datum op het voorschrift. Maximaal 18 sessies per aandoening per kalenderjaar worden terugbetaald. Voor chronische of zware aandoeningen kan dit hoger liggen — vraag dit na bij je arts of ziekenfonds.",
+    "voorwaardenEn": "Reimbursement conditions: you need a doctor's prescription. Treatment must start within 2 months of the prescription date. A maximum of 18 sessions per condition per calendar year are reimbursed. For chronic or severe conditions this can be higher — check with your doctor or health insurance fund.",
     "exBtwMpc": true,
     "annulatiebeleid": "Verwittig minstens 24 uur op voorhand telefonisch of per mail. Later of no-show: we rekenen de volledige behandeling aan.",
+    "annulatiebeleidEn": "Please cancel at least 24 hours in advance by phone or email. Later cancellation or a no-show: we charge the full session.",
     "nomenclatuur": [
       { "categorie": "Courant", "omschrijving": "1e beurt & verslag", "bedrag": "€37 + €7" },
       { "categorie": "Courant", "omschrijving": "2e t.e.m. 18e beurt", "bedrag": "€37" },
@@ -60,10 +66,15 @@
   },
   "slogans": {
     "home": "Life has its ups and downs. We call them squats!",
+    "homeEn": "Life has its ups and downs. We call them squats!",
     "kine": "A physical therapist turns pain into power",
+    "kineEn": "A physical therapist turns pain into power",
     "mpc": "We support your best sport performance!",
+    "mpcEn": "We support your best sport performance!",
     "prijzenKine": "The greatest WEALTH is HEALTH.",
-    "prijzenPt": "Sweat is fat crying"
+    "prijzenKineEn": "The greatest WEALTH is HEALTH.",
+    "prijzenPt": "Sweat is fat crying",
+    "prijzenPtEn": "Sweat is fat crying"
   },
   "homeDeurenTitel": "Eén praktijk, drie wegen",
   "homeDeurenTitelEn": "One practice, three paths",
@@ -93,26 +104,38 @@
   "homeAanbod": [
     {
       "korteNaam": "Kinesitherapie",
+      "korteNaamEn": "Physiotherapy",
       "regel": "Ontdek kinesitherapie",
+      "regelEn": "Explore physiotherapy",
       "tekst": "Gespecialiseerde kinesitherapie en actieve revalidatie, afgestemd op jouw lichaam, jouw klacht en jouw herstel.",
+      "tekstEn": "Specialist physiotherapy and active rehabilitation, tailored to your body, your complaint and your recovery.",
       "href": "/kinesitherapie"
     },
     {
       "korteNaam": "Performance",
+      "korteNaamEn": "Performance",
       "regel": "Ontdek performance",
+      "regelEn": "Explore performance",
       "tekst": "Doelgerichte training, testing en data voor sporters die hun fysieke capaciteiten en prestaties willen verbeteren.",
+      "tekstEn": "Purposeful training, testing and data for athletes who want to improve their physical capacity and performance.",
       "href": "/performance"
     },
     {
       "korteNaam": "GX",
+      "korteNaamEn": "GX",
       "regel": "Ontdek GX",
+      "regelEn": "Explore GX",
       "tekst": "Kwalitatieve groepstraining met professionele begeleiding, persoonlijke aandacht en maximaal acht deelnemers.",
+      "tekstEn": "Quality group training with professional coaching, personal attention and a maximum of eight people.",
       "href": "/groepslessen"
     },
     {
       "korteNaam": "B2B",
+      "korteNaamEn": "B2B",
       "regel": "Ontdek B2B",
+      "regelEn": "Explore B2B",
       "tekst": "Maatwerktrajecten die beweging en gezondheid duurzaam verankeren binnen jouw organisatie.",
+      "tekstEn": "Tailored programmes that make movement and health a lasting part of your organisation.",
       "href": "/b2b"
     },
     {
@@ -120,47 +143,79 @@
       "regel": "Ontdek Olympia",
       "regelEn": "Discover Olympia",
       "tekst": "Ontdek het aanbod van Sportpraktijk Movenda aan de Kuringersteenweg in Hasselt.",
+      "tekstEn": "Explore what Sportpraktijk Movenda offers on Kuringersteenweg in Hasselt.",
       "href": "/locaties/olympia"
     }
   ],
   "homeBrief": {
     "merkKicker": "Over Sportpraktijk Movenda",
+    "merkKickerEn": "About Sportpraktijk Movenda",
     "merkTitel": "Een sportpraktijk gebouwd rond beweging.",
+    "merkTitelEn": "A sports practice built around movement.",
     "merkTekst": "Sportpraktijk Movenda brengt kinesitherapie, training en performance samen. Met gespecialiseerde expertise, persoonlijke begeleiding en objectieve inzichten helpen we je herstellen, sterker bewegen en duurzaam presteren.\n\nIedereen start ergens anders. Met pijn of een blessure. Na een operatie. Met de wens om opnieuw te bewegen. Met een sportief doel. Of met de ambitie om beter te presteren.\n\nWe onderzoeken waar je staat, bepalen waar je naartoe wilt en bouwen een persoonlijk traject dat met je evolueert.",
+    "merkTekstEn": "Sportpraktijk Movenda brings physiotherapy, training and performance together. With specialist expertise, personal guidance and objective insight we help you recover, move stronger and perform in a way that lasts.\n\nEveryone starts somewhere else. With pain or an injury. After surgery. Wanting to move again. With a sporting goal. Or with the ambition to perform better.\n\nWe look at where you are, decide where you want to go, and build a personal path that changes with you.",
     "merkStatement": "Together we move.",
+    "merkStatementEn": "Together we move.",
     "merkCta": "Ontdek Sportpraktijk Movenda",
+    "merkCtaEn": "Discover Sportpraktijk Movenda",
     "partnersKicker": "",
     "partnersCta": "Ontdek onze partners",
+    "partnersCtaEn": "Meet our partners",
     "aanbodKicker": "Ontdek ons aanbod",
+    "aanbodKickerEn": "Explore what we offer",
     "aanbodTekst": "Verschillende doelen vragen om verschillende vormen van begeleiding. Ontdek waar jouw traject begint.",
+    "aanbodTekstEn": "Different goals need different kinds of guidance. See where your path starts.",
     "locatiesTitel": "Eén praktijk, twee locaties!",
+    "locatiesTitelEn": "One practice, two locations",
     "hasseltNaam": "Movenda Hasselt",
     "kuringenNaam": "Performance Centre Kuringen",
     "hasseltProfiel": "Kinesitherapie · actieve revalidatie · training",
+    "hasseltProfielEn": "Physiotherapy · active rehabilitation · training",
     "kuringenProfiel": "Performance · testing · training · GX · sportkinesitherapie en revalidatie",
+    "kuringenProfielEn": "Performance · testing · training · GX · sports physiotherapy and rehabilitation",
     "teamKicker": "One team. Different expertise.",
+    "teamKickerEn": "One team. Different expertise.",
     "teamTitel": "De juiste expertise voor jouw traject.",
+    "teamTitelEn": "The right expertise for your path.",
     "teamTekst": "Ons team bestaat uit kinesitherapeuten, coaches en performance specialisten met verschillende achtergronden en expertises. Door kennis te delen en gericht samen te werken, kunnen we je begeleiden tijdens iedere fase van jouw traject.",
+    "teamTekstEn": "Our team is made up of physiotherapists, coaches and performance specialists with different backgrounds and expertise. By sharing knowledge and working together, we can guide you through every phase of your path.",
     "teamCta": "Ontmoet ons team",
+    "teamCtaEn": "Meet the team",
     "eventsKicker": "Events",
+    "eventsKickerEn": "Events",
     "reviewsTitel": "Ervaringen die voor zich spreken.",
+    "reviewsTitelEn": "Experiences that speak for themselves.",
     "reviewsCta": "Bekijk onze Google Reviews",
+    "reviewsCtaEn": "See our Google reviews",
     "insightsKicker": "Insights/Blog",
     "insightsTitel": "Kennis die je verder brengt.",
+    "insightsTitelEn": "Knowledge that moves you forward.",
     "insightsTekst": "Inzichten over bewegen, herstel, training, gezondheid en performance van het team van Sportpraktijk Movenda.",
+    "insightsTekstEn": "Insight on movement, recovery, training, health and performance from the Sportpraktijk Movenda team.",
     "insightsCta": "Bekijk Insights/Blog",
+    "insightsCtaEn": "Read Insights/Blog",
     "instagramTitel": "Follow us",
+    "instagramTitelEn": "Follow us",
     "instagramCta": "Volg ons op Instagram",
+    "instagramCtaEn": "Follow us on Instagram",
     "slotTitel": "Klaar voor je volgende stap?",
+    "slotTitelEn": "Ready for your next step?",
     "slotTekst": "Of je nu wilt herstellen, opnieuw wilt bewegen, sterker wilt worden of beter wilt presteren: we helpen je graag bepalen welk traject bij jou past.",
+    "slotTekstEn": "Whether you want to recover, start moving again, get stronger or perform better: we will help you find the path that fits.",
     "slotAfspraak": "Plan je afspraak",
+    "slotAfspraakEn": "Book your appointment",
     "slotContact": "Contacteer ons",
+    "slotContactEn": "Contact us",
     "bewijs": {
       "jaren": "10+",
       "kinesistenLabel": "kinesitherapeuten",
+      "kinesistenLabelEn": "physiotherapists",
       "trainersLabel": "personal trainers",
+      "trainersLabelEn": "personal trainers",
       "locatiesLabel": "locaties",
-      "jarenLabel": "jaar ervaring"
+      "locatiesLabelEn": "locations",
+      "jarenLabel": "jaar ervaring",
+      "jarenLabelEn": "years of experience"
     }
   },
   "homePijlers": {

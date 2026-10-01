@@ -13,6 +13,7 @@ export default defineType({
     "Groepslessen op MPC. Eén document per lesmoment. Verschijnt op /mpc/groepslessen. Coach en dienst koppelen is optioneel.",
   fields: [
     defineField({ name: "les", title: "Les", type: "string", validation: verplicht }),
+    defineField({ name: "lesEn", title: "Les (EN)", type: "string" }),
     defineField({
       name: "dag",
       title: "Dag",

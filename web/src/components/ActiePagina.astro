@@ -1,13 +1,17 @@
 ---
 // Campaign / event landing page (Dwars door Hasselt Ready, Recovery, …).
 // Every text and photo is Julie's: Studio → Actiepagina's. Layout lives here.
-import { actieSectieGevuld, type Actiepagina, type CmsFoto } from "../lib/content";
+import { actieSectieGevuld, localizeActie, type Actiepagina, type CmsFoto } from "../lib/content";
+import { withLang, type Lang } from "../lib/i18n";
 
 interface Props {
   pagina: Actiepagina;
+  lang?: Lang;
 }
 
-const { pagina } = Astro.props;
+const { pagina: bron, lang = "nl" } = Astro.props;
+const pagina = localizeActie(bron, lang);
+const en = lang === "en";
 const alineas = (tekst?: string) => (tekst || "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 const regels = (tekst?: string) => (tekst || "").split("\n").map((r) => r.trim()).filter(Boolean);
 const secties = pagina.secties.filter(actieSectieGevuld);
@@ -92,7 +96,7 @@ function embedUrl(url: string): string | undefined {
                       <iframe src={embed} title={item.kop} loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen />
                     </div>
                   )}
-                  {item.video && !embed && <a href={item.video} target="_blank" rel="noopener" class="actie-link">Bekijk de video</a>}
+                  {item.video && !embed && <a href={item.video} target="_blank" rel="noopener" class="actie-link">{en ? "Watch the video" : "Bekijk de video"}</a>}
                 </li>
               );
             })}
@@ -122,7 +126,7 @@ function embedUrl(url: string): string | undefined {
         {s.knopLabel && s.knopUrl && (
           <div class="actie-copy mx-auto max-w-3xl">
             <a
-              href={s.knopUrl}
+              href={withLang(s.knopUrl, lang)}
               class="actie-knop"
               {...(/^https?:/.test(s.knopUrl) ? { target: "_blank", rel: "noopener" } : {})}
             >{s.knopLabel}</a>

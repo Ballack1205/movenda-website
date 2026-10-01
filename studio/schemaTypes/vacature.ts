@@ -16,6 +16,7 @@ export default defineType({
     "Lege lijst = de site toont 'geen vacatures op dit moment'. Nieuw = Nieuw document, publiceren. Zet Actief uit om een vacature te sluiten zonder te verwijderen.",
   fields: [
     defineField({ name: "titel", title: "Functietitel", type: "string", validation: verplicht }),
+    defineField({ name: "titelEn", title: "Functietitel (EN)", type: "string" }),
     defineField({
       name: "slug",
       title: "Slug (URL)",
@@ -31,6 +32,7 @@ export default defineType({
       to: [{ type: "locatie" }],
     }),
     defineField({ name: "omschrijving", title: "Omschrijving", type: "text", rows: 8, validation: verplicht }),
+    defineField({ name: "omschrijvingEn", title: "Omschrijving (EN)", type: "text", rows: 8 }),
     defineField({
       name: "contactEmail",
       title: "Solliciteren via e-mail",

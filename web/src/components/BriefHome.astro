@@ -19,6 +19,7 @@ import {
   type Teamlid,
 } from "../lib/content";
 import { teamPhotoSrc } from "../lib/images";
+import { withLang, type Lang } from "../lib/i18n";
 import homeCover from "../assets/marketing/home-cover.jpg";
 import homeOlympia from "../assets/marketing/home-olympia.jpg";
 import homePerformance from "../assets/marketing/home-performance.jpg";
@@ -27,14 +28,58 @@ import homeB2b from "../assets/marketing/home-b2b.jpg";
 import kineHero from "../assets/marketing/kine-hero.jpg";
 
 interface Props {
+  lang?: Lang;
   pagina: Pagina;
   settings: SiteSettings;
   partners: Partner[];
   team: Teamlid[];
 }
 
-const { pagina, settings, partners, team } = Astro.props;
-const brief = settings.homeBrief;
+const { lang = "nl", pagina, settings, partners, team } = Astro.props;
+const en = lang === "en";
+const rawBrief = settings.homeBrief;
+const say = (nl: string, enText?: string) => (en && enText?.trim() ? enText : nl);
+const brief = {
+  ...rawBrief,
+  merkKicker: say(rawBrief.merkKicker, rawBrief.merkKickerEn),
+  merkTitel: say(rawBrief.merkTitel, rawBrief.merkTitelEn),
+  merkTekst: say(rawBrief.merkTekst, rawBrief.merkTekstEn),
+  merkStatement: say(rawBrief.merkStatement, rawBrief.merkStatementEn),
+  merkCta: say(rawBrief.merkCta, rawBrief.merkCtaEn),
+  partnersKicker: say(rawBrief.partnersKicker, rawBrief.partnersKickerEn),
+  partnersCta: say(rawBrief.partnersCta, rawBrief.partnersCtaEn),
+  aanbodKicker: say(rawBrief.aanbodKicker, rawBrief.aanbodKickerEn),
+  aanbodTekst: say(rawBrief.aanbodTekst, rawBrief.aanbodTekstEn),
+  locatiesTitel: say(rawBrief.locatiesTitel, rawBrief.locatiesTitelEn),
+  hasseltNaam: say(rawBrief.hasseltNaam, rawBrief.hasseltNaamEn),
+  kuringenNaam: say(rawBrief.kuringenNaam, rawBrief.kuringenNaamEn),
+  hasseltProfiel: say(rawBrief.hasseltProfiel, rawBrief.hasseltProfielEn),
+  kuringenProfiel: say(rawBrief.kuringenProfiel, rawBrief.kuringenProfielEn),
+  eventsKicker: say(rawBrief.eventsKicker, rawBrief.eventsKickerEn),
+  teamKicker: say(rawBrief.teamKicker, rawBrief.teamKickerEn),
+  teamTitel: say(rawBrief.teamTitel, rawBrief.teamTitelEn),
+  teamTekst: say(rawBrief.teamTekst, rawBrief.teamTekstEn),
+  teamCta: say(rawBrief.teamCta, rawBrief.teamCtaEn),
+  reviewsTitel: say(rawBrief.reviewsTitel, rawBrief.reviewsTitelEn),
+  reviewsCta: say(rawBrief.reviewsCta, rawBrief.reviewsCtaEn),
+  insightsKicker: say(rawBrief.insightsKicker, rawBrief.insightsKickerEn),
+  insightsTitel: say(rawBrief.insightsTitel, rawBrief.insightsTitelEn),
+  insightsTekst: say(rawBrief.insightsTekst, rawBrief.insightsTekstEn),
+  insightsCta: say(rawBrief.insightsCta, rawBrief.insightsCtaEn),
+  instagramTitel: say(rawBrief.instagramTitel, rawBrief.instagramTitelEn),
+  instagramCta: say(rawBrief.instagramCta, rawBrief.instagramCtaEn),
+  slotTitel: say(rawBrief.slotTitel, rawBrief.slotTitelEn),
+  slotTekst: say(rawBrief.slotTekst, rawBrief.slotTekstEn),
+  slotAfspraak: say(rawBrief.slotAfspraak, rawBrief.slotAfspraakEn),
+  slotContact: say(rawBrief.slotContact, rawBrief.slotContactEn),
+  bewijs: {
+    ...rawBrief.bewijs,
+    kinesistenLabel: say(rawBrief.bewijs.kinesistenLabel, rawBrief.bewijs.kinesistenLabelEn),
+    trainersLabel: say(rawBrief.bewijs.trainersLabel, rawBrief.bewijs.trainersLabelEn),
+    locatiesLabel: say(rawBrief.bewijs.locatiesLabel, rawBrief.bewijs.locatiesLabelEn),
+    jarenLabel: say(rawBrief.bewijs.jarenLabel, rawBrief.bewijs.jarenLabelEn),
+  },
+};
 const today = new Date().toISOString().slice(0, 10);
 const homeEvents = (await getEvents())
   .filter((event) => event.tonenOpHome)
@@ -44,7 +89,7 @@ const homeEvents = (await getEvents())
 const eventWhen = (event: { datum: string }) => {
   const date = new Date(`${event.datum}T12:00:00`);
   if (Number.isNaN(date.getTime())) return event.datum;
-  return new Intl.DateTimeFormat("nl-BE", { day: "numeric", month: "long", year: "numeric" }).format(date);
+  return new Intl.DateTimeFormat(en ? "en-GB" : "nl-BE", { day: "numeric", month: "long", year: "numeric" }).format(date);
 };
 
 const locaties = await getLocaties();
@@ -60,13 +105,13 @@ const deurFallback: Record<string, ImageMetadata> = {
 
 const deuren = settings.homeAanbod.map((deur, i) => ({
   n: i + 1,
-  href: localizeInternalHref(deur.href, "nl"),
-  title: deur.href.endsWith("/locaties/olympia") ? "Olympia" : homeDeurNaam(deur, "nl"),
-  body: homeDeurTekst(deur, "nl"),
+  href: localizeInternalHref(deur.href, lang),
+  title: deur.href.endsWith("/locaties/olympia") ? "Olympia" : homeDeurNaam(deur, lang),
+  body: homeDeurTekst(deur, lang),
   lead: deur.href === "/kinesitherapie" || deur.href === "/performance",
   foto: deur.foto,
   fallback: deurFallback[deur.href] ?? homeCover,
-  alt: homeDeurNaam(deur, "nl"),
+  alt: homeDeurNaam(deur, lang),
 }));
 
 const counts = teamCounts(team);
@@ -83,8 +128,8 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 <LabCover
   pagina={pagina}
   fallback={homeCover}
-  alt="Trainer van Movenda begeleidt een klant tijdens een training"
-  nextLabel="Verder"
+  alt={en ? "A Movenda trainer coaching a client during a session" : "Trainer van Movenda begeleidt een klant tijdens een training"}
+  nextLabel={en ? "Continue" : "Verder"}
   crop="object-[center_72%]"
 />
 
@@ -113,7 +158,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       animatie={settings.partnerband.animatie}
     />
     <div class="mx-auto max-w-6xl px-4">
-      <a href="/over-ons/ons-verhaal#partners" class="brief-textlink">{brief.partnersCta}</a>
+      <a href={withLang("/over-ons/ons-verhaal#partners", lang)} class="brief-textlink">{brief.partnersCta}</a>
     </div>
   </section>
 </div>
@@ -132,7 +177,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 <section class="brief-locs" data-reveal aria-label={brief.locatiesTitel}>
   <div class="brief-locs__grid">
     {hasselt && (
-      <a class="brief-loc" href="/locaties/olympia">
+      <a class="brief-loc" href={withLang("/locaties/olympia", lang)}>
         {hasselt.foto && (
           <span class="brief-loc__ring">
             <img src={hasselt.foto} alt="" class="brief-loc__photo" loading="lazy" />
@@ -143,7 +188,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       </a>
     )}
     {kuringen?.foto && (
-      <a class="brief-loc" href="/locaties/mpc">
+      <a class="brief-loc" href={withLang("/locaties/mpc", lang)}>
         <span class="brief-loc__ring">
           <img src={kuringen.foto} alt="" class="brief-loc__photo" loading="lazy" />
         </span>
@@ -163,7 +208,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       <ul class="brief-team">
         {team.map((lid) => (
           <li>
-            <a href={`/team/${lid.slug}`}>
+            <a href={withLang(`/team/${lid.slug}`, lang)}>
               <span class="brief-team__photo">
                 {lid.foto ? (
                   <img src={teamPhotoSrc(lid.foto, "card")} alt="" width="240" height="320" loading="lazy" />
@@ -172,26 +217,26 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
                 )}
               </span>
               <span class="brief-team__name">{lid.voornaam} {lid.naam}</span>
-              <span class="brief-team__role">{lid.rol}</span>
+              <span class="brief-team__role">{en ? lid.rolEn || lid.rol : lid.rol}</span>
             </a>
           </li>
         ))}
       </ul>
-      <a href="/team" class="brief-textlink">{brief.teamCta}</a>
+      <a href={withLang("/team", lang)} class="brief-textlink">{brief.teamCta}</a>
     </div>
   </section>
 
   <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
-      <a class="brief-kicker" href="/events">{brief.eventsKicker}</a>
+      <a class="brief-kicker" href={withLang("/events", lang)}>{brief.eventsKicker}</a>
       <ul class="brief-events">
         {homeEvents.map((event) => (
           <li>
-            <a class="brief-event" href={event.link || "/events"}>
+            <a class="brief-event" href={event.link ? withLang(event.link, lang) : withLang("/events", lang)}>
               <span class="brief-event__copy">
                 <span class="brief-event__when">{eventWhen(event)}{event.locatie ? ` · ${event.locatie}` : ""}</span>
-                <span class="brief-event__title">{event.titel}</span>
-                {event.tekst && <span class="brief-event__text">{event.tekst}</span>}
+                <span class="brief-event__title">{en ? event.titelEn || event.titel : event.titel}</span>
+                {(en ? event.tekstEn || event.tekst : event.tekst) && <span class="brief-event__text">{en ? event.tekstEn || event.tekst : event.tekst}</span>}
               </span>
               <span class="brief-event__go" aria-hidden="true">→</span>
             </a>
@@ -203,24 +248,24 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
 </div>
 
 <div class="lab-sheet" data-lab-light>
-  <GoogleReviewsFeed settings={settings} />
+  <GoogleReviewsFeed settings={settings} lang={lang} />
 
   <section class="brief-block" data-reveal>
     <div class="mx-auto max-w-6xl px-4">
-      <a href="/blog" class="brief-textlink">{brief.insightsCta}</a>
+      <a href={withLang("/blog", lang)} class="brief-textlink">{brief.insightsCta}</a>
     </div>
   </section>
 </div>
 
 <div class="lab-sheet lab-sheet--ink brief-ink">
-  <InstagramFeed settings={settings} title={brief.instagramTitel} />
+  <InstagramFeed settings={settings} title={brief.instagramTitel} lang={lang} />
 
   <section class="brief-slot" data-reveal>
     <h2 class="brief-title">{brief.slotTitel}</h2>
     <p class="brief-lead">{brief.slotTekst}</p>
     <div class="brief-slot__actions">
-      <a class="brief-slot__button" href="/team#keuzehulp">{brief.slotAfspraak}</a>
-      <a class="brief-slot__ghost" href="/contact">{brief.slotContact}</a>
+      <a class="brief-slot__button" href={withLang("/team#keuzehulp", lang)}>{brief.slotAfspraak}</a>
+      <a class="brief-slot__ghost" href={withLang("/contact", lang)}>{brief.slotContact}</a>
     </div>
   </section>
 </div>

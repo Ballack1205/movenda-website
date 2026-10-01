@@ -28,6 +28,7 @@ import seedPartners from "../content/partners.json";
 import seedPaginas from "../content/paginas.json";
 import { resolveBlogMedia } from "./blog";
 import type { Lang } from "./i18n";
+import { KEUZEHULP_EN } from "./i18n";
 
 export type LocatieSlug = "olympia" | "mpc";
 export type DienstCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep";
@@ -98,9 +99,13 @@ export interface KeuzehulpTag {
 export interface Keuzehulp {
   actief: boolean;
   titel: string;
+  titelEn?: string;
   intro: string;
+  introEn?: string;
   vragen: Record<KeuzehulpCategorie, string>;
+  vragenEn?: Record<KeuzehulpCategorie, string>;
   geenMatchTekst: string;
+  geenMatchTekstEn?: string;
   /** Active tags, grouped per question, in display order. */
   opties: Record<KeuzehulpCategorie, KeuzehulpTag[]>;
 }
@@ -118,6 +123,7 @@ export interface Locatie {
   korteNaam: string;
   brand: "movenda" | "mpc";
   type: string;
+  typeEn?: string;
   adres: string;
   geo: { lat: number; lng: number };
   geoApprox?: boolean;
@@ -125,6 +131,7 @@ export interface Locatie {
   email: string;
   uren: Openingsuur[];
   urenNote?: string;
+  urenNoteEn?: string;
   btw: string;
   iban: string;
   bic?: string;
@@ -132,6 +139,7 @@ export interface Locatie {
   /** Google Business Profile link (sameAs in JSON-LD). Julie fills this in Sanity. */
   googleBusinessUrl?: string;
   routebeschrijving?: string;
+  routebeschrijvingEn?: string;
   /** Exterior / entrance photo. Sanity URL or a /public path. */
   foto?: string;
   rpr?: string;
@@ -190,11 +198,16 @@ export interface NomenItem {
 export interface PrijzenInfo {
   basishonorarium?: number;
   intro?: string;
+  introEn?: string;
   terugbetalingStandaard?: string;
+  terugbetalingStandaardEn?: string;
   terugbetalingVt?: string;
+  terugbetalingVtEn?: string;
   voorwaarden?: string;
+  voorwaardenEn?: string;
   exBtwMpc?: boolean;
   annulatiebeleid?: string;
+  annulatiebeleidEn?: string;
   nomenclatuur?: NomenItem[];
 }
 
@@ -294,37 +307,78 @@ export function homeDeurTekst(deur: HomeDeur, lang: Lang): string | undefined {
 /** Copy and proof numbers for the brief homepage. Numbers stay editable. */
 export interface HomeBrief {
   merkKicker: string;
+  merkKickerEn?: string;
   merkTitel: string;
+  merkTitelEn?: string;
   merkTekst: string;
+  merkTekstEn?: string;
   merkStatement: string;
+  merkStatementEn?: string;
   merkCta: string;
+  merkCtaEn?: string;
   partnersKicker: string;
+  partnersKickerEn?: string;
   partnersCta: string;
+  partnersCtaEn?: string;
   aanbodKicker: string;
+  aanbodKickerEn?: string;
   aanbodTekst: string;
+  aanbodTekstEn?: string;
   locatiesTitel: string;
+  locatiesTitelEn?: string;
   hasseltNaam: string;
+  hasseltNaamEn?: string;
   kuringenNaam: string;
+  kuringenNaamEn?: string;
   hasseltProfiel: string;
+  hasseltProfielEn?: string;
   kuringenProfiel: string;
+  kuringenProfielEn?: string;
   eventsKicker: string;
+  eventsKickerEn?: string;
   teamKicker: string;
+  teamKickerEn?: string;
   teamTitel: string;
+  teamTitelEn?: string;
   teamTekst: string;
+  teamTekstEn?: string;
   teamCta: string;
+  teamCtaEn?: string;
   reviewsTitel: string;
+  reviewsTitelEn?: string;
   reviewsCta: string;
+  reviewsCtaEn?: string;
   insightsKicker: string;
+  insightsKickerEn?: string;
   insightsTitel: string;
+  insightsTitelEn?: string;
   insightsTekst: string;
+  insightsTekstEn?: string;
   insightsCta: string;
+  insightsCtaEn?: string;
   instagramTitel: string;
+  instagramTitelEn?: string;
   instagramCta: string;
+  instagramCtaEn?: string;
   slotTitel: string;
+  slotTitelEn?: string;
   slotTekst: string;
+  slotTekstEn?: string;
   slotAfspraak: string;
+  slotAfspraakEn?: string;
   slotContact: string;
-  bewijs: { jaren: string; kinesistenLabel: string; trainersLabel: string; locatiesLabel: string; jarenLabel: string };
+  slotContactEn?: string;
+  bewijs: {
+    jaren: string;
+    kinesistenLabel: string;
+    kinesistenLabelEn?: string;
+    trainersLabel: string;
+    trainersLabelEn?: string;
+    locatiesLabel: string;
+    locatiesLabelEn?: string;
+    jarenLabel: string;
+    jarenLabelEn?: string;
+  };
 }
 
 /** Wide group photo of the whole team (Site-instellingen → Groepsfoto team). `url` is a
@@ -345,7 +399,7 @@ export interface SiteSettings {
   telefoonOlympia: string;
   telefoonMpc: string;
   email: string;
-  booking: { enabled: boolean; url: string; label: string };
+  booking: { enabled: boolean; url: string; label: string; labelEn?: string };
   teamfoto: Teamfoto;
   /** One Google profile for the whole practice. Key stays `olympia` in Sanity. */
   googleReviews: { olympia: GoogleReviews };
@@ -354,10 +408,15 @@ export interface SiteSettings {
   prijzenInfo: PrijzenInfo;
   slogans: {
     home?: string;
+    homeEn?: string;
     kine?: string;
+    kineEn?: string;
     mpc?: string;
+    mpcEn?: string;
     prijzenKine?: string;
+    prijzenKineEn?: string;
     prijzenPt?: string;
+    prijzenPtEn?: string;
   };
   nieuwsbrief: {
     enabled: boolean;
@@ -465,6 +524,7 @@ export interface PartnerbandSettings {
 
 export interface LesroosterItem {
   les: string;
+  lesEn?: string;
   dag: string;
   van: string;
   tot: string;
@@ -517,8 +577,10 @@ export type BlogPostDienst = Pick<Dienst, "slug" | "categorie" | "titel" | "tite
 export interface Vacature {
   slug: string;
   titel: string;
+  titelEn?: string;
   locatieNaam?: string;
   omschrijving: string;
+  omschrijvingEn?: string;
   contactEmail: string;
   actief: boolean;
 }
@@ -704,10 +766,10 @@ const teamlidProjection = `{
 
 const locatieProjection = `{
   "slug": slug.current,
-  naam, korteNaam, brand, type, adres,
+  naam, korteNaam, brand, type, typeEn, adres,
   "geo": { "lat": geo.lat, "lng": geo.lng },
-  telefoon, email, uren, urenNote, btw, iban, bic, mapsUrl, googleBusinessUrl,
-  routebeschrijving, rpr, instagram, facebook, verdiepingNote,
+  telefoon, email, uren, urenNote, urenNoteEn, btw, iban, bic, mapsUrl, googleBusinessUrl,
+  routebeschrijving, routebeschrijvingEn, rpr, instagram, facebook, verdiepingNote,
   "foto": foto.asset->url,
   "updatedAt": _updatedAt
 }`;
@@ -784,7 +846,7 @@ export async function getKeuzehulp(): Promise<Keuzehulp> {
 
 async function loadKeuzehulp(): Promise<Keuzehulp> {
   const [doc, tags] = await Promise.all([
-    sanity.fetch(`*[_id == "keuzehulp"][0]{ actief, titel, intro, vragen, geenMatchTekst }`),
+    sanity.fetch(`*[_id == "keuzehulp"][0]{ actief, titel, titelEn, intro, introEn, vragen, geenMatchTekst, geenMatchTekstEn }`),
     sanity.fetch(
       `*[_type == "keuzehulpTag" && actief != false] | order(categorie asc, coalesce(volgorde, 9999) asc, label asc){ "id": _id, label, labelEn, categorie, volgorde, actief }`,
     ) as Promise<KeuzehulpTag[]>,
@@ -793,16 +855,26 @@ async function loadKeuzehulp(): Promise<Keuzehulp> {
   for (const tag of tags || []) {
     if (tag.categorie in opties) opties[tag.categorie].push({ ...tag, actief: true });
   }
+  const vragen = doc?.vragen || {};
   return {
     actief: doc?.actief !== false,
     titel: doc?.titel || "Wie past bij mij?",
+    titelEn: doc?.titelEn || KEUZEHULP_EN.titel,
     intro:
       doc?.intro ||
       "Kies wat op jou van toepassing is — je mag per vraag meerdere opties aanklikken. Dit is een hulpmiddel, geen medisch advies.",
-    vragen: { ...KEUZEHULP_DEFAULT_VRAGEN, ...(doc?.vragen || {}) },
+    introEn: doc?.introEn || KEUZEHULP_EN.intro,
+    vragen: { ...KEUZEHULP_DEFAULT_VRAGEN, ...vragen },
+    vragenEn: {
+      klacht: vragen.klachtEn || KEUZEHULP_EN.vragen.klacht,
+      regio: vragen.regioEn || KEUZEHULP_EN.vragen.regio,
+      sport: vragen.sportEn || KEUZEHULP_EN.vragen.sport,
+      doelgroep: vragen.doelgroepEn || KEUZEHULP_EN.vragen.doelgroep,
+    },
     geenMatchTekst:
       doc?.geenMatchTekst ||
       "Geen exacte match, maar dit zijn de collega's die het dichtst bij je vraag zitten. Twijfel je? Bel ons.",
+    geenMatchTekstEn: doc?.geenMatchTekstEn || KEUZEHULP_EN.geenMatchTekst,
     opties,
   };
 }
@@ -996,7 +1068,11 @@ async function loadSiteSettings(): Promise<SiteSettings> {
     telefoonOlympia: olympia?.telefoon || "",
     telefoonMpc: mpc?.telefoon || "",
     email: settings?.email || "info@movenda.be",
-    booking: settings?.booking || { enabled: false, url: "", label: "Maak een afspraak" },
+    booking: {
+      ...(seedSettings.booking || { enabled: false, url: "", label: "Maak een afspraak" }),
+      ...(settings?.booking || {}),
+      labelEn: settings?.booking?.labelEn || seedSettings.booking?.labelEn,
+    },
     // Own upload wins entirely (incl. an empty caption). Without an upload the
     // seed texts + the local fallback photo (assets/marketing/team.jpg) are used.
     teamfoto: settings?.teamfoto?.url
@@ -1025,8 +1101,8 @@ async function loadSiteSettings(): Promise<SiteSettings> {
       umami: { ...DEFAULT_ANALYTICS.umami, ...(settings?.analytics?.umami || {}) },
     },
     socials: settings?.socials || { instagram: "", facebook: "", linkedin: "" },
-    prijzenInfo: settings?.prijzenInfo || {},
-    slogans: settings?.slogans || {},
+    prijzenInfo: { ...(seedSettings.prijzenInfo || {}), ...(settings?.prijzenInfo || {}) },
+    slogans: { ...(seedSettings.slogans || {}), ...(settings?.slogans || {}) },
     nieuwsbrief: settings?.nieuwsbrief || { enabled: false },
     instagramFeed: {
       enabled: settings?.instagramFeed?.enabled !== false,
@@ -1077,42 +1153,77 @@ function mergeHomeBrief(fromSanity?: Partial<HomeBrief> | null): HomeBrief {
   const text = (value: string | undefined, fallback: string) => value?.trim() || fallback;
   return {
     merkKicker: text(fromSanity?.merkKicker, seedBrief.merkKicker),
+    merkKickerEn: text(fromSanity?.merkKickerEn, seedBrief.merkKickerEn || ""),
     merkTitel: text(fromSanity?.merkTitel, seedBrief.merkTitel),
+    merkTitelEn: text(fromSanity?.merkTitelEn, seedBrief.merkTitelEn || ""),
     merkTekst: text(fromSanity?.merkTekst, seedBrief.merkTekst),
+    merkTekstEn: text(fromSanity?.merkTekstEn, seedBrief.merkTekstEn || ""),
     merkStatement: text(fromSanity?.merkStatement, seedBrief.merkStatement),
+    merkStatementEn: text(fromSanity?.merkStatementEn, seedBrief.merkStatementEn || ""),
     merkCta: text(fromSanity?.merkCta, seedBrief.merkCta),
+    merkCtaEn: text(fromSanity?.merkCtaEn, seedBrief.merkCtaEn || ""),
     partnersKicker: text(fromSanity?.partnersKicker, seedBrief.partnersKicker),
+    partnersKickerEn: text(fromSanity?.partnersKickerEn, seedBrief.partnersKickerEn || ""),
     partnersCta: text(fromSanity?.partnersCta, seedBrief.partnersCta),
+    partnersCtaEn: text(fromSanity?.partnersCtaEn, seedBrief.partnersCtaEn || ""),
     aanbodKicker: text(fromSanity?.aanbodKicker, seedBrief.aanbodKicker),
+    aanbodKickerEn: text(fromSanity?.aanbodKickerEn, seedBrief.aanbodKickerEn || ""),
     aanbodTekst: text(fromSanity?.aanbodTekst, seedBrief.aanbodTekst),
+    aanbodTekstEn: text(fromSanity?.aanbodTekstEn, seedBrief.aanbodTekstEn || ""),
     locatiesTitel: text(fromSanity?.locatiesTitel, seedBrief.locatiesTitel),
+    locatiesTitelEn: text(fromSanity?.locatiesTitelEn, seedBrief.locatiesTitelEn || ""),
     hasseltNaam: text(fromSanity?.hasseltNaam, seedBrief.hasseltNaam),
+    hasseltNaamEn: text(fromSanity?.hasseltNaamEn, seedBrief.hasseltNaamEn || ""),
     kuringenNaam: text(fromSanity?.kuringenNaam, seedBrief.kuringenNaam),
+    kuringenNaamEn: text(fromSanity?.kuringenNaamEn, seedBrief.kuringenNaamEn || ""),
     hasseltProfiel: text(fromSanity?.hasseltProfiel, seedBrief.hasseltProfiel),
+    hasseltProfielEn: text(fromSanity?.hasseltProfielEn, seedBrief.hasseltProfielEn || ""),
     kuringenProfiel: text(fromSanity?.kuringenProfiel, seedBrief.kuringenProfiel),
+    kuringenProfielEn: text(fromSanity?.kuringenProfielEn, seedBrief.kuringenProfielEn || ""),
     eventsKicker: text(fromSanity?.eventsKicker, seedBrief.eventsKicker),
+    eventsKickerEn: text(fromSanity?.eventsKickerEn, seedBrief.eventsKickerEn || ""),
     teamKicker: text(fromSanity?.teamKicker, seedBrief.teamKicker),
+    teamKickerEn: text(fromSanity?.teamKickerEn, seedBrief.teamKickerEn || ""),
     teamTitel: text(fromSanity?.teamTitel, seedBrief.teamTitel),
+    teamTitelEn: text(fromSanity?.teamTitelEn, seedBrief.teamTitelEn || ""),
     teamTekst: text(fromSanity?.teamTekst, seedBrief.teamTekst),
+    teamTekstEn: text(fromSanity?.teamTekstEn, seedBrief.teamTekstEn || ""),
     teamCta: text(fromSanity?.teamCta, seedBrief.teamCta),
+    teamCtaEn: text(fromSanity?.teamCtaEn, seedBrief.teamCtaEn || ""),
     reviewsTitel: text(fromSanity?.reviewsTitel, seedBrief.reviewsTitel),
+    reviewsTitelEn: text(fromSanity?.reviewsTitelEn, seedBrief.reviewsTitelEn || ""),
     reviewsCta: text(fromSanity?.reviewsCta, seedBrief.reviewsCta),
+    reviewsCtaEn: text(fromSanity?.reviewsCtaEn, seedBrief.reviewsCtaEn || ""),
     insightsKicker: text(fromSanity?.insightsKicker, seedBrief.insightsKicker),
+    insightsKickerEn: text(fromSanity?.insightsKickerEn, seedBrief.insightsKickerEn || ""),
     insightsTitel: text(fromSanity?.insightsTitel, seedBrief.insightsTitel),
+    insightsTitelEn: text(fromSanity?.insightsTitelEn, seedBrief.insightsTitelEn || ""),
     insightsTekst: text(fromSanity?.insightsTekst, seedBrief.insightsTekst),
+    insightsTekstEn: text(fromSanity?.insightsTekstEn, seedBrief.insightsTekstEn || ""),
     insightsCta: text(fromSanity?.insightsCta, seedBrief.insightsCta),
+    insightsCtaEn: text(fromSanity?.insightsCtaEn, seedBrief.insightsCtaEn || ""),
     instagramTitel: text(fromSanity?.instagramTitel, seedBrief.instagramTitel),
+    instagramTitelEn: text(fromSanity?.instagramTitelEn, seedBrief.instagramTitelEn || ""),
     instagramCta: text(fromSanity?.instagramCta, seedBrief.instagramCta),
+    instagramCtaEn: text(fromSanity?.instagramCtaEn, seedBrief.instagramCtaEn || ""),
     slotTitel: text(fromSanity?.slotTitel, seedBrief.slotTitel),
+    slotTitelEn: text(fromSanity?.slotTitelEn, seedBrief.slotTitelEn || ""),
     slotTekst: text(fromSanity?.slotTekst, seedBrief.slotTekst),
+    slotTekstEn: text(fromSanity?.slotTekstEn, seedBrief.slotTekstEn || ""),
     slotAfspraak: text(fromSanity?.slotAfspraak, seedBrief.slotAfspraak),
+    slotAfspraakEn: text(fromSanity?.slotAfspraakEn, seedBrief.slotAfspraakEn || ""),
     slotContact: text(fromSanity?.slotContact, seedBrief.slotContact),
+    slotContactEn: text(fromSanity?.slotContactEn, seedBrief.slotContactEn || ""),
     bewijs: {
       jaren: text(fromSanity?.bewijs?.jaren, seedBrief.bewijs.jaren),
       kinesistenLabel: text(fromSanity?.bewijs?.kinesistenLabel, seedBrief.bewijs.kinesistenLabel),
+      kinesistenLabelEn: text(fromSanity?.bewijs?.kinesistenLabelEn, seedBrief.bewijs.kinesistenLabelEn || ""),
       trainersLabel: text(fromSanity?.bewijs?.trainersLabel, seedBrief.bewijs.trainersLabel),
+      trainersLabelEn: text(fromSanity?.bewijs?.trainersLabelEn, seedBrief.bewijs.trainersLabelEn || ""),
       locatiesLabel: text(fromSanity?.bewijs?.locatiesLabel, seedBrief.bewijs.locatiesLabel),
+      locatiesLabelEn: text(fromSanity?.bewijs?.locatiesLabelEn, seedBrief.bewijs.locatiesLabelEn || ""),
       jarenLabel: text(fromSanity?.bewijs?.jarenLabel, seedBrief.bewijs.jarenLabel),
+      jarenLabelEn: text(fromSanity?.bewijs?.jarenLabelEn, seedBrief.bewijs.jarenLabelEn || ""),
     },
   };
 }
@@ -1253,7 +1364,16 @@ type PaginaRow = Partial<Omit<Pagina, "fotoSecundair" | "bannerFoto">> & {
 };
 
 function mergeBlokken(cms: PaginaBlok[] | undefined, seed: PaginaBlok[] | undefined): PaginaBlok[] {
-  return cms?.length ? cms : seed || [];
+  if (!cms?.length) return seed || [];
+  return cms.map((blok) => {
+    const fromSeed = seed?.find((item) => item.kop === blok.kop);
+    if (!fromSeed) return blok;
+    return {
+      ...blok,
+      kopEn: blok.kopEn?.trim() || fromSeed.kopEn,
+      tekstEn: blok.tekstEn?.trim() || fromSeed.tekstEn,
+    };
+  });
 }
 
 const VERWIJS_VERVOLG = new Set<VerwijsVervolg>(["geen", "naam", "club", "event", "tekst"]);
@@ -1637,7 +1757,7 @@ async function loadPartners(): Promise<Partner[]> {
 export async function getLesrooster(): Promise<LesroosterItem[]> {
   return once("lesrooster", () => sanity.fetch(
     `*[_type == "lesrooster"] | order(volgorde asc) {
-      les, dag, van, tot, volgorde,
+      les, lesEn, dag, van, tot, volgorde,
       "coachNaam": coach->voornaam,
       "coachSlug": coach->slug.current,
       "dienstSlug": dienst->slug.current,
@@ -1803,20 +1923,29 @@ export async function getEvents(): Promise<SiteEvent[]> {
 
 export interface ActieItem {
   label?: string;
+  labelEn?: string;
   kop: string;
+  kopEn?: string;
   tekst?: string;
+  tekstEn?: string;
   video?: string;
 }
 
 export interface ActieSectie {
   kicker?: string;
+  kickerEn?: string;
   titel?: string;
+  titelEn?: string;
   tekst?: string;
+  tekstEn?: string;
   items: ActieItem[];
   kaderTitel?: string;
+  kaderTitelEn?: string;
   kaderTekst?: string;
+  kaderTekstEn?: string;
   foto?: CmsFoto;
   knopLabel?: string;
+  knopLabelEn?: string;
   knopUrl?: string;
 }
 
@@ -1824,10 +1953,15 @@ export interface ActieSectie {
 export interface Actiepagina {
   slug: string;
   titel: string;
+  titelEn?: string;
   kicker?: string;
+  kickerEn?: string;
   slogan?: string;
+  sloganEn?: string;
   intro?: string;
+  introEn?: string;
   datumRegel?: string;
+  datumRegelEn?: string;
   foto?: CmsFoto;
   logo?: string;
   logoNaam?: string;
@@ -1835,9 +1969,12 @@ export interface Actiepagina {
   secties: ActieSectie[];
   galerij: CmsFoto[];
   afsluiter?: string;
+  afsluiterEn?: string;
   zichtbaarInGoogle: boolean;
   seoTitle?: string;
+  seoTitleEn?: string;
   seoDescription?: string;
+  seoDescriptionEn?: string;
 }
 
 /** A section is shown once Julie gave it more than a heading. */
@@ -1845,17 +1982,53 @@ export function actieSectieGevuld(s: ActieSectie): boolean {
   return Boolean(s.tekst?.trim() || s.items.length || s.kaderTekst?.trim() || s.foto || (s.knopLabel && s.knopUrl));
 }
 
+function actieTekst(nl: string | undefined, en: string | undefined, lang: Lang): string | undefined {
+  if (lang !== "en") return nl;
+  return en?.trim() ? en : nl;
+}
+
+/** English campaign copy when Julie filled the EN fields; otherwise the Dutch text. */
+export function localizeActie(pagina: Actiepagina, lang: Lang): Actiepagina {
+  if (lang !== "en") return pagina;
+  return {
+    ...pagina,
+    titel: actieTekst(pagina.titel, pagina.titelEn, lang) || pagina.titel,
+    kicker: actieTekst(pagina.kicker, pagina.kickerEn, lang),
+    slogan: actieTekst(pagina.slogan, pagina.sloganEn, lang),
+    intro: actieTekst(pagina.intro, pagina.introEn, lang),
+    datumRegel: actieTekst(pagina.datumRegel, pagina.datumRegelEn, lang),
+    afsluiter: actieTekst(pagina.afsluiter, pagina.afsluiterEn, lang),
+    seoTitle: actieTekst(pagina.seoTitle, pagina.seoTitleEn, lang),
+    seoDescription: actieTekst(pagina.seoDescription, pagina.seoDescriptionEn, lang),
+    secties: pagina.secties.map((s) => ({
+      ...s,
+      kicker: actieTekst(s.kicker, s.kickerEn, lang),
+      titel: actieTekst(s.titel, s.titelEn, lang),
+      tekst: actieTekst(s.tekst, s.tekstEn, lang),
+      kaderTitel: actieTekst(s.kaderTitel, s.kaderTitelEn, lang),
+      kaderTekst: actieTekst(s.kaderTekst, s.kaderTekstEn, lang),
+      knopLabel: actieTekst(s.knopLabel, s.knopLabelEn, lang),
+      items: s.items.map((item) => ({
+        ...item,
+        label: actieTekst(item.label, item.labelEn, lang),
+        kop: actieTekst(item.kop, item.kopEn, lang) || item.kop,
+        tekst: actieTekst(item.tekst, item.tekstEn, lang),
+      })),
+    })),
+  };
+}
+
 export async function getActiepaginas(): Promise<Actiepagina[]> {
   return once("actiepaginas", async () => {
     const rows = await sanity.fetch(
       `*[_type == "actiepagina" && defined(slug.current) && !(_id in path("drafts.**"))] {
-        "slug": slug.current, titel, kicker, slogan, intro, datumRegel,
+        "slug": slug.current, titel, titelEn, kicker, kickerEn, slogan, sloganEn, intro, introEn, datumRegel, datumRegelEn,
         "foto": foto${CMS_FOTO_PROJECTION},
         "logo": logo.asset->url, logoNaam, logoUrl,
-        secties[]{ kicker, titel, tekst, items[]{ label, kop, tekst, video }, kaderTitel, kaderTekst,
-          "foto": foto${CMS_FOTO_PROJECTION}, knopLabel, knopUrl },
+        secties[]{ kicker, kickerEn, titel, titelEn, tekst, tekstEn, items[]{ label, labelEn, kop, kopEn, tekst, tekstEn, video }, kaderTitel, kaderTitelEn, kaderTekst, kaderTekstEn,
+          "foto": foto${CMS_FOTO_PROJECTION}, knopLabel, knopLabelEn, knopUrl },
         "galerij": galerij[]${CMS_FOTO_PROJECTION},
-        afsluiter, zichtbaarInGoogle, seoTitle, seoDescription
+        afsluiter, afsluiterEn, zichtbaarInGoogle, seoTitle, seoTitleEn, seoDescription, seoDescriptionEn
       }`,
     );
     return (rows || [])
@@ -1927,7 +2100,7 @@ export async function getRelatedBlogPosts(slug: string, limit = 3): Promise<Blog
 export async function getVacatures(): Promise<Vacature[]> {
   return once("vacatures", () =>
     sanity.fetch(
-      `*[_type == "vacature" && actief == true] { "slug": slug.current, titel, "locatieNaam": locatie->naam, omschrijving, contactEmail, actief }`,
+      `*[_type == "vacature" && actief == true] { "slug": slug.current, titel, titelEn, "locatieNaam": locatie->naam, omschrijving, omschrijvingEn, contactEmail, actief }`,
     ),
   );
 }

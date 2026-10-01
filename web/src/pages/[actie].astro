@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ActiePagina from "../components/ActiePagina.astro";
-import { getActiepaginas } from "../lib/content";
+import { getActiepaginas, localizeActie } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 import { MPC_HOST } from "../lib/site";
 
@@ -13,24 +13,19 @@ export async function getStaticPaths() {
 
 const { pagina } = Astro.props;
 const path = `/${pagina.slug}`;
+const shown = localizeActie(pagina, "nl");
 const description =
-  pagina.seoDescription || [pagina.slogan, pagina.intro?.split("\n")[0]].filter(Boolean).join(" ").slice(0, 160);
-
-const jsonLd = [
-  breadcrumbSchema([
-    { name: "Home", path: "/" },
-    { name: pagina.titel, path },
-  ]),
-];
+  shown.seoDescription || [shown.slogan, shown.intro?.split("\n")[0]].filter(Boolean).join(" ").slice(0, 160);
 ---
 
 <Layout
-  title={pagina.seoTitle || `${pagina.titel} | Sportpraktijk Movenda`}
+  title={shown.seoTitle || `${shown.titel} | Sportpraktijk Movenda`}
   description={description}
   path={path}
-  jsonLd={jsonLd}
+  altPath={`/en/${pagina.slug}`}
+  jsonLd={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: shown.titel, path }])]}
   noindex={!pagina.zichtbaarInGoogle}
   ogImage={pagina.foto?.url}
 >
-  <ActiePagina pagina={pagina} />
+  <ActiePagina pagina={pagina} lang="nl" />
 </Layout>

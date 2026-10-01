@@ -1,0 +1,55 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SectionKicker from "./SectionKicker.astro";
+import { getLocatieBySlug, getSiteSettings, getPagina, paginaAlineas, paginaTekst } from "../lib/content";
+import { breadcrumbSchema } from "../lib/schema";
+import { MPC_HOST } from "../lib/site";
+import { withLang, type Lang } from "../lib/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "nl" } = Astro.props;
+const en = lang === "en";
+const prefix = en ? "/en" : "";
+
+if (!MPC_HOST) return Astro.redirect(withLang("/over-ons/onze-visie", lang), 301);
+
+const locatie = (await getLocatieBySlug("mpc"))!;
+const settings = await getSiteSettings();
+const pagina = await getPagina("mpc-visie");
+const slogan = en ? settings.slogans.mpcEn || settings.slogans.mpc : settings.slogans.mpc;
+const path = `${prefix}/performance/visie`;
+---
+
+<Layout
+  title={paginaTekst(pagina, "seoTitle", lang) || (en ? "Vision | Movenda Performance Centre" : "Visie | Movenda Performance Centre")}
+  description={paginaTekst(pagina, "seoDescription", lang)}
+  path={path}
+  altPath={en ? "/performance/visie" : "/en/performance/visie"}
+  lang={lang}
+  jsonLd={[breadcrumbSchema([
+    { name: "Home", path: prefix || "/" },
+    { name: "Movenda Performance Centre", path: `${prefix}/performance` },
+    { name: en ? "Vision" : "Visie", path },
+  ])]}
+>
+  <article class="mx-auto max-w-3xl px-4 py-16">
+    <a href={withLang("/performance", lang)} class="text-sm font-medium text-brand-primary">{en ? "← Back to Performance" : "← Terug naar Performance"}</a>
+    <SectionKicker n={1} />
+    <h1 class="mt-4 text-3xl font-bold">{paginaTekst(pagina, "titel", lang)}</h1>
+    {slogan && (
+      <p class="mt-3 text-lg font-medium text-brand-primary">{slogan}</p>
+    )}
+    <div class="mt-6 space-y-4 leading-relaxed text-brand-muted">
+      {paginaAlineas(pagina, lang).map((tekst) => <p>{tekst}</p>)}
+      <p>
+        {locatie.adres}. {en ? "By appointment only." : "Enkel op afspraak."}
+      </p>
+    </div>
+    <a href={withLang("/contact", lang)} class="mt-10 inline-block rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
+      {paginaTekst(pagina, "ctaTekst", lang) || (en ? "Contact us" : "Contacteer ons")}
+    </a>
+  </article>
+</Layout>

@@ -1,5 +1,6 @@
 import { CogIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { EN_FIELDSET } from "./helpers";
 import { email, maxItems, metPlek, webadres } from "./regels";
 
 export default defineType({
@@ -57,6 +58,7 @@ export default defineType({
         defineField({ name: "enabled", title: "Boekknop tonen op de site", type: "boolean", initialValue: false }),
         defineField({ name: "url", title: "Link naar de agenda-tool", type: "string", validation: webadres }),
         defineField({ name: "label", title: "Tekst op de knop", type: "string", initialValue: "Maak een afspraak" }),
+        defineField({ name: "labelEn", title: "Tekst op de knop (EN)", type: "string" }),
       ],
     }),
     defineField({
@@ -167,11 +169,16 @@ export default defineType({
       fields: [
         defineField({ name: "basishonorarium", title: "Basishonorarium (€)", type: "number" }),
         defineField({ name: "intro", title: "Introtekst boven de tabellen", type: "text", rows: 3 }),
+        defineField({ name: "introEn", title: "Introtekst boven de tabellen (EN)", type: "text", rows: 3 }),
         defineField({ name: "terugbetalingStandaard", title: "Terugbetaling — standaard verzekerde", type: "string" }),
+        defineField({ name: "terugbetalingStandaardEn", title: "Terugbetaling — standaard verzekerde (EN)", type: "string" }),
         defineField({ name: "terugbetalingVt", title: "Terugbetaling — verhoogde tegemoetkoming (VT/BIM)", type: "string" }),
+        defineField({ name: "terugbetalingVtEn", title: "Terugbetaling — verhoogde tegemoetkoming (EN)", type: "string" }),
         defineField({ name: "voorwaarden", title: "Voorwaarden voor terugbetaling", type: "text", rows: 4 }),
+        defineField({ name: "voorwaardenEn", title: "Voorwaarden voor terugbetaling (EN)", type: "text", rows: 4 }),
         defineField({ name: "exBtwMpc", title: "MPC-prijzen exclusief BTW", type: "boolean", initialValue: true }),
         defineField({ name: "annulatiebeleid", title: "Annulatiebeleid", type: "text", rows: 3 }),
+        defineField({ name: "annulatiebeleidEn", title: "Annulatiebeleid (EN)", type: "text", rows: 3 }),
         defineField({
           name: "nomenclatuur",
           title: "Nomenclatuurtabel (kine)",
@@ -200,10 +207,15 @@ export default defineType({
       group: "homepage",
       fields: [
         defineField({ name: "home", title: "Homepage", type: "string" }),
+        defineField({ name: "homeEn", title: "Homepage (EN)", type: "string" }),
         defineField({ name: "kine", title: "Kinesitherapie", type: "string" }),
+        defineField({ name: "kineEn", title: "Kinesitherapie (EN)", type: "string" }),
         defineField({ name: "mpc", title: "MPC", type: "string" }),
+        defineField({ name: "mpcEn", title: "MPC (EN)", type: "string" }),
         defineField({ name: "prijzenKine", title: "Prijzen kine", type: "string" }),
+        defineField({ name: "prijzenKineEn", title: "Prijzen kine (EN)", type: "string" }),
         defineField({ name: "prijzenPt", title: "Prijzen PT", type: "string" }),
+        defineField({ name: "prijzenPtEn", title: "Prijzen PT (EN)", type: "string" }),
       ],
     }),
     defineField({
@@ -261,6 +273,7 @@ export default defineType({
       type: "object",
       group: "homepage",
       options: { collapsible: true, collapsed: true },
+      fieldsets: [EN_FIELDSET],
       fields: [
         defineField({ name: "merkKicker", title: "Merkintro — bovenkop", type: "string" }),
         defineField({ name: "merkTitel", title: "Merkintro — titel", type: "string" }),
@@ -293,17 +306,46 @@ export default defineType({
         defineField({ name: "slotTekst", title: "Slot — tekst", type: "text", rows: 3 }),
         defineField({ name: "slotAfspraak", title: "Slot — afspraakknop", type: "string" }),
         defineField({ name: "slotContact", title: "Slot — contactknop", type: "string" }),
+        defineField({ name: "merkKickerEn", title: "Merkintro — bovenkop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "merkTitelEn", title: "Merkintro — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "merkTekstEn", title: "Merkintro — tekst (EN)", type: "text", rows: 5, fieldset: "en" }),
+        defineField({ name: "merkStatementEn", title: "Merkintro — statement (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "merkCtaEn", title: "Merkintro — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "partnersCtaEn", title: "Partners — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "aanbodKickerEn", title: "Aanbod — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "aanbodTekstEn", title: "Aanbod — tekst (EN)", type: "text", rows: 2, fieldset: "en" }),
+        defineField({ name: "locatiesTitelEn", title: "Locaties — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "hasseltProfielEn", title: "Movenda Hasselt — profiel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "kuringenProfielEn", title: "Performance Centre Kuringen — profiel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "teamTitelEn", title: "Team — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "teamTekstEn", title: "Team — tekst (EN)", type: "text", rows: 3, fieldset: "en" }),
+        defineField({ name: "teamCtaEn", title: "Team — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "reviewsTitelEn", title: "Reviews — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "reviewsCtaEn", title: "Reviews — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "insightsTitelEn", title: "Insights — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "insightsTekstEn", title: "Insights — tekst (EN)", type: "text", rows: 2, fieldset: "en" }),
+        defineField({ name: "insightsCtaEn", title: "Insights — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "instagramCtaEn", title: "Instagram — knop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "slotTitelEn", title: "Slot — titel (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "slotTekstEn", title: "Slot — tekst (EN)", type: "text", rows: 3, fieldset: "en" }),
+        defineField({ name: "slotAfspraakEn", title: "Slot — afspraakknop (EN)", type: "string", fieldset: "en" }),
+        defineField({ name: "slotContactEn", title: "Slot — contactknop (EN)", type: "string", fieldset: "en" }),
         defineField({
           name: "bewijs",
           title: "Bewijsstrook",
           description: "De aantallen kinesitherapeuten, trainers en locaties worden geteld uit Team (Telt mee als) en Locaties. Hier staan het ervaringscijfer en de woorden onder de cijfers.",
           type: "object",
+          fieldsets: [EN_FIELDSET],
           fields: [
             defineField({ name: "jaren", title: "Jaar ervaring", type: "string", initialValue: "10+" }),
             defineField({ name: "kinesistenLabel", title: "Woord onder het aantal kinesitherapeuten", type: "string" }),
             defineField({ name: "trainersLabel", title: "Woord onder het aantal trainers", type: "string" }),
             defineField({ name: "locatiesLabel", title: "Woord onder het aantal locaties", type: "string" }),
             defineField({ name: "jarenLabel", title: "Woord onder het ervaringscijfer", type: "string" }),
+            defineField({ name: "kinesistenLabelEn", title: "Woord onder het aantal kinesitherapeuten (EN)", type: "string", fieldset: "en" }),
+            defineField({ name: "trainersLabelEn", title: "Woord onder het aantal trainers (EN)", type: "string", fieldset: "en" }),
+            defineField({ name: "locatiesLabelEn", title: "Woord onder het aantal locaties (EN)", type: "string", fieldset: "en" }),
+            defineField({ name: "jarenLabelEn", title: "Woord onder het ervaringscijfer (EN)", type: "string", fieldset: "en" }),
           ],
         }),
       ],

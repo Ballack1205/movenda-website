@@ -53,7 +53,8 @@ export function byAppointment(note: string | undefined, lang: Lang): string | un
   return /enkel op afspraak/i.test(note) ? "By appointment only" : note;
 }
 
-export function locatieRoute(slug: string, nl: string | undefined, lang: Lang): string | undefined {
+export function locatieRoute(slug: string, nl: string | undefined, lang: Lang, enOverride?: string): string | undefined {
+  if (lang === "en" && enOverride?.trim()) return enOverride;
   if (!nl) return undefined;
   if (lang !== "en") return nl;
   if (slug === "olympia") {
@@ -146,6 +147,40 @@ export const KEUZEHULP_EN = {
   geenMatchTekst:
     "No exact match, but these colleagues are closest to your question. Unsure? Call us — we'll point you to the right person.",
 };
+
+type PrijzenInfoCopy = {
+  intro?: string;
+  introEn?: string;
+  terugbetalingStandaard?: string;
+  terugbetalingStandaardEn?: string;
+  terugbetalingVt?: string;
+  terugbetalingVtEn?: string;
+  voorwaarden?: string;
+  voorwaardenEn?: string;
+  annulatiebeleid?: string;
+  annulatiebeleidEn?: string;
+};
+
+const PRIJZEN_INFO_FIELDS = [
+  "intro",
+  "terugbetalingStandaard",
+  "terugbetalingVt",
+  "voorwaarden",
+  "annulatiebeleid",
+] as const;
+
+/** Dutch CMS sentence, or its English field, or the built-in English fallback. */
+export function prijzenInfoText(
+  info: PrijzenInfoCopy,
+  field: (typeof PRIJZEN_INFO_FIELDS)[number],
+  lang: Lang,
+): string | undefined {
+  const nl = info[field];
+  if (lang !== "en") return nl;
+  const en = info[`${field}En`];
+  if (typeof en === "string" && en.trim()) return en;
+  return PRIJZEN_INFO_EN[field] || nl;
+}
 
 export type FaqCopy = { vraag: string; antwoord: string };
 

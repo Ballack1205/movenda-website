@@ -158,8 +158,8 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
     [
       { slug: "sportspecifieke-screening", categorie: "training", label: en ? "Performance screening" : "Performance Screening" },
       { slug: "inspanningstesten", categorie: "training" },
-      { slug: "loopanalyse-ontracx", categorie: "mpc-training", label: "Loopanalyse met OnTracx" },
-      { slug: "vald-screening", categorie: "mpc-training", label: "VALD Screening" },
+      { slug: "loopanalyse-ontracx", categorie: "mpc-training", label: en ? "Running analysis with OnTracx" : "Loopanalyse met OnTracx" },
+      { slug: "vald-screening", categorie: "mpc-training", label: en ? "VALD screening" : "VALD Screening" },
     ],
     lang,
   );

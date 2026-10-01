@@ -148,6 +148,8 @@ html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .
 
 html[data-theme="lab"] .page-ink {
   flex: 1;
+  width: 100%;
+  min-width: 0;
   background: #161513;
   color: #f4f7fb;
 }
@@ -178,6 +180,15 @@ html[data-theme="lab"] .page-ink :is(.rounded-2xl, .rounded-xl) {
 
 html[data-theme="lab"] .page-ink .bg-brand-surface {
   background: rgb(244 247 251 / 0.06);
+}
+
+html[data-theme="lab"] .page-ink .lab-card {
+  background: rgb(244 247 251 / 0.06);
+  border-color: rgb(244 247 251 / 0.18);
+}
+
+html[data-theme="lab"] .page-ink .blog-card__caption {
+  background: rgb(22 21 19 / 0.72);
 }
 
 html[data-theme="lab"] .page-ink .divide-brand-border > * {

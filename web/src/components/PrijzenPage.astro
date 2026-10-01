@@ -1,0 +1,209 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LinkedText from "./LinkedText.astro";
+import {
+  getPagina,
+  getPrijzenByCategorie,
+  getSiteSettings,
+  paginaParagrafen,
+  paginaTekst,
+  getTeamleden,
+  prijsNaam,
+  prijsNotitie,
+  type Prijsitem,
+  type Teamlid,
+} from "../lib/content";
+import { breadcrumbSchema } from "../lib/schema";
+import { PRIJZEN_INFO_EN, prijzenInfoText, withLang, type Lang } from "../lib/i18n";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "nl" } = Astro.props;
+const en = lang === "en";
+const prefix = en ? "/en" : "";
+
+const settings = await getSiteSettings();
+const info = settings.prijzenInfo;
+const pagina = await getPagina("prijzen");
+const alineas = (field: Parameters<typeof paginaParagrafen>[1]) =>
+  paginaParagrafen(pagina, field, lang)
+    .filter((tekst) => info.basishonorarium || !tekst.includes("{basishonorarium}"))
+    .map((tekst) => tekst.replaceAll("{basishonorarium}", String(info.basishonorarium ?? "")));
+const team = await getTeamleden();
+const kine = await getPrijzenByCategorie("kine");
+const training = await getPrijzenByCategorie("training");
+
+const byNaam = (a: Teamlid, b: Teamlid) =>
+  a.naam.localeCompare(b.naam, "nl") || a.voornaam.localeCompare(b.voornaam, "nl");
+const kineTeam = team.filter((lid) => lid.tariefKine).sort(byNaam);
+const ptTeam = team.filter((lid) => lid.tariefPt).sort(byNaam);
+
+function startprijs(item: Prijsitem): string {
+  if (item.opAanvraag) return en ? "On request" : "Op aanvraag";
+  const prefixBedrag = item.vanaf ? (en ? "From " : "Vanaf ") : "";
+  return `${prefixBedrag}€${item.bedrag}`;
+}
+
+const copy = en
+  ? {
+      seoTitle: "Physiotherapy & personal training fees | Movenda",
+      crumb: "Prices",
+      kine: "Physiotherapy",
+      training: "Personal training",
+      mpc: "Performance Centre fees are on the",
+      mpcLink: "centre's prices page",
+      standard: PRIJZEN_INFO_EN.standaard,
+      vt: PRIJZEN_INFO_EN.vt,
+      cancel: PRIJZEN_INFO_EN.annulatie,
+    }
+  : {
+      seoTitle: "Tarieven kinesitherapie & personal training | Movenda",
+      crumb: "Prijzen",
+      kine: "Kinesitherapie",
+      training: "Personal training",
+      mpc: "Tarieven van het Performance Centre staan op de",
+      mpcLink: "prijzenpagina van het centre",
+      standard: "Standaard verzekerde",
+      vt: "Verhoogde tegemoetkoming (VT/BIM)",
+      cancel: "Annulatie:",
+    };
+
+const jsonLd = [
+  breadcrumbSchema([
+    { name: "Home", path: prefix || "/" },
+    { name: copy.crumb, path: `${prefix}/prijzen` },
+  ]),
+];
+const intro = prijzenInfoText(info, "intro", lang);
+const standaard = prijzenInfoText(info, "terugbetalingStandaard", lang);
+const vt = prijzenInfoText(info, "terugbetalingVt", lang);
+const voorwaarden = prijzenInfoText(info, "voorwaarden", lang);
+const annulatie = prijzenInfoText(info, "annulatiebeleid", lang);
+---
+
+<Layout
+  title={paginaTekst(pagina, "seoTitle", lang) || copy.seoTitle}
+  description={paginaTekst(pagina, "seoDescription", lang)}
+  path={`${prefix}/prijzen`}
+  altPath={en ? "/prijzen" : "/en/prijzen"}
+  lang={lang}
+  jsonLd={jsonLd}
+>
+  <section class="page-ink mx-auto max-w-5xl px-4 pb-16 pt-8">
+    <h1>{paginaTekst(pagina, "titel", lang)}</h1>
+    {intro && <p class="mt-4 text-brand-muted">{intro}</p>}
+    {alineas("intro").map((tekst) => (
+      <p class="mt-3 text-brand-muted"><LinkedText text={tekst} /></p>
+    ))}
+
+    {kine.length > 0 && (
+      <div class="mt-10 max-w-2xl">
+        <h2 class="text-xl font-semibold">{copy.kine}</h2>
+        <ul class="mt-3 border-t border-brand-border">
+          {kine.map((item) => (
+            <li class="flex items-baseline justify-between gap-6 border-b border-brand-border py-3">
+              <span>{prijsNaam(item, lang)}</span>
+              <span class="shrink-0 font-semibold">{startprijs(item)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {training.length > 0 && (
+      <div class="mt-10 max-w-2xl">
+        <h2 class="text-xl font-semibold">{copy.training}</h2>
+        <ul class="mt-3 border-t border-brand-border">
+          {training.map((item) => (
+            <li class="flex items-baseline justify-between gap-6 border-b border-brand-border py-3">
+              <span>
+                {prijsNaam(item, lang)}
+                {prijsNotitie(item, lang) && <span class="mt-0.5 block text-sm text-brand-muted">{prijsNotitie(item, lang)}</span>}
+              </span>
+              <span class="shrink-0 font-semibold">{startprijs(item)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <p class="mt-8 text-sm text-brand-muted">
+      {copy.mpc}{" "}
+      <a href={withLang("/performance/prijzen", lang)} class="underline underline-offset-4">{copy.mpcLink}</a>.
+    </p>
+
+    <div class="mt-12 border-t border-brand-border pt-8">
+      <h2 class="text-xl font-semibold">{paginaTekst(pagina, "terugbetalingTitel", lang)}</h2>
+      {alineas("terugbetalingTekst").map((tekst) => (
+        <p class="mt-2 text-sm text-brand-muted"><LinkedText text={tekst} /></p>
+      ))}
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        {standaard && (
+          <div>
+            <p class="text-sm font-semibold">{copy.standard}</p>
+            <p class="text-sm text-brand-muted">{standaard}</p>
+          </div>
+        )}
+        {vt && (
+          <div>
+            <p class="text-sm font-semibold">{copy.vt}</p>
+            <p class="text-sm text-brand-muted">{vt}</p>
+          </div>
+        )}
+      </div>
+      {voorwaarden && <p class="mt-4 text-xs text-brand-muted">{voorwaarden}</p>}
+      {annulatie && (
+        <p class="mt-4 text-sm text-brand-muted"><strong>{copy.cancel}</strong> {annulatie}</p>
+      )}
+    </div>
+
+    {(kineTeam.length > 0 || ptTeam.length > 0) && (
+      <div class="mt-14">
+        <h2 class="text-xl font-semibold">{paginaTekst(pagina, "perTherapeutTitel", lang)}</h2>
+        {alineas("perTherapeutTekst").map((tekst) => (
+          <p class="mt-2 text-sm text-brand-muted"><LinkedText text={tekst} /></p>
+        ))}
+
+        {kineTeam.length > 0 && (
+          <div class="mt-8 max-w-2xl">
+            <h3 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{copy.kine}</h3>
+            <div class="mt-2 divide-y divide-brand-border border-y border-brand-border">
+              {kineTeam.map((lid) => (
+                <details class="group">
+                  <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-2 text-sm [&::-webkit-details-marker]:hidden">
+                    <span>{lid.voornaam} {lid.naam}</span>
+                    <span class="text-brand-muted" aria-hidden="true">+</span>
+                  </summary>
+                  <p class="pb-3 text-sm">
+                    <span class="font-medium">€{lid.tariefKine} / 30 min</span>
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {ptTeam.length > 0 && (
+          <div class="mt-8 max-w-2xl">
+            <h3 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{copy.training}</h3>
+            <div class="mt-2 divide-y divide-brand-border border-y border-brand-border">
+              {ptTeam.map((lid) => (
+                <details class="group">
+                  <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-2 text-sm [&::-webkit-details-marker]:hidden">
+                    <span>{lid.voornaam} {lid.naam}</span>
+                    <span class="text-brand-muted" aria-hidden="true">+</span>
+                  </summary>
+                  <p class="pb-3 text-sm">
+                    <span class="font-medium">€{lid.tariefPt} / 60 min</span>
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    )}
+  </section>
+</Layout>
