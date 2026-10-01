@@ -1,6 +1,5 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import BlogPostFeature from "../../components/BlogPostFeature.astro";
 import BlogPostCard from "../../components/BlogPostCard.astro";
 import { getBlogPosts, getPagina, paginaAlineas } from "../../lib/content";
 import { blogListSchema, breadcrumbSchema } from "../../lib/schema";
@@ -9,8 +8,6 @@ import LinkedText from "../../components/LinkedText.astro";
 
 const posts = await getBlogPosts();
 const pagina = await getPagina("blog");
-const featured = posts[0];
-const rest = posts.slice(1);
 
 const jsonLd = [
   breadcrumbSchema([
@@ -49,20 +46,11 @@ const jsonLd = [
     {posts.length === 0 ? (
       <p class="mt-10 text-brand-muted">{pagina.legeTekst}</p>
     ) : (
-      <>
-        {featured && (
-          <div class="mt-10">
-            <BlogPostFeature post={featured} />
-          </div>
-        )}
-        {rest.length > 0 && (
-          <div class="mt-10 grid gap-6 sm:grid-cols-2">
-            {rest.map((post) => (
-              <BlogPostCard post={post} />
-            ))}
-          </div>
-        )}
-      </>
+      <div class="mt-10 grid gap-6 md:grid-cols-2">
+        {posts.map((post) => (
+          <BlogPostCard post={post} />
+        ))}
+      </div>
     )}
   </section>
 </Layout>

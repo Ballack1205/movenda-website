@@ -16,8 +16,8 @@ const { post, lang = "nl", thumb = false } = Astro.props;
 const contain = post.coverFit === "contain";
 const tag = post.tags?.[0];
 const titel = lang === "en" ? post.titelEn || post.titel : post.titel;
-const excerpt = lang === "en" ? post.excerptEn || post.excerpt : post.excerpt;
 const lab = THEME === "lab";
+const onPhoto = Boolean(post.cover) && !thumb;
 ---
 
 <a
@@ -29,7 +29,7 @@ const lab = THEME === "lab";
   ]}
 >
   {post.cover && (
-    <div class:list={["shrink-0 overflow-hidden", thumb ? "w-24" : "", contain && !thumb ? "bg-white" : "bg-brand-header/10"]}>
+    <div class:list={["relative shrink-0 overflow-hidden", thumb ? "w-24" : "", contain && !thumb ? "bg-white" : "bg-brand-header/10"]}>
       <img
         src={blogPhotoSrc(post.cover, "card")}
         alt=""
@@ -40,10 +40,15 @@ const lab = THEME === "lab";
         class:list={[
           thumb
             ? "h-full w-24 object-cover"
-            : "aspect-[16/10] w-full transition duration-500 group-hover:scale-[1.03]",
+            : "h-80 w-full transition duration-500 group-hover:scale-[1.03]",
           !thumb && (contain ? "object-contain p-5" : "object-cover object-top"),
         ]}
       />
+      {onPhoto && (
+        <div class="absolute inset-x-0 bottom-0 bg-brand-surface/65 px-5 py-4 backdrop-blur-sm">
+          <h2 class="text-pretty text-lg font-semibold leading-snug">{titel}</h2>
+        </div>
+      )}
     </div>
   )}
   <div class:list={["flex flex-1 flex-col", thumb ? "justify-center p-4" : "p-5"]}>
@@ -51,8 +56,9 @@ const lab = THEME === "lab";
       {tag ? `${blogTagLabel(tag, lang)} · ` : ""}
       {formatBlogDate(post.publicatiedatum, lang)}
     </p>
-    <h2 class:list={["mt-2 text-pretty font-semibold", thumb ? "line-clamp-3 text-base leading-snug" : "text-lg"]}>{titel}</h2>
-    {excerpt && !thumb && <p class="mt-2 line-clamp-3 text-sm text-brand-muted">{excerpt}</p>}
+    {!onPhoto && (
+      <h2 class:list={["mt-2 text-pretty font-semibold", thumb ? "line-clamp-3 text-base leading-snug" : "text-lg"]}>{titel}</h2>
+    )}
     {!thumb && (
       <span class="mt-4 inline-block text-sm font-semibold text-brand-primary">
         {lang === "en" ? "Read more →" : "Meer lezen →"}

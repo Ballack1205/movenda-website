@@ -116,7 +116,7 @@ const heroSrc = dienst.afbeelding
 
 ---
 
-<article class="pb-16">
+<article>
   <header class="dienst-hero">
     {heroSrc && (
       <img
@@ -251,21 +251,23 @@ const heroSrc = dienst.afbeelding
       {locatie.telefoon}
     </a>
   </div>
+  </div>
+  </div>
 
   {posts.length > 0 && (
-    <aside class="mt-14 border-t border-brand-border pt-10">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">
-        {lang === "en" ? "Read more about this" : "Lees ook"}
-      </h2>
-      <div class={`mt-4 grid gap-6 ${posts.length > 1 ? "sm:grid-cols-2" : ""}`}>
-        {posts.map((post) => (
-          <BlogPostCard post={post} lang={lang} />
-        ))}
-      </div>
-    </aside>
+    <div class="mx-auto max-w-3xl px-4 pb-16">
+      <aside class="mt-14 border-t border-brand-border pt-10">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">
+          {lang === "en" ? "Read more about this" : "Lees ook"}
+        </h2>
+        <div class={`mt-4 grid gap-6 ${posts.length > 1 ? "sm:grid-cols-2" : ""}`}>
+          {posts.map((post) => (
+            <BlogPostCard post={post} lang={lang} />
+          ))}
+        </div>
+      </aside>
+    </div>
   )}
-  </div>
-  </div>
 </article>
 
 <style>
@@ -408,7 +410,7 @@ const heroSrc = dienst.afbeelding
   }
 
   :global(html[data-theme="lab"]) .dienst-close {
-    background: #f3eee4;
+    background: #e6d9c4;
     color: #161513;
   }
 </style>
