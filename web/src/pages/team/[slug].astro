@@ -6,7 +6,6 @@ import {
   getLocaties,
   dienstHref,
   locatieKorteNamen,
-  formatEuro,
   rolKort,
   truncateAtSentence,
 } from "../../lib/content";
@@ -51,7 +50,7 @@ import SectionKicker from "../../components/SectionKicker.astro";
   ogImageShape="square"
   ogImageAlt={`${lid.voornaam} ${lid.naam}, ${lid.rol} bij Movenda`}
 >
-  <article class="mx-auto max-w-3xl px-4 py-12">
+  <article class="page-ink mx-auto max-w-3xl px-4 py-12">
     <a href="/team" class="text-sm font-medium text-brand-primary hover:underline">← Terug naar team</a>
 
     <div class="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start">
@@ -75,14 +74,6 @@ import SectionKicker from "../../components/SectionKicker.astro";
         <h1 class="text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
         <p class="mt-1 text-lg font-medium text-brand-primary">{lid.rol}</p>
         <p class="mt-2 text-sm text-brand-muted">{locatieKorteNamen(lid.locaties, locaties).join(" · ")}</p>
-        {(lid.tariefKine || lid.tariefPt || lid.tariefPtMpc || lid.tariefPerformance) && (
-          <p class="mt-2 text-sm">
-            {lid.tariefKine && <span>Kine {formatEuro(lid.tariefKine)}</span>}
-            {lid.tariefPt && <span> · PT Movenda {formatEuro(lid.tariefPt)}</span>}
-            {lid.tariefPtMpc && <span> · PT Performance Centre {formatEuro(lid.tariefPtMpc)}</span>}
-            {lid.tariefPerformance && <span> · Performance {formatEuro(lid.tariefPerformance)}</span>}
-          </p>
-        )}
       </div>
     </div>
 
