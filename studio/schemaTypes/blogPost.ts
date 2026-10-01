@@ -138,7 +138,7 @@ export default defineType({
       type: "text",
       group: "seo",
       rows: 2,
-      validation: (Rule) => Rule.max(160),
+      validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af."),
     }),
   ],
   orderings: [

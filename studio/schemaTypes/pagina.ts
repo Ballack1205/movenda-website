@@ -288,9 +288,9 @@ export default defineType({
       description: "De titel in het browsertabblad en in Google. Hou het onder 60 tekens.",
       validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")],
     }),
-    defineField({ name: "seoDescription", title: "SEO-omschrijving (NL)", type: "text", rows: 2, group: "seo", validation: (Rule) => Rule.max(160) }),
+    defineField({ name: "seoDescription", title: "SEO-omschrijving (NL)", type: "text", rows: 2, group: "seo", validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af.") }),
     defineField({ name: "seoTitleEn", title: "SEO-titel (EN)", type: "string", group: "seo", fieldset: "en", validation: (Rule) => [Rule.max(70), Rule.max(60).warning("Google kapt titels boven ±60 tekens af.")] }),
-    defineField({ name: "seoDescriptionEn", title: "SEO-omschrijving (EN)", type: "text", rows: 2, group: "seo", fieldset: "en", validation: (Rule) => Rule.max(160) }),
+    defineField({ name: "seoDescriptionEn", title: "SEO-omschrijving (EN)", type: "text", rows: 2, group: "seo", fieldset: "en", validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af.") }),
   ],
   preview: {
     select: { key: "key", titel: "titel", media: "foto" },

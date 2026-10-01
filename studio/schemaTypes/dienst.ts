@@ -122,7 +122,7 @@ export default defineType({
       type: "text",
       group: "seo",
       rows: 2,
-      validation: (Rule) => Rule.max(160),
+      validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af."),
     }),
     defineField({
       name: "seoTitleEn",
@@ -141,7 +141,7 @@ export default defineType({
       fieldset: "en",
       rows: 2,
       description: "Leeg = eerste zin(nen) van de Engelse tekst.",
-      validation: (Rule) => Rule.max(160),
+      validation: (Rule) => Rule.max(160).warning("Google kapt omschrijvingen boven ±160 tekens af."),
     }),
   ],
   orderings: [{ title: "Volgorde", name: "volgordeAsc", by: [{ field: "volgorde", direction: "asc" }] }],
