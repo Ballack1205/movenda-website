@@ -5,7 +5,7 @@ import type { KompasWeergave } from "../lib/content";
 
 interface Props {
   weergave?: { mobiel: KompasWeergave; desktop: KompasWeergave };
-  team?: { slug: string; rol?: string; locatie?: string; face: string | null }[];
+  team?: { slug: string; rol?: string; locatie?: string; locaties?: string[]; face: string | null }[];
 }
 
 const { weergave = { mobiel: "stappen", desktop: "stappen" }, team = [] } = Astro.props;

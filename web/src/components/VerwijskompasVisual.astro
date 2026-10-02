@@ -6,6 +6,7 @@ interface TeamFace {
   slug: string;
   rol?: string;
   locatie?: string;
+  locaties?: string[];
   face: string | null;
 }
 
@@ -91,25 +92,39 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
       training: { title: "Waarvoor zoek je begeleiding?", list: "training" },
       regions: { title: "Waar zit de klacht?", list: "regions" },
       sports: { title: "Welke sport doe je?", list: "sports" },
+      location: { title: "Op welke locatie?" },
     };
 
-    // Each entry: { step, choice } — step is "start" or a STEPS key, choice the picked id.
+    // Each entry: { step, choice } — step is "start", "location" or a STEPS key, choice the picked id.
     let path = [];
 
+    // The complaint or goal the person picked last, before choosing a location.
+    const subjectItem = () => {
+      const p = [...path].reverse().find((entry) => entry.step !== "location" && entry.step !== "start");
+      return p ? lists[STEPS[p.step].list][p.choice] : null;
+    };
+    const placeFor = (id) => subjectItem()?.places?.find((place) => place.locatie === id);
+    const itemFor = (step, id) => {
+      if (step === "start") return START.find((s) => s.id === id);
+      if (step === "location") return placeFor(id);
+      return lists[STEPS[step].list][id];
+    };
     const nextStep = (step, id) => {
       if (step === "start") return id === "training" ? "training" : "contexts";
-      if (step === "contexts") {
-        const item = lists.contexts[id];
-        if (item.next === "regio") return "regions";
-        if (item.next === "sport") return "sports";
-      }
+      if (step === "location") return "result";
+      const item = itemFor(step, id);
+      if (step === "contexts" && item.next === "regio") return "regions";
+      if (step === "contexts" && item.next === "sport") return "sports";
+      // Complaints with a pooled agenda per location: pick the location, not a person.
+      if (item?.places?.length) return "location";
       return "result";
     };
-    const itemFor = (step, id) => (step === "start" ? START.find((s) => s.id === id) : lists[STEPS[step].list][id]);
+    const peopleAt = (item, locatie) =>
+      (item.people || []).filter((id) => (faces[tree.people[id]?.slug]?.locaties || []).includes(locatie));
 
     function chip(step, item, index) {
       const picked = path.find((p) => p.step === step)?.choice === item.id;
-      const leads = step === "contexts" && item.next;
+      const leads = (step === "contexts" && item.next) || item.places?.length;
       const count = !leads && item.people ? item.people.length : 0;
       const tail = leads
         ? `<span class="kv-chip__go" aria-hidden="true">→</span>`
@@ -131,7 +146,23 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
       return column("start", "Waar ben je naar op zoek?", `<div class="kv-tiles">${tiles}</div>`, 1);
     }
 
+    function locationColumn(item, number) {
+      const picked = path.find((p) => p.step === "location")?.choice;
+      const tiles = item.places
+        .map((place, i) => {
+          const count = peopleAt(item, place.locatie).length;
+          return `<button type="button" class="kv-tile kv-tile--place" style="--i:${i}" data-kv-step="location" data-kv-choice="${esc(place.locatie)}" aria-pressed="${picked === place.locatie}">
+            <span class="kv-tile__num">0${i + 1}</span>
+            <span class="kv-tile__label">${esc(place.label)}</span>
+            <span class="kv-tile__sub">${count} ${count === 1 ? "collega" : "collega's"} voor ${esc(item.label.toLowerCase())}</span>
+          </button>`;
+        })
+        .join("");
+      return column("location", STEPS.location.title, `<div class="kv-tiles">${tiles}</div>`, number);
+    }
+
     function stepColumn(step, number) {
+      if (step === "location") return locationColumn(subjectItem(), number);
       const def = STEPS[step];
       const items = tree[def.list];
       return column(step, def.title, `<div class="kv-chips">${items.map((item, i) => chip(step, item, i)).join("")}</div>`, number);
@@ -145,7 +176,7 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
       </section>`;
     }
 
-    function personCard(id, index) {
+    function personCard(id, index, withBook = true) {
       const person = tree.people[id];
       if (!person) return "";
       const lid = faces[person.slug] || {};
@@ -153,7 +184,7 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
       const photo = lid.face
         ? `<img src="${esc(lid.face)}" alt="" loading="lazy" />`
         : `<span class="kv-card__initials">${esc(initials)}</span>`;
-      const book = person.book
+      const book = withBook && person.book
         ? `<a class="kv-card__book" href="${esc(person.book)}" target="_blank" rel="noopener noreferrer">Boek online</a>`
         : "";
       return `<li class="kv-card" style="--i:${index}">
@@ -171,16 +202,27 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
 
     function resultColumn(item) {
       const people = item.people || [];
-      const places = (item.places || [])
-        .map((place) => `<a class="kv-place" href="${esc(place.href)}" target="_blank" rel="noopener noreferrer">${esc(place.label)} <span aria-hidden="true">↗</span></a>`)
-        .join("");
       return `<section class="kv-col kv-col--result" data-kv-col="result" aria-live="polite" aria-label="Jouw collega's">
         <p class="kv-col__step">Jouw match</p>
         <h3 class="kv-col__title">${esc(item.label)}</h3>
         <p class="kv-result__count">${people.length} ${people.length === 1 ? "collega past" : "collega's passen"} bij je vraag</p>
         <div class="kv-col__body kv-col__body--result">
-          <ul class="kv-cards">${people.map(personCard).join("")}</ul>
-          ${places ? `<div class="kv-places"><p>Meteen boeken per locatie</p><div>${places}</div></div>` : ""}
+          <ul class="kv-cards">${people.map((id, i) => personCard(id, i)).join("")}</ul>
+        </div>
+      </section>`;
+    }
+
+    function poolColumn(item, place) {
+      const people = peopleAt(item, place.locatie);
+      return `<section class="kv-col kv-col--result" data-kv-col="result" aria-live="polite" aria-label="Boek op ${esc(place.label)}">
+        <p class="kv-col__step">Jouw match</p>
+        <h3 class="kv-col__title">${esc(item.label)} · ${esc(place.label)}</h3>
+        <div class="kv-col__body kv-col__body--result">
+          <div class="kv-pool">
+            <a class="kv-pool__book" href="${esc(place.href)}" target="_blank" rel="noopener noreferrer">Boek in ${esc(place.label)} <span aria-hidden="true">↗</span></a>
+            <p>Eén agenda voor ${people.length === 1 ? "deze collega" : `deze ${people.length} collega's`}: je kiest het eerste moment dat jou past.</p>
+          </div>
+          ${people.length ? `<p class="kv-pool__label">Op deze locatie</p><ul class="kv-cards">${people.map((id, i) => personCard(id, i, false)).join("")}</ul>` : ""}
         </div>
       </section>`;
     }
@@ -211,7 +253,9 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
         last = itemFor(step, picked.choice);
         step = nextStep(step, picked.choice);
       }
-      if (step === "result" && last) html += resultColumn(last);
+      const place = path.at(-1)?.step === "location" ? placeFor(path.at(-1).choice) : null;
+      if (step === "result" && place) html += poolColumn(subjectItem(), place);
+      else if (step === "result" && last) html += resultColumn(last);
       else if (!mobile) html += hintColumn();
       board.querySelectorAll(".kv-col").forEach((col) => col.remove());
       board.insertAdjacentHTML("beforeend", html);
@@ -230,8 +274,7 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
         board.scrollTo({ top: 0 });
         trail.scrollTo({ left: trail.scrollWidth, behavior: "smooth" });
       } else {
-        const result = board.querySelector(".kv-col--result, .kv-col--hint");
-        result?.scrollIntoView({ block: "nearest", inline: "end", behavior: "smooth" });
+        board.scrollTo({ left: board.scrollWidth, behavior: "smooth" });
       }
       requestAnimationFrame(drawWires);
     }
@@ -733,34 +776,45 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
     background: var(--kv-cream);
   }
 
-  .kv-board :global(.kv-places) {
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--kv-line);
+  .kv-board :global(.kv-pool) {
+    display: grid;
+    gap: 0.7rem;
+    padding: 1.1rem;
+    border: 1px solid rgba(196, 162, 101, 0.45);
+    border-radius: 1rem;
+    background: linear-gradient(140deg, rgba(196, 162, 101, 0.16), rgba(196, 162, 101, 0.03));
+    animation: kv-fade 320ms ease both;
   }
-  .kv-board :global(.kv-places p) {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--kv-cream);
-  }
-  .kv-board :global(.kv-places div) {
+  .kv-board :global(.kv-pool__book) {
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    margin-top: 0.6rem;
-  }
-  .kv-board :global(.kv-place) {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--kv-gold);
+    min-height: 3rem;
+    padding: 0.7rem 1.25rem;
     border-radius: 999px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--kv-gold);
-    transition: background 160ms, color 160ms;
-  }
-  .kv-board :global(.kv-place:hover) {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: center;
     color: var(--kv-ink);
     background: var(--kv-gold);
+    transition: background 160ms;
+  }
+  .kv-board :global(.kv-pool__book:hover) {
+    background: var(--kv-cream);
+  }
+  .kv-board :global(.kv-pool p) {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--kv-muted);
+  }
+  .kv-board :global(.kv-pool__label) {
+    margin: 1.25rem 0 0.6rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--kv-gold);
   }
 
   .kv-board :global(.kv-hint) {
@@ -845,6 +899,15 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
     50% {
       transform: scale(1);
       box-shadow: 0 0 0 14px rgba(196, 162, 101, 0);
+    }
+  }
+
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .kv-board :global(.kv-col) {
+      min-width: 10.5rem;
+    }
+    .kv-board :global(.kv-col--result) {
+      min-width: 15rem;
     }
   }
 
@@ -991,11 +1054,6 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
       padding: 0.5rem 1rem;
       font-size: 0.85rem;
     }
-    .kv-board :global(.kv-place) {
-      flex: 1;
-      text-align: center;
-    }
-
     .kv-foot {
       padding: 0.75rem 1.1rem calc(0.75rem + env(safe-area-inset-bottom));
       font-size: 0.75rem;

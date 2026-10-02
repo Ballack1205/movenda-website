@@ -40,28 +40,28 @@
   ],
   "regions": [
     { "id": "reg-lagerug", "label": "Lage rug", "people": ["andres", "koen", "jens", "miel", "maarten", "jana", "stijn"], "places": [
-      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/8a47e100-d16b-4de3-949f-356878628fd2" },
-      { "label": "Lammerweg", "href": "https://book.crossuite.app/cf18e6d3-0904-44a5-828d-08ed7ed38735" }
+      { "label": "Kuringersteenweg", "locatie": "olympia", "href": "https://book.crossuite.app/8a47e100-d16b-4de3-949f-356878628fd2" },
+      { "label": "Lammerweg", "locatie": "mpc", "href": "https://book.crossuite.app/cf18e6d3-0904-44a5-828d-08ed7ed38735" }
     ]},
     { "id": "reg-middenrug", "label": "Middenrug / nek / schouder", "people": ["andres", "josje", "jens", "simon", "miel", "maarten", "jana", "stijn"], "places": [
-      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/bec024d6-5dce-4c6e-8366-73dfa2cfa2ed" },
-      { "label": "Lammerweg", "href": "https://book.crossuite.app/e40ca65e-58a4-404d-9570-88add9829f89" }
+      { "label": "Kuringersteenweg", "locatie": "olympia", "href": "https://book.crossuite.app/bec024d6-5dce-4c6e-8366-73dfa2cfa2ed" },
+      { "label": "Lammerweg", "locatie": "mpc", "href": "https://book.crossuite.app/e40ca65e-58a4-404d-9570-88add9829f89" }
     ]},
     { "id": "reg-schouder", "label": "Schouder", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "jana", "stijn"], "places": [
-      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/6a48f7f9-1e89-4e79-9809-8025d15083e1" },
-      { "label": "Lammerweg", "href": "https://book.crossuite.app/18aaf001-fa71-497f-b249-951622a5a6cb" }
+      { "label": "Kuringersteenweg", "locatie": "olympia", "href": "https://book.crossuite.app/6a48f7f9-1e89-4e79-9809-8025d15083e1" },
+      { "label": "Lammerweg", "locatie": "mpc", "href": "https://book.crossuite.app/18aaf001-fa71-497f-b249-951622a5a6cb" }
     ]},
     { "id": "reg-elleboog", "label": "Elleboog", "people": ["josje", "jens", "stijn"], "places": [
-      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/843ed399-7239-4d16-990b-48fb82f13de8" },
-      { "label": "Lammerweg", "href": "https://book.crossuite.app/4e4d3381-cfea-4702-8371-fc8d66001d86" }
+      { "label": "Kuringersteenweg", "locatie": "olympia", "href": "https://book.crossuite.app/843ed399-7239-4d16-990b-48fb82f13de8" },
+      { "label": "Lammerweg", "locatie": "mpc", "href": "https://book.crossuite.app/4e4d3381-cfea-4702-8371-fc8d66001d86" }
     ]},
     { "id": "reg-pols", "label": "Pols", "people": ["josje", "jens", "stijn"], "places": [
-      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/e235578f-08b9-441b-86b8-a751e54bef06" },
-      { "label": "Lammerweg", "href": "https://book.crossuite.app/6bf62c23-c9d0-4300-8096-cc6c77b0f0fb" }
+      { "label": "Kuringersteenweg", "locatie": "olympia", "href": "https://book.crossuite.app/e235578f-08b9-441b-86b8-a751e54bef06" },
+      { "label": "Lammerweg", "locatie": "mpc", "href": "https://book.crossuite.app/6bf62c23-c9d0-4300-8096-cc6c77b0f0fb" }
     ]},
     { "id": "reg-knie", "label": "Knie", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "maarten", "jana", "stijn"], "places": [
-      { "label": "Kuringersteenweg", "href": "https://book.crossuite.app/e358f41f-0f44-423e-988a-077f3f2b6053" },
-      { "label": "Lammerweg", "href": "https://book.crossuite.app/09385905-3c67-4741-9ea9-eec894f25112" }
+      { "label": "Kuringersteenweg", "locatie": "olympia", "href": "https://book.crossuite.app/e358f41f-0f44-423e-988a-077f3f2b6053" },
+      { "label": "Lammerweg", "locatie": "mpc", "href": "https://book.crossuite.app/09385905-3c67-4741-9ea9-eec894f25112" }
     ]},
     { "id": "reg-heup", "label": "Heup", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "maarten", "jana"] },
     { "id": "reg-voetenkel", "label": "Voet / enkel", "people": ["andres", "josje", "koen", "jens", "simon", "miel", "maarten", "jana", "stijn"] },
