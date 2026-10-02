@@ -26,12 +26,12 @@ export default defineType({
           name: "mobiel",
           title: "Mobiel",
           type: "string",
-          initialValue: "stappen",
+          initialValue: "visual",
           options: {
             layout: "radio",
             list: [
               { title: "Huidige stappen", value: "stappen" },
-              { title: "Visuele kaart", value: "visual" },
+              { title: "Visuele versie (stap per stap)", value: "visual" },
             ],
           },
         }),

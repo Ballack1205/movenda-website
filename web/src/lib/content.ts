@@ -884,7 +884,7 @@ async function loadKeuzehulp(): Promise<Keuzehulp> {
     geenMatchTekstEn: doc?.geenMatchTekstEn || KEUZEHULP_EN.geenMatchTekst,
     opties,
     kompasWeergave: {
-      mobiel: asKompasWeergave(doc?.kompasWeergave?.mobiel, "stappen"),
+      mobiel: asKompasWeergave(doc?.kompasWeergave?.mobiel, "visual"),
       desktop: asKompasWeergave(doc?.kompasWeergave?.desktop, "visual"),
     },
   };

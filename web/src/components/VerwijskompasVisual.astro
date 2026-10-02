@@ -42,6 +42,9 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
         </div>
       </div>
       <ol class="kv-trail" data-kv-trail aria-label="Jouw keuzes"></ol>
+      <button type="button" class="kv-back" data-kv-back hidden>
+        <span aria-hidden="true">←</span> Terug
+      </button>
       <button type="button" class="kv-close" data-kv-close aria-label="Sluiten">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
       </button>
@@ -66,6 +69,9 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
     const trail = dialog.querySelector("[data-kv-trail]");
     const needle = dialog.querySelector("[data-kv-needle]");
     const reset = dialog.querySelector("[data-kv-reset]");
+    const back = dialog.querySelector("[data-kv-back]");
+    const desktopQuery = window.matchMedia("(min-width: 1024px)");
+    const isMobile = () => !desktopQuery.matches;
     const byId = (list) => Object.fromEntries(list.map((item) => [item.id, item]));
     const lists = {
       contexts: byId(tree.contexts),
@@ -190,7 +196,9 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
       </section>`;
     }
 
-    function render() {
+    function render(direction = "forward") {
+      const mobile = isMobile();
+      board.dataset.dir = direction;
       let html = startColumn();
       let step = path.length ? nextStep("start", path[0].choice) : null;
       let number = 2;
@@ -203,22 +211,41 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
         last = itemFor(step, picked.choice);
         step = nextStep(step, picked.choice);
       }
-      html += step === "result" && last ? resultColumn(last) : hintColumn();
+      if (step === "result" && last) html += resultColumn(last);
+      else if (!mobile) html += hintColumn();
       board.querySelectorAll(".kv-col").forEach((col) => col.remove());
       board.insertAdjacentHTML("beforeend", html);
       board.querySelectorAll(".kv-col__body").forEach((body) => body.addEventListener("scroll", drawWires, { passive: true }));
 
       trail.innerHTML = path
-        .map((p) => `<li>${esc(itemFor(p.step, p.choice)?.label || "")}</li>`)
+        .map(
+          (p, i) =>
+            `<li><button type="button" data-kv-crumb="${i}" aria-label="Wijzig: ${esc(itemFor(p.step, p.choice)?.label || "")}">${esc(itemFor(p.step, p.choice)?.label || "")}</button></li>`,
+        )
         .join("");
       needle.style.setProperty("--kv-turn", `${path.length * 72}deg`);
       reset.hidden = path.length === 0;
-      const result = board.querySelector(".kv-col--result, .kv-col--hint");
-      result?.scrollIntoView({ block: "nearest", inline: "end", behavior: "smooth" });
+      back.hidden = path.length === 0;
+      if (mobile) {
+        board.scrollTo({ top: 0 });
+        trail.scrollTo({ left: trail.scrollWidth, behavior: "smooth" });
+      } else {
+        const result = board.querySelector(".kv-col--result, .kv-col--hint");
+        result?.scrollIntoView({ block: "nearest", inline: "end", behavior: "smooth" });
+      }
       requestAnimationFrame(drawWires);
     }
 
+    function goBackTo(length) {
+      path = path.slice(0, length);
+      render("back");
+    }
+
     function drawWires() {
+      if (isMobile()) {
+        wires.innerHTML = "";
+        return;
+      }
       const box = board.getBoundingClientRect();
       wires.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
       const cols = [...board.querySelectorAll(".kv-col")];
@@ -251,10 +278,13 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
       render();
     });
 
-    reset.addEventListener("click", () => {
-      path = [];
-      render();
+    reset.addEventListener("click", () => goBackTo(0));
+    back.addEventListener("click", () => goBackTo(path.length - 1));
+    trail.addEventListener("click", (event) => {
+      const crumb = event.target.closest("[data-kv-crumb]");
+      if (crumb) goBackTo(Number(crumb.dataset.kvCrumb));
     });
+    desktopQuery.addEventListener("change", () => dialog.open && render());
     dialog.querySelector("[data-kv-close]").addEventListener("click", () => dialog.close());
     dialog.addEventListener("click", (event) => {
       if (event.target === dialog) dialog.close();
@@ -401,6 +431,17 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
     content: "→";
     margin-left: -0.15rem;
     color: var(--kv-gold);
+  }
+  .kv-trail :global(li:hover) {
+    border-color: var(--kv-gold);
+  }
+  .kv-trail :global(button) {
+    color: inherit;
+    font: inherit;
+  }
+
+  .kv-back {
+    display: none;
   }
 
   .kv-close {
@@ -759,6 +800,8 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
     color: var(--kv-muted);
   }
   .kv-reset {
+    flex: none;
+    white-space: nowrap;
     font-weight: 600;
     color: var(--kv-gold);
     text-decoration: underline;
@@ -805,42 +848,175 @@ const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
     }
   }
 
+  /* Phone and tablet: one step per screen, sliding in like pages of a book. */
   @media (max-width: 1023px) {
     .kv {
       width: 100vw;
       height: 92dvh;
-      margin-bottom: 0;
-      border-radius: 1.25rem 1.25rem 0 0;
+      margin: auto 0 0;
+      border-width: 1px 0 0;
+      border-radius: 1.5rem 1.5rem 0 0;
+    }
+    .kv[open] {
+      animation: kv-sheet 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .kv-shell::before {
+      content: "";
+      justify-self: center;
+      width: 2.5rem;
+      height: 0.25rem;
+      margin-top: 0.6rem;
+      border-radius: 999px;
+      background: var(--kv-line);
+    }
+    .kv-shell {
+      grid-template-rows: auto auto 1fr auto;
     }
     .kv-head {
       grid-template-columns: 1fr auto;
-      padding: 1rem 1.1rem;
+      gap: 0.75rem 1rem;
+      padding: 0.6rem 1.1rem 0.9rem;
+    }
+    .kv-brand {
+      gap: 0.75rem;
+    }
+    .kv-rose {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+    .kv-title {
+      font-size: 1.3rem;
+    }
+    .kv-close {
+      width: 2.5rem;
+      height: 2.5rem;
     }
     .kv-trail {
       grid-column: 1 / -1;
       grid-row: 2;
+      flex-wrap: nowrap;
       justify-content: flex-start;
+      margin-inline: -1.1rem;
+      padding-inline: 1.1rem;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
+    .kv-trail:empty {
+      display: none;
+    }
+    .kv-trail :global(li) {
+      flex: none;
+      padding: 0.35rem 0.8rem;
+    }
+    .kv-back:not([hidden]) {
+      grid-column: 1;
+      grid-row: 3;
+      justify-self: start;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--kv-gold);
+    }
+
     .kv-board {
-      flex-direction: column;
-      gap: 1.75rem;
-      padding: 1.25rem 1.1rem;
+      display: block;
+      padding: 1.1rem 1.1rem 1.5rem;
       overflow-x: hidden;
       overflow-y: auto;
+      overscroll-behavior: contain;
     }
     .kv-wires {
       display: none;
     }
-    .kv-board :global(.kv-col),
-    .kv-board :global(.kv-col--result),
-    .kv-board :global(.kv-col--hint) {
-      flex: none;
+    .kv-board :global(.kv-col) {
+      display: none;
+    }
+    .kv-board :global(.kv-col:last-of-type) {
+      display: flex;
+      animation: kv-page-in 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    .kv-board[data-dir="back"] :global(.kv-col:last-of-type) {
+      animation-name: kv-page-back;
+    }
+    .kv-board :global(.kv-col__step) {
+      font-size: 0.7rem;
+    }
+    .kv-board :global(.kv-col__title) {
+      font-size: 1.45rem;
+      line-height: 1.2;
     }
     .kv-board :global(.kv-col__body) {
       overflow: visible;
+      margin-top: 1rem;
     }
-    .kv-board :global(.kv-hint) {
-      padding: 1.25rem;
+
+    .kv-board :global(.kv-tile) {
+      padding: 1.2rem 1.25rem 1.3rem;
+    }
+    .kv-board :global(.kv-tile__label) {
+      font-size: 1.3rem;
+    }
+    .kv-board :global(.kv-chips) {
+      gap: 0.5rem;
+    }
+    .kv-board :global(.kv-chip) {
+      min-height: 3.25rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.9rem;
+      font-size: 1rem;
+    }
+    .kv-board :global(.kv-chip:hover) {
+      transform: none;
+    }
+    .kv-board :global(.kv-chip:active),
+    .kv-board :global(.kv-tile:active) {
+      transform: scale(0.98);
+    }
+
+    .kv-board :global(.kv-card) {
+      padding: 0.85rem;
+    }
+    .kv-board :global(.kv-card__photo) {
+      flex-basis: 3.75rem;
+      width: 3.75rem;
+      height: 3.75rem;
+    }
+    .kv-board :global(.kv-card__photo img) {
+      filter: none;
+    }
+    .kv-board :global(.kv-card__book) {
+      margin-left: 4.65rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+    .kv-board :global(.kv-place) {
+      flex: 1;
+      text-align: center;
+    }
+
+    .kv-foot {
+      padding: 0.75rem 1.1rem calc(0.75rem + env(safe-area-inset-bottom));
+      font-size: 0.75rem;
+    }
+  }
+
+  @keyframes kv-sheet {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes kv-page-in {
+    from {
+      opacity: 0;
+      transform: translateX(28px);
+    }
+  }
+  @keyframes kv-page-back {
+    from {
+      opacity: 0;
+      transform: translateX(-28px);
     }
   }
 
