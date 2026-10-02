@@ -110,8 +110,8 @@
   {
     "vraag": "Wordt de behandeling terugbetaald?",
     "vraagEn": "Is the treatment reimbursed?",
-    "antwoord": "Al onze therapeuten zijn gedeconventioneerd. Je ontvangt na elke sessie een getuigschrift voor verstrekte hulp. Daarmee vraag je zelf terugbetaling aan bij je ziekenfonds. Standaard ±€18 à €20 per sessie; bij verhoogde tegemoetkoming gunstigere tarieven.",
-    "antwoordEn": "All our therapists are deconventioned. After each session you receive a certificate of provided care, which you use to claim reimbursement from your health insurance fund. Standard ±€18–€20 per session; increased reimbursement (VT/BIM) has more favourable rates.",
+    "antwoord": "Al onze therapeuten zijn gedeconventioneerd. Je ontvangt na een aantal sessies een getuigschrift voor verstrekte hulp. Daarmee vraag je zelf terugbetaling aan bij je ziekenfonds. Standaard ±€18 à €20 per sessie; bij verhoogde tegemoetkoming gunstigere tarieven.",
+    "antwoordEn": "All our therapists are deconventioned. After a number of sessions you receive a certificate of provided care, which you use to claim reimbursement from your health insurance fund. Standard ±€18–€20 per session; increased reimbursement (VT/BIM) has more favourable rates.",
     "categorie": "prijzen",
     "site": "movenda",
     "volgorde": 13
