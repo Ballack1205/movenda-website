@@ -37,10 +37,12 @@
       const past = sheets[0].getBoundingClientRect().top < edge;
       document.body.classList.toggle("lab-past-cover", past);
       // Black bands keep the ink bar; the light band (reviews, FAQ) keeps the cream bar.
+      // The homepage stays ink the whole way, including locations and Google reviews.
       const probe = document.elementFromPoint(12, Math.min(edge + 8, window.innerHeight - 1));
       const band = probe?.closest(".lab-sheet");
       const onDarkFooter = Boolean(probe?.closest("footer"));
-      const overInk = past && (onDarkFooter || Boolean(band?.classList.contains("lab-sheet--ink")));
+      const homeStaysInk = Boolean(document.querySelector(".brief-ink"));
+      const overInk = past && (homeStaysInk || onDarkFooter || Boolean(band?.classList.contains("lab-sheet--ink")));
       document.body.classList.toggle("lab-over-ink", overInk);
       const inkTop = ink?.getBoundingClientRect().top ?? edge + 1;
       document.body.classList.toggle("lab-header-blur", !past && inkTop < edge);

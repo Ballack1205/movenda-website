@@ -108,7 +108,14 @@ export interface Keuzehulp {
   geenMatchTekstEn?: string;
   /** Active tags, grouped per question, in display order. */
   opties: Record<KeuzehulpCategorie, KeuzehulpTag[]>;
+  /** Which Verwijskompas view each screen size gets. */
+  kompasWeergave: { mobiel: KompasWeergave; desktop: KompasWeergave };
 }
+
+export type KompasWeergave = "stappen" | "visual";
+
+const asKompasWeergave = (value: unknown, fallback: KompasWeergave): KompasWeergave =>
+  value === "stappen" || value === "visual" ? value : fallback;
 
 export interface Openingsuur {
   dag: string;
@@ -846,7 +853,7 @@ export async function getKeuzehulp(): Promise<Keuzehulp> {
 
 async function loadKeuzehulp(): Promise<Keuzehulp> {
   const [doc, tags] = await Promise.all([
-    sanity.fetch(`*[_id == "keuzehulp"][0]{ actief, titel, titelEn, intro, introEn, vragen, geenMatchTekst, geenMatchTekstEn }`),
+    sanity.fetch(`*[_id == "keuzehulp"][0]{ actief, titel, titelEn, intro, introEn, vragen, geenMatchTekst, geenMatchTekstEn, kompasWeergave }`),
     sanity.fetch(
       `*[_type == "keuzehulpTag" && actief != false] | order(categorie asc, coalesce(volgorde, 9999) asc, label asc){ "id": _id, label, labelEn, categorie, volgorde, actief }`,
     ) as Promise<KeuzehulpTag[]>,
@@ -876,6 +883,10 @@ async function loadKeuzehulp(): Promise<Keuzehulp> {
       "Geen exacte match, maar dit zijn de collega's die het dichtst bij je vraag zitten. Twijfel je? Bel ons.",
     geenMatchTekstEn: doc?.geenMatchTekstEn || KEUZEHULP_EN.geenMatchTekst,
     opties,
+    kompasWeergave: {
+      mobiel: asKompasWeergave(doc?.kompasWeergave?.mobiel, "visual"),
+      desktop: asKompasWeergave(doc?.kompasWeergave?.desktop, "visual"),
+    },
   };
 }
 

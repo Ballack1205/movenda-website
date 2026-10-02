@@ -238,7 +238,17 @@ const filters = [
     </p>
   </section>
 
-  {lang === "nl" ? <Verwijskompas /> : toonKeuzehulp && (
+  {lang === "nl" ? (
+    <Verwijskompas
+      weergave={keuzehulp.kompasWeergave}
+      team={team.map((lid) => ({
+        slug: lid.slug,
+        rol: lid.rol,
+        locatie: locatieLabel(lid.locaties),
+        face: lid.foto ? teamPhotoSrc(lid.foto, "face") : null,
+      }))}
+    />
+  ) : toonKeuzehulp && (
     <dialog
       data-keuzehulp
       aria-labelledby="keuzehulp-titel"

@@ -88,7 +88,7 @@ export const PRIJZEN_INFO_EN = {
     "Training, sports rehabilitation and group classes in Kuringen. Prices exclusive of VAT, by appointment only.",
   mpcCta: "See MPC prices →",
   terugbetalingBody:
-    "After each session you receive a certificate of provided care. You claim reimbursement from your health insurance fund yourself (via the app or at the office).",
+    "After a number of sessions you receive a certificate of provided care. You claim reimbursement from your health insurance fund yourself (via the app or at the office).",
   terugbetalingStandaard: "±€18 to €20 per session",
   terugbetalingVt: "More favourable rates — ask your health insurance fund",
   voorwaarden:
