@@ -1,0 +1,857 @@
+---
+// Desktop "map" view of the Verwijskompas: every step stays visible as a column,
+// with a gold wire from each choice to the next step. Same routing data as the
+// step-by-step dialog (verwijskompas.json); that dialog stays the fallback.
+interface TeamFace {
+  slug: string;
+  rol?: string;
+  locatie?: string;
+  face: string | null;
+}
+
+interface Props {
+  tree: Record<string, unknown>;
+  team: TeamFace[];
+}
+
+const { tree, team } = Astro.props;
+const faces = Object.fromEntries(team.map((lid) => [lid.slug, lid]));
+---
+
+<dialog data-kompas-visual aria-labelledby="kv-titel" class="kv">
+  <div class="kv-shell">
+    <header class="kv-head">
+      <div class="kv-brand">
+        <span class="kv-rose" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="30" class="kv-rose__ring" />
+            <circle cx="32" cy="32" r="22" class="kv-rose__ring kv-rose__ring--inner" />
+            <g class="kv-rose__ticks">
+              <path d="M32 2v6M32 56v6M2 32h6M56 32h6" />
+            </g>
+            <g class="kv-rose__needle" data-kv-needle>
+              <path d="M32 10 37 32 32 54 27 32Z" class="kv-rose__south" />
+              <path d="M32 10 37 32H27Z" class="kv-rose__north" />
+            </g>
+            <circle cx="32" cy="32" r="2.5" class="kv-rose__pin" />
+          </svg>
+        </span>
+        <div>
+          <p class="kv-kicker">Verwijskompas</p>
+          <h2 id="kv-titel" class="kv-title">Vind de juiste collega</h2>
+        </div>
+      </div>
+      <ol class="kv-trail" data-kv-trail aria-label="Jouw keuzes"></ol>
+      <button type="button" class="kv-close" data-kv-close aria-label="Sluiten">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+    </header>
+
+    <div class="kv-board" data-kv-board>
+      <svg class="kv-wires" data-kv-wires aria-hidden="true"></svg>
+    </div>
+
+    <footer class="kv-foot">
+      <p>Een hulpmiddel, geen medisch advies. Twijfel je? Bel of mail ons, we verwijzen je graag door.</p>
+      <button type="button" class="kv-reset" data-kv-reset hidden>Opnieuw beginnen</button>
+    </footer>
+  </div>
+</dialog>
+
+<script define:vars={{ tree, faces }} is:inline>
+  const dialog = document.querySelector("[data-kompas-visual]");
+  if (dialog) {
+    const board = dialog.querySelector("[data-kv-board]");
+    const wires = dialog.querySelector("[data-kv-wires]");
+    const trail = dialog.querySelector("[data-kv-trail]");
+    const needle = dialog.querySelector("[data-kv-needle]");
+    const reset = dialog.querySelector("[data-kv-reset]");
+    const byId = (list) => Object.fromEntries(list.map((item) => [item.id, item]));
+    const lists = {
+      contexts: byId(tree.contexts),
+      regions: byId(tree.regions),
+      sports: byId(tree.sports),
+      training: byId(tree.training),
+    };
+    const esc = (s) =>
+      String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+    const START = [
+      { id: "kine", label: "Kinesitherapie", sub: "Een klacht, blessure of herstel na een operatie" },
+      { id: "training", label: "Training & coaching", sub: "Sterker worden, presteren of begeleiding op maat" },
+    ];
+    const STEPS = {
+      contexts: { title: "Wat past het best?", list: "contexts" },
+      training: { title: "Waarvoor zoek je begeleiding?", list: "training" },
+      regions: { title: "Waar zit de klacht?", list: "regions" },
+      sports: { title: "Welke sport doe je?", list: "sports" },
+    };
+
+    // Each entry: { step, choice } — step is "start" or a STEPS key, choice the picked id.
+    let path = [];
+
+    const nextStep = (step, id) => {
+      if (step === "start") return id === "training" ? "training" : "contexts";
+      if (step === "contexts") {
+        const item = lists.contexts[id];
+        if (item.next === "regio") return "regions";
+        if (item.next === "sport") return "sports";
+      }
+      return "result";
+    };
+    const itemFor = (step, id) => (step === "start" ? START.find((s) => s.id === id) : lists[STEPS[step].list][id]);
+
+    function chip(step, item, index) {
+      const picked = path.find((p) => p.step === step)?.choice === item.id;
+      const leads = step === "contexts" && item.next;
+      const count = !leads && item.people ? item.people.length : 0;
+      const tail = leads
+        ? `<span class="kv-chip__go" aria-hidden="true">→</span>`
+        : count
+          ? `<span class="kv-chip__count" aria-label="${count} collega's">${count}</span>`
+          : "";
+      return `<button type="button" class="kv-chip" style="--i:${index}" data-kv-step="${esc(step)}" data-kv-choice="${esc(item.id)}" aria-pressed="${picked}"><span>${esc(item.label)}</span>${tail}</button>`;
+    }
+
+    function startColumn() {
+      const picked = path[0]?.choice;
+      const tiles = START.map(
+        (s, i) => `<button type="button" class="kv-tile" style="--i:${i}" data-kv-step="start" data-kv-choice="${s.id}" aria-pressed="${picked === s.id}">
+          <span class="kv-tile__num">0${i + 1}</span>
+          <span class="kv-tile__label">${esc(s.label)}</span>
+          <span class="kv-tile__sub">${esc(s.sub)}</span>
+        </button>`,
+      ).join("");
+      return column("start", "Waar ben je naar op zoek?", `<div class="kv-tiles">${tiles}</div>`, 1);
+    }
+
+    function stepColumn(step, number) {
+      const def = STEPS[step];
+      const items = tree[def.list];
+      return column(step, def.title, `<div class="kv-chips">${items.map((item, i) => chip(step, item, i)).join("")}</div>`, number);
+    }
+
+    function column(step, title, body, number) {
+      return `<section class="kv-col" data-kv-col="${esc(step)}" aria-label="${esc(title)}">
+        <p class="kv-col__step">Stap ${number}</p>
+        <h3 class="kv-col__title">${esc(title)}</h3>
+        <div class="kv-col__body">${body}</div>
+      </section>`;
+    }
+
+    function personCard(id, index) {
+      const person = tree.people[id];
+      if (!person) return "";
+      const lid = faces[person.slug] || {};
+      const initials = person.naam.split(" ").map((w) => w[0]).slice(0, 2).join("");
+      const photo = lid.face
+        ? `<img src="${esc(lid.face)}" alt="" loading="lazy" />`
+        : `<span class="kv-card__initials">${esc(initials)}</span>`;
+      const book = person.book
+        ? `<a class="kv-card__book" href="${esc(person.book)}" target="_blank" rel="noopener noreferrer">Boek online</a>`
+        : "";
+      return `<li class="kv-card" style="--i:${index}">
+        <a class="kv-card__main" href="/team/${esc(person.slug)}">
+          <span class="kv-card__photo">${photo}</span>
+          <span class="kv-card__text">
+            <span class="kv-card__name">${esc(person.naam)}</span>
+            ${lid.rol ? `<span class="kv-card__role">${esc(lid.rol)}</span>` : ""}
+            ${lid.locatie ? `<span class="kv-card__loc">${esc(lid.locatie)}</span>` : ""}
+          </span>
+        </a>
+        ${book}
+      </li>`;
+    }
+
+    function resultColumn(item) {
+      const people = item.people || [];
+      const places = (item.places || [])
+        .map((place) => `<a class="kv-place" href="${esc(place.href)}" target="_blank" rel="noopener noreferrer">${esc(place.label)} <span aria-hidden="true">↗</span></a>`)
+        .join("");
+      return `<section class="kv-col kv-col--result" data-kv-col="result" aria-live="polite" aria-label="Jouw collega's">
+        <p class="kv-col__step">Jouw match</p>
+        <h3 class="kv-col__title">${esc(item.label)}</h3>
+        <p class="kv-result__count">${people.length} ${people.length === 1 ? "collega past" : "collega's passen"} bij je vraag</p>
+        <div class="kv-col__body kv-col__body--result">
+          <ul class="kv-cards">${people.map(personCard).join("")}</ul>
+          ${places ? `<div class="kv-places"><p>Meteen boeken per locatie</p><div>${places}</div></div>` : ""}
+        </div>
+      </section>`;
+    }
+
+    function hintColumn() {
+      return `<section class="kv-col kv-col--hint" aria-hidden="true">
+        <p class="kv-col__step">Jouw match</p>
+        <h3 class="kv-col__title">Nog geen keuze</h3>
+        <div class="kv-col__body kv-hint">
+          <span class="kv-hint__ring"></span>
+          <p>Kies links en volg de lijn. Je collega's verschijnen hier.</p>
+        </div>
+      </section>`;
+    }
+
+    function render() {
+      let html = startColumn();
+      let step = path.length ? nextStep("start", path[0].choice) : null;
+      let number = 2;
+      let last = null;
+      for (let i = 0; step && step !== "result"; i += 1) {
+        html += stepColumn(step, number);
+        number += 1;
+        const picked = path.find((p) => p.step === step);
+        if (!picked) break;
+        last = itemFor(step, picked.choice);
+        step = nextStep(step, picked.choice);
+      }
+      html += step === "result" && last ? resultColumn(last) : hintColumn();
+      board.querySelectorAll(".kv-col").forEach((col) => col.remove());
+      board.insertAdjacentHTML("beforeend", html);
+      board.querySelectorAll(".kv-col__body").forEach((body) => body.addEventListener("scroll", drawWires, { passive: true }));
+
+      trail.innerHTML = path
+        .map((p) => `<li>${esc(itemFor(p.step, p.choice)?.label || "")}</li>`)
+        .join("");
+      needle.style.setProperty("--kv-turn", `${path.length * 72}deg`);
+      reset.hidden = path.length === 0;
+      const result = board.querySelector(".kv-col--result, .kv-col--hint");
+      result?.scrollIntoView({ block: "nearest", inline: "end", behavior: "smooth" });
+      requestAnimationFrame(drawWires);
+    }
+
+    function drawWires() {
+      const box = board.getBoundingClientRect();
+      wires.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+      const cols = [...board.querySelectorAll(".kv-col")];
+      let d = "";
+      cols.forEach((col, i) => {
+        const picked = col.querySelector('[aria-pressed="true"]');
+        const next = cols[i + 1];
+        if (!picked || !next) return;
+        const a = picked.getBoundingClientRect();
+        const b = next.querySelector(".kv-col__title").getBoundingClientRect();
+        const x1 = a.right - box.left + board.scrollLeft;
+        const y1 = Math.min(Math.max(a.top + a.height / 2, box.top + 8), box.bottom - 8) - box.top;
+        const x2 = b.left - box.left + board.scrollLeft - 10;
+        const y2 = b.top + b.height / 2 - box.top;
+        const bend = Math.max(24, (x2 - x1) / 2);
+        d += `M${x1},${y1} C${x1 + bend},${y1} ${x2 - bend},${y2} ${x2},${y2} `;
+        d += `M${x2 - 5},${y2 - 4} L${x2},${y2} L${x2 - 5},${y2 + 4} `;
+      });
+      wires.innerHTML = d ? `<path d="${d}" />` : "";
+    }
+
+    board.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-kv-choice]");
+      if (!button) return;
+      const step = button.dataset.kvStep;
+      const choice = button.dataset.kvChoice;
+      const at = path.findIndex((p) => p.step === step);
+      path = at >= 0 ? path.slice(0, at) : path;
+      path.push({ step, choice });
+      render();
+    });
+
+    reset.addEventListener("click", () => {
+      path = [];
+      render();
+    });
+    dialog.querySelector("[data-kv-close]").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    dialog.addEventListener("close", () => {
+      if (location.hash === "#keuzehulp") history.replaceState(null, "", `${location.pathname}${location.search}`);
+    });
+    window.addEventListener("resize", () => dialog.open && drawWires());
+    dialog.addEventListener("kompas:open", () => {
+      path = [];
+      render();
+      if (!dialog.open) dialog.showModal();
+      requestAnimationFrame(drawWires);
+      if (location.hash !== "#keuzehulp") history.replaceState(null, "", `${location.pathname}${location.search}#keuzehulp`);
+    });
+  }
+</script>
+
+<style>
+  .kv {
+    --kv-ink: #161513;
+    --kv-ink-2: #1f1d1a;
+    --kv-ink-3: #2a2723;
+    --kv-line: rgba(243, 238, 228, 0.14);
+    --kv-cream: #f3eee4;
+    --kv-text: #f4f7fb;
+    --kv-muted: rgba(243, 238, 228, 0.62);
+    --kv-gold: #c4a265;
+    margin: auto;
+    width: min(100vw - 3rem, 84rem);
+    height: min(100dvh - 3rem, 46rem);
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 1px solid var(--kv-line);
+    border-radius: 1.5rem;
+    color: var(--kv-text);
+    background:
+      radial-gradient(60rem 30rem at 85% -10%, rgba(196, 162, 101, 0.16), transparent 60%),
+      radial-gradient(40rem 24rem at -10% 110%, rgba(196, 162, 101, 0.08), transparent 60%),
+      var(--kv-ink);
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+  }
+  .kv[open] {
+    animation: kv-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .kv::backdrop {
+    background: rgba(10, 9, 8, 0.72);
+    backdrop-filter: blur(6px);
+  }
+
+  .kv-shell {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+  }
+
+  .kv-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid var(--kv-line);
+  }
+  .kv-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .kv-kicker {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--kv-gold);
+  }
+  .kv-title {
+    margin-top: 0.15rem;
+    font-size: 1.6rem;
+    line-height: 1.1;
+    color: var(--kv-cream);
+  }
+
+  .kv-rose {
+    display: block;
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+  .kv-rose svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .kv-rose__ring {
+    fill: none;
+    stroke: var(--kv-line);
+    stroke-width: 1.5;
+  }
+  .kv-rose__ring--inner {
+    stroke-dasharray: 2 4;
+  }
+  .kv-rose__ticks path {
+    stroke: var(--kv-gold);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+  .kv-rose__needle {
+    transform-origin: 32px 32px;
+    transform: rotate(var(--kv-turn, -18deg));
+    transition: transform 700ms cubic-bezier(0.3, 1.6, 0.4, 1);
+  }
+  .kv-rose__north {
+    fill: var(--kv-gold);
+  }
+  .kv-rose__south {
+    fill: var(--kv-ink-3);
+    stroke: var(--kv-line);
+  }
+  .kv-rose__pin {
+    fill: var(--kv-cream);
+  }
+
+  .kv-trail {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+  .kv-trail :global(li) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--kv-line);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    color: var(--kv-cream);
+    animation: kv-fade 260ms ease both;
+  }
+  .kv-trail :global(li + li::before) {
+    content: "→";
+    margin-left: -0.15rem;
+    color: var(--kv-gold);
+  }
+
+  .kv-close {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--kv-line);
+    border-radius: 999px;
+    color: var(--kv-cream);
+    transition: border-color 160ms, transform 160ms;
+  }
+  .kv-close:hover {
+    border-color: var(--kv-gold);
+    transform: rotate(90deg);
+  }
+  .kv-close svg {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  .kv-board {
+    position: relative;
+    display: flex;
+    gap: clamp(1.75rem, 2.5vw, 2.75rem);
+    min-height: 0;
+    padding: 1.75rem 1.75rem 1.25rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+  }
+  .kv-wires {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .kv-wires :global(path) {
+    fill: none;
+    stroke: var(--kv-gold);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: kv-draw 700ms ease forwards;
+    filter: drop-shadow(0 0 6px rgba(196, 162, 101, 0.45));
+  }
+
+  .kv-board :global(.kv-col) {
+    display: flex;
+    flex: 0 1 15rem;
+    min-width: 12rem;
+    flex-direction: column;
+    min-height: 0;
+    animation: kv-slide 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .kv-board :global(.kv-col--result) {
+    flex: 1 1 22rem;
+    min-width: 16rem;
+  }
+  .kv-board :global(.kv-col--hint) {
+    flex: 1 1 18rem;
+    min-width: 14rem;
+  }
+  .kv-board :global(.kv-col__step) {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--kv-gold);
+  }
+  .kv-board :global(.kv-col__title) {
+    margin-top: 0.35rem;
+    font-size: 1.15rem;
+    line-height: 1.25;
+    color: var(--kv-cream);
+  }
+  .kv-board :global(.kv-col__body) {
+    flex: 1;
+    min-height: 0;
+    margin-top: 0.75rem;
+    margin-inline: -0.25rem;
+    padding: 0.25rem 0.6rem 0.5rem 0.25rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--kv-ink-3) transparent;
+  }
+
+  .kv-board :global(.kv-tiles) {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .kv-board :global(.kv-tile) {
+    position: relative;
+    display: grid;
+    gap: 0.35rem;
+    padding: 1.1rem 1.15rem 1.2rem;
+    border: 1px solid var(--kv-line);
+    border-radius: 1rem;
+    text-align: left;
+    background: linear-gradient(160deg, var(--kv-ink-2), var(--kv-ink));
+    transition: border-color 180ms, transform 180ms, background 180ms;
+    animation: kv-fade 360ms ease both;
+    animation-delay: calc(var(--i) * 60ms);
+  }
+  .kv-board :global(.kv-tile:hover) {
+    border-color: rgba(196, 162, 101, 0.6);
+    transform: translateY(-2px);
+  }
+  .kv-board :global(.kv-tile[aria-pressed="true"]) {
+    border-color: var(--kv-gold);
+    background: linear-gradient(160deg, rgba(196, 162, 101, 0.22), var(--kv-ink-2));
+  }
+  .kv-board :global(.kv-tile__num) {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--kv-gold);
+  }
+  .kv-board :global(.kv-tile__label) {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--kv-cream);
+  }
+  .kv-board :global(.kv-tile__sub) {
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--kv-muted);
+  }
+
+  .kv-board :global(.kv-chips) {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .kv-board :global(.kv-chip) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 2.6rem;
+    padding: 0.55rem 0.85rem;
+    border: 1px solid var(--kv-line);
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    text-align: left;
+    color: var(--kv-text);
+    background: rgba(243, 238, 228, 0.02);
+    transition: border-color 160ms, background 160ms, color 160ms, transform 160ms;
+    animation: kv-fade 320ms ease both;
+    animation-delay: calc(var(--i) * 22ms);
+  }
+  .kv-board :global(.kv-chip:hover) {
+    border-color: rgba(196, 162, 101, 0.6);
+    transform: translateX(3px);
+  }
+  .kv-board :global(.kv-chip[aria-pressed="true"]) {
+    border-color: var(--kv-cream);
+    color: var(--kv-ink);
+    background: var(--kv-cream);
+  }
+  .kv-board :global(.kv-chip__go) {
+    color: var(--kv-gold);
+  }
+  .kv-board :global(.kv-chip__count) {
+    display: inline-flex;
+    min-width: 1.6rem;
+    height: 1.6rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--kv-gold);
+    background: rgba(196, 162, 101, 0.12);
+  }
+  .kv-board :global(.kv-chip[aria-pressed="true"] .kv-chip__count) {
+    color: var(--kv-cream);
+    background: var(--kv-ink);
+  }
+  .kv-board :global(.kv-chip[aria-pressed="true"] .kv-chip__go) {
+    color: var(--kv-ink);
+  }
+
+  .kv-board :global(.kv-result__count) {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--kv-muted);
+  }
+  .kv-board :global(.kv-cards) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: 0.6rem;
+  }
+  .kv-board :global(.kv-card) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.55rem;
+    padding: 0.7rem 0.9rem 0.75rem 0.7rem;
+    border: 1px solid var(--kv-line);
+    border-radius: 1rem;
+    background: linear-gradient(160deg, var(--kv-ink-2), rgba(22, 21, 19, 0.6));
+    animation: kv-rise 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(120ms + var(--i) * 45ms);
+    transition: border-color 180ms, transform 180ms;
+  }
+  .kv-board :global(.kv-card:hover) {
+    border-color: rgba(196, 162, 101, 0.6);
+    transform: translateY(-2px);
+  }
+  .kv-board :global(.kv-card__main) {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .kv-board :global(.kv-card__photo) {
+    display: inline-flex;
+    flex: 0 0 3.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 999px;
+    box-shadow: 0 0 0 1px var(--kv-line), 0 0 0 4px var(--kv-ink), 0 0 0 5px rgba(196, 162, 101, 0.35);
+    background: var(--kv-ink-3);
+  }
+  .kv-board :global(.kv-card__photo img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    filter: grayscale(1) contrast(1.05);
+    transition: filter 240ms;
+  }
+  .kv-board :global(.kv-card:hover .kv-card__photo img) {
+    filter: none;
+  }
+  .kv-board :global(.kv-card__initials) {
+    font-weight: 600;
+    color: var(--kv-cream);
+  }
+  .kv-board :global(.kv-card__text) {
+    display: grid;
+    min-width: 0;
+    gap: 0.1rem;
+  }
+  .kv-board :global(.kv-card__name) {
+    font-weight: 600;
+    color: var(--kv-cream);
+  }
+  .kv-board :global(.kv-card__role) {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--kv-muted);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .kv-board :global(.kv-card__loc) {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--kv-gold);
+  }
+  .kv-board :global(.kv-card__book) {
+    align-self: flex-start;
+    margin-left: 4.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--kv-ink);
+    background: var(--kv-gold);
+    transition: background 160ms;
+  }
+  .kv-board :global(.kv-card__book:hover) {
+    background: var(--kv-cream);
+  }
+
+  .kv-board :global(.kv-places) {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--kv-line);
+  }
+  .kv-board :global(.kv-places p) {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--kv-cream);
+  }
+  .kv-board :global(.kv-places div) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+  }
+  .kv-board :global(.kv-place) {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--kv-gold);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--kv-gold);
+    transition: background 160ms, color 160ms;
+  }
+  .kv-board :global(.kv-place:hover) {
+    color: var(--kv-ink);
+    background: var(--kv-gold);
+  }
+
+  .kv-board :global(.kv-hint) {
+    display: grid;
+    margin-inline: 0;
+    margin-bottom: 0.5rem;
+    place-content: center;
+    justify-items: center;
+    gap: 1.25rem;
+    border: 1px dashed var(--kv-line);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    text-align: center;
+    color: var(--kv-muted);
+  }
+  .kv-board :global(.kv-hint p) {
+    max-width: 16rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .kv-board :global(.kv-hint__ring) {
+    width: 4.5rem;
+    height: 4.5rem;
+    border: 1px solid rgba(196, 162, 101, 0.5);
+    border-radius: 999px;
+    animation: kv-pulse 2.4s ease-in-out infinite;
+  }
+
+  .kv-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.75rem;
+    border-top: 1px solid var(--kv-line);
+    font-size: 0.8rem;
+    color: var(--kv-muted);
+  }
+  .kv-reset {
+    font-weight: 600;
+    color: var(--kv-gold);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  @keyframes kv-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.985);
+    }
+  }
+  @keyframes kv-slide {
+    from {
+      opacity: 0;
+      transform: translateX(-18px);
+    }
+  }
+  @keyframes kv-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes kv-rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+  @keyframes kv-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes kv-pulse {
+    0%,
+    100% {
+      transform: scale(0.9);
+      box-shadow: 0 0 0 0 rgba(196, 162, 101, 0.35);
+    }
+    50% {
+      transform: scale(1);
+      box-shadow: 0 0 0 14px rgba(196, 162, 101, 0);
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .kv {
+      width: 100vw;
+      height: 92dvh;
+      margin-bottom: 0;
+      border-radius: 1.25rem 1.25rem 0 0;
+    }
+    .kv-head {
+      grid-template-columns: 1fr auto;
+      padding: 1rem 1.1rem;
+    }
+    .kv-trail {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-content: flex-start;
+    }
+    .kv-board {
+      flex-direction: column;
+      gap: 1.75rem;
+      padding: 1.25rem 1.1rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    .kv-wires {
+      display: none;
+    }
+    .kv-board :global(.kv-col),
+    .kv-board :global(.kv-col--result),
+    .kv-board :global(.kv-col--hint) {
+      flex: none;
+    }
+    .kv-board :global(.kv-col__body) {
+      overflow: visible;
+    }
+    .kv-board :global(.kv-hint) {
+      padding: 1.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kv *,
+    .kv[open] {
+      animation: none !important;
+      transition: none !important;
+    }
+    .kv-wires :global(path) {
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

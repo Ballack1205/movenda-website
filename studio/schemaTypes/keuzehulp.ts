@@ -14,6 +14,42 @@ export default defineType({
   fieldsets: [EN_FIELDSET],
   fields: [
     defineField({ name: "actief", title: "Keuzehulp tonen op de teampagina", type: "boolean", initialValue: true }),
+    defineField({
+      name: "kompasWeergave",
+      title: "Verwijskompas — welke versie",
+      type: "object",
+      description:
+        "Per schermgrootte kiezen: de huidige stappen (vraag per vraag) of de visuele kaart. De stappen blijven altijd beschikbaar als backup.",
+      options: { columns: 2 },
+      fields: [
+        defineField({
+          name: "mobiel",
+          title: "Mobiel",
+          type: "string",
+          initialValue: "stappen",
+          options: {
+            layout: "radio",
+            list: [
+              { title: "Huidige stappen", value: "stappen" },
+              { title: "Visuele kaart", value: "visual" },
+            ],
+          },
+        }),
+        defineField({
+          name: "desktop",
+          title: "Desktop",
+          type: "string",
+          initialValue: "visual",
+          options: {
+            layout: "radio",
+            list: [
+              { title: "Huidige stappen", value: "stappen" },
+              { title: "Visuele kaart", value: "visual" },
+            ],
+          },
+        }),
+      ],
+    }),
     defineField({ name: "titel", title: "Titel", type: "string", initialValue: "Wie past bij mij?" }),
     defineField({ name: "titelEn", title: "Titel (EN)", type: "string", fieldset: "en" }),
     defineField({
