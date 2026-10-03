@@ -25,6 +25,9 @@ function zinCase(text: string): string {
 const slogan = zinCase((lang === "en" ? dienst.sloganEn || dienst.slogan : dienst.slogan) || "");
 const body = lang === "en" ? dienst.bodyEn || dienst.body : dienst.body;
 const manueel = dienst.slug === "manuele-therapie";
+// Specialist band under the service copy. false = beige everywhere.
+// true = partner-strip gray, and a gray chip border, on manuele therapie only.
+const specialistenPartnergrijs = false;
 const listLabel = /^(Voor wie|Zo werken we|Zo ziet de les eruit|Who it's for|How we work|What a session looks like)\s*:?\s*/i;
 const expectLabel = /^(Wat je mag verwachten|What to expect)\s*:?\s*/i;
 const duurStart = /^(elke behandeling duurt|each (treatment|session) lasts)/i;
@@ -209,7 +212,7 @@ const heroSrc = dienst.afbeelding
   )}
   </div>
 
-  <div class:list={["dienst-close", dienst.slug === "manuele-therapie" && "dienst-close--partnergrijs"]}>
+  <div class:list={["dienst-close", specialistenPartnergrijs && manueel && "dienst-close--partnergrijs"]}>
   <div class="mx-auto max-w-3xl px-4">
   {team.length > 0 && (
     <div class="mt-10">
@@ -415,8 +418,8 @@ const heroSrc = dienst.afbeelding
     color: #161513;
   }
 
-  /* Temporary preview for Julie: manuele therapie only, same gray as the
-     homepage partner strip (white with a 22% ink wash). Other services stay beige. */
+  /* Used only when specialistenPartnergrijs is true. Same gray as the
+     homepage partner strip (white with a 22% ink wash). */
   :global(html[data-theme="lab"]) .dienst-close--partnergrijs {
     background: color-mix(in srgb, #161513 22%, #fff);
   }
