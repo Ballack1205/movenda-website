@@ -91,8 +91,8 @@ const localHref = (href: string) => (/^https?:/i.test(href) ? href : withLang(hr
         </div>
 
         <div class="mt-16 max-w-3xl">
-          <h2 class="mb-3 text-xl font-bold">{zin("aboKicker")}</h2>
-          <h2 class="max-w-xl text-3xl font-semibold tracking-tight">{zin("aboTitel")}</h2>
+          <h2>{zin("aboKicker")}</h2>
+          <p class="mt-2 text-xl italic text-brand-muted">{zin("aboTitel")}</p>
           <p class="brief-lead">{zin("aboTekst")}</p>
           <ul class="mt-4 list-disc space-y-1 pl-5">
             {pagina.aboPunten.map((punt) => (
@@ -106,7 +106,7 @@ const localHref = (href: string) => (/^https?:/i.test(href) ? href : withLang(hr
             ))}
           </ul>
           <p class="brief-lead">
-            {zin("aboMeer")}
+            {zin("aboMeer").trim()}{" "}
             <a href={`mailto:${locatie.email}`}>{locatie.email}</a>
             {zin("aboMeerNa")}
           </p>
