@@ -943,14 +943,15 @@
   {
     "slug": "on-site-workouts",
     "categorie": "mpc-groep",
-    "titel": "On-site workouts",
-    "titelEn": "On-site workouts",
-    "menuLabel": "On-site workouts",
+    "titel": "Training op het werk",
+    "titelEn": "Training at work",
+    "menuLabel": "Training op het werk",
+    "menuLabelEn": "Training at work",
     "intro": "Een coach van Sportpraktijk Movenda begeleidt de workout op je bedrijf, afgestemd op ruimte, tijd en niveau.",
     "slogan": "Beweging die past binnen de werkdag.",
     "sloganEn": "Movement that fits the working day.",
-    "body": "Met een on-site workout brengen we de training naar je medewerkers. Een coach van Sportpraktijk Movenda begeleidt de sessie op het bedrijf, zodat verplaatsing geen drempel vormt. We stemmen de workout af op de beschikbare ruimte, de tijd en het niveau van de groep.\n\nVoor wie:\nBedrijven die medewerkers tijdens of rond de werkdag willen laten bewegen\nTeams die een terugkerend beweegmoment willen organiseren\nOrganisaties met weinig tijd of beperkte verplaatsingsmogelijkheden\n\nZo werken we:\nKorte intake over doel, deelnemers, timing en frequentie\nCheck van ruimte, ondergrond, materiaal en praktische randvoorwaarden\nProgramma met schaalbare oefeningen voor verschillende niveaus\nEvaluatie en bijsturing wanneer het om een terugkerende reeks gaat\n\nWat je mag verwachten: Een workout die past in de werkdag. De prijs is een voorstel op maat op basis van format, frequentie, locatie en groepsgrootte. Er staat geen vast tarief op deze pagina.\n\nDuur: Af te stemmen op de werkdag en het gekozen format.\n\nLocatie: Op de bedrijfslocatie binnen een vooraf afgesproken werkgebied.\n\nGerelateerd:\nTeamtraining bij Sportpraktijk Movenda|/b2b/teamtraining\nB2B|/b2b\nContact|/contact",
-    "bodyEn": "An on-site workout brings the session to your staff. A coach from Sportpraktijk Movenda leads it at the company, so travel is not a barrier.\n\nWho it's for:\nCompanies that want staff to move during or around the working day\nTeams that want a returning movement break\nOrganisations with little time or limited travel options\n\nHow we work:\nA short intake on goal, participants, timing and frequency\nA check of space, surface, equipment and practical limits\nA programme with scalable exercises for mixed levels\nReview and adjustment when it is a returning series\n\nWhat to expect: A workout that fits the working day. The price is a tailored proposal. There is no fixed fee on this page.\n\nDuration: Agreed around the working day and the format.\n\nLocation: At the company, within an agreed area.\n\nRelated:\nTeam training at Sportpraktijk Movenda|/b2b/teamtraining\nB2B|/b2b\nContact|/contact",
+    "body": "Met een on-site workout brengen we de training naar je medewerkers. Een coach van Sportpraktijk Movenda begeleidt de sessie op het bedrijf, zodat verplaatsing geen drempel vormt. We stemmen de workout af op de beschikbare ruimte, de tijd en het niveau van de groep.\n\nVoor wie:\nBedrijven die medewerkers tijdens of rond de werkdag willen laten bewegen\nTeams die een terugkerend beweegmoment willen organiseren\nOrganisaties met weinig tijd of beperkte verplaatsingsmogelijkheden\n\nZo werken we:\nKorte intake over doel, deelnemers, timing en frequentie\nCheck van ruimte, ondergrond, materiaal en praktische randvoorwaarden\nProgramma met schaalbare oefeningen voor verschillende niveaus\nEvaluatie en bijsturing wanneer het om een terugkerende reeks gaat\n\nWat je mag verwachten: Een workout die past in de werkdag. De prijs is een voorstel op maat op basis van format, frequentie, locatie en groepsgrootte. Er staat geen vast tarief op deze pagina.\n\nDuur: Af te stemmen op de werkdag en het gekozen format.\n\nLocatie: Op de bedrijfslocatie binnen een vooraf afgesproken werkgebied.\n\nGerelateerd:\nB2B|/b2b\nContact|/contact",
+    "bodyEn": "An on-site workout brings the session to your staff. A coach from Sportpraktijk Movenda leads it at the company, so travel is not a barrier.\n\nWho it's for:\nCompanies that want staff to move during or around the working day\nTeams that want a returning movement break\nOrganisations with little time or limited travel options\n\nHow we work:\nA short intake on goal, participants, timing and frequency\nA check of space, surface, equipment and practical limits\nA programme with scalable exercises for mixed levels\nReview and adjustment when it is a returning series\n\nWhat to expect: A workout that fits the working day. The price is a tailored proposal. There is no fixed fee on this page.\n\nDuration: Agreed around the working day and the format.\n\nLocation: At the company, within an agreed area.\n\nRelated:\nB2B|/b2b\nContact|/contact",
     "ctaLabel": "Bespreek een workout op jouw bedrijf",
     "ctaLabelEn": "Discuss a workout at your company",
     "ctaUrl": "/contact?behandeling=On-site%20workout",
@@ -960,9 +961,9 @@
     ],
     "volgorde": 21,
     "toonInMenu": true,
-    "seoTitle": "On-site workouts voor bedrijven | Movenda",
+    "seoTitle": "Training op het werk | Movenda",
     "seoDescription": "Een begeleide workout op je bedrijf, afgestemd op ruimte, tijd en niveau. Prijs op maat.",
-    "seoTitleEn": "On-site workouts for companies | Movenda",
+    "seoTitleEn": "Training at work | Movenda",
     "seoDescriptionEn": "A coached workout at your company, matched to space, time and level. Price on request."
   }
 ]

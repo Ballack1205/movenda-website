@@ -62,36 +62,24 @@ const aanbod = olympia
           : "Aangepaste training tijdens of na de zwangerschap, afgestemd op jouw fase.",
         href: dienstHref({ slug: "pre-en-postnatale-training", categorie: "training" }, lang),
       },
-      {
-        titel: en ? "Performance screening" : "Performance Screening",
-        intro: en
-          ? "Make relevant physical capacities objective and turn them into training priorities."
-          : "Relevante fysieke capaciteiten objectiveren en vertalen naar trainingsprioriteiten.",
-        href: dienstHref({ slug: "sportspecifieke-screening", categorie: "training" }, lang),
-      },
-      {
-        titel: en ? "Exercise testing" : "Inspanningstesten",
-        intro: en
-          ? "Tests that map fitness and training zones more precisely."
-          : "Testen om conditie en trainingszones gerichter in kaart te brengen.",
-        href: dienstHref({ slug: "inspanningstesten", categorie: "training" }, lang),
-      },
     ]
   : [];
 
 const waarom = olympia
   ? en
     ? [
-        "Treatment and training inside a full sports environment",
-        "Room for active exercise therapy and personal training",
-        "One clear path from recovery to moving stronger",
+        "Treatment and training in a full sports space of 600 m²",
+        "Separate changing rooms and showers for women and men",
+        "Olympia's sports bar, for something to eat or drink before or after training",
+        "Accessible for people with a disability and wheelchair users",
         "Personal guidance from physiotherapists and trainers",
         "For everyday movement goals and sporting ambition",
       ]
     : [
-        "Behandeling en training binnen een volwaardige sportomgeving",
-        "Ruimte voor actieve oefentherapie en persoonlijke training",
-        "Eén herkenbare route van herstel naar sterker bewegen",
+        "Behandeling en training binnen een volwaardige sportomgeving van 600 m²",
+        "Afzonderlijke kleedkamers en douches voor dames en heren",
+        "De ruime sportbar van Olympia, waar je voor of na het sporten iets kunt eten of drinken",
+        "Toegankelijk voor mensen met een beperking en rolstoelgebruikers",
         "Persoonlijke begeleiding door kinesitherapeuten en trainers",
         "Toegankelijk voor dagelijkse beweegdoelen én sportieve ambities",
       ]
@@ -101,13 +89,11 @@ const aboPunten = olympia
   ? en
     ? [
         "Access to the full Olympia gym, except the Milon circuit",
-        "During Olympia's opening hours",
         "Only with ongoing rehabilitation at Movenda or the Performance Centre",
         "Ask your therapist",
       ]
     : [
         "Toegang tot de volledige fitness van Olympia, exclusief de Milon-cirkel",
-        "Tijdens de openingsuren van Olympia",
         "Alleen met een lopende revalidatie bij Movenda of het Performance Centre",
         "Aan te vragen via je therapeut",
       ]
@@ -166,8 +152,19 @@ const aboPunten = olympia
               : "Ben je in revalidatie bij Movenda of het Performance Centre? Via de samenwerking met Olympia kan je een kiné-fitnessabonnement afsluiten. Zo werk je buiten je sessies op eigen tempo verder aan je herstel."}
           </p>
           <ul class="mt-4 list-disc space-y-1 pl-5">
-            {aboPunten.map((punt) => <li>{punt}</li>)}
+            <li>{aboPunten[0]}</li>
+            <li>
+              <a href="https://oly.be/openingsuren-olympia-hasselt/" target="_blank" rel="noopener noreferrer">
+                {en ? "During Olympia's opening hours" : "Tijdens de openingsuren van Olympia"}
+              </a>
+            </li>
+            {aboPunten.slice(1).map((punt) => <li>{punt}</li>)}
           </ul>
+          <p class="brief-lead">
+            {en ? "More information? " : "Meer info? "}
+            <a href={`mailto:${locatie.email}`}>{locatie.email}</a>
+            {en ? ", or speak to your therapist." : ", of spreek je therapeut rechtstreeks aan."}
+          </p>
           <a class="brief-textlink" href={withLang("/kine-abonnement", lang)}>
             {en ? "Price and how to apply" : "Tarief en hoe je het aanvraagt"}
           </a>
@@ -186,6 +183,7 @@ const aboPunten = olympia
               </li>
             ))}
           </ul>
+          <a class="brief-textlink" href="https://www.oly.be" target="_blank" rel="noopener noreferrer">Olympia Hasselt</a>
         </div>
 
         <div class="mt-16 max-w-3xl">
@@ -212,7 +210,7 @@ const aboPunten = olympia
     <div class="mt-8 grid gap-8 sm:grid-cols-2">
       <div>
         <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{en ? "Address" : "Adres"}</h2>
-        <p class="mt-2">{locatie.adres}</p>
+        <p class="mt-2">{olympia ? `Olympia · ${locatie.adres}` : locatie.adres}</p>
         <a href={locatie.mapsUrl} target="_blank" rel="noopener noreferrer" class="mt-1 inline-block text-sm font-semibold text-brand-primary hover:underline">
           {en ? "View on Google Maps →" : "Bekijk op Google Maps →"}
         </a>

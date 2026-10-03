@@ -58,7 +58,7 @@ export function locatieRoute(slug: string, nl: string | undefined, lang: Lang, e
   if (!nl) return undefined;
   if (lang !== "en") return nl;
   if (slug === "olympia") {
-    return "First visit? Take the sports entrance on the left of the building, where Movenda is on the window. Check in at the info desk and say you are here for physiotherapy. You will get an access card and a staff member will show you upstairs. Upstairs, open the gate with the access card and walk around the corner to the second desk. You can wait in the waiting room there.";
+    return "First time here? Use the sports entrance on the left of the building. You will recognise it by the name Sportpraktijk Movenda on the window. At the reception desk, say you have an appointment with the physiotherapist. You receive an access card and a member of staff shows you upstairs. Upstairs, open the gate with your card and follow the corridor around the corner to the second desk. You can wait there. Your physiotherapist will come and get you.";
   }
   return nl;
 }

@@ -163,14 +163,15 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
     ],
     lang,
   );
-  const b2b = linksBySlugs(
-    diensten,
-    [
-      { slug: "teamtraining", categorie: "mpc-groep", label: en ? "Team training at Movenda" : "Teamtraining bij Movenda" },
-      { slug: "on-site-workouts", categorie: "mpc-groep", label: "On-site workouts" },
-    ],
-    lang,
-  );
+  // Julie, 2 Oct: of the B2B formats, only 1 (Corporate Coaching) and 2 (training at work) go online.
+  const b2b: NavLink[] = [
+    { href: p("/b2b"), label: en ? "Corporate coaching" : "Corporate Coaching" },
+    ...linksBySlugs(
+      diensten,
+      [{ slug: "on-site-workouts", categorie: "mpc-groep", label: en ? "Training at work" : "Training op het werk" }],
+      lang,
+    ),
+  ];
   const gx = [
     ...linksBySlugs(
       diensten,
