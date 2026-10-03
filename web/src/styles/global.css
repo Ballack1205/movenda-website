@@ -139,6 +139,16 @@ html[data-theme="lab"] .locatie-page a.rounded-xl:hover {
   border-color: #f4f7fb;
 }
 
+html[data-theme="lab"] .locatie-page a.bg-brand-primary {
+  background: #f3eee4;
+  color: #161513;
+}
+
+html[data-theme="lab"] .locatie-page a.bg-brand-primary:hover {
+  background: #fffdf8;
+  color: #161513;
+}
+
 /* Overview pages use the same black as the Aanbod bands. */
 html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) main {
   display: flex;
