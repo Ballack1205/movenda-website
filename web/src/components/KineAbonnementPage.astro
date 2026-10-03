@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import LinkedText from "./LinkedText.astro";
-import { getPagina, getSiteSettings, paginaAlineas, paginaTekst } from "../lib/content";
+import { getPagina, getSiteSettings, paginaTekst, tekstChunks } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 import type { Lang } from "../lib/i18n";
 
@@ -14,7 +14,7 @@ const en = lang === "en";
 const prefix = en ? "/en" : "";
 const pagina = await getPagina("kine-abonnement");
 const settings = await getSiteSettings();
-const alineas = paginaAlineas(pagina, lang);
+const intro = tekstChunks(paginaTekst(pagina, "intro", lang));
 const path = `${prefix}/kine-abonnement`;
 const crumb = en ? "Physio membership" : "Kiné-abonnement";
 ---
@@ -31,11 +31,23 @@ const crumb = en ? "Physio membership" : "Kiné-abonnement";
     <div>
     {paginaTekst(pagina, "ondertitel", lang) && <p class="brief-kicker">{paginaTekst(pagina, "ondertitel", lang)}</p>}
     <h1 class="brief-title brief-title--wide">{paginaTekst(pagina, "titel", lang)}</h1>
-    {alineas.map((tekst, i) => (
-      <p class:list={["brief-lead", i < alineas.length - 1 && "brief-lead--wide"]}>
-        <LinkedText text={tekst} />
-      </p>
-    ))}
+    {intro.map((chunk) =>
+      chunk.kind === "ul" ? (
+        <ul class="brief-lead list-disc space-y-1 pl-5">
+          {chunk.lines.map((line) => (
+            <li>
+              <LinkedText text={line} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        chunk.lines.map((line) => (
+          <p class="brief-lead">
+            <LinkedText text={line} />
+          </p>
+        ))
+      ),
+    )}
     <p class="brief-kicker mt-10">{en ? "More information?" : "Meer info?"}</p>
     <a class="brief-textlink" href={`mailto:${settings.email}`}>{settings.email}</a>
     </div>
