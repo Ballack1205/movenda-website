@@ -9,7 +9,7 @@ export default defineType({
   type: "document",
   icon: CogIcon,
   description:
-    "Algemene teksten, knoppen en blokken die over de hele site terugkomen. Er is maar één document — niet verwijderen.",
+    "Algemene teksten, knoppen en blokken die over de hele site terugkomen. Er is maar één document — niet verwijderen. De blokken onder de hero, de slogan en de overige homepage-teksten staan op het tabblad Homepage.",
   groups: [
     { name: "algemeen", title: "Algemeen", default: true },
     { name: "homepage", title: "Homepage" },
@@ -220,9 +220,9 @@ export default defineType({
     }),
     defineField({
       name: "homePijlers",
-      title: "Homepage — drie pijlers",
+      title: "Drie blokken onder de hero",
       description:
-        "De drie blokken onder de hero op de homepage. Per pijler: titel, korte tekst en de lijst 'waarvoor kom je / voor wie'. De technieken ernaast komen automatisch uit 'Diensten'.",
+        "De drie blokken onder de hero op de homepage. Per blok: titel, korte tekst, de knop naar het aanbod en de lijst 'waarvoor kom je / voor wie'. De technieken ernaast komen automatisch uit 'Diensten'.",
       type: "object",
       group: "homepage",
       fields: [
@@ -230,7 +230,7 @@ export default defineType({
         defineField({ name: "training", title: "Personal training", type: "homePijler" }),
         defineField({ name: "mpc", title: "Movenda Performance Centre", type: "homePijler" }),
       ],
-      options: { collapsible: true, collapsed: true },
+      options: { collapsible: true, collapsed: false },
     }),
     defineField({
       name: "homeDeurenTitel",
@@ -258,9 +258,9 @@ export default defineType({
     }),
     defineField({
       name: "homeAanbod",
-      title: "Homepage — vijf aanboddeuren (brief)",
+      title: "Vijf aanboddeuren",
       description:
-        "De vijf toegangspoorten op de brief-homepage. Tekst is de zin op de deur. Leeg laten = de starttekst uit de site.",
+        "De vijf toegangspoorten op de homepage. Tekst is de zin op de deur. Leeg laten = de starttekst uit de site.",
       type: "array",
       group: "homepage",
       of: [{ type: "homeDeur" }],
@@ -268,11 +268,12 @@ export default defineType({
     }),
     defineField({
       name: "homeBrief",
-      title: "Homepage — teksten (brief)",
-      description: "Merkintro en de korte titels op de brief-homepage. De aantallen in de strook komen uit Team en Locaties.",
+      title: "Teksten op de homepage",
+      description:
+        "De tekst onder de hero, de slogan staat hierboven bij Slogans, en dit blok is de rest van de homepage: merkintro, aanbod, locaties, team, reviews en slot. De aantallen in de strook komen uit Team en Locaties. Titel, intro, foto en de kaarten onderaan wijzig je via Homepage → Titel, intro, foto en kaarten.",
       type: "object",
       group: "homepage",
-      options: { collapsible: true, collapsed: true },
+      options: { collapsible: true, collapsed: false },
       fieldsets: [EN_FIELDSET],
       fields: [
         defineField({ name: "merkKicker", title: "Merkintro — bovenkop", type: "string" }),

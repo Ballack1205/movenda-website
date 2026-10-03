@@ -241,7 +241,9 @@
         "Pre- and postnatal complaints",
         "Cardiac rehabilitation",
         "Chronic pain"
-      ]
+      ],
+      "cta": "Bekijk ons kine-aanbod",
+      "ctaEn": "See our physiotherapy services"
     },
     "training": {
       "titel": "Personal training in Hasselt",
@@ -263,7 +265,9 @@
         "People in rehabilitation",
         "Pregnant women & new mothers",
         "Anyone who wants to move more healthily"
-      ]
+      ],
+      "cta": "Bekijk ons trainingsaanbod",
+      "ctaEn": "See our training services"
     },
     "mpc": {
       "titel": "Movenda Performance Centre",
@@ -285,7 +289,9 @@
         "Sports rehabilitation after injury",
         "Small groups & group classes",
         "Companies (corporate coaching)"
-      ]
+      ],
+      "cta": "Ontdek het Performance Centre",
+      "ctaEn": "Discover the Performance Centre"
     }
   },
   "partnerband": {

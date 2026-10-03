@@ -253,6 +253,9 @@ export interface HomePijler {
   lijstTitelEn?: string;
   lijst: string[];
   lijstEn?: string[];
+  /** Label on the link to this pillar's overview page. */
+  cta?: string;
+  ctaEn?: string;
   /** Photo next to the block; undefined = the bundled marketing photo. */
   foto?: CmsFoto;
 }
@@ -1280,7 +1283,16 @@ function mergePijler(
     lijstTitelEn: fromSanity?.lijstTitelEn || seed.lijstTitelEn,
     lijst: fromSanity?.lijst?.length ? fromSanity.lijst : seed.lijst,
     lijstEn: fromSanity?.lijstEn?.length ? fromSanity.lijstEn : seed.lijstEn,
+    cta: fromSanity?.cta?.trim() || seed.cta,
+    ctaEn: fromSanity?.ctaEn?.trim() || seed.ctaEn,
   };
+}
+
+/** Button under a homepage pillar. Dutch, or English when that field is filled in. */
+export function homePijlerCta(pijler: HomePijler, lang: Lang): string {
+  const nl = pijler.cta || "";
+  if (lang !== "en") return nl;
+  return pijler.ctaEn?.trim() || nl;
 }
 
 // ---------------------------------------------------------------------------
@@ -1305,6 +1317,25 @@ export interface Pagina {
   titelEn?: string;
   intro?: string;
   introEn?: string;
+  /** Location cards and team block under the three pillars (home only). */
+  olympiaKaartTitel?: string;
+  olympiaKaartTitelEn?: string;
+  olympiaKaartTekst?: string;
+  olympiaKaartTekstEn?: string;
+  olympiaKaartCta?: string;
+  olympiaKaartCtaEn?: string;
+  mpcKaartTitel?: string;
+  mpcKaartTitelEn?: string;
+  mpcKaartTekst?: string;
+  mpcKaartTekstEn?: string;
+  mpcKaartCta?: string;
+  mpcKaartCtaEn?: string;
+  teamBlokTitel?: string;
+  teamBlokTitelEn?: string;
+  teamBlokTekst?: string;
+  teamBlokTekstEn?: string;
+  teamBlokCta?: string;
+  teamBlokCtaEn?: string;
   /** Sanity CDN URL of the uploaded hero photo; undefined = use the bundled asset. */
   foto?: string;
   /** Hotspot Julie picked in the Studio (0–1), used as crop focal point. */
@@ -1424,6 +1455,9 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
   const row = (await sanity.fetch(
     `*[_type == "pagina" && key == $key][0]{
       ondertitel, ondertitelEn, titel, titelEn, intro, introEn,
+      olympiaKaartTitel, olympiaKaartTitelEn, olympiaKaartTekst, olympiaKaartTekstEn, olympiaKaartCta, olympiaKaartCtaEn,
+      mpcKaartTitel, mpcKaartTitelEn, mpcKaartTekst, mpcKaartTekstEn, mpcKaartCta, mpcKaartCtaEn,
+      teamBlokTitel, teamBlokTitelEn, teamBlokTekst, teamBlokTekstEn, teamBlokCta, teamBlokCtaEn,
       "foto": foto.asset->url, "fotoHotspot": foto.hotspot{ x, y }, fotoAlt,
       "fotoSecundair": fotoSecundair${CMS_FOTO_PROJECTION},
       "bannerFoto": bannerFoto${CMS_FOTO_PROJECTION},
@@ -1453,6 +1487,24 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
     titelEn: pick("titelEn"),
     intro: pick("intro"),
     introEn: pick("introEn"),
+    olympiaKaartTitel: pick("olympiaKaartTitel"),
+    olympiaKaartTitelEn: pick("olympiaKaartTitelEn"),
+    olympiaKaartTekst: pick("olympiaKaartTekst"),
+    olympiaKaartTekstEn: pick("olympiaKaartTekstEn"),
+    olympiaKaartCta: pick("olympiaKaartCta"),
+    olympiaKaartCtaEn: pick("olympiaKaartCtaEn"),
+    mpcKaartTitel: pick("mpcKaartTitel"),
+    mpcKaartTitelEn: pick("mpcKaartTitelEn"),
+    mpcKaartTekst: pick("mpcKaartTekst"),
+    mpcKaartTekstEn: pick("mpcKaartTekstEn"),
+    mpcKaartCta: pick("mpcKaartCta"),
+    mpcKaartCtaEn: pick("mpcKaartCtaEn"),
+    teamBlokTitel: pick("teamBlokTitel"),
+    teamBlokTitelEn: pick("teamBlokTitelEn"),
+    teamBlokTekst: pick("teamBlokTekst"),
+    teamBlokTekstEn: pick("teamBlokTekstEn"),
+    teamBlokCta: pick("teamBlokCta"),
+    teamBlokCtaEn: pick("teamBlokCtaEn"),
     foto: row?.foto || undefined,
     fotoHotspot: row?.foto && row.fotoHotspot ? row.fotoHotspot : undefined,
     fotoAlt: pick("fotoAlt"),
@@ -1504,6 +1556,15 @@ type PaginaTekstVeld =
   | "ondertitel"
   | "titel"
   | "intro"
+  | "olympiaKaartTitel"
+  | "olympiaKaartTekst"
+  | "olympiaKaartCta"
+  | "mpcKaartTitel"
+  | "mpcKaartTekst"
+  | "mpcKaartCta"
+  | "teamBlokTitel"
+  | "teamBlokTekst"
+  | "teamBlokCta"
   | "stappenTitel"
   | "stappenIntro"
   | "legeTekst"

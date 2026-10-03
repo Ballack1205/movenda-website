@@ -88,9 +88,26 @@ for (const id of ["siteSettings", "drafts.siteSettings"]) {
       set[`homeBrief.${field}`] = value;
     }
   }
+  const pijlerSeed = settingsSeed.homePijlers || {};
+  for (const key of ["kine", "training", "mpc"]) {
+    const live = doc.homePijlers?.[key] || {};
+    const fromSeed = pijlerSeed[key] || {};
+    for (const field of ["cta", "ctaEn"]) {
+      if (!live[field] && fromSeed[field]) set[`homePijlers.${key}.${field}`] = fromSeed[field];
+    }
+  }
   if (Object.keys(set).length === 0) continue;
-  await client.patch(id).setIfMissing({ homeBrief: {} }).commit();
+  await client.patch(id).setIfMissing({ homeBrief: {}, homePijlers: {} }).commit();
   await client.patch(id).setIfMissing({ "homeBrief.bewijs": {} }).commit();
+  const pijlerMissing = {};
+  for (const key of ["kine", "training", "mpc"]) {
+    if (Object.keys(set).some((field) => field.startsWith(`homePijlers.${key}.`))) {
+      pijlerMissing[`homePijlers.${key}`] = {};
+    }
+  }
+  if (Object.keys(pijlerMissing).length > 0) {
+    await client.patch(id).setIfMissing(pijlerMissing).commit();
+  }
   await client.patch(id).set(set).commit();
   console.log(`${id}: ${Object.keys(set).length} velden aangevuld.`);
 }

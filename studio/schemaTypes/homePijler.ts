@@ -26,6 +26,13 @@ export default defineType({
     }),
     defineField({ name: "tekstEn", title: "Korte tekst (EN)", type: "text", rows: 4 }),
     defineField({
+      name: "cta",
+      title: "Knop naar het aanbod",
+      type: "string",
+      description: "Bv. 'Bekijk ons kine-aanbod'. Leeg laten = de huidige knoptekst.",
+    }),
+    defineField({ name: "ctaEn", title: "Knop naar het aanbod (EN)", type: "string" }),
+    defineField({
       name: "lijstTitel",
       title: "Titel linkerlijst",
       type: "string",

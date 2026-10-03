@@ -11,6 +11,7 @@ import {
   DocumentTextIcon,
   EarthGlobeIcon,
   HelpCircleIcon,
+  HomeIcon,
   ImageIcon,
   PinIcon,
   RocketIcon,
@@ -33,6 +34,33 @@ export const deskStructure: StructureResolver = (S) =>
   S.list()
     .title("Movenda")
     .items([
+      S.listItem()
+        .title("Homepage")
+        .icon(HomeIcon)
+        .child(
+          S.list()
+            .title("Homepage")
+            .items([
+              S.listItem()
+                .title("Titel, intro, foto en kaarten")
+                .icon(DocumentTextIcon)
+                .child(
+                  S.document()
+                    .schemaType("pagina")
+                    .documentId("pagina-home")
+                    .title("Titel, intro, foto en kaarten"),
+                ),
+              S.listItem()
+                .title("Blokken, slogan en overige teksten")
+                .icon(CogIcon)
+                .child(
+                  S.document()
+                    .schemaType("siteSettings")
+                    .documentId("siteSettings")
+                    .title("Blokken, slogan en overige teksten — tabblad Homepage"),
+                ),
+            ]),
+        ),
       S.listItem()
         .title("Site-instellingen")
         .icon(CogIcon)

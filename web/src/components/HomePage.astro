@@ -25,8 +25,10 @@ import {
   getGetuigenissen,
   getLocaties,
   getPagina,
+  homePijlerCta,
   homePijlerDiensten,
   paginaAlineas,
+  paginaParagrafen,
   paginaTekst,
   teamCounts,
 } from "../lib/content";
@@ -103,22 +105,8 @@ const copy = en
       call: "Call",
       contact: "Contact us",
       kineAlt: "Physiotherapist treating a patient at Movenda in Hasselt",
-      kineCta: "See our physiotherapy services",
       trainingAlt: "Personal trainer coaching a client through an exercise at Movenda",
-      trainingCta: "See our training services",
       mpcAlt: "Performance training at the Movenda Performance Centre in Kuringen",
-      mpcCta: "Discover the Performance Centre",
-      olympiaTitle: "Movenda — Kuringersteenweg",
-      olympiaBody:
-        "Physiotherapy and personal training on Kuringersteenweg in Hasselt. Manual therapy, dry needling, acupuncture, sport-specific training and more.",
-      olympiaCta: "See the location →",
-      mpcTitle: "Movenda Performance Centre",
-      mpcBody:
-        "Performance training and sports rehabilitation in Kuringen, data-driven and one-on-one, for recreational and professional athletes.",
-      mpcCardCta: "See MPC →",
-      teamTitle: "Our team",
-      teamBody: `${team.length} physiotherapists, personal trainers and performance coaches — each with their own specialisation.`,
-      teamCta: "Meet the full team →",
     }
   : {
       seoTitle: "Kinesitherapie & personal training Hasselt | Movenda",
@@ -128,23 +116,11 @@ const copy = en
       call: "Bel",
       contact: "Contacteer ons",
       kineAlt: "Kinesitherapeut behandelt een patiënt bij Movenda in Hasselt",
-      kineCta: "Bekijk ons kine-aanbod",
       trainingAlt: "Personal trainer begeleidt een klant tijdens een oefening bij Movenda",
-      trainingCta: "Bekijk ons trainingsaanbod",
       mpcAlt: "Performance training in het Movenda Performance Centre in Kuringen",
-      mpcCta: "Ontdek het Performance Centre",
-      olympiaTitle: "Movenda — Kuringersteenweg",
-      olympiaBody:
-        "Kinesitherapie en personal training aan de Kuringersteenweg in Hasselt. Manuele therapie, dry needling, acupunctuur, sportspecifieke training en meer.",
-      olympiaCta: "Bekijk de vestiging →",
-      mpcTitle: "Movenda Performance Centre",
-      mpcBody:
-        "Performance training en sportrevalidatie in Kuringen, data-gedreven en één-op-één, voor recreatieve en professionele sporters.",
-      mpcCardCta: "Bekijk MPC →",
-      teamTitle: "Ons team",
-      teamBody: `${team.length} kinesisten, personal trainers en performance coaches — elk met hun eigen specialisatie.`,
-      teamCta: "Bekijk het volledige team →",
     };
+
+const teamBody = paginaParagrafen(pagina, "teamBlokTekst", lang, { aantal: team.length }).join(" ");
 ---
 
 {MPC_HOST ? (
@@ -305,7 +281,7 @@ const copy = en
       image={kineHero}
       imageAlt={copy.kineAlt}
       aanbodHref={withLang("/kinesitherapie", lang)}
-      aanbodLabel={copy.kineCta}
+      aanbodLabel={homePijlerCta(settings.homePijlers.kine, lang)}
       afspraakHref={afspraakHref}
       lang={lang}
     />
@@ -315,7 +291,7 @@ const copy = en
       image={trainingSecondary}
       imageAlt={copy.trainingAlt}
       aanbodHref={withLang("/training", lang)}
-      aanbodLabel={copy.trainingCta}
+      aanbodLabel={homePijlerCta(settings.homePijlers.training, lang)}
       afspraakHref={afspraakHref}
       lang={lang}
       reverse
@@ -326,7 +302,7 @@ const copy = en
       image={mpcHero}
       imageAlt={copy.mpcAlt}
       aanbodHref={withLang("/performance", lang)}
-      aanbodLabel={copy.mpcCta}
+      aanbodLabel={homePijlerCta(settings.homePijlers.mpc, lang)}
       afspraakHref={afspraakHref}
       lang={lang}
     />
@@ -337,10 +313,10 @@ const copy = en
       href={withLang("/locaties/olympia", lang)}
       class="group rounded-2xl border border-brand-border bg-brand-surface p-6 transition hover:border-brand-primary sm:p-8"
     >
-      <h2 class="text-2xl font-bold text-brand-primary">{copy.olympiaTitle}</h2>
-      <p class="mt-2 text-brand-muted">{copy.olympiaBody}</p>
+      <h2 class="text-2xl font-bold text-brand-primary">{paginaTekst(pagina, "olympiaKaartTitel", lang)}</h2>
+      <p class="mt-2 text-brand-muted">{paginaTekst(pagina, "olympiaKaartTekst", lang)}</p>
       <span class="mt-4 inline-block font-semibold text-brand-primary group-hover:underline">
-        {copy.olympiaCta}
+        {paginaTekst(pagina, "olympiaKaartCta", lang)}
       </span>
     </a>
     <a
@@ -358,10 +334,10 @@ const copy = en
       />
       <div class="absolute inset-0 bg-brand-header/80"></div>
       <div class="relative">
-        <h2 class="text-2xl font-bold text-white">{copy.mpcTitle}</h2>
-        <p class="mt-2 text-white/80">{copy.mpcBody}</p>
+        <h2 class="text-2xl font-bold text-white">{paginaTekst(pagina, "mpcKaartTitel", lang)}</h2>
+        <p class="mt-2 text-white/80">{paginaTekst(pagina, "mpcKaartTekst", lang)}</p>
         <span class="mt-4 inline-block font-semibold text-white group-hover:underline">
-          {copy.mpcCardCta}
+          {paginaTekst(pagina, "mpcKaartCta", lang)}
         </span>
       </div>
     </a>
@@ -369,13 +345,13 @@ const copy = en
 
   <section class="bg-brand-surface py-16">
     <div class="mx-auto max-w-6xl px-4">
-      <h2 class="text-2xl font-bold">{copy.teamTitle}</h2>
-      <p class="mt-2 max-w-2xl text-brand-muted">{copy.teamBody}</p>
+      <h2 class="text-2xl font-bold">{paginaTekst(pagina, "teamBlokTitel", lang)}</h2>
+      <p class="mt-2 max-w-2xl text-brand-muted">{teamBody}</p>
       <div class="mt-8">
         <TeamCarousel team={team} lang={lang} />
       </div>
       <a href={withLang("/team", lang)} class="mt-6 inline-block font-semibold text-brand-primary hover:underline">
-        {copy.teamCta}
+        {paginaTekst(pagina, "teamBlokCta", lang)}
       </a>
     </div>
   </section>
