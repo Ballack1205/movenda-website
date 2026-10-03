@@ -86,10 +86,7 @@ const jsonLd = [
   <section class="page-ink mx-auto max-w-6xl px-4 py-16">
     <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
       <div>
-        {paginaTekst(pagina, "ondertitel", lang) && (
-          <p class="brief-kicker">{paginaTekst(pagina, "ondertitel", lang)}</p>
-        )}
-        <h1 class="mt-3">{paginaTekst(pagina, "titel", lang)}</h1>
+        <h1>{paginaTekst(pagina, "titel", lang)}</h1>
         {paginaTekst(pagina, "slogan", lang) && (
           <p class="mt-4 text-brand-muted">{paginaTekst(pagina, "slogan", lang)}</p>
         )}
