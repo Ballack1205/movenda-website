@@ -1594,6 +1594,11 @@ html[data-theme="lab"] .brief-ink > .lab-intro {
   padding-bottom: 2rem;
 }
 
+/* One extra line under the homepage shout, before the proof numbers. */
+html[data-theme="lab"] .brief-ink > .lab-intro .lab-intro__title {
+  margin-bottom: calc(1.1rem + 0.5lh);
+}
+
 @media (max-width: 767px) {
   html[data-theme="lab"] .brief-ink > .lab-intro {
     padding-top: 2.625rem;
