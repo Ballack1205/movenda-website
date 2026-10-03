@@ -135,8 +135,7 @@ Do not generate a full Material dynamic scheme from wallpaper. Do assign **paire
 
 | Role | Hex | On | Use |
 |---|---|---|---|
-| `paper` | `#f3eee4` | `ink` | Page background (Brick paper, slightly warmer) |
-| `paper-deep` | `#ebe4d6` | `ink` | MPC page wash, so the two locations still differ |
+| `paper` | `#f3eee4` | `ink` | Page background (Brick paper). Same beige on every page, including MPC. |
 | `surface` | `#fffdf8` | `ink` | Cards, dropdowns |
 | `ink` | `#161513` | `paper` | Text, filled CTAs, footer |
 | `ink-soft` | `#4f4a42` | `paper` | Muted. Must stay ≥ 4.5:1 on paper (verify before ship) |
@@ -148,7 +147,7 @@ Do not generate a full Material dynamic scheme from wallpaper. Do assign **paire
 
 Ink on paper is the default CTA (LAB). Navy is the *Movenda* signal, used sparingly so logos do not float in a foreign system.
 
-**Not doing:** a second dark theme for MPC. One paper system. MPC is a deeper paper, not a nightclub. Dark footer is enough contrast at the bottom.
+**Not doing:** a second dark theme for MPC, or a second paper. One beige (`#f3eee4`) on every page. Dark footer is enough contrast at the bottom.
 
 ### Contrast (WCAG 2.2 AA, Apple Accessibility Inspector, Material)
 
