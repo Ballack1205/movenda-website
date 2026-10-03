@@ -209,7 +209,7 @@ const heroSrc = dienst.afbeelding
   )}
   </div>
 
-  <div class="dienst-close">
+  <div class:list={["dienst-close", dienst.slug === "manuele-therapie" && "dienst-close--partnergrijs"]}>
   <div class="mx-auto max-w-3xl px-4">
   {team.length > 0 && (
     <div class="mt-10">
@@ -413,5 +413,19 @@ const heroSrc = dienst.afbeelding
   :global(html[data-theme="lab"]) .dienst-close {
     background: #f3eee4;
     color: #161513;
+  }
+
+  /* Temporary preview for Julie: manuele therapie only, same gray as the
+     homepage partner strip (white with a 22% ink wash). Other services stay beige. */
+  :global(html[data-theme="lab"]) .dienst-close--partnergrijs {
+    background: color-mix(in srgb, #161513 22%, #fff);
+  }
+
+  :global(html[data-theme="lab"]) .dienst-close--partnergrijs a {
+    border-color: rgb(22 21 19 / 0.38);
+  }
+
+  :global(html[data-theme="lab"]) .dienst-close--partnergrijs a:hover {
+    border-color: #161513;
   }
 </style>
