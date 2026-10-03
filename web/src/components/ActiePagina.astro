@@ -70,7 +70,7 @@ function embedUrl(url: string): string | undefined {
   <div class="actie-ink">
     {pagina.intro && (
       <div class="actie-copy mx-auto box-content max-w-3xl px-4">
-        {alineas(pagina.intro).map((p, i) => <p class:list={["actie-regels", i === 0 && "actie-lead"]}>{p}</p>)}
+        {alineas(pagina.intro).map((p) => <p class="actie-regels">{p}</p>)}
       </div>
     )}
 
@@ -263,12 +263,6 @@ function embedUrl(url: string): string | undefined {
 
   .actie-ink > .actie-copy {
     padding-top: 3rem;
-  }
-
-  .actie-copy .actie-lead {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: #f4f7fb;
   }
 
   .actie-sectie {

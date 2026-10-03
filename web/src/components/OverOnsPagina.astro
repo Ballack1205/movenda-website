@@ -73,7 +73,7 @@ const leesOok = verhaal
 
   <div class="overons-ink">
     <div class="overons-copy mx-auto max-w-3xl px-4">
-      {intro.map((p, i) => <p class:list={[i === 0 && "overons-lead"]}>{p}</p>)}
+      {intro.map((p) => <p>{p}</p>)}
 
       {pagina.blokken.map((blok) => (
         <section>
@@ -223,12 +223,6 @@ const leesOok = verhaal
     margin-top: 1rem;
     line-height: 1.75;
     color: rgb(244 247 251 / 0.86);
-  }
-
-  .overons-copy .overons-lead {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: #f4f7fb;
   }
 
   .overons-copy h2 {
