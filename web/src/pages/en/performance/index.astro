@@ -1,9 +1,12 @@
 ---
 import AanbodOverzicht from "../../../components/AanbodOverzicht.astro";
 import Layout from "../../../layouts/Layout.astro";
+import PaginaFoto from "../../../components/PaginaFoto.astro";
 import { getPagina, paginaAlineas, paginaTekst } from "../../../lib/content";
 import { getBriefAanbod } from "../../../lib/nav";
 import { breadcrumbSchema } from "../../../lib/schema";
+import { withLang } from "../../../lib/i18n";
+import performanceHero from "../../../assets/marketing/home-performance.jpg";
 
 const pagina = await getPagina("performance");
 const aanbod = (await getBriefAanbod("en")).find((group) => group.label === "Performance")?.children ?? [];
@@ -30,12 +33,24 @@ const jsonLd = [
     titel={paginaTekst(pagina, "titel", "en")}
     alineaas={paginaAlineas(pagina, "en")}
     blokken={pagina.blokken}
-    aanbodTitel="Offer"
+    aanbodTitel={paginaTekst(pagina, "aanbodTitel", "en") || "Offer"}
     aanbod={aanbod}
     lang="en"
   >
-    <a slot="actions" href="/en/team#keuzehulp" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
-      Plan your performance programme
+    <a slot="actions" href={withLang(pagina.knopUrl || "/team#keuzehulp", "en")} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
+      {paginaTekst(pagina, "knopLabel", "en") || "Plan your performance programme"}
     </a>
+    <PaginaFoto
+      slot="media"
+      pagina={pagina}
+      fallback={performanceHero}
+      alt={pagina.fotoAlt || "Performance training at Movenda"}
+      width={640}
+      height={720}
+      widths={[640, 960, 1280]}
+      sizes="(min-width: 1024px) 42vw, 100vw"
+      class="aspect-[4/4.5] w-full object-cover"
+      priority
+    />
   </AanbodOverzicht>
 </Layout>

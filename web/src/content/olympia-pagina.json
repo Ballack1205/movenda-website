@@ -1,0 +1,122 @@
+{
+  "kicker": "Sportpraktijk Movenda in Sportcentrum Olympia",
+  "kickerEn": "Movenda in Sportcentrum Olympia",
+  "titel": "Professionele begeleiding in een actieve sportomgeving.",
+  "titelEn": "Professional guidance in an active sports environment.",
+  "intro": "In Sportcentrum Olympia in Hasselt vind je kinesitherapie, actieve revalidatie en persoonlijke training van Movenda. Behandeling en training komen hier samen in een toegankelijke omgeving waar sport en bewegen centraal staan.",
+  "introEn": "At Sportcentrum Olympia in Hasselt you find physiotherapy, active rehabilitation and personal training from Movenda. Treatment and training come together in an accessible place where sport and movement are central.",
+  "cta": "Plan je afspraak in Olympia",
+  "ctaEn": "Book in Olympia",
+  "ctaHref": "/team#keuzehulp",
+  "aanbodLink": "Bekijk het aanbod",
+  "aanbodLinkEn": "See the offer",
+  "aboKicker": "Kiné-fitnessabonnement",
+  "aboKickerEn": "Physio fitness membership",
+  "aboTitel": "Revalideer verder, ook buiten je sessies.",
+  "aboTitelEn": "Keep recovering, also outside your sessions.",
+  "aboTekst": "Ben je in revalidatie bij Movenda of het Performance Centre? Via de samenwerking met Olympia kan je een kiné-fitnessabonnement afsluiten. Zo werk je buiten je sessies op eigen tempo verder aan je herstel.",
+  "aboTekstEn": "In rehabilitation at Movenda or the Performance Centre? Through the partnership with Olympia you can take a physio fitness membership and keep working on your recovery at your own pace, outside your sessions.",
+  "aboPunten": [
+    {
+      "tekst": "Toegang tot de volledige fitness van Olympia, exclusief de Milon-cirkel",
+      "tekstEn": "Access to the full Olympia gym, except the Milon circuit"
+    },
+    {
+      "tekst": "Tijdens de openingsuren van Olympia",
+      "tekstEn": "During Olympia's opening hours",
+      "href": "https://oly.be/openingsuren-olympia-hasselt/"
+    },
+    {
+      "tekst": "Alleen met een lopende revalidatie bij Movenda of het Performance Centre",
+      "tekstEn": "Only with ongoing rehabilitation at Movenda or the Performance Centre"
+    },
+    {
+      "tekst": "Aan te vragen via je therapeut",
+      "tekstEn": "Ask your therapist"
+    }
+  ],
+  "aboMeer": "Meer info? ",
+  "aboMeerEn": "More information? ",
+  "aboMeerNa": ", of spreek je therapeut rechtstreeks aan.",
+  "aboMeerNaEn": ", or speak to your therapist.",
+  "aboCta": "Tarief en hoe je het aanvraagt",
+  "aboCtaEn": "Price and how to apply",
+  "aboCtaHref": "/kine-abonnement",
+  "aanbodTitel": "Overig aanbod in Olympia",
+  "aanbodTitelEn": "Also at Olympia",
+  "aanbodMeer": "Meer →",
+  "aanbodMeerEn": "More →",
+  "olympiaLink": "Olympia Hasselt",
+  "olympiaUrl": "https://www.oly.be",
+  "aanbod": [
+    {
+      "titel": "Kinesitherapie en actieve revalidatie",
+      "titelEn": "Physiotherapy and active rehabilitation",
+      "tekst": "Persoonlijke behandeling en actieve opbouw bij pijn, bewegingsproblemen, blessures of herstel na een ingreep.",
+      "tekstEn": "Personal treatment and an active build-up for pain, movement problems, injuries or recovery after surgery.",
+      "href": "/kinesitherapie"
+    },
+    {
+      "titel": "Personal Training",
+      "titelEn": "Personal Training",
+      "tekst": "Individuele training met een plan dat past bij jouw startniveau, doel en belastbaarheid.",
+      "tekstEn": "One-on-one training with a plan that fits your starting point, goal and load tolerance.",
+      "href": "/performance/personal-training"
+    },
+    {
+      "titel": "Duo Training",
+      "titelEn": "Duo Training",
+      "tekst": "Samen trainen met persoonlijke aanpassingen en professionele begeleiding.",
+      "tekstEn": "Train together, with personal adjustments and professional coaching.",
+      "href": "/performance/duotraining"
+    },
+    {
+      "titel": "Sportspecifieke training",
+      "titelEn": "Sport-specific training",
+      "tekst": "Gerichte fysieke voorbereiding op de eisen van jouw sport.",
+      "tekstEn": "Physical preparation aimed at what your sport asks of you.",
+      "href": "/performance/performance-training"
+    },
+    {
+      "titel": "Pre- en postnatale training",
+      "titelEn": "Pre- and postnatal training",
+      "tekst": "Aangepaste training tijdens of na de zwangerschap, afgestemd op jouw fase.",
+      "tekstEn": "Training during or after pregnancy, matched to your stage.",
+      "href": "/training/pre-en-postnatale-training"
+    }
+  ],
+  "waaromTitel": "Waarom Olympia",
+  "waaromTitelEn": "Why Olympia",
+  "waarom": [
+    {
+      "tekst": "Behandeling en training binnen een volwaardige sportomgeving van 600 m²",
+      "tekstEn": "Treatment and training in a full sports space of 600 m²"
+    },
+    {
+      "tekst": "Afzonderlijke kleedkamers en douches voor dames en heren",
+      "tekstEn": "Separate changing rooms and showers for women and men"
+    },
+    {
+      "tekst": "De ruime sportbar van Olympia, waar je voor of na het sporten iets kunt eten of drinken",
+      "tekstEn": "Olympia's sports bar, for something to eat or drink before or after training"
+    },
+    {
+      "tekst": "Toegankelijk voor mensen met een beperking en rolstoelgebruikers",
+      "tekstEn": "Accessible for people with a disability and wheelchair users"
+    },
+    {
+      "tekst": "Persoonlijke begeleiding door kinesitherapeuten en trainers",
+      "tekstEn": "Personal guidance from physiotherapists and trainers"
+    },
+    {
+      "tekst": "Toegankelijk voor dagelijkse beweegdoelen én sportieve ambities",
+      "tekstEn": "For everyday movement goals and sporting ambition"
+    }
+  ],
+  "praktischTitel": "Praktisch",
+  "praktischTitelEn": "Practical",
+  "seoTitel": "Movenda in Olympia | Kinesitherapie & training Hasselt",
+  "seoTitelEn": "Movenda in Olympia | Physiotherapy & training Hasselt",
+  "seoBeschrijving": "Kinesitherapie, training en een kiné-fitnessabonnement bij Movenda in Sportcentrum Olympia, {adres}. Adres, openingsuren en route.",
+  "seoBeschrijvingEn": "Physiotherapy, training and a physio fitness membership at Movenda in Sportcentrum Olympia, {adres}. Address, opening hours and directions."
+}

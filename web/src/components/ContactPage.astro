@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Routebeschrijving from "./Routebeschrijving.astro";
 import ContactVerwijsVraag from "./ContactVerwijsVraag.astro";
-import { getLocaties, getPagina, paginaTekst } from "../lib/content";
+import { formulierTekst, getLocaties, getPagina, getSiteSettings, paginaTekst, uiTekst } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 import { byAppointment, legalCourt, weekday, type Lang } from "../lib/i18n";
 
@@ -18,66 +18,41 @@ const locaties = (await getLocaties()).sort((a, b) =>
   a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0,
 );
 const pagina = await getPagina("contact");
+const settings = await getSiteSettings();
+const f = (key: string) => formulierTekst(pagina, key, lang);
+const gedeeld = (key: string) => uiTekst(settings, "formulier", key, lang);
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
 const olympia = locaties.find((l) => l.slug === "olympia");
 const mapSrc = (adres: string) =>
   `https://maps.google.com/maps?q=${encodeURIComponent(adres)}&z=15&output=embed`;
 
-const copy = en
-  ? {
-      seoTitle: "Contact & appointments | Movenda Hasselt",
-      crumb: "Contact",
-      name: "Name",
-      email: "Email",
-      phone: "Phone",
-      which: "Which location?",
-      reasonLegend: "What would you like to come in for?",
-      physio: "Physiotherapy",
-      training: "Personal training",
-      other: "Other",
-      prescriptionLegend: "Do you have a doctor's prescription?",
-      prescriptionHint: "Only needed for physiotherapy",
-      yes: "Yes",
-      no: "No",
-      na: "Not applicable",
-      message: "Your question or message",
-      send: "Send my question",
-      sending: "Sending…",
-      thanks: "Thanks for your message! We received your request and will get back to you as soon as possible.",
-      fail: "Something went wrong sending this. Please call or email us directly — see the details below.",
-      vat: "VAT",
-      map: "Map",
-      photoMpc: "Entrance of the Performance Centre on Lammerweg",
-      photoOlympia: "Entrance of Movenda on Kuringersteenweg",
-      route: "First visit to Movenda?",
-    }
-  : {
-      seoTitle: "Contact & afspraak | Movenda Hasselt",
-      crumb: "Contact",
-      name: "Naam",
-      email: "E-mail",
-      phone: "Telefoon",
-      which: "Voor welke vestiging?",
-      reasonLegend: "Waarvoor wil je langskomen?",
-      physio: "Kinesitherapie",
-      training: "Personal Training",
-      other: "Andere",
-      prescriptionLegend: "Heb je een voorschrift van je arts?",
-      prescriptionHint: "Enkel van toepassing voor kinesitherapie",
-      yes: "Ja",
-      no: "Nee",
-      na: "Niet van toepassing",
-      message: "Jouw vraag of bericht",
-      send: "Verstuur mijn vraag",
-      sending: "Verzenden…",
-      thanks: "Bedankt voor je bericht! We hebben je aanvraag goed ontvangen en nemen zo snel mogelijk contact met je op.",
-      fail: "Er ging iets mis bij het verzenden. Bel of mail ons gerust rechtstreeks — zie de gegevens hieronder.",
-      vat: "BTW",
-      map: "Kaart",
-      photoMpc: "Ingang van Performance Centre aan de Lammerweg",
-      photoOlympia: "Ingang van Movenda aan de Kuringersteenweg",
-      route: "Eerste keer bij Movenda?",
-    };
+const copy = {
+  seoTitle: paginaTekst(pagina, "seoTitle", lang),
+  crumb: uiTekst(settings, "menu", "contact", lang),
+  name: gedeeld("naam"),
+  email: gedeeld("email"),
+  phone: gedeeld("telefoon"),
+  which: f("welke"),
+  reasonLegend: f("reden"),
+  physio: f("kine"),
+  training: f("training"),
+  other: f("andere"),
+  prescriptionLegend: f("voorschrift"),
+  prescriptionHint: f("voorschriftHint"),
+  yes: gedeeld("ja"),
+  no: gedeeld("nee"),
+  na: gedeeld("nvt"),
+  message: f("bericht"),
+  send: f("verstuur"),
+  sending: f("bezig"),
+  thanks: f("bedankt"),
+  fail: f("mislukt"),
+  vat: f("btw"),
+  map: f("kaart"),
+  photoMpc: f("fotoMpc"),
+  photoOlympia: f("fotoOlympia"),
+  route: f("route"),
+};
 
 const jsonLd = [
   breadcrumbSchema([

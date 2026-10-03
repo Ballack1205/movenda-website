@@ -18,6 +18,7 @@ function once<T>(key: string, load: () => Promise<T>): Promise<T> {
   return hit as Promise<T>;
 }
 import seedSettings from "../content/site-settings.json";
+import seedOlympiaPagina from "../content/olympia-pagina.json";
 import seedFaqs from "../content/faqs.json";
 import seedTeam from "../content/team.json";
 import seedGetuigenissen from "../content/getuigenissen.json";
@@ -153,7 +154,70 @@ export interface Locatie {
   instagram?: string;
   facebook?: string;
   verdiepingNote?: string;
+  /** Marketing copy on /locaties/olympia. Empty fields fall back to the launch sentences. */
+  olympiaPagina?: OlympiaPagina;
   updatedAt?: string;
+}
+
+export interface OlympiaZin {
+  tekst: string;
+  tekstEn?: string;
+  href?: string;
+}
+
+export interface OlympiaAanbodItem {
+  titel: string;
+  titelEn?: string;
+  tekst: string;
+  tekstEn?: string;
+  href: string;
+}
+
+export interface OlympiaPagina {
+  kicker: string;
+  kickerEn: string;
+  titel: string;
+  titelEn: string;
+  intro: string;
+  introEn: string;
+  cta: string;
+  ctaEn: string;
+  ctaHref: string;
+  aanbodLink: string;
+  aanbodLinkEn: string;
+  aboKicker: string;
+  aboKickerEn: string;
+  aboTitel: string;
+  aboTitelEn: string;
+  aboTekst: string;
+  aboTekstEn: string;
+  aboPunten: OlympiaZin[];
+  aboMeer: string;
+  aboMeerEn: string;
+  aboMeerNa: string;
+  aboMeerNaEn: string;
+  aboCta: string;
+  aboCtaEn: string;
+  aboCtaHref: string;
+  aanbodTitel: string;
+  aanbodTitelEn: string;
+  aanbodMeer: string;
+  aanbodMeerEn: string;
+  olympiaLink: string;
+  olympiaUrl: string;
+  aanbod: OlympiaAanbodItem[];
+  waaromTitel: string;
+  waaromTitelEn: string;
+  waarom: OlympiaZin[];
+  praktischTitel: string;
+  praktischTitelEn: string;
+  seoTitel: string;
+  seoTitelEn: string;
+  seoBeschrijving: string;
+  seoBeschrijvingEn: string;
+  hoofdfoto?: string;
+  hoofdfotoHotspot?: { x: number; y: number };
+  hoofdfotoAlt?: string;
 }
 
 export interface Dienst {
@@ -459,6 +523,17 @@ export interface SiteSettings {
   ogAfbeelding?: string;
   /** Google Search Console "HTML tag" verification token (content attribute only). */
   googleSiteVerification?: string;
+  labels: SiteLabels;
+}
+
+export type LabelGroep = "menu" | "footer" | "formulier" | "cookies" | "locatie";
+
+export interface SiteLabels {
+  menu: Record<string, string>;
+  footer: Record<string, string>;
+  formulier: Record<string, string>;
+  cookies: Record<string, string>;
+  locatie: Record<string, string>;
 }
 
 /** Existing Elfsight Instagram Feed on movenda.be ("Untitled Instagram Feed 2"). */
@@ -780,6 +855,21 @@ const locatieProjection = `{
   "geo": { "lat": geo.lat, "lng": geo.lng },
   telefoon, email, uren, urenNote, urenNoteEn, btw, iban, bic, mapsUrl, googleBusinessUrl,
   routebeschrijving, routebeschrijvingEn, rpr, instagram, facebook, verdiepingNote,
+  olympiaPagina{
+    kicker, kickerEn, titel, titelEn, intro, introEn, cta, ctaEn, ctaHref,
+    aanbodLink, aanbodLinkEn,
+    aboKicker, aboKickerEn, aboTitel, aboTitelEn, aboTekst, aboTekstEn,
+    aboPunten[]{ tekst, tekstEn, href },
+    aboMeer, aboMeerEn, aboMeerNa, aboMeerNaEn, aboCta, aboCtaEn, aboCtaHref,
+    aanbodTitel, aanbodTitelEn, aanbodMeer, aanbodMeerEn, olympiaLink, olympiaUrl,
+    aanbod[]{ titel, titelEn, tekst, tekstEn, href },
+    waaromTitel, waaromTitelEn, waarom[]{ tekst, tekstEn },
+    praktischTitel, praktischTitelEn,
+    seoTitel, seoTitelEn, seoBeschrijving, seoBeschrijvingEn,
+    "hoofdfoto": hoofdfoto.asset->url,
+    "hoofdfotoHotspot": hoofdfoto.hotspot{ x, y },
+    hoofdfotoAlt
+  },
   "foto": foto.asset->url,
   "updatedAt": _updatedAt
 }`;
@@ -926,12 +1016,106 @@ const locatieFotoFallback: Record<string, string> = {
   mpc: "/locaties/mpc-ingang.jpg",
 };
 
+function filled(value: string | undefined, fallback: string): string {
+  return value?.trim() || fallback;
+}
+
+function mergeZinnen(live: OlympiaZin[] | undefined, seed: OlympiaZin[]): OlympiaZin[] {
+  if (!live?.length) return seed;
+  return live.map((item, index) => {
+    const fromSeed = seed[index];
+    return {
+      tekst: filled(item.tekst, fromSeed?.tekst || ""),
+      tekstEn: item.tekstEn?.trim() || fromSeed?.tekstEn,
+      href: item.href?.trim() || fromSeed?.href,
+    };
+  });
+}
+
+function mergeAanbod(live: OlympiaAanbodItem[] | undefined, seed: OlympiaAanbodItem[]): OlympiaAanbodItem[] {
+  if (!live?.length) return seed;
+  return live.map((item, index) => {
+    const fromSeed = seed[index];
+    return {
+      titel: filled(item.titel, fromSeed?.titel || ""),
+      titelEn: item.titelEn?.trim() || fromSeed?.titelEn,
+      tekst: filled(item.tekst, fromSeed?.tekst || ""),
+      tekstEn: item.tekstEn?.trim() || fromSeed?.tekstEn,
+      href: filled(item.href, fromSeed?.href || ""),
+    };
+  });
+}
+
+const olympiaSeed = seedOlympiaPagina as OlympiaPagina;
+
+function mergeOlympiaPagina(live?: Partial<OlympiaPagina> | null): OlympiaPagina {
+  const seed = olympiaSeed;
+  return {
+    kicker: filled(live?.kicker, seed.kicker),
+    kickerEn: filled(live?.kickerEn, seed.kickerEn),
+    titel: filled(live?.titel, seed.titel),
+    titelEn: filled(live?.titelEn, seed.titelEn),
+    intro: filled(live?.intro, seed.intro),
+    introEn: filled(live?.introEn, seed.introEn),
+    cta: filled(live?.cta, seed.cta),
+    ctaEn: filled(live?.ctaEn, seed.ctaEn),
+    ctaHref: filled(live?.ctaHref, seed.ctaHref),
+    aanbodLink: filled(live?.aanbodLink, seed.aanbodLink),
+    aanbodLinkEn: filled(live?.aanbodLinkEn, seed.aanbodLinkEn),
+    aboKicker: filled(live?.aboKicker, seed.aboKicker),
+    aboKickerEn: filled(live?.aboKickerEn, seed.aboKickerEn),
+    aboTitel: filled(live?.aboTitel, seed.aboTitel),
+    aboTitelEn: filled(live?.aboTitelEn, seed.aboTitelEn),
+    aboTekst: filled(live?.aboTekst, seed.aboTekst),
+    aboTekstEn: filled(live?.aboTekstEn, seed.aboTekstEn),
+    aboPunten: mergeZinnen(live?.aboPunten, seed.aboPunten),
+    aboMeer: filled(live?.aboMeer, seed.aboMeer),
+    aboMeerEn: filled(live?.aboMeerEn, seed.aboMeerEn),
+    aboMeerNa: filled(live?.aboMeerNa, seed.aboMeerNa),
+    aboMeerNaEn: filled(live?.aboMeerNaEn, seed.aboMeerNaEn),
+    aboCta: filled(live?.aboCta, seed.aboCta),
+    aboCtaEn: filled(live?.aboCtaEn, seed.aboCtaEn),
+    aboCtaHref: filled(live?.aboCtaHref, seed.aboCtaHref),
+    aanbodTitel: filled(live?.aanbodTitel, seed.aanbodTitel),
+    aanbodTitelEn: filled(live?.aanbodTitelEn, seed.aanbodTitelEn),
+    aanbodMeer: filled(live?.aanbodMeer, seed.aanbodMeer),
+    aanbodMeerEn: filled(live?.aanbodMeerEn, seed.aanbodMeerEn),
+    olympiaLink: filled(live?.olympiaLink, seed.olympiaLink),
+    olympiaUrl: filled(live?.olympiaUrl, seed.olympiaUrl),
+    aanbod: mergeAanbod(live?.aanbod, seed.aanbod),
+    waaromTitel: filled(live?.waaromTitel, seed.waaromTitel),
+    waaromTitelEn: filled(live?.waaromTitelEn, seed.waaromTitelEn),
+    waarom: mergeZinnen(live?.waarom, seed.waarom),
+    praktischTitel: filled(live?.praktischTitel, seed.praktischTitel),
+    praktischTitelEn: filled(live?.praktischTitelEn, seed.praktischTitelEn),
+    seoTitel: filled(live?.seoTitel, seed.seoTitel),
+    seoTitelEn: filled(live?.seoTitelEn, seed.seoTitelEn),
+    seoBeschrijving: filled(live?.seoBeschrijving, seed.seoBeschrijving),
+    seoBeschrijvingEn: filled(live?.seoBeschrijvingEn, seed.seoBeschrijvingEn),
+    hoofdfoto: live?.hoofdfoto || undefined,
+    hoofdfotoHotspot: live?.hoofdfoto && live.hoofdfotoHotspot ? live.hoofdfotoHotspot : undefined,
+    hoofdfotoAlt: live?.hoofdfotoAlt?.trim() || undefined,
+  };
+}
+
+/** Dutch field, or the English twin when it is filled in. */
+export function olympiaTekst(pagina: OlympiaPagina, field: keyof OlympiaPagina, lang: Lang): string {
+  const nl = pagina[field];
+  if (lang !== "en" || typeof nl !== "string") return typeof nl === "string" ? nl : "";
+  const en = pagina[`${String(field)}En` as keyof OlympiaPagina];
+  return typeof en === "string" && en.trim() ? en : nl;
+}
+
+export function olympiaZin(zin: OlympiaZin, lang: Lang): string {
+  return lang === "en" ? zin.tekstEn?.trim() || zin.tekst : zin.tekst;
+}
+
 function normalizeLocatie(row: Locatie): Locatie {
   const foto = row.foto || locatieFotoFallback[row.slug];
   // Public names are Movenda (Kuringersteenweg) and Performance Centre (Lammerweg).
   // The slug stays "olympia" so existing URLs and CMS records keep working.
   if (row.slug === "olympia") {
-    return { ...row, naam: "Movenda", korteNaam: "Movenda", foto };
+    return { ...row, naam: "Movenda", korteNaam: "Movenda", foto, olympiaPagina: mergeOlympiaPagina(row.olympiaPagina) };
   }
   if (row.slug === "mpc") {
     return { ...row, korteNaam: "Performance Centre", foto };
@@ -1057,6 +1241,35 @@ function normalizeDienst(row: Dienst): Dienst {
   };
 }
 
+const seedLabels = seedSettings.labels as SiteLabels;
+
+function mergeLabelGroep(live: Record<string, string> | undefined, seed: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(seed)) {
+    const fromLive = live?.[key];
+    out[key] = typeof fromLive === "string" && fromLive.trim() ? fromLive : value;
+  }
+  return out;
+}
+
+function mergeLabels(live?: Partial<SiteLabels> | null): SiteLabels {
+  return {
+    menu: mergeLabelGroep(live?.menu, seedLabels.menu),
+    footer: mergeLabelGroep(live?.footer, seedLabels.footer),
+    formulier: mergeLabelGroep(live?.formulier, seedLabels.formulier),
+    cookies: mergeLabelGroep(live?.cookies, seedLabels.cookies),
+    locatie: mergeLabelGroep(live?.locatie, seedLabels.locatie),
+  };
+}
+
+/** A shared button or menu word. Empty English falls back to Dutch. */
+export function uiTekst(settings: SiteSettings, groep: LabelGroep, key: string, lang: Lang): string {
+  const bag = settings.labels[groep];
+  const nl = bag[key] || "";
+  if (lang !== "en") return nl;
+  return bag[`${key}En`]?.trim() || nl;
+}
+
 export async function getSiteSettings(): Promise<SiteSettings> {
   return once("siteSettings", loadSiteSettings);
 }
@@ -1069,6 +1282,7 @@ async function loadSiteSettings(): Promise<SiteSettings> {
       homeDeuren[]{ korteNaam, korteNaamEn, regel, regelEn, tekst, tekstEn, href, "foto": foto${CMS_FOTO_PROJECTION} },
       homeAanbod[]{ korteNaam, korteNaamEn, regel, regelEn, tekst, tekstEn, href, "foto": foto${CMS_FOTO_PROJECTION} },
       homeBrief,
+      labels,
       teamfoto{ "url": afbeelding.asset->url, alt, bijschrift, "hotspot": afbeelding.hotspot{ x, y } },
       "ogAfbeelding": ogAfbeelding.asset->url }`,
   );
@@ -1154,6 +1368,7 @@ async function loadSiteSettings(): Promise<SiteSettings> {
     homeAanbod: mergeHomeDeuren(settings?.homeAanbod, seedAanbod),
     homeBrief: mergeHomeBrief(settings?.homeBrief),
     ogAfbeelding: settings?.ogAfbeelding || undefined,
+    labels: mergeLabels(settings?.labels),
     // Lives under Analytics in the Studio (same tab as the GA4 id), top-level here.
     googleSiteVerification: (settings?.analytics?.googleSiteVerification as string | undefined)?.trim() || undefined,
   };
@@ -1309,6 +1524,20 @@ export interface PaginaBlok {
   tekstEn?: string;
 }
 
+export interface CookieRij {
+  naam: string;
+  doel: string;
+  doelEn?: string;
+  termijn: string;
+  termijnEn?: string;
+  toestemming?: string;
+  toestemmingEn?: string;
+  /** ga4, umami, instagram, googleReviews, maps, or altijd. */
+  tool?: string;
+  dienstverlener?: string;
+  dienstverlenerEn?: string;
+}
+
 export interface Pagina {
   key: PaginaKey;
   ondertitel?: string;
@@ -1336,6 +1565,16 @@ export interface Pagina {
   teamBlokTekstEn?: string;
   teamBlokCta?: string;
   teamBlokCtaEn?: string;
+  belLabel?: string;
+  belLabelEn?: string;
+  contactLabel?: string;
+  contactLabelEn?: string;
+  /** Button under the intro of the overview pages (kine, performance, b2b). */
+  knopLabel?: string;
+  knopLabelEn?: string;
+  knopUrl?: string;
+  aanbodTitel?: string;
+  aanbodTitelEn?: string;
   /** Sanity CDN URL of the uploaded hero photo; undefined = use the bundled asset. */
   foto?: string;
   /** Hotspot Julie picked in the Studio (0–1), used as crop focal point. */
@@ -1378,6 +1617,25 @@ export interface Pagina {
   perTherapeutTitelEn?: string;
   perTherapeutTekst?: string;
   perTherapeutTekstEn?: string;
+  bijgewerkt?: string;
+  bijgewerktEn?: string;
+  cookiesKolomNaam?: string;
+  cookiesKolomNaamEn?: string;
+  cookiesKolomDoel?: string;
+  cookiesKolomDoelEn?: string;
+  cookiesKolomTermijn?: string;
+  cookiesKolomTermijnEn?: string;
+  cookiesKolomToestemming?: string;
+  cookiesKolomToestemmingEn?: string;
+  cookies: CookieRij[];
+  wieTitel?: string;
+  wieTitelEn?: string;
+  annulatieTitel?: string;
+  annulatieTitelEn?: string;
+  privacyZin?: string;
+  privacyZinEn?: string;
+  /** Page-specific form sentences. Shared name/email live on site settings. */
+  formulier: Record<string, string>;
   /** Contact form: choices for "Hoe ben je bij ons terechtgekomen?" (contact page only). */
   verwijsopties: VerwijsOptie[];
   seoTitle?: string;
@@ -1404,6 +1662,38 @@ type PaginaRow = Partial<Omit<Pagina, "fotoSecundair" | "bannerFoto">> & {
   bannerFoto?: CmsFotoRow;
   heroVideo?: string | null;
 };
+
+function mergeCookies(cms: CookieRij[] | undefined, seed: CookieRij[] | undefined): CookieRij[] {
+  if (!cms?.length) return seed || [];
+  return cms.map((row) => {
+    const fromSeed = seed?.find((item) => item.naam === row.naam);
+    if (!fromSeed) return row;
+    return {
+      ...fromSeed,
+      ...row,
+      doelEn: row.doelEn?.trim() || fromSeed.doelEn,
+      termijnEn: row.termijnEn?.trim() || fromSeed.termijnEn,
+      toestemmingEn: row.toestemmingEn?.trim() || fromSeed.toestemmingEn,
+      dienstverlener: row.dienstverlener?.trim() || fromSeed.dienstverlener,
+      dienstverlenerEn: row.dienstverlenerEn?.trim() || fromSeed.dienstverlenerEn,
+      tool: row.tool?.trim() || fromSeed.tool,
+    };
+  });
+}
+
+function mergeTekstMap(
+  cms: Record<string, string> | undefined,
+  seed: Record<string, string> | undefined,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  const keys = new Set([...Object.keys(seed || {}), ...Object.keys(cms || {})]);
+  for (const key of keys) {
+    if (key.startsWith("_")) continue;
+    const live = cms?.[key];
+    out[key] = typeof live === "string" && live.trim() ? live : seed?.[key] || "";
+  }
+  return out;
+}
 
 function mergeBlokken(cms: PaginaBlok[] | undefined, seed: PaginaBlok[] | undefined): PaginaBlok[] {
   if (!cms?.length) return seed || [];
@@ -1467,6 +1757,14 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
       slogan, sloganEn, afsluiter, afsluiterEn, extraTekst, extraTekstEn, prijsNotitie, prijsNotitieEn, formulierIntro, formulierIntroEn,
       terugbetalingTitel, terugbetalingTitelEn, terugbetalingTekst, terugbetalingTekstEn,
       perTherapeutTitel, perTherapeutTitelEn, perTherapeutTekst, perTherapeutTekstEn,
+      belLabel, belLabelEn, contactLabel, contactLabelEn,
+      knopLabel, knopLabelEn, knopUrl, aanbodTitel, aanbodTitelEn,
+      bijgewerkt, bijgewerktEn,
+      cookiesKolomNaam, cookiesKolomNaamEn, cookiesKolomDoel, cookiesKolomDoelEn,
+      cookiesKolomTermijn, cookiesKolomTermijnEn, cookiesKolomToestemming, cookiesKolomToestemmingEn,
+      cookies[]{ naam, doel, doelEn, termijn, termijnEn, toestemming, toestemmingEn, tool, dienstverlener, dienstverlenerEn },
+      wieTitel, wieTitelEn, annulatieTitel, annulatieTitelEn, privacyZin, privacyZinEn,
+      formulier,
       verwijsopties[]{ label, labelEn, vervolg },
       seoTitle, seoDescription, seoTitleEn, seoDescriptionEn
     }`,
@@ -1541,6 +1839,33 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
     perTherapeutTitelEn: pick("perTherapeutTitelEn"),
     perTherapeutTekst: pick("perTherapeutTekst"),
     perTherapeutTekstEn: pick("perTherapeutTekstEn"),
+    belLabel: pick("belLabel"),
+    belLabelEn: pick("belLabelEn"),
+    contactLabel: pick("contactLabel"),
+    contactLabelEn: pick("contactLabelEn"),
+    knopLabel: pick("knopLabel"),
+    knopLabelEn: pick("knopLabelEn"),
+    knopUrl: pick("knopUrl"),
+    aanbodTitel: pick("aanbodTitel"),
+    aanbodTitelEn: pick("aanbodTitelEn"),
+    bijgewerkt: pick("bijgewerkt"),
+    bijgewerktEn: pick("bijgewerktEn"),
+    cookiesKolomNaam: pick("cookiesKolomNaam"),
+    cookiesKolomNaamEn: pick("cookiesKolomNaamEn"),
+    cookiesKolomDoel: pick("cookiesKolomDoel"),
+    cookiesKolomDoelEn: pick("cookiesKolomDoelEn"),
+    cookiesKolomTermijn: pick("cookiesKolomTermijn"),
+    cookiesKolomTermijnEn: pick("cookiesKolomTermijnEn"),
+    cookiesKolomToestemming: pick("cookiesKolomToestemming"),
+    cookiesKolomToestemmingEn: pick("cookiesKolomToestemmingEn"),
+    cookies: mergeCookies(row?.cookies, seed.cookies),
+    wieTitel: pick("wieTitel"),
+    wieTitelEn: pick("wieTitelEn"),
+    annulatieTitel: pick("annulatieTitel"),
+    annulatieTitelEn: pick("annulatieTitelEn"),
+    privacyZin: pick("privacyZin"),
+    privacyZinEn: pick("privacyZinEn"),
+    formulier: mergeTekstMap(row?.formulier, seed.formulier),
     verwijsopties: withSeedVerwijsopties(
       normalizeVerwijsopties(row?.verwijsopties?.length ? row.verwijsopties : seed.verwijsopties),
       seed.verwijsopties,
@@ -1578,8 +1903,28 @@ type PaginaTekstVeld =
   | "terugbetalingTekst"
   | "perTherapeutTitel"
   | "perTherapeutTekst"
+  | "belLabel"
+  | "contactLabel"
+  | "bijgewerkt"
+  | "cookiesKolomNaam"
+  | "cookiesKolomDoel"
+  | "cookiesKolomTermijn"
+  | "cookiesKolomToestemming"
+  | "wieTitel"
+  | "annulatieTitel"
+  | "privacyZin"
+  | "knopLabel"
+  | "aanbodTitel"
   | "seoTitle"
   | "seoDescription";
+
+/** A sentence from the page's own form copy. Empty English falls back to Dutch. */
+export function formulierTekst(p: Pagina, key: string, lang: Lang = "nl"): string {
+  const nl = p.formulier?.[key] || "";
+  if (lang !== "en") return nl;
+  const en = p.formulier?.[`${key}En`];
+  return en?.trim() || nl;
+}
 
 /** NL field, or its EN twin when present and lang is "en". */
 export function paginaTekst(p: Pagina, field: PaginaTekstVeld, lang: Lang = "nl"): string {

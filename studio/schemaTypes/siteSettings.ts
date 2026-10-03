@@ -1,6 +1,7 @@
 import { CogIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET } from "./helpers";
+import { labelsField } from "./labels";
 import { email, maxItems, metPlek, webadres } from "./regels";
 
 export default defineType({
@@ -9,10 +10,11 @@ export default defineType({
   type: "document",
   icon: CogIcon,
   description:
-    "Algemene teksten, knoppen en blokken die over de hele site terugkomen. Er is maar één document — niet verwijderen. De blokken onder de hero, de slogan en de overige homepage-teksten staan op het tabblad Homepage.",
+    "Algemene teksten, knoppen en blokken die over de hele site terugkomen. Er is maar één document — niet verwijderen. De blokken onder de hero, de slogan en de overige homepage-teksten staan op het tabblad Homepage. Menu, footer, formulieren en de cookiebalk staan op het tabblad Knoppen en labels.",
   groups: [
     { name: "algemeen", title: "Algemeen", default: true },
     { name: "homepage", title: "Homepage" },
+    { name: "labels", title: "Knoppen en labels" },
     { name: "prijzen", title: "Prijzen" },
     { name: "tracking", title: "Analytics & cookies" },
   ],
@@ -452,6 +454,7 @@ export default defineType({
         defineField({ name: "socialProofEn", title: "Social proof (EN)", type: "string" }),
       ],
     }),
+    labelsField,
   ],
   preview: {
     prepare: () => ({ title: "Site-instellingen" }),

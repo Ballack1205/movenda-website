@@ -1,16 +1,14 @@
 ---
 import AanbodOverzicht from "../../components/AanbodOverzicht.astro";
 import Layout from "../../layouts/Layout.astro";
-import { getDienstBySlug, getPagina, paginaAlineas } from "../../lib/content";
+import PaginaFoto from "../../components/PaginaFoto.astro";
+import { getPagina, paginaAlineas, paginaTekst } from "../../lib/content";
 import { getBriefAanbod } from "../../lib/nav";
 import { breadcrumbSchema } from "../../lib/schema";
+import b2bHero from "../../assets/marketing/home-b2b.jpg";
 
 const pagina = await getPagina("b2b");
 const aanbod = (await getBriefAanbod("nl")).find((group) => group.label === "B2B")?.children ?? [];
-const groep = await getDienstBySlug("kleine-groepstraining", "mpc");
-const teamtraining = await getDienstBySlug("teamtraining", "mpc");
-const raw = groep?.afbeelding || teamtraining?.afbeelding || "/dienst-covers/kleine-groepstraining.jpg";
-const foto = raw.startsWith("/") ? raw : `${raw.split("?")[0]}?w=2000&fit=max&auto=format`;
 
 const jsonLd = [
   breadcrumbSchema([
@@ -27,22 +25,29 @@ const jsonLd = [
   altPath="/en/b2b"
   jsonLd={jsonLd}
 >
-  {foto && (
-    <div class="b2b-cover">
-      <img src={foto} alt="Een kleine groep traint in het Performance Centre" width="1600" height="2200" />
-    </div>
-  )}
   <AanbodOverzicht
     class="page-ink"
     kicker={pagina.ondertitel}
     titel={pagina.titel}
     alineaas={paginaAlineas(pagina)}
     blokken={pagina.blokken}
-    aanbodTitel="Aanbod"
+    aanbodTitel={paginaTekst(pagina, "aanbodTitel") || "Aanbod"}
     aanbod={aanbod}
   >
-    <a slot="actions" href="/contact?behandeling=B2B" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
-      Vraag een voorstel op maat
+    <a slot="actions" href={pagina.knopUrl || "/contact?behandeling=B2B"} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
+      {paginaTekst(pagina, "knopLabel") || "Vraag een voorstel op maat"}
     </a>
+    <PaginaFoto
+      slot="media"
+      pagina={pagina}
+      fallback={b2bHero}
+      alt={pagina.fotoAlt || "Training met een bedrijf bij Movenda"}
+      width={640}
+      height={720}
+      widths={[640, 960, 1280]}
+      sizes="(min-width: 1024px) 42vw, 100vw"
+      class="aspect-[4/4.5] w-full object-cover"
+      priority
+    />
   </AanbodOverzicht>
 </Layout>

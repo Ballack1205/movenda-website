@@ -24,6 +24,8 @@ const PAGINA_PATHS: Record<string, string> = {
   "mpc-visie": "/mpc/visie",
   contact: "/contact",
   jobs: "/jobs",
+  privacy: "/privacy",
+  voorwaarden: "/voorwaarden",
 };
 
 function slugOf(doc: PreviewDoc): string | undefined {

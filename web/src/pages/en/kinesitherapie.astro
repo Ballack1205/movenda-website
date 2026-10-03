@@ -7,6 +7,7 @@ import { getPagina, paginaAlineas, paginaTekst } from "../../lib/content";
 import { getBriefAanbod } from "../../lib/nav";
 import { breadcrumbSchema, localBusinessSchema } from "../../lib/schema";
 import { getLocatieBySlug } from "../../lib/content";
+import { withLang } from "../../lib/i18n";
 import kineHero from "../../assets/marketing/kine-hero.jpg";
 
 const locatie = (await getLocatieBySlug("olympia"))!;
@@ -36,12 +37,12 @@ const jsonLd = [
     titel={paginaTekst(pagina, "titel", "en")}
     alineaas={paginaAlineas(pagina, "en")}
     blokken={pagina.blokken}
-    aanbodTitel="Offer"
+    aanbodTitel={paginaTekst(pagina, "aanbodTitel", "en") || "Offer"}
     aanbod={aanbod}
     lang="en"
   >
-    <a slot="actions" href="/en/team#keuzehulp" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
-      Book an appointment
+    <a slot="actions" href={withLang(pagina.knopUrl || "/team#keuzehulp", "en")} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
+      {paginaTekst(pagina, "knopLabel", "en") || "Book an appointment"}
     </a>
     <GoogleReviewBadge slot="actions" />
     <PaginaFoto

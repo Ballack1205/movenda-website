@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { getLocaties, getSiteSettings } from "../lib/content";
+import LinkedText from "./LinkedText.astro";
+import { getLocaties, getPagina, getSiteSettings, paginaBlokKop, paginaBlokTekst, paginaTekst, tekstChunks, uiTekst } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 import { prijzenInfoText, withLang, type Lang } from "../lib/i18n";
 
@@ -13,54 +14,78 @@ const en = lang === "en";
 const prefix = en ? "/en" : "";
 const locaties = await getLocaties();
 const settings = await getSiteSettings();
+const pagina = await getPagina("voorwaarden");
 const annulatie = prijzenInfoText(settings.prijzenInfo, "annulatiebeleid", lang);
 const path = `${prefix}/voorwaarden`;
+const [eerste, ...rest] = pagina.blokken;
+const privacyZin = paginaTekst(pagina, "privacyZin", lang).replace("](/privacy)", `](${withLang("/privacy", lang)})`);
 ---
 
 <Layout
-  title={en ? "Terms | Movenda" : "Algemene voorwaarden | Movenda"}
-  description={en
-    ? "Draft terms for Movenda and the Performance Centre. Still to be reviewed."
-    : "Concept algemene voorwaarden van Movenda en het Performance Centre. Nog na te lezen."}
+  title={paginaTekst(pagina, "seoTitle", lang)}
+  description={paginaTekst(pagina, "seoDescription", lang)}
   path={path}
   altPath={en ? "/voorwaarden" : "/en/voorwaarden"}
   lang={lang}
-  jsonLd={[breadcrumbSchema([{ name: "Home", path: prefix || "/" }, { name: en ? "Terms" : "Algemene voorwaarden", path }])]}
+  jsonLd={[breadcrumbSchema([{ name: "Home", path: prefix || "/" }, { name: paginaTekst(pagina, "titel", lang), path }])]}
 >
   <article class="mx-auto max-w-3xl px-4 py-12">
-    <p class="text-sm font-semibold uppercase tracking-wide">{en ? "Draft" : "Concept"}</p>
-    <h1 class="mt-2 text-3xl font-bold">{en ? "Terms" : "Algemene voorwaarden"}</h1>
-    <p class="mt-4 text-brand-muted">
-      {en
-        ? "This is a draft for the two practices. Have the accountant or a lawyer read it before go-live."
-        : "Dit is een concept voor de twee praktijken. Laat het nalezen door de boekhouder of jurist voor het live gaat."}
-    </p>
-    <h2 class="mt-8 text-xl font-semibold">{en ? "Who" : "Wie"}</h2>
+    {paginaTekst(pagina, "ondertitel", lang) && (
+      <p class="text-sm font-semibold uppercase tracking-wide">{paginaTekst(pagina, "ondertitel", lang)}</p>
+    )}
+    <h1 class="mt-2 text-3xl font-bold">{paginaTekst(pagina, "titel", lang)}</h1>
+    {paginaTekst(pagina, "intro", lang) && <p class="mt-4 text-brand-muted">{paginaTekst(pagina, "intro", lang)}</p>}
+
+    <h2 class="mt-8 text-xl font-semibold">{paginaTekst(pagina, "wieTitel", lang)}</h2>
     <ul class="mt-3 space-y-2 text-brand-muted">
       {locaties.map((locatie) => (
-        <li>{locatie.slug === "mpc" ? "Performance Centre" : "Movenda"} — {locatie.adres} — {en ? "VAT" : "BTW"} {locatie.btw}</li>
+        <li>
+          {locatie.slug === "mpc" ? "Performance Centre" : "Movenda"} — {locatie.adres} — {uiTekst(settings, "locatie", "btw", lang)} {locatie.btw}
+        </li>
       ))}
     </ul>
-    <h2 class="mt-8 text-xl font-semibold">{en ? "Appointments" : "Afspraken"}</h2>
-    <p class="mt-3 text-brand-muted">
-      {en
-        ? "We work by appointment only. A session lasts about 30 minutes, including administration and changing, unless agreed otherwise."
-        : "We werken enkel op afspraak. Een sessie duurt ongeveer 30 minuten, inclusief administratie en omkleden, tenzij anders afgesproken."}
-    </p>
+
+    {eerste && (
+      <section>
+        <h2 class="mt-8 text-xl font-semibold">{paginaBlokKop(eerste, lang)}</h2>
+        {tekstChunks(paginaBlokTekst(eerste, lang)).map((chunk) =>
+          chunk.kind === "ul" ? (
+            <ul class="mt-3 list-disc space-y-1 pl-5 text-brand-muted">
+              {chunk.lines.map((line) => <li><LinkedText text={line} /></li>)}
+            </ul>
+          ) : (
+            chunk.lines.map((line) => <p class="mt-3 text-brand-muted"><LinkedText text={line} /></p>)
+          ),
+        )}
+      </section>
+    )}
+
     {annulatie && (
       <>
-        <h2 class="mt-8 text-xl font-semibold">{en ? "Cancellation" : "Annuleren"}</h2>
+        <h2 class="mt-8 text-xl font-semibold">{paginaTekst(pagina, "annulatieTitel", lang)}</h2>
         <p class="mt-3 text-brand-muted">{annulatie}</p>
       </>
     )}
-    <h2 class="mt-8 text-xl font-semibold">{en ? "Fees and reimbursement" : "Tarieven en terugbetaling"}</h2>
-    <p class="mt-3 text-brand-muted">
-      {en
-        ? "Fees are on the prices page and can differ per therapist. After a number of sessions you receive a certificate of care and claim reimbursement from your health insurance fund yourself."
-        : "De tarieven staan op de prijspagina en kunnen per therapeut verschillen. Je ontvangt na een aantal sessies een getuigschrift en vraagt de terugbetaling zelf aan bij je ziekenfonds."}
-    </p>
-    <p class="mt-6 text-sm text-brand-muted">
-      {en ? "See also the" : "Zie ook de"} <a class="underline" href={withLang("/privacy", lang)}>{en ? "privacy policy" : "privacyverklaring"}</a>.
-    </p>
+
+    {rest.map((blok) => (
+      <section>
+        <h2 class="mt-8 text-xl font-semibold">{paginaBlokKop(blok, lang)}</h2>
+        {tekstChunks(paginaBlokTekst(blok, lang)).map((chunk) =>
+          chunk.kind === "ul" ? (
+            <ul class="mt-3 list-disc space-y-1 pl-5 text-brand-muted">
+              {chunk.lines.map((line) => <li><LinkedText text={line} /></li>)}
+            </ul>
+          ) : (
+            chunk.lines.map((line) => <p class="mt-3 text-brand-muted"><LinkedText text={line} /></p>)
+          ),
+        )}
+      </section>
+    ))}
+
+    {privacyZin && (
+      <p class="mt-6 text-sm text-brand-muted">
+        <LinkedText text={privacyZin} linkClass="underline" />
+      </p>
+    )}
   </article>
 </Layout>

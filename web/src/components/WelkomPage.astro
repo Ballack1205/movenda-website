@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import SectionKicker from "./SectionKicker.astro";
-import { getLocatieBySlug, getPagina, paginaAlineas, paginaTekst } from "../lib/content";
+import { formulierTekst, getLocatieBySlug, getPagina, getSiteSettings, paginaAlineas, paginaTekst, uiTekst } from "../lib/content";
 import type { Lang } from "../lib/i18n";
 
 interface Props {
@@ -13,46 +13,29 @@ const en = lang === "en";
 const prefix = en ? "/en" : "";
 const locatie = (await getLocatieBySlug("olympia"))!;
 const pagina = await getPagina("welkom");
+const settings = await getSiteSettings();
+const f = (key: string) => formulierTekst(pagina, key, lang);
+const gedeeld = (key: string) => uiTekst(settings, "formulier", key, lang);
 const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL || "https://movenda-contact-api.onrender.com";
-const copy = en
-  ? {
-      name: "Name",
-      email: "Email",
-      phone: "Phone",
-      reason: "What would you like to come in for?",
-      physio: "Physiotherapy",
-      training: "Personal training",
-      other: "Other",
-      prescription: "Do you have a doctor's prescription?",
-      hint: "No prescription? No problem, we're happy to help.",
-      yes: "Yes",
-      no: "No",
-      na: "Not applicable",
-      message: "Your question",
-      send: "Send",
-      sending: "Sending…",
-      thanks: "Thanks for your message. We've received your question.",
-      fail: "Something went wrong. Please call us.",
-    }
-  : {
-      name: "Naam",
-      email: "E-mail",
-      phone: "Telefoon",
-      reason: "Waarvoor wil je langskomen?",
-      physio: "Kinesitherapie",
-      training: "Personal training",
-      other: "Andere",
-      prescription: "Heb je een voorschrift van je arts?",
-      hint: "Geen voorschrift? Geen enkel probleem, we helpen je graag verder.",
-      yes: "Ja",
-      no: "Nee",
-      na: "Niet van toepassing",
-      message: "Stel hier je vraag",
-      send: "Versturen",
-      sending: "Verzenden…",
-      thanks: "Bedankt voor je mail. We hebben je vraag goed ontvangen.",
-      fail: "Er ging iets mis. Bel ons gerust.",
-    };
+const copy = {
+  name: gedeeld("naam"),
+  email: gedeeld("email"),
+  phone: gedeeld("telefoon"),
+  reason: f("welkomReden"),
+  physio: f("welkomKine"),
+  training: f("welkomTraining"),
+  other: f("welkomAndere"),
+  prescription: f("welkomVoorschrift"),
+  hint: f("welkomHint"),
+  yes: gedeeld("ja"),
+  no: gedeeld("nee"),
+  na: gedeeld("nvt"),
+  message: f("welkomBericht"),
+  send: f("welkomVerstuur"),
+  sending: f("welkomBezig"),
+  thanks: f("welkomBedankt"),
+  fail: f("welkomMislukt"),
+};
 ---
 
 <Layout

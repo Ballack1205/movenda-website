@@ -14,7 +14,7 @@
 //   the site calls (forms, CTA clicks). It fans out to GA4 + Umami.
 //
 // Settings live in siteSettings -> Analytics (see content.ts AnalyticsSettings).
-import { getSiteSettings } from "../lib/content";
+import { getSiteSettings, uiTekst } from "../lib/content";
 
 export interface Props {
   lang?: "nl" | "en";
@@ -35,22 +35,14 @@ const config = {
 };
 
 const privacyHref = lang === "en" ? "/en/privacy" : "/privacy";
-const t =
-  lang === "en"
-    ? {
-        label: "Cookie preferences",
-        text: "We use a few analytics cookies to see how the site is used and improve it.",
-        privacy: "Privacy",
-        accept: "OK",
-        reject: "No thanks",
-      }
-    : {
-        label: "Cookievoorkeuren",
-        text: "We gebruiken een paar analytische cookies om te zien hoe de site gebruikt wordt en hem te verbeteren.",
-        privacy: "Privacy",
-        accept: "Oké",
-        reject: "Liever niet",
-      };
+const c = (key: string) => uiTekst(settings, "cookies", key, lang);
+const t = {
+  label: c("titel"),
+  text: c("tekst"),
+  privacy: c("privacy"),
+  accept: c("accepteren"),
+  reject: c("weigeren"),
+};
 ---
 
 {enabled && (

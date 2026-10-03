@@ -1,5 +1,5 @@
 ---
-import { getLocaties, getSiteSettings } from "../lib/content";
+import { getLocaties, getSiteSettings, uiTekst } from "../lib/content";
 import { byAppointment, locatieType, weekday } from "../lib/i18n";
 import { MPC_HOST, MOVENDA_PUBLIC_URL, movendaHomeHref, mpcHomePath, THEME } from "../lib/site";
 
@@ -37,13 +37,15 @@ const shortName = (naam: string) => naam.replace(/^Movenda\s*/i, "");
 const placeName = (locatie: { slug: string; naam: string }) =>
   locatie.slug === "mpc" ? "Performance Centre" : locatie.slug === "olympia" ? "Movenda" : shortName(locatie.naam);
 
+const f = (key: string) => uiTekst(settings, "footer", key, lang);
 const t = {
-  hours: lang === "en" ? "Opening hours" : "Openingsuren",
-  follow: lang === "en" ? "Follow us" : "Volg ons",
-  route: lang === "en" ? "Directions" : "Routebeschrijving",
-  vat: lang === "en" ? "VAT" : "BTW",
-  privacy: lang === "en" ? "Privacy" : "Privacy",
-  cookies: lang === "en" ? "Cookie preferences" : "Cookievoorkeuren",
+  hours: f("openingsuren"),
+  follow: f("volgOns"),
+  route: f("route"),
+  vat: f("btw"),
+  privacy: f("privacy"),
+  cookies: f("cookies"),
+  terms: f("voorwaarden"),
 };
 const privacyHref = lang === "en" ? "/en/privacy" : "/privacy";
 // Only offer "change my cookie choice" when there is a consent-gated tool (GA4) to change it for.
@@ -55,44 +57,44 @@ const navLinks = MPC_HOST
   ? lang === "en"
     ? [
         { href: mpcHome, label: "MPC" },
-        { href: "/en/team", label: "Team" },
-        { href: "/en/performance/prijzen", label: "Prices" },
-        { href: "/en/groepslessen", label: "Group classes" },
-        { href: "/en/performance/visie", label: "Vision" },
-        { href: "/en/contact", label: "Contact" },
+        { href: "/en/team", label: f("team") },
+        { href: "/en/performance/prijzen", label: f("prijzen") },
+        { href: "/en/groepslessen", label: f("groepslessen") },
+        { href: "/en/performance/visie", label: f("visie") },
+        { href: "/en/contact", label: f("contact") },
         { href: MOVENDA_PUBLIC_URL, label: "Movenda", external: true },
       ]
     : [
         { href: mpcHome, label: "MPC" },
-        { href: "/team", label: "Team" },
-        { href: "/performance/prijzen", label: "Prijzen" },
-        { href: "/groepslessen", label: "Groepslessen" },
-        { href: "/performance/visie", label: "Visie" },
-        { href: "/contact", label: "Contact" },
+        { href: "/team", label: f("team") },
+        { href: "/performance/prijzen", label: f("prijzen") },
+        { href: "/groepslessen", label: f("groepslessen") },
+        { href: "/performance/visie", label: f("visie") },
+        { href: "/contact", label: f("contact") },
         { href: MOVENDA_PUBLIC_URL, label: "Movenda", external: true },
       ]
   : lang === "en"
     ? [
-        { href: "/en/kinesitherapie", label: "Services" },
-        { href: "/en/over-ons/ons-verhaal", label: "Our story" },
-        { href: "/en/over-ons/onze-visie", label: "Our vision" },
-        { href: footerBrand === "mpc" ? "/en/performance/prijzen" : "/en/prijzen", label: "Prices" },
-        { href: "/en/faq", label: "FAQ" },
-        { href: "/en/team", label: "Team" },
-        { href: "/en/blog", label: lab ? "Insights/Blog" : "Blog" },
-        { href: "/en/jobs", label: "Jobs" },
-        { href: "/en/contact", label: "Contact" },
+        { href: "/en/kinesitherapie", label: f("aanbod") },
+        { href: "/en/over-ons/ons-verhaal", label: f("onsVerhaal") },
+        { href: "/en/over-ons/onze-visie", label: f("onzeVisie") },
+        { href: footerBrand === "mpc" ? "/en/performance/prijzen" : "/en/prijzen", label: f("prijzen") },
+        { href: "/en/faq", label: f("faq") },
+        { href: "/en/team", label: f("team") },
+        { href: "/en/blog", label: lab ? f("insights") : f("blog") },
+        { href: "/en/jobs", label: f("vacatures") },
+        { href: "/en/contact", label: f("contact") },
       ]
     : [
-        { href: "/kinesitherapie", label: "Aanbod" },
-        { href: "/over-ons/ons-verhaal", label: "Ons verhaal" },
-        { href: "/over-ons/onze-visie", label: "Onze visie" },
-        { href: footerBrand === "mpc" ? "/performance/prijzen" : "/prijzen", label: "Prijzen" },
-        { href: "/faq", label: "FAQ" },
-        { href: "/team", label: "Team" },
-        { href: "/blog", label: lab ? "Insights/Blog" : "Blog" },
-        { href: "/jobs", label: "Vacatures" },
-        { href: "/contact", label: "Contact" },
+        { href: "/kinesitherapie", label: f("aanbod") },
+        { href: "/over-ons/ons-verhaal", label: f("onsVerhaal") },
+        { href: "/over-ons/onze-visie", label: f("onzeVisie") },
+        { href: footerBrand === "mpc" ? "/performance/prijzen" : "/prijzen", label: f("prijzen") },
+        { href: "/faq", label: f("faq") },
+        { href: "/team", label: f("team") },
+        { href: "/blog", label: lab ? f("insights") : f("blog") },
+        { href: "/jobs", label: f("vacatures") },
+        { href: "/contact", label: f("contact") },
       ];
 
 // One social row per footer: Movenda's channels on Movenda pages, MPC's own channels on MPC pages.
@@ -138,10 +140,10 @@ const socialClass =
       <p class="mt-4 max-w-xs">
         {lang === "en"
           ? footerBrand === "mpc"
-            ? "Part of Movenda — physiotherapy & personal training in Hasselt, Belgium."
+            ? f("onderdeel")
             : settings.footerTaglineEn
           : footerBrand === "mpc"
-            ? "Onderdeel van Movenda, kinesitherapie & personal training in Hasselt."
+            ? f("onderdeel")
             : settings.footerTagline}
       </p>
 
@@ -319,7 +321,7 @@ const socialClass =
       </p>
       <p class="flex flex-wrap items-center gap-x-4 gap-y-1">
         <a href={privacyHref} class="hover:text-white">{t.privacy}</a>
-        <a href={lang === "en" ? "/en/voorwaarden" : "/voorwaarden"} class="hover:text-white">{lang === "en" ? "Terms" : "Voorwaarden"}</a>
+        <a href={lang === "en" ? "/en/voorwaarden" : "/voorwaarden"} class="hover:text-white">{t.terms}</a>
         {showCookieLink && (
           <a href={privacyHref + "#cookies"} data-consent-open class="hover:text-white">{t.cookies}</a>
         )}

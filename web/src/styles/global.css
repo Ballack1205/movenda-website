@@ -229,23 +229,6 @@ html[data-theme="lab"] .page-ink button.bg-brand-primary:hover {
   color: #161513;
 }
 
-/* B2B overview: the small-group photo sits above the black copy, edge to edge. */
-html[data-theme="lab"] .b2b-cover {
-  position: relative;
-  height: clamp(16rem, 48vh, 36rem);
-  overflow: hidden;
-  background: #161513;
-}
-
-html[data-theme="lab"] .b2b-cover img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 42%;
-}
-
 html[data-theme="lab"] h1 {
   font-size: clamp(2.25rem, 1.2rem + 3vw, 4rem);
   font-weight: 500;

@@ -28,8 +28,26 @@ const seed = JSON.parse(
 
 const BLOCK_FIELDS = ["blokken", "kenmerken", "stappen", "pijlers"];
 
-function withKeys(list, prefix) {
-  return list.map((item, i) => ({ _type: "blok", _key: `${prefix}-${i + 1}`, ...item }));
+function withKeys(list, prefix, type = "blok") {
+  return list.map((item, i) => ({ _type: type, _key: `${prefix}-${i + 1}`, ...item }));
+}
+
+function isEmpty(value) {
+  return value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0);
+}
+
+function collectEmpty(prefix, seedObj, liveObj, set) {
+  for (const [key, value] of Object.entries(seedObj || {})) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    const live = liveObj?.[key];
+    if (Array.isArray(value)) {
+      if (isEmpty(live)) set[path] = value;
+    } else if (value && typeof value === "object") {
+      collectEmpty(path, value, live || {}, set);
+    } else if (isEmpty(live) && value) {
+      set[path] = value;
+    }
+  }
 }
 
 let created = 0;
@@ -41,7 +59,12 @@ for (const [key, fields] of Object.entries(seed)) {
 
   const doc = { _id: id, _type: "pagina", key };
   for (const [field, value] of Object.entries(fields)) {
-    doc[field] = BLOCK_FIELDS.includes(field) ? withKeys(value, field) : value;
+    doc[field] =
+      field === "cookies"
+        ? withKeys(value, "cookie", "cookieRij")
+        : BLOCK_FIELDS.includes(field)
+          ? withKeys(value, field)
+          : value;
   }
 
   if (!existing) {
@@ -96,7 +119,23 @@ for (const id of ["siteSettings", "drafts.siteSettings"]) {
       if (!live[field] && fromSeed[field]) set[`homePijlers.${key}.${field}`] = fromSeed[field];
     }
   }
+  const labelSet = {};
+  collectEmpty("labels", settingsSeed.labels, doc.labels || {}, labelSet);
+  Object.assign(set, labelSet);
   if (Object.keys(set).length === 0) continue;
+  if (Object.keys(labelSet).length > 0) {
+    await client.patch(id).setIfMissing({ labels: {} }).commit();
+    await client
+      .patch(id)
+      .setIfMissing({
+        "labels.menu": {},
+        "labels.footer": {},
+        "labels.formulier": {},
+        "labels.cookies": {},
+        "labels.locatie": {},
+      })
+      .commit();
+  }
   await client.patch(id).setIfMissing({ homeBrief: {}, homePijlers: {} }).commit();
   await client.patch(id).setIfMissing({ "homeBrief.bewijs": {} }).commit();
   const pijlerMissing = {};
@@ -110,4 +149,28 @@ for (const id of ["siteSettings", "drafts.siteSettings"]) {
   }
   await client.patch(id).set(set).commit();
   console.log(`${id}: ${Object.keys(set).length} velden aangevuld.`);
+}
+
+const olympiaSeed = JSON.parse(
+  await readFile(new URL("../../web/src/content/olympia-pagina.json", import.meta.url), "utf8"),
+);
+const tag = (list, type) => list.map((item, i) => ({ _type: type, _key: `${type}-${i + 1}`, ...item }));
+const olympiaDoc = {
+  ...olympiaSeed,
+  aboPunten: tag(olympiaSeed.aboPunten, "olympiaZin"),
+  aanbod: tag(olympiaSeed.aanbod, "olympiaAanbod"),
+  waarom: tag(olympiaSeed.waarom, "olympiaZin"),
+};
+for (const id of ["locatie-olympia", "drafts.locatie-olympia"]) {
+  const doc = await client.getDocument(id).catch(() => null);
+  if (!doc) {
+    if (!id.startsWith("drafts.")) console.log(`${id}: niet gevonden, overgeslagen.`);
+    continue;
+  }
+  const set = {};
+  collectEmpty("olympiaPagina", olympiaDoc, doc.olympiaPagina || {}, set);
+  if (Object.keys(set).length === 0) continue;
+  await client.patch(id).setIfMissing({ olympiaPagina: {} }).commit();
+  await client.patch(id).set(set).commit();
+  console.log(`${id}: ${Object.keys(set).length} Olympia-teksten aangevuld.`);
 }

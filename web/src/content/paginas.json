@@ -28,7 +28,11 @@
     "teamBlokTekst": "{aantal} kinesisten, personal trainers en performance coaches — elk met hun eigen specialisatie.",
     "teamBlokTekstEn": "{aantal} physiotherapists, personal trainers and performance coaches — each with their own specialisation.",
     "teamBlokCta": "Bekijk het volledige team →",
-    "teamBlokCtaEn": "Meet the full team →"
+    "teamBlokCtaEn": "Meet the full team →",
+    "belLabel": "Bel",
+    "belLabelEn": "Call",
+    "contactLabel": "Contacteer ons",
+    "contactLabelEn": "Contact us"
   },
   "over": {
     "titel": "Ons verhaal",
@@ -155,6 +159,11 @@
     "seoDescriptionEn": "Our vision on physiotherapy and performance: from treatment to active rehabilitation, with expertise, personal attention and measurable progress."
   },
   "kinesitherapie": {
+    "knopLabel": "Plan je afspraak",
+    "knopLabelEn": "Book an appointment",
+    "knopUrl": "/team#keuzehulp",
+    "aanbodTitel": "Aanbod",
+    "aanbodTitelEn": "Offer",
     "titel": "Herstel begint met begrijpen hoe jij beweegt.",
     "titelEn": "Recovery starts with understanding how you move.",
     "intro": "Gespecialiseerde kinesitherapie en actieve revalidatie, afgestemd op jouw lichaam, jouw klacht en jouw doel. We helpen je om pijnvrijer te bewegen, vertrouwen terug te winnen en stap voor stap sterker te worden.",
@@ -356,7 +365,43 @@
     "seoTitle": "Contact & afspraak | Movenda Hasselt",
     "seoDescription": "Neem contact op met Movenda (Kuringersteenweg, Hasselt) of het Performance Centre (Lammerweg, Kuringen) via telefoon, e-mail of het contactformulier.",
     "seoTitleEn": "Contact & appointments | Movenda Hasselt",
-    "seoDescriptionEn": "Get in touch with Movenda (Kuringersteenweg, Hasselt) or the Performance Centre (Lammerweg, Kuringen) by phone, email or the contact form."
+    "seoDescriptionEn": "Get in touch with Movenda (Kuringersteenweg, Hasselt) or the Performance Centre (Lammerweg, Kuringen) by phone, email or the contact form.",
+    "formulier": {
+      "welke": "Voor welke vestiging?",
+      "welkeEn": "Which location?",
+      "reden": "Waarvoor wil je langskomen?",
+      "redenEn": "What would you like to come in for?",
+      "kine": "Kinesitherapie",
+      "kineEn": "Physiotherapy",
+      "training": "Personal Training",
+      "trainingEn": "Personal training",
+      "andere": "Andere",
+      "andereEn": "Other",
+      "voorschrift": "Heb je een voorschrift van je arts?",
+      "voorschriftEn": "Do you have a doctor's prescription?",
+      "voorschriftHint": "Enkel van toepassing voor kinesitherapie",
+      "voorschriftHintEn": "Only needed for physiotherapy",
+      "bericht": "Jouw vraag of bericht",
+      "berichtEn": "Your question or message",
+      "verstuur": "Verstuur mijn vraag",
+      "verstuurEn": "Send my question",
+      "bezig": "Verzenden…",
+      "bezigEn": "Sending…",
+      "bedankt": "Bedankt voor je bericht! We hebben je aanvraag goed ontvangen en nemen zo snel mogelijk contact met je op.",
+      "bedanktEn": "Thanks for your message! We received your request and will get back to you as soon as possible.",
+      "mislukt": "Er ging iets mis bij het verzenden. Bel of mail ons gerust rechtstreeks — zie de gegevens hieronder.",
+      "misluktEn": "Something went wrong sending this. Please call or email us directly — see the details below.",
+      "btw": "BTW",
+      "btwEn": "VAT",
+      "kaart": "Kaart",
+      "kaartEn": "Map",
+      "route": "Eerste keer bij Movenda?",
+      "routeEn": "First visit to Movenda?",
+      "fotoOlympia": "Ingang van Movenda aan de Kuringersteenweg",
+      "fotoOlympiaEn": "Entrance of Movenda on Kuringersteenweg",
+      "fotoMpc": "Ingang van Performance Centre aan de Lammerweg",
+      "fotoMpcEn": "Entrance of the Performance Centre on Lammerweg"
+    }
   },
   "jobs": {
     "titel": "Werken bij Movenda",
@@ -371,6 +416,11 @@
     "seoDescriptionEn": "See open vacancies at Movenda in Hasselt and the Movenda Performance Centre in Kuringen."
   },
   "performance": {
+    "knopLabel": "Plan jouw performancetraject",
+    "knopLabelEn": "Plan your performance programme",
+    "knopUrl": "/team#keuzehulp",
+    "aanbodTitel": "Aanbod",
+    "aanbodTitelEn": "Offer",
     "ondertitel": "Performance bij Sportpraktijk Movenda",
     "ondertitelEn": "Performance at Sportpraktijk Movenda",
     "titel": "Progress you can measure.",
@@ -402,6 +452,11 @@
     ]
   },
   "b2b": {
+    "knopLabel": "Vraag een voorstel op maat",
+    "knopLabelEn": "Request a tailored proposal",
+    "knopUrl": "/contact?behandeling=B2B",
+    "aanbodTitel": "Aanbod",
+    "aanbodTitelEn": "Offer",
     "ondertitel": "B2B voor bedrijven",
     "ondertitelEn": "B2B for companies",
     "titel": "Meer beweging en energie op de werkvloer.",
@@ -463,7 +518,33 @@
     "seoTitle": "Groepslessen & lesrooster | Movenda Performance Centre",
     "seoDescription": "GX small group training in Kuringen: maximaal acht deelnemers, met coaching op techniek en niveau. Lesrooster van het Movenda Performance Centre.",
     "seoTitleEn": "Group classes & timetable | Movenda Performance Centre",
-    "seoDescriptionEn": "Timetable of the Movenda Performance Centre in Kuringen: HIIT, Full Body, PowerPlus, boxing, corporate and more. Maximum 8 people."
+    "seoDescriptionEn": "Timetable of the Movenda Performance Centre in Kuringen: HIIT, Full Body, PowerPlus, boxing, corporate and more. Maximum 8 people.",
+    "formulier": {
+      "proefles": "Boek een proefles",
+      "proeflesEn": "Book a trial class",
+      "rooster": "Lesrooster",
+      "roosterEn": "Timetable",
+      "geenLes": "Geen les",
+      "geenLesEn": "No class",
+      "abonnementen": "Memberships",
+      "abonnementenEn": "Memberships",
+      "alleTarieven": "Alle tarieven",
+      "alleTarievenEn": "All fees",
+      "inschrijven": "Inschrijven",
+      "inschrijvenEn": "Sign up",
+      "les": "Les",
+      "lesEn": "Class",
+      "gxBericht": "Bericht",
+      "gxBerichtEn": "Message",
+      "gxVerstuur": "Verstuur",
+      "gxVerstuurEn": "Send",
+      "gxBezig": "Bezig…",
+      "gxBezigEn": "Sending…",
+      "gxGelukt": "Verstuurd. We nemen contact op.",
+      "gxGeluktEn": "Sent. We'll be in touch.",
+      "gxMislukt": "Versturen lukte niet. Mail ons gerust rechtstreeks.",
+      "gxMisluktEn": "Sending failed. Please email us directly."
+    }
   },
   "kine-abonnement": {
     "ondertitel": "Kiné-abonnement",
@@ -552,6 +633,192 @@
     "seoTitle": "Welkom bij Movenda",
     "seoDescription": "Vertel ons waarmee we je kunnen helpen. We nemen zo snel mogelijk contact met je op.",
     "seoTitleEn": "Welcome to Movenda",
-    "seoDescriptionEn": "Tell us how we can help. We'll get back to you as soon as possible."
+    "seoDescriptionEn": "Tell us how we can help. We'll get back to you as soon as possible.",
+    "formulier": {
+      "welkomReden": "Waarvoor wil je langskomen?",
+      "welkomRedenEn": "What would you like to come in for?",
+      "welkomKine": "Kinesitherapie",
+      "welkomKineEn": "Physiotherapy",
+      "welkomTraining": "Personal training",
+      "welkomTrainingEn": "Personal training",
+      "welkomAndere": "Andere",
+      "welkomAndereEn": "Other",
+      "welkomVoorschrift": "Heb je een voorschrift van je arts?",
+      "welkomVoorschriftEn": "Do you have a doctor's prescription?",
+      "welkomHint": "Geen voorschrift? Geen enkel probleem, we helpen je graag verder.",
+      "welkomHintEn": "No prescription? No problem, we're happy to help.",
+      "welkomBericht": "Stel hier je vraag",
+      "welkomBerichtEn": "Your question",
+      "welkomVerstuur": "Versturen",
+      "welkomVerstuurEn": "Send",
+      "welkomBezig": "Verzenden…",
+      "welkomBezigEn": "Sending…",
+      "welkomBedankt": "Bedankt voor je mail. We hebben je vraag goed ontvangen.",
+      "welkomBedanktEn": "Thanks for your message. We've received your question.",
+      "welkomMislukt": "Er ging iets mis. Bel ons gerust.",
+      "welkomMisluktEn": "Something went wrong. Please call us."
+    }
+  },
+  "privacy": {
+    "titel": "Privacy & cookies",
+    "titelEn": "Privacy & cookies",
+    "bijgewerkt": "Laatst bijgewerkt: 11 september 2026",
+    "bijgewerktEn": "Last updated: 11 September 2026",
+    "intro": "Movenda gaat zorgvuldig om met je gegevens. Op deze pagina lees je welke gegevens we via deze website verzamelen, waarom, en welke keuzes je hebt. Dit gaat enkel over de website. Voor je dossier als patiënt of klant gelden de afspraken die je met je therapeut of trainer maakt.",
+    "introEn": "Movenda handles your data with care. This page explains which data we collect through this website, why, and what your choices are. It covers the website only; your patient or client file is governed by the arrangements you make with your therapist or trainer.",
+    "cookiesKolomNaam": "Wat",
+    "cookiesKolomNaamEn": "What",
+    "cookiesKolomDoel": "Doel",
+    "cookiesKolomDoelEn": "Purpose",
+    "cookiesKolomTermijn": "Bewaartermijn",
+    "cookiesKolomTermijnEn": "Kept for",
+    "cookiesKolomToestemming": "Toestemming",
+    "cookiesKolomToestemmingEn": "Consent",
+    "seoTitle": "Privacy & cookies | Movenda Hasselt",
+    "seoTitleEn": "Privacy policy & cookies | Movenda Hasselt",
+    "seoDescription": "Hoe Movenda omgaat met je persoonsgegevens en welke cookies deze website gebruikt.",
+    "seoDescriptionEn": "How Movenda handles your personal data and which cookies this website uses.",
+    "blokken": [
+      {
+        "kop": "1. Wie is verantwoordelijk?",
+        "kopEn": "1. Who is responsible?",
+        "tekst": "Movenda bestaat uit twee vestigingen met elk een eigen onderneming. Beide zijn verwerkingsverantwoordelijke voor de gegevens die je via deze site aan hun vestiging bezorgt.\n{locaties}",
+        "tekstEn": "Movenda has two locations, each with its own company. Both are controller for the data you send to their location through this site.\n{locaties}"
+      },
+      {
+        "kop": "2. Welke gegevens verzamelen we en waarom?",
+        "kopEn": "2. What we collect, and why",
+        "tekst": "Contactformulier — naam, e-mailadres, telefoonnummer, gekozen vestiging en je bericht. We gebruiken dit enkel om je vraag te beantwoorden of een afspraak in te plannen. Grondslag: uitvoering van de overeenkomst / ons gerechtvaardigd belang om op je vraag te reageren. We bewaren deze berichten maximaal 12 maanden, tenzij ze deel worden van je dossier.\n\nNieuwsbrief en inschrijvingen via pop-up — je e-mailadres (en eventueel je naam). Grondslag: jouw toestemming. Je kan je op elk moment uitschrijven via de link onderaan elke mail. E-mails worden verstuurd via Resend (EU/VS, met passende waarborgen).\n\nWebsitestatistieken — anonieme informatie over hoe de site gebruikt wordt (bezochte pagina's, apparaat, herkomst). Zie [cookies](#cookies).\n\nWe verkopen geen gegevens en delen ze niet met derden, behalve met de dienstverleners hieronder die ons helpen de site te laten werken.",
+        "tekstEn": "Contact form — name, email, phone number, chosen location and your message. We use this only to answer your question or book an appointment. Basis: performance of a contract / our legitimate interest in replying. We keep these messages for 12 months at most, unless they become part of your file.\n\nNewsletter and pop-up sign-ups — your email address (and possibly your name). Basis: your consent. You can unsubscribe at any time via the link at the bottom of each email. Emails are sent via Resend (EU/US, with appropriate safeguards).\n\nWebsite statistics — anonymous information about how the site is used (pages visited, device, source). See [cookies](#cookies).\n\nWe do not sell data and we do not share it with third parties, except the providers below who help us run the site."
+      },
+      {
+        "kop": "3. Cookies",
+        "kopEn": "3. Cookies",
+        "tekst": "Deze site werkt zonder cookies tot je zelf een keuze maakt. Uitzonderingen: de kaart op de contactpagina (pas na je klik) en de Instagram-feed op de homepage (laadt als je naar dat blok scrollt). Je cookiekeuze kan je altijd wijzigen via {cookievoorkeuren} onderaan elke pagina.\n{cookies}",
+        "tekstEn": "This site uses no cookies until you make a choice. Exceptions: the map on the contact page (only after you click) and the Instagram feed on the homepage (loads when you scroll to that block). You can change your cookie choice at any time via {cookievoorkeuren} at the bottom of every page.\n{cookies}"
+      },
+      {
+        "kop": "4. Dienstverleners",
+        "kopEn": "4. Providers",
+        "tekst": "- Render (hosting van de website en het contactformulier)\n- Sanity (beheer van de inhoud van de site)\n- Resend (versturen van e-mails uit het contactformulier en de nieuwsbrief)\n{diensten}",
+        "tekstEn": "- Render (hosting of the website and the contact form)\n- Sanity (managing the content of the site)\n- Resend (sending emails from the contact form and the newsletter)\n{diensten}"
+      },
+      {
+        "kop": "5. Je rechten",
+        "kopEn": "5. Your rights",
+        "tekst": "Je hebt het recht op inzage, verbetering en verwijdering van je gegevens, en je kan bezwaar maken tegen de verwerking of je toestemming intrekken. Mail daarvoor naar {email}. We antwoorden binnen 30 dagen. Ben je niet tevreden, dan kan je klacht indienen bij de [Gegevensbeschermingsautoriteit](https://www.gegevensbeschermingsautoriteit.be).",
+        "tekstEn": "You have the right to access, correct and delete your data, and you can object to the processing or withdraw your consent. Email {email} for that. We reply within 30 days. If you are not satisfied, you can file a complaint with the [Data Protection Authority](https://www.gegevensbeschermingsautoriteit.be)."
+      },
+      {
+        "kop": "6. Wijzigingen",
+        "kopEn": "6. Changes",
+        "tekst": "Als we iets aan deze pagina veranderen, passen we de datum bovenaan aan.",
+        "tekstEn": "If we change this page, we update the date at the top."
+      }
+    ],
+    "cookies": [
+      {
+        "naam": "movenda-consent",
+        "doel": "Onthoudt je cookiekeuze (lokale opslag, geen cookie).",
+        "doelEn": "Remembers your cookie choice (local storage, not a cookie).",
+        "termijn": "Tot je hem wist",
+        "termijnEn": "Until you delete it",
+        "toestemming": "Niet nodig (noodzakelijk)",
+        "toestemmingEn": "Not required (necessary)",
+        "tool": "altijd"
+      },
+      {
+        "naam": "_ga, _ga_*",
+        "doel": "Google Analytics 4: anonieme bezoekersstatistieken (IP wordt ingekort). Wordt pas geplaatst nadat je op \"Oké\" klikt.",
+        "doelEn": "Google Analytics 4: anonymous visitor statistics (IP is shortened). Set only after you click OK.",
+        "termijn": "Max. 2 jaar",
+        "termijnEn": "2 years at most",
+        "toestemming": "Ja",
+        "toestemmingEn": "Yes",
+        "tool": "ga4",
+        "dienstverlener": "Google Analytics (statistieken, enkel na toestemming)",
+        "dienstverlenerEn": "Google Analytics (statistics, only after consent)"
+      },
+      {
+        "naam": "Umami",
+        "doel": "Cookieloze, anonieme statistieken. Plaatst geen cookies en slaat geen persoonsgegevens op.",
+        "doelEn": "Cookieless, anonymous statistics. Sets no cookies and stores no personal data.",
+        "termijn": "—",
+        "termijnEn": "—",
+        "toestemming": "Niet nodig",
+        "toestemmingEn": "Not required",
+        "tool": "umami",
+        "dienstverlener": "Umami (cookieloze statistieken)",
+        "dienstverlenerEn": "Umami (cookieless statistics)"
+      },
+      {
+        "naam": "Google Maps",
+        "doel": "De kaart op de contactpagina laadt pas nadat je op \"Kaart tonen\" klikt. Pas dan kan Google cookies plaatsen.",
+        "doelEn": "The map on the contact page loads only after you click to show it. Only then can Google set cookies.",
+        "termijn": "Volgens Google",
+        "termijnEn": "According to Google",
+        "toestemming": "Via je klik",
+        "toestemmingEn": "By your click",
+        "tool": "maps",
+        "dienstverlener": "Google Maps (kaart, enkel na je klik)",
+        "dienstverlenerEn": "Google Maps (map, only after your click)"
+      },
+      {
+        "naam": "Elfsight / Instagram",
+        "doel": "Toont recente posts van Movenda op de homepage. Het script laadt als je naar dat blok scrollt. Elfsight en Instagram kunnen dan cookies plaatsen.",
+        "doelEn": "Shows recent Movenda posts on the homepage. The script loads when you scroll to that block. Elfsight and Instagram may then set cookies.",
+        "termijn": "Volgens Elfsight / Instagram",
+        "termijnEn": "According to Elfsight / Instagram",
+        "toestemming": "Via het tonen van de feed",
+        "toestemmingEn": "By showing the feed",
+        "tool": "instagram",
+        "dienstverlener": "Elfsight (Instagram-feed op de homepage)",
+        "dienstverlenerEn": "Elfsight (Instagram feed on the homepage)"
+      },
+      {
+        "naam": "Elfsight / Google Reviews",
+        "doel": "Toont onze echte Google-reviews op de homepage. Het script laadt als je naar dat blok scrollt. Elfsight en Google kunnen dan cookies plaatsen.",
+        "doelEn": "Shows our real Google reviews on the homepage. The script loads when you scroll to that block. Elfsight and Google may then set cookies.",
+        "termijn": "Volgens Elfsight / Google",
+        "termijnEn": "According to Elfsight / Google",
+        "toestemming": "Via het tonen van de reviews",
+        "toestemmingEn": "By showing the reviews",
+        "tool": "googleReviews",
+        "dienstverlener": "Elfsight (Google Reviews-blok op de homepage)",
+        "dienstverlenerEn": "Elfsight (Google Reviews block on the homepage)"
+      }
+    ]
+  },
+  "voorwaarden": {
+    "ondertitel": "Concept",
+    "ondertitelEn": "Draft",
+    "titel": "Algemene voorwaarden",
+    "titelEn": "Terms",
+    "intro": "Dit is een concept voor de twee praktijken. Laat het nalezen door de boekhouder of jurist voor het live gaat.",
+    "introEn": "This is a draft for the two practices. Have the accountant or a lawyer read it before go-live.",
+    "wieTitel": "Wie",
+    "wieTitelEn": "Who",
+    "annulatieTitel": "Annuleren",
+    "annulatieTitelEn": "Cancellation",
+    "privacyZin": "Zie ook de [privacyverklaring](/privacy).",
+    "privacyZinEn": "See also the [privacy policy](/privacy).",
+    "seoTitle": "Algemene voorwaarden | Movenda",
+    "seoTitleEn": "Terms | Movenda",
+    "seoDescription": "Concept algemene voorwaarden van Movenda en het Performance Centre. Nog na te lezen.",
+    "seoDescriptionEn": "Draft terms for Movenda and the Performance Centre. Still to be reviewed.",
+    "blokken": [
+      {
+        "kop": "Afspraken",
+        "kopEn": "Appointments",
+        "tekst": "We werken enkel op afspraak. Een sessie duurt ongeveer 30 minuten, inclusief administratie en omkleden, tenzij anders afgesproken.",
+        "tekstEn": "We work by appointment only. A session lasts about 30 minutes, including administration and changing, unless agreed otherwise."
+      },
+      {
+        "kop": "Tarieven en terugbetaling",
+        "kopEn": "Fees and reimbursement",
+        "tekst": "De tarieven staan op de prijspagina en kunnen per therapeut verschillen. Je ontvangt na een aantal sessies een getuigschrift en vraagt de terugbetaling zelf aan bij je ziekenfonds.",
+        "tekstEn": "Fees are on the prices page and can differ per therapist. After a number of sessions you receive a certificate of care and claim reimbursement from your health insurance fund yourself."
+      }
+    ]
   }
 }

@@ -1,9 +1,20 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import CmsFoto from "./CmsFoto.astro";
 import GoogleReviewBadge from "./GoogleReviewBadge.astro";
 import Routebeschrijving from "./Routebeschrijving.astro";
 import SectionKicker from "./SectionKicker.astro";
-import { dienstHref, getLocatieBySlug, getTeamledenByLocatie, type LocatieSlug } from "../lib/content";
+import olympiaHero from "../assets/marketing/home-olympia.jpg";
+import {
+  getLocatieBySlug,
+  getSiteSettings,
+  getTeamledenByLocatie,
+  olympiaTekst,
+  olympiaZin,
+  uiTekst,
+  type LocatieSlug,
+  type OlympiaPagina,
+} from "../lib/content";
 import { breadcrumbNode } from "../lib/schema";
 import { byAppointment, floorNote, legalCourt, locatieType, weekday, withLang, type Lang } from "../lib/i18n";
 
@@ -16,6 +27,8 @@ const { lang = "nl", slug } = Astro.props;
 const en = lang === "en";
 const prefix = en ? "/en" : "";
 const locatie = (await getLocatieBySlug(slug as LocatieSlug))!;
+const settings = await getSiteSettings();
+const kop = (key: string) => uiTekst(settings, "locatie", key, lang);
 const team = await getTeamledenByLocatie(slug as LocatieSlug);
 const brand = locatie.brand === "mpc" ? "mpc" : "movenda";
 const path = `${prefix}/locaties/${locatie.slug}`;
@@ -24,94 +37,19 @@ const urenNote = en ? locatie.urenNoteEn || byAppointment(locatie.urenNote, "en"
 const route = en ? locatie.routebeschrijvingEn || locatie.routebeschrijving : locatie.routebeschrijving;
 const locatieForRoute = route === locatie.routebeschrijving ? locatie : { ...locatie, routebeschrijving: route };
 const olympia = locatie.slug === "olympia";
-
-const aanbod = olympia
-  ? [
-      {
-        titel: en ? "Physiotherapy and active rehabilitation" : "Kinesitherapie en actieve revalidatie",
-        intro: en
-          ? "Personal treatment and an active build-up for pain, movement problems, injuries or recovery after surgery."
-          : "Persoonlijke behandeling en actieve opbouw bij pijn, bewegingsproblemen, blessures of herstel na een ingreep.",
-        href: withLang("/kinesitherapie", lang),
-      },
-      {
-        titel: "Personal Training",
-        intro: en
-          ? "One-on-one training with a plan that fits your starting point, goal and load tolerance."
-          : "Individuele training met een plan dat past bij jouw startniveau, doel en belastbaarheid.",
-        href: dienstHref({ slug: "personal-training", categorie: "mpc-training" }, lang),
-      },
-      {
-        titel: "Duo Training",
-        intro: en
-          ? "Train together, with personal adjustments and professional coaching."
-          : "Samen trainen met persoonlijke aanpassingen en professionele begeleiding.",
-        href: dienstHref({ slug: "duotraining", categorie: "mpc-training" }, lang),
-      },
-      {
-        titel: en ? "Sport-specific training" : "Sportspecifieke training",
-        intro: en
-          ? "Physical preparation aimed at what your sport asks of you."
-          : "Gerichte fysieke voorbereiding op de eisen van jouw sport.",
-        href: dienstHref({ slug: "performance-training", categorie: "mpc-training" }, lang),
-      },
-      {
-        titel: en ? "Pre- and postnatal training" : "Pre- en postnatale training",
-        intro: en
-          ? "Training during or after pregnancy, matched to your stage."
-          : "Aangepaste training tijdens of na de zwangerschap, afgestemd op jouw fase.",
-        href: dienstHref({ slug: "pre-en-postnatale-training", categorie: "training" }, lang),
-      },
-    ]
-  : [];
-
-const waarom = olympia
-  ? en
-    ? [
-        "Treatment and training in a full sports space of 600 m²",
-        "Separate changing rooms and showers for women and men",
-        "Olympia's sports bar, for something to eat or drink before or after training",
-        "Accessible for people with a disability and wheelchair users",
-        "Personal guidance from physiotherapists and trainers",
-        "For everyday movement goals and sporting ambition",
-      ]
-    : [
-        "Behandeling en training binnen een volwaardige sportomgeving van 600 m²",
-        "Afzonderlijke kleedkamers en douches voor dames en heren",
-        "De ruime sportbar van Olympia, waar je voor of na het sporten iets kunt eten of drinken",
-        "Toegankelijk voor mensen met een beperking en rolstoelgebruikers",
-        "Persoonlijke begeleiding door kinesitherapeuten en trainers",
-        "Toegankelijk voor dagelijkse beweegdoelen én sportieve ambities",
-      ]
-  : [];
-
-const aboPunten = olympia
-  ? en
-    ? [
-        "Access to the full Olympia gym, except the Milon circuit",
-        "Only with ongoing rehabilitation at Movenda or the Performance Centre",
-        "Ask your therapist",
-      ]
-    : [
-        "Toegang tot de volledige fitness van Olympia, exclusief de Milon-cirkel",
-        "Alleen met een lopende revalidatie bij Movenda of het Performance Centre",
-        "Aan te vragen via je therapeut",
-      ]
-  : [];
+const pagina = locatie.olympiaPagina;
+const zin = (field: keyof OlympiaPagina) => (pagina ? olympiaTekst(pagina, field, lang) : "");
+const localHref = (href: string) => (/^https?:/i.test(href) ? href : withLang(href, lang));
 ---
 
 <Layout
   title={olympia
-    ? en
-      ? "Movenda in Olympia | Physiotherapy & training Hasselt"
-      : "Movenda in Olympia | Kinesitherapie & training Hasselt"
+    ? zin("seoTitel")
     : en
       ? `${locatie.naam} | Address & opening hours`
       : `${locatie.naam} | Adres & openingsuren`}
   description={olympia
-    ? en
-      ? `Physiotherapy, training and a physio fitness membership at Movenda in Sportcentrum Olympia, ${locatie.adres}. Address, opening hours and directions.`
-      : `Kinesitherapie, training en een kiné-fitnessabonnement bij Movenda in Sportcentrum Olympia, ${locatie.adres}. Adres, openingsuren en route.`
+    ? zin("seoBeschrijving").replaceAll("{adres}", locatie.adres)
     : en
       ? `${locatie.naam} — ${typeLabel}, ${locatie.adres}. Opening hours, phone, directions and the team at this location.`
       : `${locatie.naam} — ${locatie.type}, ${locatie.adres}. Openingsuren, telefoon, route en het team op deze locatie.`}
@@ -123,77 +61,82 @@ const aboPunten = olympia
 >
   <div class="locatie-page">
   <section class:list={["mx-auto px-4 py-12", olympia ? "max-w-6xl" : "max-w-4xl"]}>
-    {olympia ? (
+    {olympia && pagina ? (
       <>
-        <p class="brief-kicker">{en ? "Movenda in Sportcentrum Olympia" : "Sportpraktijk Movenda in Sportcentrum Olympia"}</p>
-        <h1 class="brief-title brief-title--wide">
-          {en ? "Professional guidance in an active sports environment." : "Professionele begeleiding in een actieve sportomgeving."}
-        </h1>
-        <p class="brief-lead">
-          {en
-            ? "At Sportcentrum Olympia in Hasselt you find physiotherapy, active rehabilitation and personal training from Movenda. Treatment and training come together in an accessible place where sport and movement are central."
-            : "In Sportcentrum Olympia in Hasselt vind je kinesitherapie, actieve revalidatie en persoonlijke training van Movenda. Behandeling en training komen hier samen in een toegankelijke omgeving waar sport en bewegen centraal staan."}
-        </p>
-        <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
-          <a class="inline-flex min-h-11 items-center rounded-full bg-brand-primary px-6 py-3 font-semibold" href={withLang("/team#keuzehulp", lang)}>
-            {en ? "Book in Olympia" : "Plan je afspraak in Olympia"}
-          </a>
-          <a class="brief-textlink mt-0" href="#aanbod">{en ? "See the offer" : "Bekijk het aanbod"}</a>
+        <div class="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div>
+            <p class="brief-kicker">{zin("kicker")}</p>
+            <h1 class="mt-3">{zin("titel")}</h1>
+            <p class="mt-4 text-brand-muted">{zin("intro")}</p>
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <a class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white" href={localHref(zin("ctaHref"))}>
+                {zin("cta")}
+              </a>
+              <a class="brief-textlink mt-0" href="#aanbod">{zin("aanbodLink")}</a>
+            </div>
+          </div>
+          <CmsFoto
+            foto={pagina.hoofdfoto
+              ? { url: pagina.hoofdfoto, hotspot: pagina.hoofdfotoHotspot, alt: pagina.hoofdfotoAlt }
+              : undefined}
+            fallback={olympiaHero}
+            alt={pagina.hoofdfotoAlt || (en ? "Movenda at Sportcentrum Olympia" : "Movenda in Sportcentrum Olympia")}
+            width={640}
+            height={720}
+            widths={[640, 960, 1280]}
+            sizes="(min-width: 1024px) 42vw, 100vw"
+            class="aspect-[4/4.5] w-full object-cover"
+            priority
+          />
         </div>
 
         <div class="mt-16 max-w-3xl">
-          <p class="brief-kicker">{en ? "Physio fitness membership" : "Kiné-fitnessabonnement"}</p>
-          <h2 class="max-w-xl text-3xl font-semibold tracking-tight">
-            {en ? "Keep recovering, also outside your sessions." : "Revalideer verder, ook buiten je sessies."}
-          </h2>
-          <p class="brief-lead">
-            {en
-              ? "In rehabilitation at Movenda or the Performance Centre? Through the partnership with Olympia you can take a physio fitness membership and keep working on your recovery at your own pace, outside your sessions."
-              : "Ben je in revalidatie bij Movenda of het Performance Centre? Via de samenwerking met Olympia kan je een kiné-fitnessabonnement afsluiten. Zo werk je buiten je sessies op eigen tempo verder aan je herstel."}
-          </p>
+          <h2 class="mb-3 text-xl font-bold">{zin("aboKicker")}</h2>
+          <h2 class="max-w-xl text-3xl font-semibold tracking-tight">{zin("aboTitel")}</h2>
+          <p class="brief-lead">{zin("aboTekst")}</p>
           <ul class="mt-4 list-disc space-y-1 pl-5">
-            <li>{aboPunten[0]}</li>
-            <li>
-              <a href="https://oly.be/openingsuren-olympia-hasselt/" target="_blank" rel="noopener noreferrer">
-                {en ? "During Olympia's opening hours" : "Tijdens de openingsuren van Olympia"}
-              </a>
-            </li>
-            {aboPunten.slice(1).map((punt) => <li>{punt}</li>)}
+            {pagina.aboPunten.map((punt) => (
+              <li>
+                {punt.href ? (
+                  <a href={punt.href} target="_blank" rel="noopener noreferrer">{olympiaZin(punt, lang)}</a>
+                ) : (
+                  olympiaZin(punt, lang)
+                )}
+              </li>
+            ))}
           </ul>
           <p class="brief-lead">
-            {en ? "More information? " : "Meer info? "}
+            {zin("aboMeer")}
             <a href={`mailto:${locatie.email}`}>{locatie.email}</a>
-            {en ? ", or speak to your therapist." : ", of spreek je therapeut rechtstreeks aan."}
+            {zin("aboMeerNa")}
           </p>
-          <a class="brief-textlink" href={withLang("/kine-abonnement", lang)}>
-            {en ? "Price and how to apply" : "Tarief en hoe je het aanvraagt"}
-          </a>
+          <a class="brief-textlink" href={localHref(zin("aboCtaHref"))}>{zin("aboCta")}</a>
         </div>
 
         <div id="aanbod" class="mt-16 scroll-mt-24">
-          <h2 class="text-xl font-bold">{en ? "Also at Olympia" : "Overig aanbod in Olympia"}</h2>
+          <h2 class="text-xl font-bold">{zin("aanbodTitel")}</h2>
           <ul class="mt-4 divide-y divide-white/15 border-y border-white/15">
-            {aanbod.map((item) => (
+            {pagina.aanbod.map((item) => (
               <li>
-                <a class="grid gap-1 py-4 sm:grid-cols-[16rem_1fr_auto] sm:items-baseline sm:gap-6" href={item.href}>
-                  <span class="font-semibold">{item.titel}</span>
-                  <span class="text-sm opacity-80">{item.intro}</span>
-                  <span class="text-sm font-semibold" aria-hidden="true">{en ? "More →" : "Meer →"}</span>
+                <a class="grid gap-1 py-4 sm:grid-cols-[16rem_1fr_auto] sm:items-baseline sm:gap-6" href={localHref(item.href)}>
+                  <span class="font-semibold">{lang === "en" ? item.titelEn || item.titel : item.titel}</span>
+                  <span class="text-sm opacity-80">{lang === "en" ? item.tekstEn || item.tekst : item.tekst}</span>
+                  <span class="text-sm font-semibold" aria-hidden="true">{zin("aanbodMeer")}</span>
                 </a>
               </li>
             ))}
           </ul>
-          <a class="brief-textlink" href="https://www.oly.be" target="_blank" rel="noopener noreferrer">Olympia Hasselt</a>
+          <a class="brief-textlink" href={zin("olympiaUrl")} target="_blank" rel="noopener noreferrer">{zin("olympiaLink")}</a>
         </div>
 
         <div class="mt-16 max-w-3xl">
-          <h2 class="text-xl font-bold">{en ? "Why Olympia" : "Waarom Olympia"}</h2>
+          <h2 class="text-xl font-bold">{zin("waaromTitel")}</h2>
           <ul class="mt-4 list-disc space-y-1 pl-5">
-            {waarom.map((punt) => <li>{punt}</li>)}
+            {pagina.waarom.map((punt) => <li>{olympiaZin(punt, lang)}</li>)}
           </ul>
         </div>
 
-        <h2 class="mt-16 text-xl font-bold">{en ? "Practical" : "Praktisch"}</h2>
+        <h2 class="mt-16 text-xl font-bold">{zin("praktischTitel")}</h2>
       </>
     ) : (
       <>
@@ -209,13 +152,13 @@ const aboPunten = olympia
 
     <div class="mt-8 grid gap-8 sm:grid-cols-2">
       <div>
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{en ? "Address" : "Adres"}</h2>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{kop("adres")}</h2>
         <p class="mt-2">{olympia ? `Olympia · ${locatie.adres}` : locatie.adres}</p>
         <a href={locatie.mapsUrl} target="_blank" rel="noopener noreferrer" class="mt-1 inline-block text-sm font-semibold text-brand-primary hover:underline">
-          {en ? "View on Google Maps →" : "Bekijk op Google Maps →"}
+          {kop("maps")}
         </a>
 
-        <h2 class="mt-6 text-sm font-semibold uppercase tracking-wide text-brand-muted">Contact</h2>
+        <h2 class="mt-6 text-sm font-semibold uppercase tracking-wide text-brand-muted">{kop("contact")}</h2>
         <p class="mt-2">
           <a href={`tel:${locatie.telefoon.replace(/\s+/g, "")}`} class="text-brand-primary hover:underline">{locatie.telefoon}</a>
         </p>
@@ -225,7 +168,7 @@ const aboPunten = olympia
       </div>
 
       <div>
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{en ? "Opening hours" : "Openingsuren"}</h2>
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{kop("openingsuren")}</h2>
         {urenNote && <p class="mt-2 text-sm text-brand-muted">{urenNote}</p>}
         <ul class="mt-2 space-y-1 text-sm">
           {locatie.uren.map((u) => (
@@ -239,10 +182,10 @@ const aboPunten = olympia
       </div>
     </div>
 
-    <Routebeschrijving locatie={locatieForRoute} lang={lang} title={en ? "Directions" : "Route"} class="mt-8" />
+    <Routebeschrijving locatie={locatieForRoute} lang={lang} title={kop("route")} class="mt-8" />
 
     <p class="mt-8 text-xs text-brand-muted">
-      {en ? "VAT" : "BTW"} {locatie.btw}
+      {kop("btw")} {locatie.btw}
       {locatie.iban && <> · IBAN {locatie.iban}</>}
       {locatie.bic && <> · BIC {locatie.bic}</>}
       {legalCourt(locatie.rpr, lang) && <> · {legalCourt(locatie.rpr, lang)}</>}
@@ -250,7 +193,7 @@ const aboPunten = olympia
 
     {team.length > 0 && (
       <div class="mt-12">
-        <h2 class="text-xl font-bold">{en ? "Team at this location" : "Team op deze locatie"}</h2>
+        <h2 class="text-xl font-bold">{kop("team")}</h2>
         <div class="mt-4 grid gap-4 sm:grid-cols-2">
           {team.map((lid) => (
             <a href={withLang(`/team/${lid.slug}`, lang)} class="rounded-xl border border-brand-border p-4 transition hover:border-brand-primary">

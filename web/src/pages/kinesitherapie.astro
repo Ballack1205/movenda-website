@@ -3,7 +3,7 @@ import AanbodOverzicht from "../components/AanbodOverzicht.astro";
 import Layout from "../layouts/Layout.astro";
 import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import PaginaFoto from "../components/PaginaFoto.astro";
-import { getLocatieBySlug, getPagina, paginaAlineas } from "../lib/content";
+import { getLocatieBySlug, getPagina, paginaAlineas, paginaTekst } from "../lib/content";
 import { getBriefAanbod } from "../lib/nav";
 import { breadcrumbSchema, localBusinessSchema } from "../lib/schema";
 import kineHero from "../assets/marketing/kine-hero.jpg";
@@ -34,11 +34,11 @@ const jsonLd = [
     titel={pagina.titel}
     alineaas={paginaAlineas(pagina)}
     blokken={pagina.blokken}
-    aanbodTitel="Aanbod"
+    aanbodTitel={paginaTekst(pagina, "aanbodTitel") || "Aanbod"}
     aanbod={aanbod}
   >
-    <a slot="actions" href="/team#keuzehulp" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
-      Plan je afspraak
+    <a slot="actions" href={pagina.knopUrl || "/team#keuzehulp"} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
+      {paginaTekst(pagina, "knopLabel") || "Plan je afspraak"}
     </a>
     <GoogleReviewBadge slot="actions" />
     <PaginaFoto

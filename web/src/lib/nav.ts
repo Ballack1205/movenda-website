@@ -16,6 +16,7 @@ import {
   getSiteSettings,
   getSportaanbod,
   localizeInternalHref,
+  uiTekst,
   type Dienst,
   type DienstCategorie,
   type Locatie,
@@ -109,9 +110,9 @@ function linksBySlugs(
 }
 
 /** Julie's header (lab/brief). Only pages that already exist. Rehab is one URL. */
-function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
+function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink, settings: SiteSettings): NavModel {
   const p = (href: string) => localizeInternalHref(href, lang);
-  const en = lang === "en";
+  const w = (key: string) => uiTekst(settings, "menu", key, lang);
   const rehabHref = p("/performance/sportrevalidatie");
   const kine: NavLink[] = [
     ...linksBySlugs(
@@ -123,7 +124,7 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
       ],
       lang,
     ),
-    { href: rehabHref, label: en ? "Sports physiotherapy and rehab" : "Sportkinesitherapie" },
+    { href: rehabHref, label: w("sportkine") },
     ...linksBySlugs(
       diensten,
       [
@@ -144,11 +145,11 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
   const train = linksBySlugs(
     diensten,
     [
-      { slug: "personal-training", categorie: "mpc-training", label: en ? "Personal training" : "Personal Training" },
-      { slug: "performance-training", categorie: "mpc-training", label: en ? "Performance coaching" : "Performance Coaching" },
-      { slug: "high-performance-coaching", categorie: "mpc-training", label: en ? "High performance coaching" : "High Performance Coaching" },
-      { slug: "duotraining", categorie: "mpc-training", label: en ? "Duo training" : "Duo Training" },
-      { slug: "boxing-1-on-1", categorie: "mpc-training", label: "Boxing 1-on-1" },
+      { slug: "personal-training", categorie: "mpc-training", label: w("personalTraining") },
+      { slug: "performance-training", categorie: "mpc-training", label: w("performanceCoaching") },
+      { slug: "high-performance-coaching", categorie: "mpc-training", label: w("highPerformance") },
+      { slug: "duotraining", categorie: "mpc-training", label: w("duoTraining") },
+      { slug: "boxing-1-on-1", categorie: "mpc-training", label: w("boxing") },
       { slug: "pre-en-postnatale-training", categorie: "training" },
     ],
     lang,
@@ -156,19 +157,19 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
   const test = linksBySlugs(
     diensten,
     [
-      { slug: "sportspecifieke-screening", categorie: "training", label: en ? "Performance screening" : "Performance Screening" },
+      { slug: "sportspecifieke-screening", categorie: "training", label: w("performanceScreening") },
       { slug: "inspanningstesten", categorie: "training" },
-      { slug: "loopanalyse-ontracx", categorie: "mpc-training", label: en ? "Running analysis with OnTracx" : "Loopanalyse met OnTracx" },
-      { slug: "vald-screening", categorie: "mpc-training", label: en ? "VALD screening" : "VALD Screening" },
+      { slug: "loopanalyse-ontracx", categorie: "mpc-training", label: w("loopanalyse") },
+      { slug: "vald-screening", categorie: "mpc-training", label: w("vald") },
     ],
     lang,
   );
   // Julie, 2 Oct: of the B2B formats, only 1 (Corporate Coaching) and 2 (training at work) go online.
   const b2b: NavLink[] = [
-    { href: p("/b2b"), label: en ? "Corporate coaching" : "Corporate Coaching" },
+    { href: p("/b2b"), label: w("corporate") },
     ...linksBySlugs(
       diensten,
-      [{ slug: "on-site-workouts", categorie: "mpc-groep", label: en ? "Training at work" : "Training op het werk" }],
+      [{ slug: "on-site-workouts", categorie: "mpc-groep", label: w("trainingWerk") }],
       lang,
     ),
   ];
@@ -187,12 +188,12 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
       ],
       lang,
     ),
-    { href: p("/groepslessen"), label: en ? "Timetable" : "Lessenrooster" },
+    { href: p("/groepslessen"), label: w("lessenrooster") },
   ];
   const keuzehulp = `${p("/team")}#keuzehulp`;
   const afspraak: NavItem = {
     href: keuzehulp,
-    label: en ? "Book" : "Afspraak",
+    label: w("afspraak"),
     button: true,
   };
 
@@ -200,31 +201,31 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
     items: [
       {
         href: p("/kinesitherapie"),
-        label: en ? "Offer" : "Aanbod",
+        label: w("aanbod"),
         side: "start",
         groups: [
-          { label: en ? "Physiotherapy" : "Kinesitherapie", href: p("/kinesitherapie"), children: kine },
+          { label: w("kinesitherapie"), href: p("/kinesitherapie"), children: kine },
           {
-            label: "Performance",
+            label: w("performance"),
             href: p("/performance"),
             children: [
-              { href: "", label: "Train", heading: true },
+              { href: "", label: w("train"), heading: true },
               ...train,
-              { href: "", label: en ? "Test and analysis" : "Test en analyse", heading: true },
+              { href: "", label: w("test"), heading: true },
               ...test,
-              { href: rehabHref, label: en ? "Rehab" : "Revalidatie", heading: true },
+              { href: rehabHref, label: w("revalidatie"), heading: true },
             ],
           },
-          { label: "GX", href: p("/groepslessen"), children: gx },
-          { label: "B2B", href: p("/b2b"), children: b2b },
+          { label: w("gx"), href: p("/groepslessen"), children: gx },
+          { label: w("b2b"), href: p("/b2b"), children: b2b },
           {
-            label: "Olympia",
+            label: w("olympia"),
             href: p("/locaties/olympia"),
             children: [
-              { href: p("/kine-abonnement"), label: en ? "Physio membership" : "Kiné-abonnement" },
+              { href: p("/kine-abonnement"), label: w("kineAbonnement") },
               {
                 href: "https://www.oly.be",
-                label: en ? "About this location" : "Over deze locatie",
+                label: w("overLocatie"),
                 external: true,
               },
             ],
@@ -233,19 +234,19 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
       },
       {
         href: p("/team"),
-        label: "Team",
+        label: w("team"),
       },
       {
         href: p("/over-ons/ons-verhaal"),
-        label: en ? "About us" : "Over ons",
+        label: w("overOns"),
         children: [
-          { href: p("/over-ons/ons-verhaal"), label: en ? "Our story" : "Ons verhaal" },
-          { href: p("/over-ons/onze-visie"), label: en ? "Our vision" : "Onze visie" },
-          { href: p("/team"), label: "Team" },
-          { href: p("/events"), label: "Events" },
-          { href: p("/prijzen"), label: en ? "Prices" : "Prijzen" },
-          { href: p("/faq"), label: "FAQ" },
-          { href: p("/jobs"), label: en ? "Jobs" : "Vacatures" },
+          { href: p("/over-ons/ons-verhaal"), label: w("onsVerhaal") },
+          { href: p("/over-ons/onze-visie"), label: w("onzeVisie") },
+          { href: p("/team"), label: w("team") },
+          { href: p("/events"), label: w("events") },
+          { href: p("/prijzen"), label: w("prijzen") },
+          { href: p("/faq"), label: w("faq") },
+          { href: p("/jobs"), label: w("vacatures") },
         ],
       },
       contact,
@@ -258,10 +259,12 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink): NavModel {
 
 /** Same Aanbod lists the header uses, so overview pages do not keep a second copy. */
 export async function getBriefAanbod(lang: Lang): Promise<NavGroup[]> {
-  const { diensten } = await loadNavData();
-  const contact: NavLink =
-    lang === "en" ? { href: "/en/contact", label: "Contact" } : { href: "/contact", label: "Contact" };
-  return briefNav(diensten, lang, contact).items[0]?.groups ?? [];
+  const { diensten, settings } = await loadNavData();
+  const contact: NavLink = {
+    href: lang === "en" ? "/en/contact" : "/contact",
+    label: uiTekst(settings, "menu", "contact", lang),
+  };
+  return briefNav(diensten, lang, contact, settings).items[0]?.groups ?? [];
 }
 
 function sportaanbodLinks(items: SportaanbodItem[], lang: Lang = "nl"): NavLink[] {
@@ -279,19 +282,26 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
   const locatie = locaties.find((l) => l.slug === (brand === "mpc" ? "mpc" : "olympia"));
   const phone = locatie?.telefoon;
 
-  const contact: NavLink =
-    lang === "en" ? { href: "/en/contact", label: "Contact" } : { href: "/contact", label: "Contact" };
+  const w = (key: string) => uiTekst(settings, "menu", key, lang);
+  const contact: NavLink = {
+    href: lang === "en" ? "/en/contact" : "/contact",
+    label: w("contact"),
+  };
 
   const { booking } = settings;
   const cta: NavCta =
     booking.enabled && booking.url
-      ? { href: booking.url, label: lang === "en" ? "Book an appointment" : booking.label, external: true }
+      ? {
+          href: booking.url,
+          label: lang === "en" ? booking.labelEn?.trim() || "Book an appointment" : booking.label,
+          external: true,
+        }
       : contact;
   // When booking is the CTA, Contact goes back into the list as a plain link.
   const contactItem: NavItem[] = cta === contact ? [] : [contact];
 
   if (THEME === "lab") {
-    const model = briefNav(diensten, lang, contact);
+    const model = briefNav(diensten, lang, contact, settings);
     return { ...model, phone };
   }
 
@@ -301,36 +311,36 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
         items: [
           {
             href: "/en/performance#training",
-            label: "Training",
+            label: w("training"),
             children: [
-              { href: "/en/performance#training", label: "All training" },
+              { href: "/en/performance#training", label: w("alleTraining") },
               ...dienstLinks(diensten, "mpc-training", "en"),
             ],
           },
           {
             href: "/en/performance#sportrevalidatie",
-            label: "Sports rehabilitation",
+            label: w("sportrevalidatie"),
             children: [
-              { href: "/en/performance#sportrevalidatie", label: "All sports rehabilitation" },
+              { href: "/en/performance#sportrevalidatie", label: w("alleSportrevalidatie") },
               ...dienstLinks(diensten, "mpc-rehab", "en"),
             ],
           },
           {
             href: "/en/groepslessen",
-            label: "Group classes",
+            label: w("groepslessen"),
             children: [
-              { href: "/en/groepslessen", label: "Timetable & all classes" },
+              { href: "/en/groepslessen", label: w("lesroosterAlle") },
               ...dienstLinks(diensten, "mpc-groep", "en"),
             ],
           },
-          { href: "/en/performance/prijzen", label: "Prices" },
-          { href: "/en/team", label: "Team" },
+          { href: "/en/performance/prijzen", label: w("prijzen") },
+          { href: "/en/team", label: w("team") },
           {
             href: "/en/performance/visie",
-            label: "About MPC",
+            label: w("overMpc"),
             children: [
-              { href: "/en/performance/visie", label: "Vision" },
-              { href: "/en/performance#faq", label: "FAQ" },
+              { href: "/en/performance/visie", label: w("visie") },
+              { href: "/en/performance#faq", label: w("faq") },
             ],
           },
           (() => {
@@ -348,36 +358,36 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
       items: [
         {
           href: "/performance#training",
-          label: "Training",
+          label: w("training"),
           children: [
-            { href: "/performance#training", label: "Alle training" },
+            { href: "/performance#training", label: w("alleTraining") },
             ...dienstLinks(diensten, "mpc-training", "nl"),
           ],
         },
         {
           href: "/performance#sportrevalidatie",
-          label: "Sportrevalidatie",
+          label: w("sportrevalidatie"),
           children: [
-            { href: "/performance#sportrevalidatie", label: "Alle sportrevalidatie" },
+            { href: "/performance#sportrevalidatie", label: w("alleSportrevalidatie") },
             ...dienstLinks(diensten, "mpc-rehab", "nl"),
           ],
         },
         {
           href: "/groepslessen",
-          label: "Groepslessen",
+          label: w("groepslessen"),
           children: [
-            { href: "/groepslessen", label: "Lesrooster & alle lessen" },
+            { href: "/groepslessen", label: w("lesroosterAlle") },
             ...dienstLinks(diensten, "mpc-groep", "nl"),
           ],
         },
-        { href: "/performance/prijzen", label: "Prijzen" },
-        { href: "/team", label: "Team" },
+        { href: "/performance/prijzen", label: w("prijzen") },
+        { href: "/team", label: w("team") },
         {
           href: "/performance/visie",
-          label: "Over MPC",
+          label: w("overMpc"),
           children: [
-            { href: "/performance/visie", label: "Visie" },
-            { href: "/performance#faq", label: "Veelgestelde vragen" },
+            { href: "/performance/visie", label: w("visie") },
+            { href: "/performance#faq", label: w("veelgesteldeVragen") },
           ],
         },
         (() => {
@@ -397,28 +407,28 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
       items: [
         {
           href: "/en/kinesitherapie",
-          label: "Physiotherapy",
+          label: w("kinesitherapie"),
           children: [
-            { href: "/en/kinesitherapie", label: "All treatments" },
+            { href: "/en/kinesitherapie", label: w("alleBehandelingen") },
             ...dienstLinks(diensten, "kine", "en"),
           ],
         },
         {
           href: "/en/training",
-          label: "Training",
-          children: [{ href: "/en/training", label: "All training" }, ...dienstLinks(diensten, "training", "en")],
+          label: w("training"),
+          children: [{ href: "/en/training", label: w("alleTrainingen") }, ...dienstLinks(diensten, "training", "en")],
         },
-        { href: "/en/team", label: "Team" },
-        { href: "/en/prijzen", label: "Prices" },
+        { href: "/en/team", label: w("team") },
+        { href: "/en/prijzen", label: w("prijzen") },
         {
           href: "/en/over-ons/ons-verhaal",
-          label: "About us",
+          label: w("overOns"),
           children: [
-            { href: "/en/over-ons/ons-verhaal", label: "Our story" },
-            { href: "/en/over-ons/onze-visie", label: "Our vision" },
-            { href: "/en/faq", label: "FAQ" },
-            { href: "/en/blog", label: "Blog" },
-            { href: "/en/jobs", label: "Jobs" },
+            { href: "/en/over-ons/ons-verhaal", label: w("onsVerhaal") },
+            { href: "/en/over-ons/onze-visie", label: w("onzeVisie") },
+            { href: "/en/faq", label: w("faq") },
+            { href: "/en/blog", label: w("blog") },
+            { href: "/en/jobs", label: w("vacatures") },
             ...sportaanbodLinks(sportaanbod, "en"),
           ],
         },
@@ -435,28 +445,28 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
     items: [
       {
         href: "/kinesitherapie",
-        label: "Kinesitherapie",
+        label: w("kinesitherapie"),
         children: [
-          { href: "/kinesitherapie", label: "Alle behandelingen" },
+          { href: "/kinesitherapie", label: w("alleBehandelingen") },
           ...dienstLinks(diensten, "kine", "nl"),
         ],
       },
       {
         href: "/training",
-        label: "Training",
-        children: [{ href: "/training", label: "Alle trainingen" }, ...dienstLinks(diensten, "training", "nl")],
+        label: w("training"),
+        children: [{ href: "/training", label: w("alleTrainingen") }, ...dienstLinks(diensten, "training", "nl")],
       },
-      { href: "/team", label: "Team" },
-      { href: "/prijzen", label: "Prijzen" },
+      { href: "/team", label: w("team") },
+      { href: "/prijzen", label: w("prijzen") },
       {
         href: "/over-ons/ons-verhaal",
-        label: "Over ons",
+        label: w("overOns"),
         children: [
-          { href: "/over-ons/ons-verhaal", label: "Ons verhaal" },
-          { href: "/over-ons/onze-visie", label: "Onze visie" },
-          { href: "/faq", label: "Veelgestelde vragen" },
-          { href: "/blog", label: "Blog" },
-          { href: "/jobs", label: "Vacatures" },
+          { href: "/over-ons/ons-verhaal", label: w("onsVerhaal") },
+          { href: "/over-ons/onze-visie", label: w("onzeVisie") },
+          { href: "/faq", label: w("veelgesteldeVragen") },
+          { href: "/blog", label: w("blog") },
+          { href: "/jobs", label: w("vacatures") },
           ...sportaanbodLinks(sportaanbod, "nl"),
         ],
       },

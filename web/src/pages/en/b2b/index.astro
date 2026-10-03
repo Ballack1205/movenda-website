@@ -1,16 +1,15 @@
 ---
 import AanbodOverzicht from "../../../components/AanbodOverzicht.astro";
 import Layout from "../../../layouts/Layout.astro";
-import { getDienstBySlug, getPagina, paginaAlineas, paginaTekst } from "../../../lib/content";
+import PaginaFoto from "../../../components/PaginaFoto.astro";
+import { getPagina, paginaAlineas, paginaTekst } from "../../../lib/content";
 import { getBriefAanbod } from "../../../lib/nav";
 import { breadcrumbSchema } from "../../../lib/schema";
+import { withLang } from "../../../lib/i18n";
+import b2bHero from "../../../assets/marketing/home-b2b.jpg";
 
 const pagina = await getPagina("b2b");
 const aanbod = (await getBriefAanbod("en")).find((group) => group.label === "B2B")?.children ?? [];
-const groep = await getDienstBySlug("kleine-groepstraining", "mpc");
-const teamtraining = await getDienstBySlug("teamtraining", "mpc");
-const raw = groep?.afbeelding || teamtraining?.afbeelding || "/dienst-covers/kleine-groepstraining.jpg";
-const foto = raw.startsWith("/") ? raw : `${raw.split("?")[0]}?w=2000&fit=max&auto=format`;
 
 const jsonLd = [
   breadcrumbSchema([
@@ -28,23 +27,30 @@ const jsonLd = [
   lang="en"
   jsonLd={jsonLd}
 >
-  {foto && (
-    <div class="b2b-cover">
-      <img src={foto} alt="A small group training in the Performance Centre" width="1600" height="2200" />
-    </div>
-  )}
   <AanbodOverzicht
     class="page-ink"
     kicker={paginaTekst(pagina, "ondertitel", "en")}
     titel={paginaTekst(pagina, "titel", "en")}
     alineaas={paginaAlineas(pagina, "en")}
     blokken={pagina.blokken}
-    aanbodTitel="Offer"
+    aanbodTitel={paginaTekst(pagina, "aanbodTitel", "en") || "Offer"}
     aanbod={aanbod}
     lang="en"
   >
-    <a slot="actions" href="/en/contact?behandeling=B2B" class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
-      Request a tailored proposal
+    <a slot="actions" href={withLang(pagina.knopUrl || "/contact?behandeling=B2B", "en")} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
+      {paginaTekst(pagina, "knopLabel", "en") || "Request a tailored proposal"}
     </a>
+    <PaginaFoto
+      slot="media"
+      pagina={pagina}
+      fallback={b2bHero}
+      alt={pagina.fotoAlt || "Company training at Movenda"}
+      width={640}
+      height={720}
+      widths={[640, 960, 1280]}
+      sizes="(min-width: 1024px) 42vw, 100vw"
+      class="aspect-[4/4.5] w-full object-cover"
+      priority
+    />
   </AanbodOverzicht>
 </Layout>
