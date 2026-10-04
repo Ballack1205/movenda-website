@@ -1,7 +1,7 @@
 // "Open preview" in the document menu — Julie can jump to the live page
-// she is editing. Preview host is the pitch site until go-live.
+// she is editing. Preview host is the brief site until go-live.
 
-export const PREVIEW_URL = (process.env.SANITY_STUDIO_PREVIEW_URL || "https://movenda-preview.onrender.com").replace(
+export const PREVIEW_URL = (process.env.SANITY_STUDIO_PREVIEW_URL || "https://movenda-brief.onrender.com").replace(
   /\/+$/,
   "",
 );

@@ -3,7 +3,7 @@
 // sitemap all read from here so a DNS cutover is env vars in Render — nothing
 // hardcoded in pages.
 
-export const PREVIEW_URL = "https://movenda-preview.onrender.com";
+export const PREVIEW_URL = "https://movenda-brief.onrender.com";
 export const OLD_MOVENDA_URL = "https://www.movenda.be";
 
 export type Theme = "current" | "lab";

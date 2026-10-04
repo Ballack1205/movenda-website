@@ -6,7 +6,7 @@ import sitemap from "@astrojs/sitemap";
 // PUBLIC_SITE_URL is set as a Render env var; falls back to the preview
 // URL locally. Flip PUBLIC_NOINDEX to "false" only after go-live.
 // src/lib/site.ts reads the same variables for canonical/JSON-LD/robots.
-const site = process.env.PUBLIC_SITE_URL || "https://movenda-preview.onrender.com";
+const site = process.env.PUBLIC_SITE_URL || "https://movenda-brief.onrender.com";
 const hostMode = process.env.PUBLIC_HOST_MODE === "mpc";
 
 const SANITY_PROJECT = process.env.PUBLIC_SANITY_PROJECT_ID || "k73l2by8";
