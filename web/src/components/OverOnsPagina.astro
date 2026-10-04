@@ -29,6 +29,7 @@ const { pagina, soort, fallback, fallbackAlt, fotoPositie = "center 30%", lang =
 const en = lang === "en";
 const titel = paginaTekst(pagina, "titel", lang);
 const slogan = paginaTekst(pagina, "slogan", lang);
+const introKop = paginaTekst(pagina, "introKop", lang);
 const afsluiter = paginaTekst(pagina, "afsluiter", lang);
 const intro = paginaAlineas(pagina, lang);
 const alineas = (tekst: string) => tekst.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
@@ -73,6 +74,7 @@ const leesOok = verhaal
 
   <div class="overons-ink">
     <div class="overons-copy mx-auto max-w-3xl px-4">
+      {introKop && <h2 class="overons-introkop">{introKop}</h2>}
       {intro.map((p) => <p>{p}</p>)}
 
       {pagina.blokken.map((blok) => (
@@ -231,6 +233,10 @@ const leesOok = verhaal
     font-weight: 650;
     line-height: 1.15;
     letter-spacing: -0.02em;
+  }
+
+  .overons-copy h2.overons-introkop {
+    margin-top: 0;
   }
 
   .overons-principes {

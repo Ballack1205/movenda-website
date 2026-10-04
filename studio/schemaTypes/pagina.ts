@@ -178,6 +178,15 @@ export default defineType({
     }),
     defineField({ name: "sloganEn", title: "Slogan onder de titel (EN)", type: "string", group: "inhoud", fieldset: "en", hidden: only("groepslessen", "welkom") }),
     defineField({
+      name: "introKop",
+      title: "Kop boven de introtekst (NL)",
+      type: "string",
+      group: "inhoud",
+      hidden: only("over", "onze-visie"),
+      description: "Leeg = geen kop boven de eerste alinea's.",
+    }),
+    defineField({ name: "introKopEn", title: "Kop boven de introtekst (EN)", type: "string", group: "inhoud", fieldset: "en", hidden: only("over", "onze-visie") }),
+    defineField({
       name: "intro",
       title: "Introtekst (NL)",
       type: "text",
