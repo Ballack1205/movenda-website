@@ -21,7 +21,7 @@ import {
   type Teamlid,
 } from "./content";
 import { SITE_URL, absoluteUrl } from "./site";
-import { withLang, type Lang } from "./i18n";
+import { withLang, zonderLinks, type Lang } from "./i18n";
 
 export type JsonLdNode = Record<string, unknown>;
 
@@ -290,7 +290,7 @@ export function faqPageNode(faqs: Faq[], path: string): JsonLdNode {
     mainEntity: faqs.map((faq) => ({
       "@type": "Question",
       name: faq.vraag,
-      acceptedAnswer: { "@type": "Answer", text: faq.antwoord },
+      acceptedAnswer: { "@type": "Answer", text: zonderLinks(faq.antwoord) },
     })),
   };
 }

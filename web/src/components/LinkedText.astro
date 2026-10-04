@@ -30,7 +30,7 @@ if (last < text.length) parts.push({ text: text.slice(last) });
   part.href ? (
     <a
       href={part.href}
-      class={linkClass}
+      class:list={[linkClass, part.href.startsWith("tel:") && "whitespace-nowrap"]}
       target={part.external ? "_blank" : undefined}
       rel={part.external ? "noopener noreferrer" : undefined}
     >{part.text}</a>

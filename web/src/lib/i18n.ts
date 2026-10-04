@@ -190,3 +190,6 @@ export function faqCopy(faq: { vraag: string; vraagEn?: string; antwoord: string
     antwoord: lang === "en" ? faq.antwoordEn || faq.antwoord : faq.antwoord,
   };
 }
+
+/** CMS text with [label](url) links reduced to the label, for JSON-LD and plain-text exports. */
+export const zonderLinks = (text: string) => text.replace(/\[([^\]]+)\]\([^)\s]+\)/g, "$1");

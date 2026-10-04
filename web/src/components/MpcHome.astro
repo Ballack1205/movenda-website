@@ -9,6 +9,7 @@ import GetuigenisCarousel from "./GetuigenisCarousel.astro";
 import HeroVideo from "./HeroVideo.astro";
 import LabCover from "./LabCover.astro";
 import LabStrip from "./LabStrip.astro";
+import LinkedText from "./LinkedText.astro";
 import { THEME } from "../lib/site";
 import {
   getDienstenByCategorie,
@@ -296,7 +297,9 @@ const heroAlt = en ? "Movenda Performance Centre training space" : "Movenda Perf
                   <span class="text-brand-primary transition group-open:rotate-45">+</span>
                 </span>
               </summary>
-              <p class="mt-3 text-sm text-brand-muted">{copy.antwoord}</p>
+              <p class="mt-3 whitespace-pre-line text-sm text-brand-muted">
+                <LinkedText text={copy.antwoord} linkClass="font-semibold text-brand-primary underline underline-offset-4 hover:no-underline" />
+              </p>
             </details>
           );
         })}

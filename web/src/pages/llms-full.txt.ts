@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { zonderLinks } from "../lib/i18n";
 import {
   dienstHref,
   dienstKorteTitel,
@@ -145,7 +146,7 @@ export const GET: APIRoute = async () => {
     })
     .join("\n\n");
 
-  const faqText = faqs.map((f) => `Q: ${f.vraag}\nA: ${f.antwoord}`).join("\n\n");
+  const faqText = faqs.map((f) => `Q: ${f.vraag}\nA: ${zonderLinks(f.antwoord)}`).join("\n\n");
 
   const blogText = posts
     .map((p) => `- ${p.titel} (${p.publicatiedatum}) — ${SITE_URL}/blog/${p.slug}.md${p.excerpt ? `\n  ${p.excerpt}` : ""}`)

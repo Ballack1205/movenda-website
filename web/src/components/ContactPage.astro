@@ -4,7 +4,8 @@ import Routebeschrijving from "./Routebeschrijving.astro";
 import ContactVerwijsVraag from "./ContactVerwijsVraag.astro";
 import { formulierTekst, getLocaties, getPagina, getSiteSettings, paginaTekst, uiTekst } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
-import { byAppointment, legalCourt, weekday, type Lang } from "../lib/i18n";
+import { byAppointment, legalCourt, weekday, withLang, type Lang } from "../lib/i18n";
+import { THEME } from "../lib/site";
 
 interface Props {
   lang?: Lang;
@@ -32,7 +33,6 @@ const copy = {
   name: gedeeld("naam"),
   email: gedeeld("email"),
   phone: gedeeld("telefoon"),
-  which: f("welke"),
   reasonLegend: f("reden"),
   physio: f("kine"),
   training: f("training"),
@@ -73,19 +73,12 @@ const jsonLd = [
   <div class="page-ink">
   <section class="px-4 pb-4 pt-8 md:px-12">
     <form class="grid gap-4" data-contact-form>
-      <div class="grid gap-4 sm:grid-cols-2">
+      <div class="grid gap-4 sm:grid-cols-3">
         <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder={copy.name} required />
         <input class="rounded-lg border border-brand-border px-4 py-3" type="email" name="email" placeholder={copy.email} required />
-      </div>
-      <div class="grid gap-4 sm:grid-cols-2">
         <input class="rounded-lg border border-brand-border px-4 py-3" type="tel" name="telefoon" placeholder={copy.phone} required />
-        <select class="rounded-lg border border-brand-border px-4 py-3" name="locatie">
-          <option value="">{copy.which}</option>
-          <option value="Movenda — Kuringersteenweg">Movenda — Kuringersteenweg</option>
-          <option value="Performance Centre — Lammerweg">Performance Centre — Lammerweg</option>
-        </select>
       </div>
-      <ContactVerwijsVraag opties={pagina.verwijsopties} lang={lang} />
+      <input type="hidden" name="locatie" value="" />
       <fieldset class="rounded-lg border border-brand-border px-4 py-3">
         <legend class="px-1 text-sm font-semibold">{copy.reasonLegend}</legend>
         <div class="mt-3 flex flex-wrap gap-x-6 gap-y-3 text-sm">
@@ -103,6 +96,7 @@ const jsonLd = [
           <label class="inline-flex items-center gap-2"><input type="radio" name="voorschrift" value="Niet van toepassing" /> {copy.na}</label>
         </div>
       </fieldset>
+      <ContactVerwijsVraag opties={pagina.verwijsopties} lang={lang} />
       <textarea class="rounded-lg border border-brand-border px-4 py-3" name="bericht" rows="5" placeholder={copy.message} required minlength="5"></textarea>
       <input class="hidden" type="text" name="website" tabindex="-1" autocomplete="off" />
       <button type="submit" class="w-fit rounded-full bg-brand-primary px-6 py-3 font-semibold text-white transition hover:bg-brand-primary-dark">
@@ -115,7 +109,14 @@ const jsonLd = [
   <section class="grid md:grid-cols-2">
     {locaties.map((locatie) => (
         <div class="flex min-h-[24rem] flex-col border-brand-border md:border-r md:last:border-r-0">
-          {locatie.foto && (
+          {locatie.foto && THEME === "lab" && (
+            <a class="brief-loc self-start px-8 pt-10 md:px-12 md:pt-12" href={withLang(`/locaties/${locatie.slug}`, lang)}>
+              <span class="brief-loc__ring">
+                <img src={locatie.foto} alt={locatie.slug === "mpc" ? copy.photoMpc : copy.photoOlympia} class="brief-loc__photo" loading="lazy" />
+              </span>
+            </a>
+          )}
+          {locatie.foto && THEME !== "lab" && (
             <img
               src={locatie.foto}
               alt={locatie.slug === "mpc" ? copy.photoMpc : copy.photoOlympia}
@@ -185,7 +186,7 @@ const jsonLd = [
   const form = document.querySelector("[data-contact-form]");
   const status = document.querySelector("[data-contact-status]");
   const locatie = new URLSearchParams(location.search).get("locatie");
-  const locatieVeld = form?.querySelector("select[name=locatie]");
+  const locatieVeld = form?.querySelector("input[name=locatie]");
   if (locatie && locatieVeld) locatieVeld.value = locatie;
 
   form?.addEventListener("submit", async (e) => {
