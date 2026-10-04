@@ -1,7 +1,34 @@
 import { UsersIcon } from "@sanity/icons";
-import { defineField, defineType } from "sanity";
+import { LaunchIcon } from "@sanity/icons";
+import { Button, Stack } from "@sanity/ui";
+import { createElement } from "react";
+import { defineField, defineType, type FieldProps } from "sanity";
+import { PREVIEW_URL } from "../preview";
 import { EN_FIELDSET, SLUG_DESCRIPTION } from "./helpers";
 import { email, link, minItems, verplicht } from "./regels";
+
+function opDeSite(path: string) {
+  return {
+    field: (props: FieldProps) =>
+      createElement(
+        Stack,
+        { space: 2 },
+        props.renderDefault(props),
+        createElement(Button, {
+          as: "a",
+          href: `${PREVIEW_URL}${path}`,
+          target: "_blank",
+          rel: "noopener noreferrer",
+          mode: "ghost",
+          fontSize: 1,
+          padding: 2,
+          icon: LaunchIcon,
+          text: "Bekijk op de site",
+          style: { justifySelf: "start" },
+        }),
+      ),
+  };
+}
 
 export default defineType({
   name: "teamlid",
@@ -128,24 +155,37 @@ export default defineType({
       group: "bio",
       validation: email("Of laat het leeg."),
     }),
-    defineField({ name: "tariefKine", title: "Tarief kinesitherapie (€ / 30 min)", type: "number", group: "tarieven" }),
+    defineField({
+      name: "tariefKine",
+      title: "Tarief kinesitherapie (€ / 30 min)",
+      type: "number",
+      group: "tarieven",
+      description: "Staat op Prijzen, in de lijst ‘Kinesitherapie’. Leeg = niet in die lijst.",
+      components: opDeSite("/prijzen#tarief-kine"),
+    }),
     defineField({
       name: "tariefPt",
       title: "Tarief personal training Olympia (€ / 60 min)",
       type: "number",
       group: "tarieven",
+      description: "Staat op Prijzen, in de lijst ‘Personal training’. Leeg = niet in die lijst.",
+      components: opDeSite("/prijzen#tarief-pt"),
     }),
     defineField({
       name: "tariefPtMpc",
       title: "Tarief personal training MPC (€ / 60 min)",
       type: "number",
       group: "tarieven",
+      description: "Staat op Prijzen van het Performance Centre, in de tabel per coach (alleen coaches met locatie MPC).",
+      components: opDeSite("/performance/prijzen#tarief-coaches"),
     }),
     defineField({
       name: "tariefPerformance",
       title: "Tarief high performance (€ / sessie)",
       type: "number",
       group: "tarieven",
+      description: "Staat op Prijzen van het Performance Centre, kolom ‘High performance’. Kolom verschijnt zodra één coach dit invult.",
+      components: opDeSite("/performance/prijzen#tarief-coaches"),
     }),
     defineField({
       name: "clubs",

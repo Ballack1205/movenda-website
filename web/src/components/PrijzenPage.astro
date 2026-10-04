@@ -167,7 +167,7 @@ const annulatie = prijzenInfoText(info, "annulatiebeleid", lang);
         ))}
 
         {kineTeam.length > 0 && (
-          <div class="mt-8 max-w-2xl">
+          <div id="tarief-kine" class="mt-8 max-w-2xl scroll-mt-24">
             <h3 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{copy.kine}</h3>
             <div class="mt-2 divide-y divide-brand-border border-y border-brand-border">
               {kineTeam.map((lid) => (
@@ -186,7 +186,7 @@ const annulatie = prijzenInfoText(info, "annulatiebeleid", lang);
         )}
 
         {ptTeam.length > 0 && (
-          <div class="mt-8 max-w-2xl">
+          <div id="tarief-pt" class="mt-8 max-w-2xl scroll-mt-24">
             <h3 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{copy.training}</h3>
             <div class="mt-2 divide-y divide-brand-border border-y border-brand-border">
               {ptTeam.map((lid) => (
