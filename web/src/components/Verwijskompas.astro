@@ -32,7 +32,7 @@ const tree = {
       <div class="min-w-0">
         <h2 id="verwijskompas-titel" class="text-xl font-semibold">Verwijskompas</h2>
         <p class="mt-1 text-sm text-brand-muted" data-kompas-lead>
-          Voorlopige versie. Een naam zonder boekingslink blijft gewone tekst.
+          Kies je vraag en boek meteen online.
         </p>
       </div>
       <button
@@ -99,18 +99,13 @@ const tree = {
     function showResult(item, heading) {
       const names = item.people || [];
       const people = names.map((id) => `<li class="border-b border-brand-border py-2.5">${personHtml(id)}</li>`).join("");
-      const places = (item.places || [])
-        .map(
-          (place) =>
-            `<a class="inline-flex min-h-11 items-center rounded-full border border-brand-border px-3 py-1.5 text-sm font-semibold text-brand-primary hover:border-brand-primary" href="${esc(place.href)}" target="_blank" rel="noopener noreferrer">${esc(place.label)}</a>`,
-        )
-        .join("");
+      const book = item.book
+        ? `<a class="inline-flex min-h-11 items-center self-start rounded-full bg-brand-primary px-5 py-2 text-sm font-semibold text-white hover:opacity-90" href="${esc(item.book)}" target="_blank" rel="noopener noreferrer">Boek online ↗</a>`
+        : "";
       titleEl.textContent = heading;
       setBodyLayout(false);
       const cols = names.length >= 4 ? "sm:grid-cols-2 sm:gap-x-8" : "";
-      bodyEl.innerHTML = `<ul class="grid grid-cols-1 ${cols}">${people}</ul>${
-        places ? `<p class="mb-2 mt-5 text-sm font-semibold">Locatie</p><div class="flex flex-wrap gap-2">${places}</div>` : ""
-      }`;
+      bodyEl.innerHTML = `${book}${!book && names.length ? `<ul class="grid grid-cols-1 ${cols}">${people}</ul>` : ""}`;
     }
 
     function showChoices(heading, choices) {

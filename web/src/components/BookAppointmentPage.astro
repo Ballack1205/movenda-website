@@ -25,11 +25,12 @@ const path = `${prefix}/bookappointment`;
     <h1 class="text-3xl font-bold">{en ? "Appointment" : "Afspraak"}</h1>
     <p class="mt-4 text-brand-muted">
       {en
-        ? "The booking module will go here once the page is shared. Until then, book through the contact form."
-        : "De afspraakmodule wordt hier geplaatst zodra de pagina gedeeld is. Tot dan plan je een afspraak via het contactformulier."}
+        ? "Answer a few short questions in our referral compass and book online straight away. In the booking calendar you pick your location and the right colleague."
+        : "Beantwoord een paar korte vragen in ons verwijskompas en boek meteen online. In de agenda kies je je locatie en de juiste collega."}
     </p>
-    <p class="mt-6">
-      <a class="font-semibold underline" href={withLang("/contact", lang)}>{en ? "Go to contact" : "Naar contact"}</a>
+    <p class="mt-6 flex flex-wrap gap-x-6 gap-y-3">
+      <a class="font-semibold underline" href={`${withLang("/team", lang)}#keuzehulp`}>{en ? "Open the referral compass" : "Open het verwijskompas"}</a>
+      <a class="text-brand-muted underline" href={withLang("/contact", lang)}>{en ? "Questions? Contact us" : "Vragen? Contacteer ons"}</a>
     </p>
   </section>
 </Layout>
