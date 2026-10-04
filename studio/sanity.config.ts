@@ -14,7 +14,7 @@ const dataset = process.env.SANITY_STUDIO_DATASET || "production";
 const showVision = process.env.SANITY_STUDIO_VISION === "true";
 
 const NO_DELETE = new Set(["siteSettings", "keuzehulp", "locatie", "pagina"]);
-const HIDE_FROM_CREATE = new Set(["siteSettings", "keuzehulp", "locatie", "pagina", "googleReviewInfo", "homePijler"]);
+const HIDE_FROM_CREATE = new Set(["siteSettings", "keuzehulp", "locatie", "pagina", "googleReviewInfo", "homePijler", "lesrooster-op-dag"]);
 
 // Julie asked for a "duplicate" next to "create" for blogposts and the like.
 // Sanity has the action, but buried at the bottom of the ⋮ menu. For these
@@ -54,7 +54,19 @@ export default defineConfig({
     ...(showVision ? [visionTool()] : []),
   ],
   tools: (prev) => [...prev, bulkPublishTool],
-  schema: { types: schemaTypes },
+  schema: {
+    types: schemaTypes,
+    templates: (prev) => [
+      ...prev,
+      {
+        id: "lesrooster-op-dag",
+        title: "Les op deze dag",
+        schemaType: "lesrooster",
+        parameters: [{ name: "dag", type: "string" }],
+        value: ({ dag }: { dag: string }) => ({ dag, zichtbaar: true }),
+      },
+    ],
+  },
   form: { components: { input: withBekijkOpSite } },
   document: {
     actions: (input, context) => {

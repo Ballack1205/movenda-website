@@ -617,7 +617,6 @@ export interface LesroosterItem {
   coachSlug?: string;
   dienstSlug?: string;
   dienstCategorie?: DienstCategorie;
-  volgorde: number;
 }
 
 export interface Getuigenis {
@@ -2176,8 +2175,8 @@ async function loadPartners(): Promise<Partner[]> {
 
 export async function getLesrooster(): Promise<LesroosterItem[]> {
   return once("lesrooster", () => sanity.fetch(
-    `*[_type == "lesrooster"] | order(volgorde asc) {
-      les, lesEn, dag, van, tot, volgorde,
+    `*[_type == "lesrooster" && zichtbaar != false] | order(van asc) {
+      les, lesEn, dag, van, tot,
       "coachNaam": coach->voornaam,
       "coachSlug": coach->slug.current,
       "dienstSlug": dienst->slug.current,

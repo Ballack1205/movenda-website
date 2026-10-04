@@ -18,6 +18,7 @@ import {
   TagIcon,
   UsersIcon,
 } from "@sanity/icons";
+import { DAGEN } from "./schemaTypes/lesrooster";
 
 // Julie's desk: daily work first, then people, then the offer, then copy.
 // siteSettings + keuzehulp are singletons (no second document). Locaties
@@ -87,13 +88,25 @@ export const deskStructure: StructureResolver = (S) =>
         .icon(CalendarIcon)
         .schemaType("lesrooster")
         .child(
-          S.documentTypeList("lesrooster")
+          S.list()
             .title("Lesrooster MPC")
-            .defaultOrdering([
-              { field: "volgorde", direction: "asc" },
-              { field: "dag", direction: "asc" },
-              { field: "van", direction: "asc" },
-            ]),
+            .items(
+              DAGEN.map((dag) =>
+                S.listItem()
+                  .id(dag.toLowerCase())
+                  .title(dag)
+                  .icon(CalendarIcon)
+                  .child(
+                    S.documentList()
+                      .title(dag)
+                      .schemaType("lesrooster")
+                      .filter('_type == "lesrooster" && dag == $dag')
+                      .params({ dag })
+                      .defaultOrdering([{ field: "van", direction: "asc" }])
+                      .initialValueTemplates([S.initialValueTemplateItem("lesrooster-op-dag", { dag })]),
+                  ),
+              ),
+            ),
         ),
       S.documentTypeListItem("prijsitem").title("Prijzen").icon(BillIcon),
       S.documentTypeListItem("partner").title("Partners & logo's").icon(ImageIcon),
