@@ -1,5 +1,5 @@
 ---
-// Body of a team profile (bio, expertise, motivation, quote, clubs), shared by NL and EN.
+// Body of a team profile (bio, motivation + quote, expertise, clubs), shared by NL and EN.
 import { dienstHref, specialisatieNaam, type Teamlid } from "../lib/content";
 import type { Lang } from "../lib/i18n";
 
@@ -36,46 +36,47 @@ const kopClass = "text-sm font-semibold uppercase tracking-wide text-brand-muted
   {alineas(bio).map((p) => <p>{p}</p>)}
 </div>
 
-{expertise.length > 0 && (
-  <div class="mt-8">
+{(motivatie.length > 0 || quote) && (
+  <div class="mt-8 space-y-8">
+    {motivatie.length > 0 && (
+      <div>
+        <p class={kopClass}>{motivatieKop}</p>
+        <div class="mt-2 space-y-3 text-brand-muted">
+          {motivatie.map((p) => <p>{p}</p>)}
+        </div>
+      </div>
+    )}
+    {quote && (
+      <figure class="border-l-2 border-brand-primary pl-5">
+        <figcaption class={kopClass}>{quoteKop}</figcaption>
+        <blockquote class="mt-2 text-2xl font-medium italic leading-snug text-brand-text">“{quote}”</blockquote>
+      </figure>
+    )}
+  </div>
+)}
+
+{(expertise.length > 0 || lid.specialisaties.length > 0) && (
+  <div class="mt-10">
     <h2 class={kopClass}>{expertiseKop}</h2>
-    <ul class="mt-3 divide-y divide-brand-border border-y border-brand-border">
-      {expertise.map((r) => <li class="py-2.5 text-brand-text">{r}</li>)}
-    </ul>
+    {expertise.length > 0 && (
+      <ul class="mt-3 divide-y divide-brand-border border-y border-brand-border">
+        {expertise.map((r) => <li class="py-2.5 text-brand-text">{r}</li>)}
+      </ul>
+    )}
+    {lid.specialisaties.length > 0 && (
+      <ul class="mt-4 flex flex-wrap gap-2">
+        {lid.specialisaties.map((s) => (
+          <li>
+            {s.dienst ? (
+              <a href={dienstHref(s.dienst, lang)} class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-primary hover:underline">{specialisatieNaam(s, lang)}</a>
+            ) : (
+              <span class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-text">{specialisatieNaam(s, lang)}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    )}
   </div>
-)}
-
-{lid.specialisaties.length > 0 && (
-  <div class="mt-8">
-    <h2 class={kopClass}>{en ? "Specialisations" : "Specialisaties"}</h2>
-    <ul class="mt-3 flex flex-wrap gap-2">
-      {lid.specialisaties.map((s) => (
-        <li>
-          {s.dienst ? (
-            <a href={dienstHref(s.dienst, lang)} class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-primary hover:underline">{specialisatieNaam(s, lang)}</a>
-          ) : (
-            <span class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-text">{specialisatieNaam(s, lang)}</span>
-          )}
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
-
-{motivatie.length > 0 && (
-  <div class="mt-8">
-    <h2 class={kopClass}>{motivatieKop}</h2>
-    <div class="mt-3 space-y-3 text-brand-muted">
-      {motivatie.map((p) => <p>{p}</p>)}
-    </div>
-  </div>
-)}
-
-{quote && (
-  <figure class="mt-10 border-l-2 border-brand-primary pl-5">
-    <figcaption class={kopClass}>{quoteKop}</figcaption>
-    <blockquote class="mt-2 text-2xl font-medium italic leading-snug text-brand-text">“{quote}”</blockquote>
-  </figure>
 )}
 
 {lid.clubs.length > 0 && (
