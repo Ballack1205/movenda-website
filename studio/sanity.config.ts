@@ -7,6 +7,7 @@ import { deskStructure } from "./structure";
 import { resolvePreviewUrl } from "./preview";
 import { bulkPublishTool } from "./tools/bulkPublish";
 import { withErrorList } from "./actions/publishWithErrors";
+import { withBekijkOpSite } from "./components/BekijkOpSite";
 
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
@@ -54,6 +55,7 @@ export default defineConfig({
   ],
   tools: (prev) => [...prev, bulkPublishTool],
   schema: { types: schemaTypes },
+  form: { components: { input: withBekijkOpSite } },
   document: {
     actions: (input, context) => {
       const prev = input.map((action) => (action.action === "publish" ? withErrorList(action) : action));

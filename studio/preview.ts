@@ -1,5 +1,7 @@
-// "Open preview" in the document menu — Julie can jump to the live page
-// she is editing. Preview host is the brief site until go-live.
+// "Bekijk op de site" above every document form and in the document menu —
+// Julie can jump to the live page she is editing. Preview host is the brief
+// site until go-live.
+import { PAGINAS } from "./schemaTypes/pagina";
 
 export const PREVIEW_URL = (process.env.SANITY_STUDIO_PREVIEW_URL || "https://movenda-brief.onrender.com").replace(
   /\/+$/,
@@ -15,17 +17,9 @@ type PreviewDoc = {
 };
 
 const PAGINA_PATHS: Record<string, string> = {
-  home: "/",
-  over: "/over-ons/ons-verhaal",
-  "onze-visie": "/over-ons/onze-visie",
-  kinesitherapie: "/kinesitherapie",
-  training: "/training",
-  mpc: "/mpc",
-  "mpc-visie": "/mpc/visie",
-  contact: "/contact",
-  jobs: "/jobs",
-  privacy: "/privacy",
-  voorwaarden: "/voorwaarden",
+  ...Object.fromEntries(PAGINAS.map((p) => [p.key, p.path])),
+  mpc: "/performance",
+  "mpc-visie": "/over-ons/onze-visie",
 };
 
 function slugOf(doc: PreviewDoc): string | undefined {
@@ -37,10 +31,12 @@ function dienstPath(categorie?: string, slug?: string): string {
   if (!slug) {
     if (categorie === "kine") return "/kinesitherapie";
     if (categorie === "training") return "/training";
-    return "/mpc";
+    if (categorie === "mpc-groep") return "/groepslessen";
+    return "/performance";
   }
   if (categorie === "kine") return `/kinesitherapie/${slug}`;
   if (categorie === "training") return `/training/${slug}`;
+  // The site redirects /mpc/<slug> to its real home (/performance, /groepslessen or /b2b).
   return `/mpc/${slug}`;
 }
 
@@ -64,26 +60,31 @@ export function resolvePreviewUrl(document: PreviewDoc): string | undefined {
       return slug ? `${PREVIEW_URL}/${slug}` : PREVIEW_URL;
     case "faq":
       return `${PREVIEW_URL}/faq`;
+    case "event":
+      return `${PREVIEW_URL}/events`;
     case "prijsitem":
       return document.categorie === "kine" || document.categorie === "training"
         ? `${PREVIEW_URL}/prijzen`
-        : `${PREVIEW_URL}/mpc/prijzen`;
+        : `${PREVIEW_URL}/performance/prijzen`;
     case "vacature":
       return `${PREVIEW_URL}/jobs`;
     case "getuigenis":
-      return document.locatie === "mpc" ? `${PREVIEW_URL}/mpc` : `${PREVIEW_URL}/`;
+      return document.locatie === "mpc" ? `${PREVIEW_URL}/performance` : `${PREVIEW_URL}/`;
     case "sportaanbodItem":
       return `${PREVIEW_URL}/training`;
     case "lesrooster":
-      return `${PREVIEW_URL}/mpc/groepslessen`;
+      return `${PREVIEW_URL}/groepslessen`;
     case "keuzehulp":
     case "keuzehulpTag":
     case "specialisatie":
-      return `${PREVIEW_URL}/team`;
+      return `${PREVIEW_URL}/team#keuzehulp`;
     case "popup":
     case "siteSettings":
     case "partner":
-      return PREVIEW_URL;
+    case "homePijler":
+    case "homeDeur":
+    case "googleReviewInfo":
+      return `${PREVIEW_URL}/`;
     default:
       return undefined;
   }
