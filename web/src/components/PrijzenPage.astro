@@ -49,7 +49,6 @@ const copy = en
       training: "Training & Coaching",
       trainingPlace: "(Performance Centre)",
       exBtw: "*Prices excl. VAT",
-      trainingTitle: "Training",
       groep: "Group classes",
       screening: "Screening & data",
       pt: "Personal training",
@@ -68,7 +67,6 @@ const copy = en
       training: "Training & Coaching",
       trainingPlace: "(Performance Centre)",
       exBtw: "*Prijzen zijn exclusief btw",
-      trainingTitle: "Training",
       groep: "Groepslessen",
       screening: "Screening & data",
       pt: "Personal training",
@@ -116,14 +114,6 @@ const annulatie = prijzenInfoText(info, "annulatiebeleid", lang);
       </div>
     )}
 
-    {training.length > 0 && (
-      <div class="mt-10 max-w-2xl">
-        <h2 class="text-xl font-semibold">{copy.training} <span class="font-normal text-brand-muted">{copy.trainingPlace}</span></h2>
-        <p class="mt-1 text-sm text-brand-muted">{copy.exBtw}</p>
-        <PrijsLijst items={training} lang={lang} />
-      </div>
-    )}
-
     <div class="mt-12 border-t border-brand-border pt-8">
       <h2 class="text-xl font-semibold">{paginaTekst(pagina, "terugbetalingTitel", lang)}</h2>
       {alineas("terugbetalingTekst").map((tekst) => (
@@ -162,10 +152,11 @@ const annulatie = prijzenInfoText(info, "annulatiebeleid", lang);
       )}
     </div>
 
-    {(groep.length > 0 || screening.length > 0) && (
+    {(training.length > 0 || groep.length > 0 || screening.length > 0) && (
       <div class="mt-14 max-w-2xl">
-        <h2 class="text-xl font-semibold">{copy.trainingTitle}</h2>
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{copy.training} {copy.trainingPlace}</h3>
         <p class="mt-1 text-sm text-brand-muted">{copy.exBtw}</p>
+        {training.length > 0 && <PrijsLijst items={training} lang={lang} />}
         {[[copy.groep, groep], [copy.screening, screening]].map(([titel, items]) =>
           (items as Prijsitem[]).length > 0 && (
             <div class="mt-6">
