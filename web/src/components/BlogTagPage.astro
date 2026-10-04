@@ -39,7 +39,7 @@ const path = `${prefix}/blog/tag/${tag}`;
     blogListSchema(posts, lang),
   ]}
 >
-  <section class="mx-auto max-w-6xl px-4 py-12 lg:py-16">
+  <section class="page-ink mx-auto max-w-6xl px-4 py-12 lg:py-16">
     <a href={withLang("/blog", lang)} class="text-sm font-semibold text-brand-primary hover:underline">← Blog</a>
     <p class="mt-5 text-sm font-semibold uppercase tracking-wide text-brand-primary">{en ? "Topic" : "Onderwerp"}</p>
     <SectionKicker n={1} />

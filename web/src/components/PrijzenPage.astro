@@ -56,6 +56,9 @@ const copy = en
       mpcLink: "centre's prices page",
       standard: PRIJZEN_INFO_EN.standaard,
       vt: PRIJZEN_INFO_EN.vt,
+      terugTitel: "What do you get back?",
+      situatie: "Situation",
+      geschat: "Estimated reimbursement",
       cancel: PRIJZEN_INFO_EN.annulatie,
     }
   : {
@@ -67,6 +70,9 @@ const copy = en
       mpcLink: "prijzenpagina van het centre",
       standard: "Standaard verzekerde",
       vt: "Verhoogde tegemoetkoming (VT/BIM)",
+      terugTitel: "Wat krijg je terug?",
+      situatie: "Situatie",
+      geschat: "Geschatte terugbetaling",
       cancel: "Annulatie:",
     };
 
@@ -139,20 +145,33 @@ const annulatie = prijzenInfoText(info, "annulatiebeleid", lang);
       {alineas("terugbetalingTekst").map((tekst) => (
         <p class="mt-2 text-sm text-brand-muted"><LinkedText text={tekst} /></p>
       ))}
-      <div class="mt-4 grid gap-4 sm:grid-cols-2">
-        {standaard && (
-          <div>
-            <p class="text-sm font-semibold">{copy.standard}</p>
-            <p class="text-sm text-brand-muted">{standaard}</p>
-          </div>
-        )}
-        {vt && (
-          <div>
-            <p class="text-sm font-semibold">{copy.vt}</p>
-            <p class="text-sm text-brand-muted">{vt}</p>
-          </div>
-        )}
-      </div>
+      {(standaard || vt) && (
+        <div class="mt-6 max-w-3xl">
+          <h3 class="font-semibold">{copy.terugTitel}</h3>
+          <table class="mt-3 w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-brand-border">
+                <th class="py-2 pr-4 font-semibold">{copy.situatie}</th>
+                <th class="py-2 font-semibold">{copy.geschat}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {standaard && (
+                <tr class="border-b border-brand-border">
+                  <td class="py-3 pr-4">{copy.standard}</td>
+                  <td class="py-3 text-brand-muted">{standaard}</td>
+                </tr>
+              )}
+              {vt && (
+                <tr class="border-b border-brand-border">
+                  <td class="py-3 pr-4">{copy.vt}</td>
+                  <td class="py-3 text-brand-muted">{vt}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
       {voorwaarden && <p class="mt-4 text-xs text-brand-muted">{voorwaarden}</p>}
       {annulatie && (
         <p class="mt-4 text-sm text-brand-muted"><strong>{copy.cancel}</strong> {annulatie}</p>
