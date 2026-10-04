@@ -205,6 +205,7 @@ const TAG_EN = {
   "Motorcross & BMX": "Motocross & BMX",
   "Tennis & padel": "Tennis & padel",
   Voetbal: "Football",
+  "Bovenhandse slagsporten": "Overhead striking sports",
 };
 
 async function migrateKeuzehulpTags() {

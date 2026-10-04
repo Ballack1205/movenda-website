@@ -74,6 +74,7 @@ const VOCAB = {
     ["boksen", "Boksen"],
     ["motorcross-bmx", "Motorcross & BMX"],
     ["autosport", "Autosport"],
+    ["bovenhandse-slagsporten", "Bovenhandse slagsporten"],
   ],
   doelgroep: [
     ["recreatief", "Recreatieve sporter"],
@@ -92,7 +93,7 @@ const VOCAB = {
 // refines this in Studio afterwards — this is a starting point, not gospel.
 const ASSIGN = {
   Andres: ["klacht:pijn-blessure", "klacht:na-operatie", "klacht:complex-terugkerend", "klacht:oefentherapie", "klacht:dry-needling", "klacht:personal-training", "regio:nek-bovenrug", "regio:schouder", "doelgroep:recreatief", "doelgroep:ondernemers"],
-  Cedriek: ["klacht:performance", "sport:voetbal", "doelgroep:topsport"],
+  Cedriek: ["klacht:performance", "sport:voetbal", "sport:hyrox", "sport:bovenhandse-slagsporten", "doelgroep:topsport", "doelgroep:ondernemers", "doelgroep:recreatief"],
   Josje: ["klacht:pijn-blessure", "klacht:complex-terugkerend", "klacht:dry-needling", "klacht:personal-training", "regio:schouder", "regio:pols-hand", "sport:gymnastiek", "sport:lopen", "sport:hyrox", "doelgroep:recreatief"],
   Koen: ["klacht:pijn-blessure", "klacht:na-operatie", "klacht:complex-terugkerend", "klacht:personal-training", "regio:lage-rug", "regio:nek-bovenrug", "regio:schouder", "regio:knie", "regio:heup", "regio:voet-enkel", "doelgroep:ondernemers", "doelgroep:recreatief"],
   Jens: ["klacht:pijn-blessure", "klacht:dry-needling", "klacht:oefentherapie", "klacht:inspanningstest", "klacht:loopanalyse", "klacht:performance", "klacht:personal-training", "sport:lopen", "sport:motorcross-bmx", "sport:autosport", "doelgroep:topsport", "doelgroep:recreatief"],
@@ -103,9 +104,9 @@ const ASSIGN = {
   Maarten: ["klacht:pijn-blessure", "klacht:personal-training", "regio:knie", "regio:heup", "regio:voet-enkel", "sport:fitness", "sport:voetbal", "sport:balsporten", "doelgroep:recreatief"],
   Arne: ["klacht:pijn-blessure", "klacht:na-operatie", "klacht:oefentherapie", "klacht:performance", "sport:basket", "sport:autosport", "doelgroep:topsport", "doelgroep:recreatief"],
   Charlotte: ["klacht:personal-training", "sport:fitness", "doelgroep:ondernemers", "doelgroep:vrouwen", "doelgroep:bedrijven", "doelgroep:recreatief"],
-  Yannick: ["klacht:performance", "doelgroep:topsport", "doelgroep:bedrijven"],
+  Yannick: ["klacht:performance", "sport:bovenhandse-slagsporten", "doelgroep:topsport", "doelgroep:bedrijven"],
   Jana: ["klacht:pijn-blessure", "klacht:preventie", "klacht:personal-training", "klacht:performance", "doelgroep:jeugd", "doelgroep:recreatief"],
-  Quinten: ["klacht:personal-training", "sport:basket", "doelgroep:recreatief", "doelgroep:jeugd"],
+  Quinten: ["klacht:personal-training", "sport:basket", "sport:bovenhandse-slagsporten", "doelgroep:recreatief", "doelgroep:jeugd"],
   Dimitri: ["klacht:personal-training", "sport:boksen", "doelgroep:recreatief"],
   Stijn: ["klacht:pijn-blessure", "klacht:preventie", "klacht:dry-needling", "klacht:inspanningstest", "klacht:loopanalyse", "regio:kaak", "sport:lopen", "sport:fietsen", "sport:tennis-padel", "doelgroep:jeugd", "doelgroep:recreatief"],
   An: ["klacht:lymfedrainage", "klacht:na-operatie"],
