@@ -47,7 +47,6 @@ Both locations share info@movenda.be and work strictly by appointment.
 - Our story: /over-ons/ons-verhaal
 - Our vision: /over-ons/onze-visie
 - Prices & reimbursement (practice): /prijzen
-- Performance prices: /performance/prijzen
 - FAQ: /faq
 - Blog: /blog
 - Blog (Markdown index): /blog.md

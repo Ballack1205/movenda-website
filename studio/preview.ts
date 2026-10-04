@@ -63,9 +63,7 @@ export function resolvePreviewUrl(document: PreviewDoc): string | undefined {
     case "event":
       return `${PREVIEW_URL}/events`;
     case "prijsitem":
-      return document.categorie === "kine" || document.categorie === "training"
-        ? `${PREVIEW_URL}/prijzen`
-        : `${PREVIEW_URL}/performance/prijzen`;
+      return `${PREVIEW_URL}/prijzen`;
     case "vacature":
       return `${PREVIEW_URL}/jobs`;
     case "getuigenis":

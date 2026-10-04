@@ -3,17 +3,14 @@ import { defineField, defineType } from "sanity";
 import { EN_FIELDSET } from "./helpers";
 import { verplicht } from "./regels";
 
-// Which page/section a price appears in follows from the category alone — no
-// name matching. Adding "Kickboxing — 10 lessen" under "MPC — groepslessen"
-// puts it in the Groepslessen table on /mpc/prijzen and in the memberships on
-// /mpc/groepslessen, whatever the name says.
+// Which section of /prijzen a price appears in follows from the category alone —
+// no name matching. "Kickboxing — 10 lessen" under Groepslessen lands in that
+// table and in the memberships on /groepslessen, whatever the name says.
 export const PRIJS_CATEGORIEEN = [
-  { title: "Kinesitherapie (Olympia) — /prijzen", value: "kine" },
-  { title: "Personal training (Olympia) — /prijzen", value: "training" },
-  { title: "MPC — training", value: "mpc-training" },
-  { title: "MPC — sportrevalidatie", value: "mpc-rehab" },
-  { title: "MPC — groepslessen (ook op /mpc/groepslessen)", value: "mpc-groep" },
-  { title: "MPC — screening & data", value: "screening" },
+  { title: "Kinesitherapie", value: "kine" },
+  { title: "Training & Coaching (Performance Centre)", value: "training" },
+  { title: "Groepslessen (ook op /groepslessen)", value: "mpc-groep" },
+  { title: "Screening & data", value: "screening" },
 ] as const;
 
 export default defineType({
@@ -48,7 +45,7 @@ export default defineType({
       title: "Publieke noot (NL)",
       type: "string",
       description:
-        "Kleine tekst onder de naam, bv. 'incl. opvolging' of 'HIIT, Full Body, Core'. Niet nodig: 'ex BTW' of 'enkel op afspraak' — dat staat al boven de MPC-prijstabel (Site-instellingen → Prijzen). Interne opmerkingen horen hieronder.",
+        "Kleine tekst onder de naam, bv. 'incl. opvolging' of 'HIIT, Full Body, Core'. Niet nodig: 'ex BTW' of 'enkel op afspraak' — dat staat al boven de Performance Centre-prijzen. Interne opmerkingen horen hieronder.",
     }),
     defineField({
       name: "notitieEn",

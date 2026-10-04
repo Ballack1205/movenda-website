@@ -35,7 +35,7 @@ export type LocatieSlug = "olympia" | "mpc";
 export type DienstCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep";
 /** Mirrors PRIJS_CATEGORIEEN in the Studio; the category alone decides which page/table a price lands in. */
 export type PrijsCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep" | "screening";
-export const MPC_PRIJS_CATEGORIEEN: PrijsCategorie[] = ["mpc-training", "mpc-rehab", "mpc-groep", "screening"];
+export const MPC_PRIJS_CATEGORIEEN: PrijsCategorie[] = ["training", "mpc-training", "mpc-rehab", "mpc-groep", "screening"];
 export type FaqSite = "movenda" | "mpc" | "beide";
 
 export interface Club {
@@ -2054,7 +2054,7 @@ export async function getPrijzen(): Promise<Prijsitem[]> {
     return items.filter((item) => {
       const names = [normalizeNaam(item.naam), item.naamEn ? normalizeNaam(item.naamEn) : ""];
       return !hidden.some(
-        (naam) => naam && names.some((pn) => pn === naam || pn.startsWith(`${naam} `)),
+        (naam) => naam && names.some((pn) => pn === naam || (pn.startsWith(`${naam} `) && /^\d/.test(pn.slice(naam.length + 1)))),
       );
     });
   });
@@ -2063,8 +2063,8 @@ export async function getPrijzen(): Promise<Prijsitem[]> {
 const prijsCategorieVoorDienst: Record<DienstCategorie, PrijsCategorie[]> = {
   kine: ["kine"],
   training: ["training", "screening"],
-  "mpc-training": ["mpc-training", "screening"],
-  "mpc-rehab": ["mpc-rehab"],
+  "mpc-training": ["training", "screening"],
+  "mpc-rehab": ["kine"],
   "mpc-groep": ["mpc-groep"],
 };
 

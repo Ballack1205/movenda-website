@@ -164,7 +164,7 @@ export const GET: APIRoute = async () => {
     section("Locations", locatieText),
     section("Services — Movenda (physiotherapy & training, Hasselt)", olympiaDiensten.map((d) => dienstBlock(d, prijzen)).join("\n\n")),
     section("Services — Movenda Performance Centre (Kuringen)", mpcDiensten.map((d) => dienstBlock(d, prijzen)).join("\n\n")),
-    section("Prices", `${prijsText}\n\n${terugbetaling}\n\nFull price pages: ${SITE_URL}/prijzen and ${SITE_URL}/performance/prijzen`),
+    section("Prices", `${prijsText}\n\n${terugbetaling}\n\nFull price page: ${SITE_URL}/prijzen`),
     section("Team", teamText),
     section("Frequently asked questions", faqText || "See /faq."),
     section("Blog (Markdown versions)", blogText || "No posts yet."),

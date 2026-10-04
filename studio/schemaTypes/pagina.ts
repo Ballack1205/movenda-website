@@ -23,8 +23,7 @@ export const PAGINAS = [
   { key: "team", title: "Team", path: "/team" },
   { key: "groepslessen", title: "Groepslessen (GX)", path: "/groepslessen" },
   { key: "kine-abonnement", title: "Kiné-abonnement", path: "/kine-abonnement" },
-  { key: "prijzen", title: "Prijzen (Movenda)", path: "/prijzen" },
-  { key: "performance-prijzen", title: "Prijzen (Performance Centre)", path: "/performance/prijzen" },
+  { key: "prijzen", title: "Prijzen", path: "/prijzen" },
   { key: "faq", title: "FAQ", path: "/faq" },
   { key: "blog", title: "Blog (overzicht)", path: "/blog" },
   { key: "events", title: "Events (overzicht)", path: "/events" },
@@ -41,7 +40,7 @@ const only =
   ({ document }: ConditionalPropertyCallbackContext) =>
     !keys.includes(((document as { key?: string } | undefined)?.key || "") as PaginaKey);
 
-const ONDERTITEL: PaginaKey[] = ["home", "kinesitherapie", "performance", "b2b", "groepslessen", "kine-abonnement", "performance-prijzen", "blog", "voorwaarden"];
+const ONDERTITEL: PaginaKey[] = ["home", "kinesitherapie", "performance", "b2b", "groepslessen", "kine-abonnement", "blog", "voorwaarden"];
 
 const cookieRij = {
   type: "object",
@@ -453,7 +452,7 @@ export default defineType({
     ...tekstVeld("formulierIntro", "Tekst boven het inschrijfformulier", ["groepslessen"]),
     ...tekstVeld("terugbetalingTitel", "Terugbetaling — titel", ["prijzen"], true),
     ...tekstVeld("terugbetalingTekst", "Terugbetaling — uitleg", ["prijzen"]),
-    ...tekstVeld("perTherapeutTitel", "Tarieven per therapeut of coach — titel", ["prijzen", "performance-prijzen"], true),
+    ...tekstVeld("perTherapeutTitel", "Tarieven per therapeut of coach — titel", ["prijzen"], true),
     ...tekstVeld("perTherapeutTekst", "Tarieven per therapeut — uitleg", ["prijzen"]),
     defineField({
       name: "bijgewerkt",

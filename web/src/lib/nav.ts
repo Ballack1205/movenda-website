@@ -333,7 +333,7 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
               ...dienstLinks(diensten, "mpc-groep", "en"),
             ],
           },
-          { href: "/en/performance/prijzen", label: w("prijzen") },
+          { href: "/en/prijzen", label: w("prijzen") },
           { href: "/en/team", label: w("team") },
           {
             href: "/en/performance/visie",
@@ -380,7 +380,7 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
             ...dienstLinks(diensten, "mpc-groep", "nl"),
           ],
         },
-        { href: "/performance/prijzen", label: w("prijzen") },
+        { href: "/prijzen", label: w("prijzen") },
         { href: "/team", label: w("team") },
         {
           href: "/performance/visie",
