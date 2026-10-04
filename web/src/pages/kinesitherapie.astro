@@ -1,7 +1,6 @@
 ---
 import AanbodOverzicht from "../components/AanbodOverzicht.astro";
 import Layout from "../layouts/Layout.astro";
-import GoogleReviewBadge from "../components/GoogleReviewBadge.astro";
 import PaginaFoto from "../components/PaginaFoto.astro";
 import { getLocatieBySlug, getPagina, paginaAlineas, paginaTekst } from "../lib/content";
 import { getBriefAanbod } from "../lib/nav";
@@ -40,7 +39,6 @@ const jsonLd = [
     <a slot="actions" href={pagina.knopUrl || "/team#keuzehulp"} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
       {paginaTekst(pagina, "knopLabel") || "Plan je afspraak"}
     </a>
-    <GoogleReviewBadge slot="actions" />
     <PaginaFoto
       slot="media"
       pagina={pagina}
