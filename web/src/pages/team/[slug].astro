@@ -4,7 +4,6 @@ import {
   getTeamleden,
   getTeamlidBySlug,
   getLocaties,
-  dienstHref,
   locatieKorteNamen,
   rolKort,
   truncateAtSentence,
@@ -25,6 +24,7 @@ if (!lid) {
 }
 
 const locaties = await getLocaties();
+const opleiding = (lid.opleiding || "").split("\n").map((r) => r.trim()).filter(Boolean);
 
 const jsonLd = [
   personNode(lid),
@@ -38,6 +38,7 @@ const jsonLd = [
 // "Pieter Hayen | Kinesitherapeut Hasselt | Movenda" — full role is in the H1.
 const title = `${lid.voornaam} ${lid.naam} | ${rolKort(lid.rol)} Hasselt | Movenda`;
 import SectionKicker from "../../components/SectionKicker.astro";
+import TeamlidProfiel from "../../components/TeamlidProfiel.astro";
 ---
 
 <Layout
@@ -74,44 +75,11 @@ import SectionKicker from "../../components/SectionKicker.astro";
         <h1 class="text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
         <p class="mt-1 text-lg font-medium text-brand-primary">{lid.rol}</p>
         <p class="mt-2 text-sm text-brand-muted">{locatieKorteNamen(lid.locaties, locaties).join(" · ")}</p>
+        {opleiding.map((r) => <p class="mt-1 text-xs text-brand-muted">{r}</p>)}
       </div>
     </div>
 
-    <p class="mt-6 text-brand-muted">{lid.bio}</p>
-
-    {lid.specialisaties.length > 0 && (
-      <div class="mt-8">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Specialisaties</h2>
-        <ul class="mt-3 flex flex-wrap gap-2">
-          {lid.specialisaties.map((s) => (
-            <li>
-              {s.dienst ? (
-                <a href={dienstHref(s.dienst)} class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-primary hover:underline">{s.naam}</a>
-              ) : (
-                <span class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-text">{s.naam}</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
-
-    {lid.clubs.length > 0 && (
-      <div class="mt-6">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Clubs</h2>
-        <ul class="mt-2 flex flex-wrap gap-2 text-sm">
-          {lid.clubs.map((c) => (
-            <li>
-              {c.url ? (
-                <a href={c.url} target="_blank" rel="noopener" class="text-brand-primary hover:underline">{c.naam}</a>
-              ) : (
-                c.naam
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+    <TeamlidProfiel lid={lid} />
 
     <p class="mt-8">
       <a href={`mailto:${lid.email}`} class="font-semibold text-brand-primary hover:underline">

@@ -59,6 +59,12 @@ export interface Teamlid {
   email: string;
   bio: string;
   bioEn?: string;
+  opleiding?: string;
+  expertise?: string;
+  expertiseEn?: string;
+  motivatie?: string;
+  motivatieEn?: string;
+  quote?: string;
   volgorde: number;
   actief: boolean;
   foto?: string;
@@ -839,6 +845,7 @@ export function formatEuro(bedrag?: number): string | undefined {
 const teamlidProjection = `{
   "slug": slug.current,
   voornaam, naam, rol, rolEn, disciplines, locaties, email, bio, bioEn,
+  opleiding, expertise, expertiseEn, motivatie, motivatieEn, quote,
   volgorde, actief,
   "specialisaties": specialisaties[]->{ "id": _id, naam, naamEn, "dienst": dienst->{ "slug": slug.current, categorie } },
   "foto": foto.asset->url,

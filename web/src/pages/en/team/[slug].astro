@@ -4,9 +4,7 @@ import {
   getTeamleden,
   getTeamlidBySlug,
   getLocaties,
-  dienstHref,
   locatieKorteNamen,
-  specialisatieNaam,
   rolKort,
   truncateAtSentence,
 } from "../../../lib/content";
@@ -28,6 +26,7 @@ if (!lid) {
 const locaties = await getLocaties();
 const rol = lid.rolEn || lid.rol;
 const bio = lid.bioEn || lid.bio;
+const opleiding = (lid.opleiding || "").split("\n").map((r) => r.trim()).filter(Boolean);
 
 const jsonLd = [
   personNode(lid, "en"),
@@ -40,6 +39,7 @@ const jsonLd = [
 
 const title = `${lid.voornaam} ${lid.naam} | ${rolKort(rol)} Hasselt | Movenda`;
 import SectionKicker from "../../../components/SectionKicker.astro";
+import TeamlidProfiel from "../../../components/TeamlidProfiel.astro";
 ---
 
 <Layout
@@ -77,6 +77,7 @@ import SectionKicker from "../../../components/SectionKicker.astro";
         <h1 class="text-3xl font-bold">{lid.voornaam} {lid.naam}</h1>
         <p class="mt-1 text-lg font-medium text-brand-primary">{rol}</p>
         <p class="mt-2 text-sm text-brand-muted">{locatieKorteNamen(lid.locaties, locaties).join(" · ")}</p>
+        {opleiding.map((r) => <p class="mt-1 text-xs text-brand-muted">{r}</p>)}
       </div>
     </div>
 
@@ -85,41 +86,7 @@ import SectionKicker from "../../../components/SectionKicker.astro";
         This bio is currently in Dutch. The English translation will follow.
       </p>
     )}
-    <p class="mt-6 text-brand-muted">{bio}</p>
-
-    {lid.specialisaties.length > 0 && (
-      <div class="mt-8">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Specialisations</h2>
-        <ul class="mt-3 flex flex-wrap gap-2">
-          {lid.specialisaties.map((s) => (
-            <li>
-              {s.dienst ? (
-                <a href={dienstHref(s.dienst, "en")} class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-primary hover:underline">{specialisatieNaam(s, "en")}</a>
-              ) : (
-                <span class="rounded-full bg-brand-surface px-3 py-1 text-sm text-brand-text">{specialisatieNaam(s, "en")}</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
-
-    {lid.clubs.length > 0 && (
-      <div class="mt-6">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Clubs</h2>
-        <ul class="mt-2 flex flex-wrap gap-2 text-sm">
-          {lid.clubs.map((c) => (
-            <li>
-              {c.url ? (
-                <a href={c.url} target="_blank" rel="noopener" class="text-brand-primary hover:underline">{c.naam}</a>
-              ) : (
-                c.naam
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+    <TeamlidProfiel lid={lid} lang="en" />
 
     <p class="mt-8">
       <a href={`mailto:${lid.email}`} class="font-semibold text-brand-primary hover:underline">
