@@ -164,7 +164,7 @@ export default defineType({
       group: "bio",
       rows: 5,
       description:
-        "Eén regel per lijn, zoals in het document. De kop ‘Expertise en begeleiding’ komt automatisch. Leeg = de specialisaties hierboven worden getoond.",
+        "Eén regel per lijn, zoals in het document. De kop ‘Expertise en begeleiding’ komt automatisch. De specialisaties (met links naar het aanbod) staan eronder.",
     }),
     defineField({ name: "expertiseEn", title: "Expertise en begeleiding (EN)", type: "text", group: "bio", fieldset: "en", rows: 5 }),
     defineField({

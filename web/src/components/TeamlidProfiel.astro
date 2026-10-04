@@ -36,14 +36,16 @@ const kopClass = "text-sm font-semibold uppercase tracking-wide text-brand-muted
   {alineas(bio).map((p) => <p>{p}</p>)}
 </div>
 
-{expertise.length > 0 ? (
+{expertise.length > 0 && (
   <div class="mt-8">
     <h2 class={kopClass}>{expertiseKop}</h2>
     <ul class="mt-3 divide-y divide-brand-border border-y border-brand-border">
       {expertise.map((r) => <li class="py-2.5 text-brand-text">{r}</li>)}
     </ul>
   </div>
-) : lid.specialisaties.length > 0 && (
+)}
+
+{lid.specialisaties.length > 0 && (
   <div class="mt-8">
     <h2 class={kopClass}>{en ? "Specialisations" : "Specialisaties"}</h2>
     <ul class="mt-3 flex flex-wrap gap-2">
