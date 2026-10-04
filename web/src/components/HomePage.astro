@@ -18,6 +18,7 @@ import HomePijler from "./HomePijler.astro";
 import PaginaFoto from "./PaginaFoto.astro";
 import CmsFoto from "./CmsFoto.astro";
 import {
+  aantalBehandelaars,
   getTeamleden,
   getSiteSettings,
   getDienstenByCategorie,
@@ -120,7 +121,7 @@ const copy = en
       mpcAlt: "Performance training in het Movenda Performance Centre in Kuringen",
     };
 
-const teamBody = paginaParagrafen(pagina, "teamBlokTekst", lang, { aantal: team.length }).join(" ");
+const teamBody = paginaParagrafen(pagina, "teamBlokTekst", lang, { aantal: aantalBehandelaars(team) }).join(" ");
 ---
 
 {MPC_HOST ? (

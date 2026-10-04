@@ -922,6 +922,9 @@ export function teamVoorDienst(dienst: Pick<Dienst, "slug" | "gekoppeldeTeamlede
 }
 export const isTrainer = (lid: Teamlid) => lid.disciplines.includes("pt");
 
+/** Therapists and coaches only: office staff tick nothing under "Telt mee als". */
+export const aantalBehandelaars = (team: Teamlid[]) => team.filter((lid) => lid.disciplines.length > 0).length;
+
 /** Counts from Teamlid.disciplines ("Telt mee als"). Someone ticked as both counts in both. */
 export function teamCounts(team: Teamlid[]): { kinesisten: number; trainers: number } {
   return {
