@@ -14,7 +14,6 @@ import {
   aantalBehandelaars,
   keuzehulpTagLabel,
   locatieKorteNamen,
-  specialisatieNaam,
 } from "../lib/content";
 import TeamGroupPhoto from "./TeamGroupPhoto.astro";
 import Verwijskompas from "./Verwijskompas.astro";
@@ -168,6 +167,8 @@ const filters = [
     <div class:list={["mt-4 grid gap-3 sm:gap-6 lg:grid-cols-3", lab ? "grid-cols-1" : "grid-cols-2"]} data-grid>
       {team.map((lid) => {
         const bio = lang === "en" ? lid.bioEn || lid.bio : lid.bio;
+        const rol = lang === "en" ? lid.rolEn || lid.rol : lid.rol;
+        const clubs = lid.clubs.map((club) => club.naam.trim()).filter(Boolean);
         return (
         <article
           class="group relative overflow-hidden rounded-xl border border-brand-border bg-brand-surface transition hover:border-brand-primary sm:rounded-2xl"
@@ -203,13 +204,8 @@ const filters = [
             </div>
             <div class="p-3 sm:p-5">
               <h2 class="text-[15px] font-semibold leading-snug sm:text-lg">{lid.voornaam} {lid.naam}</h2>
-              <p class="mt-0.5 line-clamp-2 text-xs font-medium text-brand-primary sm:text-sm">{lang === "en" ? lid.rolEn || lid.rol : lid.rol}</p>
-              <p class="mt-1 text-[11px] text-brand-muted sm:text-xs">{locatieLabel(lid.locaties)}</p>
-              {lid.specialisaties.length > 0 && (
-                <p class="mt-3 hidden line-clamp-2 text-sm text-brand-muted sm:block">
-                  {lid.specialisaties.slice(0, 4).map((s) => specialisatieNaam(s, lang)).join(" · ")}
-                </p>
-              )}
+              <p class="mt-0.5 line-clamp-2 text-xs font-medium text-brand-primary sm:text-sm">{rol}</p>
+              {clubs.length > 0 && <p class="mt-1 text-[11px] text-brand-muted sm:text-xs">{clubs.join(" · ")}</p>}
             </div>
           </a>
           {bio && (

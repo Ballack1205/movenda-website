@@ -218,6 +218,9 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
               </span>
               <span class="brief-team__name">{lid.voornaam} {lid.naam}</span>
               <span class="brief-team__role">{en ? lid.rolEn || lid.rol : lid.rol}</span>
+              {lid.clubs.length > 0 && (
+                <span class="brief-team__club">{lid.clubs.map((club) => club.naam.trim()).filter(Boolean).join(" · ")}</span>
+              )}
             </a>
           </li>
         ))}
