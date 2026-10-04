@@ -123,13 +123,22 @@ function embedUrl(url: string): string | undefined {
           />
         )}
 
-        {s.knopLabel && s.knopUrl && (
-          <div class="actie-copy mx-auto max-w-3xl">
-            <a
-              href={withLang(s.knopUrl, lang)}
-              class="actie-knop"
-              {...(/^https?:/.test(s.knopUrl) ? { target: "_blank", rel: "noopener" } : {})}
-            >{s.knopLabel}</a>
+        {((s.knopLabel && s.knopUrl) || (s.knop2Label && s.knop2Url)) && (
+          <div class="actie-knoppen mx-auto max-w-3xl">
+            {s.knopLabel && s.knopUrl && (
+              <a
+                href={withLang(s.knopUrl, lang)}
+                class="actie-knop"
+                {...(/^(https?:|mailto:)/.test(s.knopUrl) ? { target: "_blank", rel: "noopener" } : {})}
+              >{s.knopLabel}</a>
+            )}
+            {s.knop2Label && s.knop2Url && (
+              <a
+                href={withLang(s.knop2Url, lang)}
+                class="actie-knop actie-knop--lijn"
+                {...(/^(https?:|mailto:)/.test(s.knop2Url) ? { target: "_blank", rel: "noopener" } : {})}
+              >{s.knop2Label}</a>
+            )}
           </div>
         )}
       </section>
@@ -369,11 +378,17 @@ function embedUrl(url: string): string | undefined {
     margin-top: 2rem;
   }
 
+  .actie-knoppen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
   .actie-knop {
     display: inline-flex;
     min-height: 48px;
     align-items: center;
-    margin-top: 1.75rem;
     padding: 0 1.5rem;
     border: 1px solid #f4f7fb;
     border-radius: 9999px;
@@ -386,6 +401,16 @@ function embedUrl(url: string): string | undefined {
   .actie-knop:hover {
     background: transparent;
     color: #f4f7fb;
+  }
+
+  .actie-knop--lijn {
+    background: transparent;
+    color: #f4f7fb;
+  }
+
+  .actie-knop--lijn:hover {
+    background: #f4f7fb;
+    color: #161513;
   }
 
   .actie-link {

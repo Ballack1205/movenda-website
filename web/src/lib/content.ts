@@ -2364,6 +2364,9 @@ export interface ActieSectie {
   knopLabel?: string;
   knopLabelEn?: string;
   knopUrl?: string;
+  knop2Label?: string;
+  knop2LabelEn?: string;
+  knop2Url?: string;
 }
 
 /** Campaign / event landing page at /<slug> (Dwars door Hasselt Ready, Recovery). */
@@ -2396,7 +2399,9 @@ export interface Actiepagina {
 
 /** A section is shown once Julie gave it more than a heading. */
 export function actieSectieGevuld(s: ActieSectie): boolean {
-  return Boolean(s.tekst?.trim() || s.items.length || s.kaderTekst?.trim() || s.foto || (s.knopLabel && s.knopUrl));
+  return Boolean(
+    s.tekst?.trim() || s.items.length || s.kaderTekst?.trim() || s.foto || (s.knopLabel && s.knopUrl) || (s.knop2Label && s.knop2Url),
+  );
 }
 
 function actieTekst(nl: string | undefined, en: string | undefined, lang: Lang): string | undefined {
@@ -2425,6 +2430,7 @@ export function localizeActie(pagina: Actiepagina, lang: Lang): Actiepagina {
       kaderTitel: actieTekst(s.kaderTitel, s.kaderTitelEn, lang),
       kaderTekst: actieTekst(s.kaderTekst, s.kaderTekstEn, lang),
       knopLabel: actieTekst(s.knopLabel, s.knopLabelEn, lang),
+      knop2Label: actieTekst(s.knop2Label, s.knop2LabelEn, lang),
       items: s.items.map((item) => ({
         ...item,
         label: actieTekst(item.label, item.labelEn, lang),
@@ -2443,7 +2449,7 @@ export async function getActiepaginas(): Promise<Actiepagina[]> {
         "foto": foto${CMS_FOTO_PROJECTION},
         "logo": logo.asset->url, logoNaam, logoUrl,
         secties[]{ kicker, kickerEn, titel, titelEn, tekst, tekstEn, items[]{ label, labelEn, kop, kopEn, tekst, tekstEn, video }, kaderTitel, kaderTitelEn, kaderTekst, kaderTekstEn,
-          "foto": foto${CMS_FOTO_PROJECTION}, knopLabel, knopLabelEn, knopUrl },
+          "foto": foto${CMS_FOTO_PROJECTION}, knopLabel, knopLabelEn, knopUrl, knop2Label, knop2LabelEn, knop2Url },
         "galerij": galerij[]${CMS_FOTO_PROJECTION},
         afsluiter, afsluiterEn, zichtbaarInGoogle, seoTitle, seoTitleEn, seoDescription, seoDescriptionEn
       }`,

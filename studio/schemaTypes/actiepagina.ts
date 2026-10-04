@@ -60,6 +60,9 @@ const sectie = defineArrayMember({
     defineField({ name: "knopLabel", title: "Knop: tekst", type: "string" }),
     defineField({ name: "knopLabelEn", title: "Knop: tekst (EN)", type: "string" }),
     defineField({ name: "knopUrl", title: "Knop: link", type: "string", description: "Bv. /team#keuzehulp, /contact of https://…" }),
+    defineField({ name: "knop2Label", title: "Tweede knop: tekst", type: "string", description: "Mag leeg. Staat naast de eerste knop, bv. 'Stel je vraag'." }),
+    defineField({ name: "knop2LabelEn", title: "Tweede knop: tekst (EN)", type: "string" }),
+    defineField({ name: "knop2Url", title: "Tweede knop: link", type: "string", description: "Bv. /contact of mailto:info@movenda.be." }),
   ],
   preview: {
     select: { title: "titel", subtitle: "kicker" },
