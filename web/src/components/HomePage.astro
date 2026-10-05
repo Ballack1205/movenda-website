@@ -79,7 +79,8 @@ const mpcTeaserFoto = mpcPagina.foto
 
 const heroSizes = "(min-width: 1024px) 60vw, 100vw";
 const heroWidths = [640, 960, 1280];
-const heroPreload = pagina.foto ? null : await getImage({ src: homeHero, widths: heroWidths, sizes: heroSizes });
+// The lab cover renders its own eager, high-priority photo; preloading homeHero there only steals bandwidth.
+const heroPreload = pagina.foto || THEME === "lab" ? null : await getImage({ src: homeHero, widths: heroWidths, sizes: heroSizes });
 const heroLinks = heroPreload
   ? [
       {

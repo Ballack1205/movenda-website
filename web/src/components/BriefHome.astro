@@ -114,6 +114,14 @@ const deuren = settings.homeAanbod.map((deur, i) => ({
   alt: homeDeurNaam(deur, lang),
 }));
 
+// The circles are at most 13rem wide; 640px stays sharp on retina without shipping the full photo.
+const lokaleLocFoto: Record<string, string> = {
+  "/locaties/olympia-ingang.jpg": "/locaties/olympia-ingang-640.webp",
+  "/locaties/mpc-ingang.jpg": "/locaties/mpc-ingang-640.webp",
+};
+const locFoto = (src: string) =>
+  /^https?:/.test(src) ? `${src}?w=640&h=640&fit=crop&auto=format` : lokaleLocFoto[src] ?? src;
+
 const counts = teamCounts(team);
 const proof = [
   { value: String(counts.kinesisten), label: brief.bewijs.kinesistenLabel },
@@ -180,7 +188,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       <a class="brief-loc" href={withLang("/locaties/olympia", lang)}>
         {hasselt.foto && (
           <span class="brief-loc__ring">
-            <img src={hasselt.foto} alt="" class="brief-loc__photo" loading="lazy" />
+            <img src={locFoto(hasselt.foto)} alt="" width="640" height="640" class="brief-loc__photo" loading="lazy" decoding="async" />
           </span>
         )}
         <span class="brief-loc__name">{brief.hasseltNaam}</span>
@@ -190,7 +198,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
     {kuringen?.foto && (
       <a class="brief-loc" href={withLang("/locaties/mpc", lang)}>
         <span class="brief-loc__ring">
-          <img src={kuringen.foto} alt="" class="brief-loc__photo" loading="lazy" />
+          <img src={locFoto(kuringen.foto)} alt="" width="640" height="640" class="brief-loc__photo" loading="lazy" decoding="async" />
         </span>
         <span class="brief-loc__name">{brief.kuringenNaam}</span>
         <span class="brief-loc__address">{kuringen.adres}</span>

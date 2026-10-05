@@ -32,7 +32,7 @@ const sharedNote =
 
 // Location mark: the "M" for Movenda / Olympia, the MPC mark for the Performance Centre.
 const markFor = (slug: string) =>
-  slug === "mpc" ? "/brand/logo-mpc.png" : "/brand/logo-m.png";
+  slug === "mpc" ? "/brand/logo-mpc-160.png" : "/brand/logo-m-160.png";
 const shortName = (naam: string) => naam.replace(/^Movenda\s*/i, "");
 const placeName = (locatie: { slug: string; naam: string }) =>
   locatie.slug === "mpc" ? "Performance Centre" : locatie.slug === "olympia" ? "Movenda" : shortName(locatie.naam);
@@ -132,8 +132,8 @@ const socialClass =
         <img
           src={lab ? "/brand/logo-wordmark-on-dark.png" : "/brand/logo-wordmark.png"}
           alt="Movenda"
-          width="140"
-          height="30"
+          width={lab ? 278 : 140}
+          height={lab ? 28 : 30}
           class="h-6 w-auto xl:h-7"
         />
       </a>

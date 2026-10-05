@@ -42,7 +42,7 @@ const afbeelding = popup?.afbeelding
       >
         <div class="relative min-h-12">
           {afbeelding && (
-            <img src={afbeelding} alt="" class="h-48 w-full object-cover sm:h-56" />
+            <img src={afbeelding} alt="" width="960" height="540" loading="lazy" decoding="async" class="h-48 w-full object-cover sm:h-56" />
           )}
           <button
             type="button"
@@ -175,9 +175,17 @@ const afbeelding = popup?.afbeelding
         remember();
       }
 
-      root.hidden = false;
-      if (typeof dialog.showModal === "function") dialog.showModal();
-      else dialog.setAttribute("open", "");
+      // Opening during load makes the popup the LCP element and hides the hero.
+      function openPopup() {
+        root.hidden = false;
+        if (typeof dialog.showModal === "function") dialog.showModal();
+        else dialog.setAttribute("open", "");
+      }
+      function schedule() {
+        setTimeout(openPopup, 3000);
+      }
+      if (document.readyState === "complete") schedule();
+      else window.addEventListener("load", schedule, { once: true });
 
       root.querySelector("[data-promo-close]")?.addEventListener("click", closePopup);
       dialog.addEventListener("click", function (e) {
