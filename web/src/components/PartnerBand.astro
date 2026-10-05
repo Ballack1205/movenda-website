@@ -58,6 +58,7 @@ const logoWidth = (logo: string) => {
                       alt={isClone ? "" : p.naam}
                       width={logoWidth(p.logo)}
                       height="48"
+                      loading="lazy"
                       decoding="async"
                       class:list={[
                         "partnerband__logo",
