@@ -175,17 +175,23 @@ const afbeelding = popup?.afbeelding
         remember();
       }
 
-      // Opening during load makes the popup the LCP element and hides the hero.
+      // Opening during load makes the popup the LCP element and hides the hero:
+      // wait for the visitor to scroll, or a long idle fallback.
+      var opened = false;
       function openPopup() {
+        if (opened) return;
+        opened = true;
+        window.removeEventListener("scroll", onScroll);
         root.hidden = false;
         if (typeof dialog.showModal === "function") dialog.showModal();
         else dialog.setAttribute("open", "");
       }
-      function schedule() {
-        setTimeout(openPopup, 3000);
+      function onScroll() {
+        window.removeEventListener("scroll", onScroll);
+        setTimeout(openPopup, 1200);
       }
-      if (document.readyState === "complete") schedule();
-      else window.addEventListener("load", schedule, { once: true });
+      window.addEventListener("scroll", onScroll, { passive: true });
+      setTimeout(openPopup, 10000);
 
       root.querySelector("[data-promo-close]")?.addEventListener("click", closePopup);
       dialog.addEventListener("click", function (e) {

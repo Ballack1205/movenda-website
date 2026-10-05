@@ -110,6 +110,8 @@ export default defineConfig({
   // URLs (/kinesitherapie/manuele-therapie). Output stays "directory"
   // (…/index.html) which Render serves for the slash-less path.
   trailingSlash: "never",
+  // The single stylesheet (~19 KB) was render-blocking on slow mobile; inline it in every page.
+  build: { inlineStylesheets: "always" },
   redirects: {
     "/groepslessen/kleine-groepstraining": {
       status: 301,
