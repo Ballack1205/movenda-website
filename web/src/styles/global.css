@@ -148,7 +148,7 @@ html[data-theme="lab"] .locatie-page a.bg-brand-primary:hover {
 }
 
 /* Overview pages use the same black as the Aanbod bands. */
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) main {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) main {
   display: flex;
   flex-direction: column;
   background: #161513;
@@ -336,7 +336,7 @@ html[data-theme="lab"] [data-header] [data-nav-panel] ul {
 
 /* The bar itself stays see-through. The page behind it is ink, so the
    cream body never shows through, and copy can scroll across that black. */
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) {
   background: #161513;
 }
 
@@ -346,7 +346,7 @@ html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .
    the photo header.
    Desktop keeps the last 10%. On a phone the strip is 15%, because the
    bar is shorter and a 10% fade is barely a line. */
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] {
   position: sticky;
   top: 0;
   background-color: transparent;
@@ -356,7 +356,7 @@ html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .
   box-shadow: none;
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header]::before {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header]::before {
   content: "";
   position: absolute;
   left: 0;
@@ -373,72 +373,72 @@ html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .
 }
 
 @media (max-width: 959px) {
-  html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] {
+  html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] {
     background-image: linear-gradient(180deg, #161513 0%, #161513 85%, transparent 100%);
   }
 
-  html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header]::before {
+  html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header]::before {
     height: calc(15% + 0.75rem);
   }
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] a,
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] button,
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] input {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] a,
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] button,
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] input {
   color: #f4f7fb;
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] input::placeholder {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] input::placeholder {
   color: rgb(244 247 251 / 0.6);
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] [data-cta],
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] [data-cta]:hover,
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] [data-cta]:focus-visible {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] [data-cta],
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] [data-cta]:hover,
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] [data-cta]:focus-visible {
   background: #f3eee4;
   color: #161513;
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-menu-toggle] {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-menu-toggle] {
   border-color: rgb(244 247 251 / 0.28);
   color: #f4f7fb;
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] a:not([data-logo]):hover,
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] button:hover {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] a:not([data-logo]):hover,
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] button:hover {
   background-color: rgb(244 247 251 / 0.08);
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] a[data-logo]:hover :is(.logo-on-light, .logo-on-dark),
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] a[data-logo]:focus-visible :is(.logo-on-light, .logo-on-dark) {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] a[data-logo]:hover :is(.logo-on-light, .logo-on-dark),
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] a[data-logo]:focus-visible :is(.logo-on-light, .logo-on-dark) {
   filter: none;
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) .logo-on-light {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) .logo-on-light {
   display: none;
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) .logo-on-dark {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) .logo-on-dark {
   display: block;
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] [data-mobile-nav],
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] [data-nav-panel] ul,
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-nav-panel] .lab-mega {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] [data-mobile-nav],
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] [data-nav-panel] ul,
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-nav-panel] .lab-mega {
   background: #161513;
   border-color: rgb(244 247 251 / 0.15);
   color: #f4f7fb;
 }
 
 /* Summaries are not links, so the header link color never reached Aanbod / Over ons. */
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) .lab-menu,
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) .lab-menu__item,
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) .lab-menu summary {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) .lab-menu,
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) .lab-menu__item,
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) .lab-menu summary {
   color: #f4f7fb;
 }
 
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] [data-search-list] a,
-html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:has(.lab-cover, .dienst-hero)) [data-header] [data-search-list] a:hover {
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] [data-search-list] a,
+html[data-theme="lab"] body:has(.page-ink, .locatie-page):not(:is([data-cover], :has(.lab-cover, .dienst-hero))) [data-header] [data-search-list] a:hover {
   color: #161513;
 }
 
@@ -811,7 +811,7 @@ html[data-theme="lab"] .lab-strip__card--alt .lab-strip__body {
 }
 
 /* Header floats over the cover, like LAB / Brick. */
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] {
   position: fixed;
   inset-inline: 0;
   top: 0;
@@ -825,28 +825,28 @@ html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] {
     color 0.35s ease;
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] a,
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] button,
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] input {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] a,
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] button,
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] input {
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] input::placeholder {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] input::placeholder {
   color: color-mix(in srgb, var(--on-photo) 72%, transparent);
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) [data-menu-toggle] {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) [data-menu-toggle] {
   border-color: rgb(239 237 230 / 0.35);
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] [data-cta] {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] [data-cta] {
   background: var(--on-photo);
   color: #161513;
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] a:not([data-logo]):hover,
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] button:hover {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] a:not([data-logo]):hover,
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] button:hover {
   background-color: rgb(239 237 230 / 0.1);
 }
 
@@ -854,28 +854,28 @@ html[data-theme="lab"] .logo-on-dark {
   display: none;
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .logo-on-light {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .logo-on-light {
   display: none;
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .logo-on-dark {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .logo-on-dark {
   display: block;
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] [data-mobile-nav],
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] [data-nav-panel] ul {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] [data-mobile-nav],
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] [data-nav-panel] ul {
   background: #161513;
   border-color: rgb(239 237 230 / 0.15);
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):has(.lab-cover, .dienst-hero) [data-header] {
+html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] {
   background: transparent;
   border-bottom-color: transparent;
   color: #f4f7fb;
 }
 
-html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):has(.lab-cover, .dienst-hero) [data-header]::before {
+html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header]::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -888,40 +888,40 @@ html[data-theme="lab"] body.lab-header-blur:not(.lab-past-cover):has(.lab-cover,
   mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] {
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] {
   background: var(--brand-bg);
   border-bottom-color: transparent;
   color: var(--brand-text);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] a,
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] button,
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] input {
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] a,
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] button,
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] input {
   color: var(--brand-text);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] input::placeholder {
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] input::placeholder {
   color: color-mix(in srgb, var(--brand-text) 62%, transparent);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-menu-toggle] {
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-menu-toggle] {
   border-color: var(--brand-border);
   color: var(--brand-text);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] [data-cta] {
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] [data-cta] {
   background: var(--brand-text);
   color: var(--brand-bg);
 }
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] a:not([data-logo]):hover,
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] button:hover {
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] a:not([data-logo]):hover,
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] button:hover {
   background-color: rgb(22 21 19 / 0.06);
 }
 
 
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] [data-mobile-nav],
-html[data-theme="lab"] body.lab-past-cover:has(.lab-cover, .dienst-hero):not(:has(.header-ink)):not(.lab-over-ink) [data-header] [data-nav-panel] ul {
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] [data-mobile-nav],
+html[data-theme="lab"] body.lab-past-cover:is([data-cover], :has(.lab-cover, .dienst-hero)):not(:has(.header-ink)):not(.lab-over-ink) [data-header] [data-nav-panel] ul {
   background: var(--brand-surface);
   border-color: var(--brand-border);
   color: var(--brand-text);
@@ -1137,22 +1137,22 @@ html[data-theme="lab"] .lab-menu__cta {
   font-weight: 600;
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu {
   background: #161513;
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu__item,
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu a {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu__item,
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu a {
   color: var(--on-photo);
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu__cta {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu__cta {
   background: var(--on-photo);
   color: #161513;
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) .lab-menu {
   border-color: rgb(239 237 230 / 0.15);
 }
 
@@ -1396,7 +1396,7 @@ html[data-theme="lab"] .lab-mega {
   border: 1px solid var(--brand-border);
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) [data-nav-panel] .lab-mega {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) [data-nav-panel] .lab-mega {
   background: #161513;
   color: var(--on-photo);
   border-color: rgb(239 237 230 / 0.15);
@@ -1450,8 +1450,8 @@ html[data-theme="lab"] [data-header] [data-cta]:focus-visible {
   color: var(--brand-bg);
 }
 
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) [data-header] [data-cta]:hover,
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) [data-header] [data-cta]:focus-visible {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) [data-header] [data-cta]:hover,
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)):is(:not(.lab-past-cover), :has(.header-ink), .lab-over-ink) [data-header] [data-cta]:focus-visible {
   background: var(--on-photo);
   color: #161513;
 }
@@ -2125,12 +2125,12 @@ html[data-theme="lab"] summary.brief-slot__button::-webkit-details-marker {
 
 .search-suggest a[aria-selected="true"],
 html[data-theme="lab"] [data-header] [data-search-list] a:hover,
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] [data-search-list] a:hover {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] [data-search-list] a:hover {
   background: rgba(22, 21, 19, 0.06);
   color: #161513;
 }
 
 html[data-theme="lab"] [data-header] [data-search-list] a,
-html[data-theme="lab"] body:has(.lab-cover, .dienst-hero) [data-header] [data-search-list] a {
+html[data-theme="lab"] body:is([data-cover], :has(.lab-cover, .dienst-hero)) [data-header] [data-search-list] a {
   color: #161513;
 }

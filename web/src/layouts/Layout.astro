@@ -75,6 +75,11 @@ const {
   deferDisplayFont = false,
 } = Astro.props;
 const deferFont = deferDisplayFont && THEME === "lab";
+// Rendered up front so <body> can carry data-cover from the server: the
+// body:has(.lab-cover) header rules only match once the cover has streamed in,
+// which made the photo jump on slow connections (CLS).
+const content = await Astro.slots.render("default");
+const hasCover = /class="[^"]*\b(lab-cover|dienst-hero)\b/.test(content);
 
 // Preview safety net: this site is a pitch preview until Movenda confirms
 // go-live. PUBLIC_NOINDEX defaults to "true" so search engines never index
@@ -183,10 +188,10 @@ const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
     ))}
     <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
   </head>
-  <body class="flex min-h-screen flex-col bg-brand-bg text-brand-text">
+  <body class="flex min-h-screen flex-col bg-brand-bg text-brand-text" data-cover={hasCover ? "" : undefined}>
     <Header brand={chromeBrand} lang={lang} path={path} altPath={altPath} />
     <main class="flex-1">
-      <slot />
+      <Fragment set:html={content} />
     </main>
     <Footer brand={chromeBrand} lang={lang} />
     <PromoPopup popup={popup} lang={lang} />
