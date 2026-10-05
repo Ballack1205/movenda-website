@@ -29,6 +29,9 @@ export const BLOG_TAGS = [
   { value: "mentale-training", label: "Mentale training" },
 ] as const;
 
+/** Tag pages with fewer posts are thin lists: noindex + out of the sitemap. Mirrored in astro.config.mjs. */
+export const TAG_INDEX_MIN_POSTS = 4;
+
 export type BlogTag = (typeof BLOG_TAGS)[number]["value"];
 
 const BLOG_TAGS_EN: Record<string, string> = {

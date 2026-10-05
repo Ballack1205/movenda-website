@@ -17,6 +17,8 @@ const SANITY_DATASET = process.env.PUBLIC_SANITY_DATASET || "production";
 const SITEMAP_EXCLUDE = new Set([
   "/welkom",
   "/en/welkom",
+  "/zoeken",
+  "/en/zoeken",
 ]);
 
 /**
@@ -37,7 +39,7 @@ async function getLastmodMap() {
       const query = `{
         "diensten": *[_type == "dienst"]{ "slug": slug.current, categorie, "u": _updatedAt },
         "team": *[_type == "teamlid" && actief == true]{ "slug": slug.current, "u": _updatedAt },
-        "blog": *[_type == "blogPost"]{ "slug": slug.current, "u": _updatedAt },
+        "blog": *[_type == "blogPost"]{ "slug": slug.current, tags, "u": _updatedAt },
         "locaties": *[_type == "locatie"]{ "slug": slug.current, "u": _updatedAt },
         "acties": *[_type == "actiepagina" && !(_id in path("drafts.**"))]{ "slug": slug.current, zichtbaarInGoogle, "u": _updatedAt }
       }`;
@@ -65,9 +67,18 @@ async function getLastmodMap() {
         map.set(`/team/${t.slug}`, t.u);
         map.set(`/en/team/${t.slug}`, t.u);
       }
+      /** @type {Map<string, number>} */
+      const tagCount = new Map();
       for (const b of result.blog || []) {
         map.set(`/blog/${b.slug}`, b.u);
         map.set(`/en/blog/${b.slug}`, b.u);
+        for (const tag of b.tags || []) tagCount.set(tag, (tagCount.get(tag) || 0) + 1);
+      }
+      // Same threshold as TAG_INDEX_MIN_POSTS in src/lib/blog.ts.
+      for (const [tag, n] of tagCount) {
+        if (n >= 4) continue;
+        noindexPaths.add(`/blog/tag/${tag}`);
+        noindexPaths.add(`/en/blog/tag/${tag}`);
       }
       for (const l of result.locaties || []) {
         map.set(`/locaties/${l.slug}`, l.u);

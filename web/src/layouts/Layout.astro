@@ -130,7 +130,7 @@ if (THEME === "lab") {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {noindex && <meta name="robots" content={NOINDEX ? "noindex, nofollow" : "noindex, follow"} />}
     {settings.googleSiteVerification && (
       <meta name="google-site-verification" content={settings.googleSiteVerification} />
     )}

@@ -4,7 +4,7 @@ import BlogPostCard from "./BlogPostCard.astro";
 import SectionKicker from "./SectionKicker.astro";
 import { getBlogPosts } from "../lib/content";
 import { blogListSchema, breadcrumbSchema } from "../lib/schema";
-import { BLOG_TAGS, blogTagLabel } from "../lib/blog";
+import { BLOG_TAGS, TAG_INDEX_MIN_POSTS, blogTagLabel } from "../lib/blog";
 import { withLang, type Lang } from "../lib/i18n";
 
 interface Props {
@@ -30,6 +30,7 @@ const path = `${prefix}/blog/tag/${tag}`;
   path={path}
   altPath={en ? `/blog/tag/${tag}` : `/en/blog/tag/${tag}`}
   lang={lang}
+  noindex={posts.length < TAG_INDEX_MIN_POSTS}
   jsonLd={[
     breadcrumbSchema([
       { name: "Home", path: prefix || "/" },
