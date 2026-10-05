@@ -10,7 +10,7 @@ import { defineArrayMember, defineField, defineType } from "sanity";
 // Top-level URLs that already belong to a fixed page of the site.
 const BEZET = new Set([
   "b2b", "blog", "bookappointment", "contact", "en", "events", "faq", "groepslessen", "index", "jobs",
-  "kine-abonnement", "kinesitherapie", "locaties", "mpc", "over", "over-ons", "performance", "prijzen",
+  "kine-abonnement", "kinesitherapie", "locaties", "movenda-kinesitherapie", "mpc", "over", "over-ons", "performance", "prijzen",
   "privacy", "team", "training", "voorwaarden", "welkom", "zoeken", "rss.xml", "llms.txt", "robots.txt",
 ]);
 

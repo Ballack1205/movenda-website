@@ -22,7 +22,7 @@ const { slug } = Astro.params;
 const dienst = await getDienstBySlug(slug!, "kine");
 
 if (!dienst) {
-  return Astro.redirect("/kinesitherapie");
+  return Astro.redirect("/movenda-kinesitherapie");
 }
 
 const locatie = (await getLocatieBySlug("olympia"))!;
@@ -35,7 +35,7 @@ const jsonLd = [
   serviceNode(dienst, locatie, { path, prijs, team }),
   breadcrumbNode([
     { name: "Home", path: "/" },
-    { name: "Kinesitherapie", path: "/kinesitherapie" },
+    { name: "Kinesitherapie", path: "/movenda-kinesitherapie" },
     { name: dienst.titel, path },
   ]),
 ];
@@ -54,7 +54,7 @@ const jsonLd = [
     dienst={dienst}
     team={team}
     locatie={locatie}
-    backHref="/kinesitherapie"
+    backHref="/movenda-kinesitherapie"
     backLabel="← Terug naar kinesitherapie"
   />
 </Layout>

@@ -1,0 +1,59 @@
+---
+import AanbodOverzicht from "../../components/AanbodOverzicht.astro";
+import Layout from "../../layouts/Layout.astro";
+import PaginaFoto from "../../components/PaginaFoto.astro";
+import { getPagina, paginaAlineas, paginaTekst } from "../../lib/content";
+import { getBriefAanbod } from "../../lib/nav";
+import { breadcrumbSchema, localBusinessSchema } from "../../lib/schema";
+import { getLocatieBySlug } from "../../lib/content";
+import { withLang } from "../../lib/i18n";
+import kineHero from "../../assets/marketing/kine-hero.jpg";
+
+const locatie = (await getLocatieBySlug("olympia"))!;
+const pagina = await getPagina("kinesitherapie");
+const aanbod = (await getBriefAanbod("en")).find((group) => group.href === "/en/movenda-kinesitherapie")?.children ?? [];
+
+const jsonLd = [
+  localBusinessSchema(locatie),
+  breadcrumbSchema([
+    { name: "Home", path: "/en" },
+    { name: "Physiotherapy", path: "/en/movenda-kinesitherapie" },
+  ]),
+];
+---
+
+<Layout
+  title={paginaTekst(pagina, "seoTitle", "en") || "Physiotherapy treatments | Movenda Hasselt"}
+  description={paginaTekst(pagina, "seoDescription", "en")}
+  path="/en/movenda-kinesitherapie"
+  altPath="/movenda-kinesitherapie"
+  lang="en"
+  jsonLd={jsonLd}
+>
+  <AanbodOverzicht
+    class="page-ink"
+    kicker={paginaTekst(pagina, "ondertitel", "en")}
+    titel={paginaTekst(pagina, "titel", "en")}
+    alineaas={paginaAlineas(pagina, "en")}
+    blokken={pagina.blokken}
+    aanbodTitel={paginaTekst(pagina, "aanbodTitel", "en") || "Offer"}
+    aanbod={aanbod}
+    lang="en"
+  >
+    <a slot="actions" href={withLang(pagina.knopUrl || "/team#keuzehulp", "en")} class="rounded-full bg-brand-primary px-6 py-3 font-semibold text-white">
+      {paginaTekst(pagina, "knopLabel", "en") || "Book an appointment"}
+    </a>
+    <PaginaFoto
+      slot="media"
+      pagina={pagina}
+      fallback={kineHero}
+      alt={pagina.fotoAlt || "Physiotherapist in Hasselt treating a patient at Movenda"}
+      width={640}
+      height={720}
+      widths={[640, 960, 1280]}
+      sizes="(min-width: 1024px) 42vw, 100vw"
+      class="aspect-[4/4.5] w-full object-cover"
+      priority
+    />
+  </AanbodOverzicht>
+</Layout>

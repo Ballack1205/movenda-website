@@ -200,11 +200,11 @@ function briefNav(diensten: Dienst[], lang: Lang, contact: NavLink, settings: Si
   return {
     items: [
       {
-        href: p("/kinesitherapie"),
+        href: p("/movenda-kinesitherapie"),
         label: w("aanbod"),
         side: "start",
         groups: [
-          { label: w("kinesitherapie"), href: p("/kinesitherapie"), children: kine },
+          { label: w("kinesitherapie"), href: p("/movenda-kinesitherapie"), children: kine },
           {
             label: w("performance"),
             href: p("/performance"),
@@ -406,10 +406,10 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
     return {
       items: [
         {
-          href: "/en/kinesitherapie",
+          href: "/en/movenda-kinesitherapie",
           label: w("kinesitherapie"),
           children: [
-            { href: "/en/kinesitherapie", label: w("alleBehandelingen") },
+            { href: "/en/movenda-kinesitherapie", label: w("alleBehandelingen") },
             ...dienstLinks(diensten, "kine", "en"),
           ],
         },
@@ -444,10 +444,10 @@ export async function getNavModel(brand: Brand, lang: Lang): Promise<NavModel> {
   return {
     items: [
       {
-        href: "/kinesitherapie",
+        href: "/movenda-kinesitherapie",
         label: w("kinesitherapie"),
         children: [
-          { href: "/kinesitherapie", label: w("alleBehandelingen") },
+          { href: "/movenda-kinesitherapie", label: w("alleBehandelingen") },
           ...dienstLinks(diensten, "kine", "nl"),
         ],
       },

@@ -138,6 +138,8 @@ export default defineConfig({
       filter: (url) => {
         const path = new URL(url).pathname.replace(/\/$/, "") || "/";
         if (SITEMAP_EXCLUDE.has(path)) return false;
+        // /kinesitherapie renders the homepage and canonicals to /. The overview lives at /movenda-kinesitherapie.
+        if (path === "/kinesitherapie" || path === "/en/kinesitherapie") return false;
         // Redirects to /over-ons/… (the MPC host keeps its own visie page).
         if (path === "/over" || path === "/en/over") return false;
         if (!hostMode && (path === "/performance/visie" || path === "/en/performance/visie")) return false;

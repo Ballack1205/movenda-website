@@ -12,7 +12,7 @@ export const PAGINAS = [
   { key: "home", title: "Homepage", path: "/" },
   { key: "over", title: "Ons verhaal", path: "/over-ons/ons-verhaal" },
   { key: "onze-visie", title: "Onze visie", path: "/over-ons/onze-visie" },
-  { key: "kinesitherapie", title: "Kinesitherapie (overzicht)", path: "/kinesitherapie" },
+  { key: "kinesitherapie", title: "Kinesitherapie (overzicht)", path: "/movenda-kinesitherapie" },
   { key: "training", title: "Training (overzicht)", path: "/training" },
   { key: "performance", title: "Performance (overzicht)", path: "/performance" },
   { key: "b2b", title: "B2B (overzicht)", path: "/b2b" },

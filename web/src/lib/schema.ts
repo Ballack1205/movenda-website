@@ -106,7 +106,10 @@ export function organizationNode(settings: SiteSettings, locaties: Locatie[]): J
     ]),
     // Both legal entities/vestigingen hang under the one brand.
     location: locaties.map((l) => ({ "@id": ids.locatie(l.slug) })),
-    areaServed: { "@type": "City", name: "Hasselt" },
+    areaServed: [
+      { "@type": "City", name: "Hasselt" },
+      { "@type": "City", name: "Kuringen" },
+    ],
   });
 }
 
@@ -157,6 +160,10 @@ export function localBusinessNode(locatie: Locatie): JsonLdNode {
     priceRange: "€€",
     currenciesAccepted: "EUR",
     medicalSpecialty: isMpc ? undefined : "https://schema.org/Physiotherapy",
+    areaServed: [
+      { "@type": "City", name: "Hasselt" },
+      { "@type": "City", name: "Kuringen" },
+    ],
     sameAs: unique([locatie.googleBusinessUrl, locatie.instagram, locatie.facebook]),
     parentOrganization: { "@id": ids.organization() },
     openingHoursSpecification: locatie.uren
@@ -167,6 +174,28 @@ export function localBusinessNode(locatie: Locatie): JsonLdNode {
       })
       .filter(Boolean),
   });
+}
+
+/** Homepage: the Hasselt practice lists its physiotherapy services for Google. */
+export function withKineOfferCatalog(locatie: Locatie, diensten: Dienst[], lang: Lang = "nl"): JsonLdNode {
+  const base = localBusinessNode(locatie);
+  if (locatie.brand === "mpc" || diensten.length === 0) return base;
+  return {
+    ...base,
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: lang === "en" ? "Physiotherapy in Hasselt" : "Kinesitherapie in Hasselt",
+      itemListElement: diensten.map((dienst) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          "@id": ids.service(dienstHref(dienst, lang)),
+          name: lang === "en" ? dienst.titelEn || dienst.titel : dienst.titel,
+          url: `${SITE_URL}${dienstHref(dienst, lang)}`,
+        },
+      })),
+    },
+  };
 }
 
 /** Organization + WebSite + both locations: the base graph Layout adds to every page. */

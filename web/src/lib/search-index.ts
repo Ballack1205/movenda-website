@@ -29,7 +29,7 @@ export function buildSearchIndex(input: {
   const items: SearchItem[] = [
     {
       title: en ? "Physiotherapy" : "Kinesitherapie",
-      href: page(lang, "/kinesitherapie"),
+      href: page(lang, "/movenda-kinesitherapie"),
       keys: "kine kine fysio physiotherapy kinesitherapie hasselt",
       text: "",
       kind: "page",

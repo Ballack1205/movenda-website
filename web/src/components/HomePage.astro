@@ -34,6 +34,7 @@ import {
   teamCounts,
 } from "../lib/content";
 import { partnerBandTitle, withLang, type Lang } from "../lib/i18n";
+import { withKineOfferCatalog } from "../lib/schema";
 import homeHero from "../assets/marketing/home-hero.jpg";
 import homeCover from "../assets/marketing/home-cover.jpg";
 import mpcHero from "../assets/marketing/mpc-hero.jpg";
@@ -63,7 +64,9 @@ const afspraakHref =
 const partners = await getPartners();
 const getuigenissen = await getGetuigenissen("olympia", lang);
 
-const heroLocaties = (await getLocaties())
+const locaties = await getLocaties();
+const olympia = locaties.find((loc) => loc.slug === "olympia");
+const heroLocaties = locaties
   .sort((a, b) => (a.slug === "olympia" ? -1 : b.slug === "olympia" ? 1 : 0))
   .map((loc) => ({
     href: withLang(`/locaties/${loc.slug}`, lang),
@@ -100,24 +103,24 @@ const homeSlogan = en ? settings.slogans.homeEn || settings.slogans.home : setti
 
 const copy = en
   ? {
-      seoTitle: "Physiotherapy, personal and performance training Hasselt | Movenda",
+      seoTitle: "Physiotherapist Hasselt | Physiotherapy & training | Movenda",
       heroAlt: "A Movenda trainer coaching a client during a session",
-      insetAlt: "A Movenda physiotherapist treating a patient",
+      insetAlt: "A physiotherapist at Movenda in Hasselt treating a patient",
       locations: "Our locations",
       call: paginaTekst(pagina, "belLabel", lang),
       contact: paginaTekst(pagina, "contactLabel", lang),
-      kineAlt: "Physiotherapist treating a patient at Movenda in Hasselt",
+      kineAlt: "Physiotherapist in Hasselt treating a patient at Movenda",
       trainingAlt: "Personal trainer coaching a client through an exercise at Movenda",
       mpcAlt: "Performance training at the Movenda Performance Centre in Kuringen",
     }
   : {
-      seoTitle: "Kinesitherapie, personal en performance training Hasselt | Movenda",
+      seoTitle: "Kinesist Hasselt | Kinesitherapie & training | Movenda",
       heroAlt: "Trainer van Movenda begeleidt een klant tijdens een training",
-      insetAlt: "Kinesist van Movenda behandelt een patiënt",
+      insetAlt: "Kinesist in Hasselt behandelt een patiënt bij Movenda",
       locations: "Onze locaties",
       call: paginaTekst(pagina, "belLabel", lang),
       contact: paginaTekst(pagina, "contactLabel", lang),
-      kineAlt: "Kinesitherapeut behandelt een patiënt bij Movenda in Hasselt",
+      kineAlt: "Kinesist in Hasselt behandelt een patiënt bij Movenda",
       trainingAlt: "Personal trainer begeleidt een klant tijdens een oefening bij Movenda",
       mpcAlt: "Performance training in het Movenda Performance Centre in Kuringen",
     };
@@ -135,6 +138,7 @@ const teamBody = paginaParagrafen(pagina, "teamBlokTekst", lang, { aantal: aanta
   path={prefix || "/"}
   altPath={en ? "/" : "/en"}
   lang={lang}
+  jsonLd={olympia ? [withKineOfferCatalog(olympia, alleDiensten.kine, lang)] : []}
   ogImage={pagina.foto || homeCover.src}
   ogImageAlt={pagina.fotoAlt || copy.heroAlt}
   extraLinks={heroLinks}
@@ -283,7 +287,7 @@ const teamBody = paginaParagrafen(pagina, "teamBlokTekst", lang, { aantal: aanta
       diensten={homePijlerDiensten("kine", alleDiensten)}
       image={kineHero}
       imageAlt={copy.kineAlt}
-      aanbodHref={withLang("/kinesitherapie", lang)}
+      aanbodHref={withLang("/movenda-kinesitherapie", lang)}
       aanbodLabel={homePijlerCta(settings.homePijlers.kine, lang)}
       afspraakHref={afspraakHref}
       lang={lang}

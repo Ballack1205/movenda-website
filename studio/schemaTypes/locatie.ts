@@ -38,7 +38,7 @@ const aanbodItem = {
       name: "href",
       title: "Link",
       type: "string",
-      description: "Pad op de site, bv. /kinesitherapie, of een volledige link.",
+      description: "Pad op de site, bv. /movenda-kinesitherapie, of een volledige link.",
       validation: verplicht,
     }),
   ],

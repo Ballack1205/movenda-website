@@ -40,7 +40,7 @@ Both locations share info@movenda.be and work strictly by appointment.
 ## Key pages
 
 - Home: /
-- Physiotherapy (Hasselt): /kinesitherapie
+- Physiotherapy (Hasselt): /movenda-kinesitherapie
 - Personal training (Hasselt): /training
 - Movenda Performance Centre: /performance
 - Team: /team
@@ -52,7 +52,7 @@ Both locations share info@movenda.be and work strictly by appointment.
 - Blog (Markdown index): /blog.md
 - Blog RSS: /rss.xml
 - Contact: /contact
-- English: /en (full bilingual site: /en/kinesitherapie, /en/training, /en/performance, /en/team, /en/prijzen, /en/faq, /en/blog, /en/jobs, /en/contact, …)
+- English: /en (full bilingual site: /en/movenda-kinesitherapie, /en/training, /en/performance, /en/team, /en/prijzen, /en/faq, /en/blog, /en/jobs, /en/contact, …)
 
 ## Blog
 

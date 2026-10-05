@@ -128,7 +128,7 @@ Listed in `render.yaml`. `/over` is a real page (do **not** redirect it to `/`).
 
 | Old | New |
 |---|---|
-| `/kine` | `/kinesitherapie` |
+| `/kine` | `/movenda-kinesitherapie` |
 | `/manuele` | `/kinesitherapie/manuele-therapie` |
 | `/oefentherapie` | `/kinesitherapie/oefentherapie` |
 | `/pre-en-post-natale` | `/kinesitherapie/pre-en-postnatale-kinesitherapie` |

@@ -35,7 +35,7 @@ services:
         destination: /
       - type: redirect
         source: /kine
-        destination: /kinesitherapie
+        destination: /movenda-kinesitherapie
       - type: redirect
         source: /manuele
         destination: /kinesitherapie/manuele-therapie

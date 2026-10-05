@@ -97,6 +97,7 @@ const hasselt = locaties.find((loc) => loc.slug === "olympia");
 const kuringen = locaties.find((loc) => loc.slug === "mpc");
 const deurFallback: Record<string, ImageMetadata> = {
   "/kinesitherapie": kineHero,
+  "/movenda-kinesitherapie": kineHero,
   "/performance": homePerformance,
   "/groepslessen": homeGx,
   "/b2b": homeB2b,
@@ -108,7 +109,7 @@ const deuren = settings.homeAanbod.map((deur, i) => ({
   href: localizeInternalHref(deur.href, lang),
   title: deur.href.endsWith("/locaties/olympia") ? "Olympia" : homeDeurNaam(deur, lang),
   body: homeDeurTekst(deur, lang),
-  lead: deur.href === "/kinesitherapie" || deur.href === "/performance",
+  lead: deur.href === "/kinesitherapie" || deur.href === "/movenda-kinesitherapie" || deur.href === "/performance",
   foto: deur.foto,
   fallback: deurFallback[deur.href] ?? homeCover,
   alt: homeDeurNaam(deur, lang),

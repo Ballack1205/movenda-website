@@ -26,7 +26,7 @@ export default defineType({
   fields: [
     defineField({ name: "vraag", title: "Vraag (NL)", type: "string", validation: verplicht }),
     defineField({ name: "vraagEn", title: "Vraag (EN)", type: "string", fieldset: "en" }),
-    defineField({ name: "antwoord", title: "Antwoord (NL)", type: "text", rows: 4, description: "Link maken: [tekst](/pad), bv. [Klik hier voor ons aanbod kinesitherapie](/kinesitherapie). E-mailadressen worden vanzelf klikbaar.", validation: verplicht }),
+    defineField({ name: "antwoord", title: "Antwoord (NL)", type: "text", rows: 4, description: "Link maken: [tekst](/pad), bv. [Klik hier voor ons aanbod kinesitherapie](/movenda-kinesitherapie). E-mailadressen worden vanzelf klikbaar.", validation: verplicht }),
     defineField({ name: "antwoordEn", title: "Antwoord (EN)", type: "text", rows: 4, fieldset: "en" }),
     defineField({
       name: "categorie",

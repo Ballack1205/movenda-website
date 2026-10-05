@@ -365,9 +365,10 @@ export interface HomeDeur {
 }
 
 export function localizeInternalHref(href: string, lang: Lang): string {
-  if (lang !== "en") return href;
-  if (!href.startsWith("/") || href.startsWith("/en")) return href;
-  return `/en${href}`;
+  const rewritten = rewriteKineOverzichtHref(href);
+  if (lang !== "en") return rewritten;
+  if (!rewritten.startsWith("/") || rewritten.startsWith("/en")) return rewritten;
+  return `/en${rewritten}`;
 }
 
 export function homeDeurNaam(deur: HomeDeur, lang: Lang): string {
@@ -759,6 +760,17 @@ export function isRetiredDienst(dienst: Pick<Dienst, "slug">): boolean {
  * Julie: no public /mpc path. Old links (Sanity doors, CTA urls) are rewritten
  * onto /performance and /groepslessen. /locaties/mpc stays the location slug.
  */
+/**
+ * The physiotherapy overview moved to /movenda-kinesitherapie so /kinesitherapie
+ * can serve the homepage. Treatment pages stay at /kinesitherapie/<slug>.
+ */
+export function rewriteKineOverzichtHref(href: string): string {
+  return href.replace(
+    /(https?:\/\/(?:www\.)?movenda\.be)?(\/en)?\/kinesitherapie(?!\/[a-z0-9-])\/?/gi,
+    (_match, origin = "", prefix = "") => `${origin}${prefix}/movenda-kinesitherapie`,
+  );
+}
+
 export function rewriteMpcHref(href: string): string;
 export function rewriteMpcHref(href: string | undefined): string | undefined;
 export function rewriteMpcHref(href: string | undefined): string | undefined {
@@ -1036,7 +1048,7 @@ function mergeZinnen(live: OlympiaZin[] | undefined, seed: OlympiaZin[]): Olympi
     return {
       tekst: filled(item.tekst, fromSeed?.tekst || ""),
       tekstEn: item.tekstEn?.trim() || fromSeed?.tekstEn,
-      href: item.href?.trim() || fromSeed?.href,
+      href: rewriteKineOverzichtHref(item.href?.trim() || fromSeed?.href || "") || undefined,
     };
   });
 }
@@ -1050,7 +1062,7 @@ function mergeAanbod(live: OlympiaAanbodItem[] | undefined, seed: OlympiaAanbodI
       titelEn: item.titelEn?.trim() || fromSeed?.titelEn,
       tekst: filled(item.tekst, fromSeed?.tekst || ""),
       tekstEn: item.tekstEn?.trim() || fromSeed?.tekstEn,
-      href: filled(item.href, fromSeed?.href || ""),
+      href: rewriteKineOverzichtHref(filled(item.href, fromSeed?.href || "")),
     };
   });
 }
@@ -1246,7 +1258,9 @@ function normalizeDienst(row: Dienst): Dienst {
     // Sanity wins once Julie sets the checkbox. An empty field falls back to the seed,
     // so these three can start hidden and she can turn them back on in Studio.
     toonInMenu: row.toonInMenu ?? fromSeed?.toonInMenu ?? true,
-    ctaUrl: rewriteMpcHref((seedWon ? fromSeed?.ctaUrl : undefined) || row.ctaUrl || fromSeed?.ctaUrl),
+    ctaUrl: rewriteKineOverzichtHref(
+      rewriteMpcHref((seedWon ? fromSeed?.ctaUrl : undefined) || row.ctaUrl || fromSeed?.ctaUrl) || "",
+    ) || undefined,
   };
 }
 
@@ -1483,7 +1497,7 @@ function mergeHomeDeuren(
         regelEn: row.regelEn?.trim() || undefined,
         tekst: row.tekst?.trim() || undefined,
         tekstEn: row.tekstEn?.trim() || undefined,
-        href: (rewriteMpcHref(href) || href).replace(/\/performance\/corporate-coaching$/, "/b2b"),
+        href: rewriteKineOverzichtHref((rewriteMpcHref(href) || href).replace(/\/performance\/corporate-coaching$/, "/b2b")),
         foto: toCmsFoto(row.foto),
       };
     })
@@ -1789,6 +1803,33 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
     return (live ?? seed[field]) as PaginaSeed[K] | undefined;
   };
 
+  // Swap the previous default metadata for the new seed when Julie has not
+  // edited it. Visible page copy is never replaced this way.
+  const previousMeta: Record<string, string> =
+    key === "home"
+      ? {
+          seoTitle: "Kinesitherapie, personal en performance training Hasselt | Movenda",
+          seoDescription: "Sportpraktijk Movenda brengt kinesitherapie, training en performance samen.",
+          seoTitleEn: "Physiotherapy, personal and performance training Hasselt | Movenda",
+          seoDescriptionEn: "Sportpraktijk Movenda brings physiotherapy, training and performance together.",
+        }
+      : key === "kinesitherapie"
+        ? {
+            seoTitle: "Kinesitherapie Hasselt | Movenda",
+            seoDescription: "Gespecialiseerde kinesitherapie en actieve revalidatie in Hasselt, afgestemd op jouw klacht en jouw doel.",
+            seoTitleEn: "Physiotherapy Hasselt | Movenda",
+            seoDescriptionEn: "Specialised physiotherapy and active rehabilitation in Hasselt, matched to your complaint and your goal.",
+            fotoAlt: "Manuele therapie behandeling bij Movenda",
+          }
+        : {};
+
+  const pickMeta = <K extends keyof PaginaSeed>(field: K): PaginaSeed[K] | undefined => {
+    const value = pick(field);
+    const previous = previousMeta[field as string];
+    if (typeof value === "string" && previous && value.trim() === previous) return seed[field];
+    return value;
+  };
+
   return {
     key,
     ondertitel: pick("ondertitel"),
@@ -1817,7 +1858,7 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
     teamBlokCtaEn: pick("teamBlokCtaEn"),
     foto: row?.foto || undefined,
     fotoHotspot: row?.foto && row.fotoHotspot ? row.fotoHotspot : undefined,
-    fotoAlt: pick("fotoAlt"),
+    fotoAlt: pickMeta("fotoAlt"),
     fotoSecundair: toCmsFoto(row?.fotoSecundair),
     bannerFoto: toCmsFoto(row?.bannerFoto),
     heroVideo: row?.heroVideo || undefined,
@@ -1859,7 +1900,10 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
     contactLabelEn: pick("contactLabelEn"),
     knopLabel: pick("knopLabel"),
     knopLabelEn: pick("knopLabelEn"),
-    knopUrl: pick("knopUrl"),
+    knopUrl: (() => {
+      const url = pick("knopUrl");
+      return typeof url === "string" ? rewriteKineOverzichtHref(url) : url;
+    })(),
     aanbodTitel: pick("aanbodTitel"),
     aanbodTitelEn: pick("aanbodTitelEn"),
     bijgewerkt: pick("bijgewerkt"),
@@ -1884,10 +1928,10 @@ async function loadPagina(key: PaginaKey): Promise<Pagina> {
       normalizeVerwijsopties(row?.verwijsopties?.length ? row.verwijsopties : seed.verwijsopties),
       seed.verwijsopties,
     ),
-    seoTitle: pick("seoTitle"),
-    seoDescription: pick("seoDescription"),
-    seoTitleEn: pick("seoTitleEn"),
-    seoDescriptionEn: pick("seoDescriptionEn"),
+    seoTitle: pickMeta("seoTitle"),
+    seoDescription: pickMeta("seoDescription"),
+    seoTitleEn: pickMeta("seoTitleEn"),
+    seoDescriptionEn: pickMeta("seoDescriptionEn"),
   };
 }
 
@@ -2048,7 +2092,10 @@ async function loadFaqs(): Promise<Faq[]> {
     return {
       ...faq,
       vraagEn: faq.vraagEn || fromSeed?.vraagEn,
-      antwoordEn: faq.antwoordEn || fromSeed?.antwoordEn,
+      antwoord: rewriteKineOverzichtHref(faq.antwoord),
+      antwoordEn: (faq.antwoordEn || fromSeed?.antwoordEn)
+        ? rewriteKineOverzichtHref(faq.antwoordEn || fromSeed?.antwoordEn || "")
+        : undefined,
     };
   });
 }

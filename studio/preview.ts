@@ -29,7 +29,7 @@ function slugOf(doc: PreviewDoc): string | undefined {
 
 function dienstPath(categorie?: string, slug?: string): string {
   if (!slug) {
-    if (categorie === "kine") return "/kinesitherapie";
+    if (categorie === "kine") return "/movenda-kinesitherapie";
     if (categorie === "training") return "/training";
     if (categorie === "mpc-groep") return "/groepslessen";
     return "/performance";

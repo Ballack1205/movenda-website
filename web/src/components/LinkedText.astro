@@ -1,5 +1,7 @@
 ---
 // Plain CMS text with [label](url) links and bare e-mail addresses turned into anchors.
+import { rewriteKineOverzichtHref } from "../lib/content";
+
 interface Props {
   text: string;
   linkClass?: string;
@@ -17,7 +19,7 @@ for (const match of text.matchAll(pattern)) {
   if (match[3]) {
     parts.push({ text: match[3], href: `mailto:${match[3]}` });
   } else {
-    const href = match[2];
+    const href = rewriteKineOverzichtHref(match[2]);
     const safe = /^(https?:|mailto:|tel:|\/|#)/i.test(href);
     parts.push(safe ? { text: match[1], href, external: /^https?:/i.test(href) } : { text: match[1] });
   }
