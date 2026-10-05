@@ -14,6 +14,7 @@ import { getActivePopup, getLocaties, getSiteSettings } from "../lib/content";
 import { ogImageSrc, type OgShape } from "../lib/images";
 import { baseGraph, toGraph, type JsonLdNode } from "../lib/schema";
 import { MPC_HOST, NOINDEX, THEME, absoluteUrl } from "../lib/site";
+import LabFonts from "../components/LabFonts.astro";
 
 export interface ArticleMeta {
   publishedTime: string;
@@ -113,13 +114,6 @@ const headLinks = [
 // by @id so a page may pass a richer version of a shared node.
 const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
 
-// Lab-only: Newsreader (display) + Instrument Sans width axis. PUBLIC_THEME is
-// a build env, so the QR / navy hosts do not ship these files.
-if (THEME === "lab") {
-  await import("@fontsource-variable/newsreader/opsz.css");
-  await import("@fontsource-variable/newsreader/opsz-italic.css");
-  await import("@fontsource-variable/instrument-sans/wdth.css");
-}
 ---
 
 <!doctype html>
@@ -177,6 +171,7 @@ if (THEME === "lab") {
     <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
   </head>
   <body class="flex min-h-screen flex-col bg-brand-bg text-brand-text">
+    {THEME === "lab" && <LabFonts />}
     <Header brand={chromeBrand} lang={lang} path={path} altPath={altPath} />
     <main class="flex-1">
       <slot />

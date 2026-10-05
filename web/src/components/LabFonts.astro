@@ -1,0 +1,10 @@
+---
+// Lab-only fonts: Newsreader (display) + Instrument Sans width axis.
+// Static imports: a conditional `await import()` of these CSS files inlined the
+// @font-face rules but never emitted the woff2 files (404 on the live site).
+// Other themes get the @font-face rules only; browsers fetch a font file only
+// when a rendered element uses that family.
+import "@fontsource-variable/newsreader/opsz.css";
+import "@fontsource-variable/newsreader/opsz-italic.css";
+import "@fontsource-variable/instrument-sans/wdth.css";
+---
