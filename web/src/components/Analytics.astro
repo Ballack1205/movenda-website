@@ -131,6 +131,9 @@ const t = {
         };
 
         if (read() === "granted") loadGa();
+        // The banner ships visible so it paints with the page (a late JS reveal
+        // made it the LCP element). Runs before the banner is parsed: no flash.
+        if (read()) document.documentElement.setAttribute("data-consent-stored", "");
 
         var banner;
         function el() {
@@ -139,6 +142,7 @@ const t = {
         function show() {
           var b = el();
           if (!b) return;
+          document.documentElement.removeAttribute("data-consent-stored");
           b.hidden = false;
           requestAnimationFrame(function () {
             b.setAttribute("data-open", "");
@@ -194,7 +198,7 @@ const t = {
         role="dialog"
         aria-label={t.label}
         class="consent fixed bottom-3 left-3 right-3 z-50 max-w-sm rounded-2xl border border-brand-border bg-brand-surface p-4 shadow-[0_8px_30px_rgba(20,36,51,0.12)] sm:left-4 sm:right-auto sm:bottom-4"
-        hidden
+        data-open
       >
         <p class="text-[13px] leading-snug text-brand-text">
           {t.text}
@@ -235,6 +239,9 @@ const t = {
   .consent[data-open] {
     opacity: 1;
     transform: translateY(0);
+  }
+  :global(:root[data-consent-stored]) .consent {
+    display: none;
   }
   @media (prefers-reduced-motion: reduce) {
     .consent {

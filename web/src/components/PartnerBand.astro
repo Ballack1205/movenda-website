@@ -30,6 +30,11 @@ const duration = Math.round(Math.max(partners.length, 1) * secondsPerLogo[snelhe
 
 const logoSrc = (logo: string, height: number) =>
   logo.startsWith("/") ? logo : `${logo}?h=${height}&fit=max&auto=format`;
+// Sanity asset URLs carry the original size (…-364x84.webp): width for a 48px-high box, so the slot is reserved before the logo loads.
+const logoWidth = (logo: string) => {
+  const m = logo.match(/-(\d+)x(\d+)\.\w+$/);
+  return m ? Math.round((48 * Number(m[1])) / Number(m[2])) : undefined;
+};
 ---
 
 {
@@ -51,6 +56,7 @@ const logoSrc = (logo: string, height: number) =>
                       src={logoSrc(p.logo, 96)}
                       srcset={`${logoSrc(p.logo, 96)} 1x, ${logoSrc(p.logo, 192)} 2x`}
                       alt={isClone ? "" : p.naam}
+                      width={logoWidth(p.logo)}
                       height="48"
                       decoding="async"
                       class:list={[
