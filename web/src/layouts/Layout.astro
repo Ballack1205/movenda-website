@@ -42,6 +42,8 @@ export interface Props {
   /** Force noindex for this page regardless of the preview flag (thank-you / QR landing pages). */
   noindex?: boolean;
   extraLinks?: HeadLink[];
+  /** Lab only: no display-font text above the fold, so Newsreader loads after the page instead of competing with the hero. */
+  deferDisplayFont?: boolean;
 }
 
 export interface HeadLink {
@@ -70,7 +72,9 @@ const {
   article,
   noindex: pageNoindex = false,
   extraLinks = [],
+  deferDisplayFont = false,
 } = Astro.props;
+const deferFont = deferDisplayFont && THEME === "lab";
 
 // Preview safety net: this site is a pitch preview until Movenda confirms
 // go-live. PUBLIC_NOINDEX defaults to "true" so search engines never index
@@ -116,9 +120,19 @@ const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
 ---
 
 <!doctype html>
-<html lang={lang === "en" ? "en" : "nl-BE"} data-brand={chromeBrand} data-theme={THEME}>
+<html
+  lang={lang === "en" ? "en" : "nl-BE"}
+  data-brand={chromeBrand}
+  data-theme={THEME}
+  data-defer-display-font={deferFont ? "" : undefined}
+>
   <head>
     <meta charset="utf-8" />
+    {deferFont && (
+      <script is:inline>
+        addEventListener("load", function () { document.documentElement.removeAttribute("data-defer-display-font"); }, { once: true });
+      </script>
+    )}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
