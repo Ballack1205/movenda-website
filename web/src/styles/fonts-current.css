@@ -1,0 +1,4 @@
+/* Fonts for the current (navy / QR) theme. Picked at build time via the
+   "theme-fonts.css" alias in astro.config.mjs. */
+@import "@fontsource-variable/bricolage-grotesque/opsz.css";
+@import "@fontsource-variable/instrument-sans";

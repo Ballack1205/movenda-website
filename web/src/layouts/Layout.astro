@@ -3,8 +3,8 @@ import "../styles/global.css";
 // Type pairing: Bricolage Grotesque (headings, has character, optical-size
 // axis) + Instrument Sans (body). Both variable, self-hosted, free/OFL.
 // Replaced Inter + Poppins, which read as "default Tailwind template".
-import "@fontsource-variable/bricolage-grotesque/opsz.css";
-import "@fontsource-variable/instrument-sans";
+// The lab theme swaps in Newsreader; the alias picks the set per PUBLIC_THEME.
+import "theme-fonts.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import LabMotion from "../components/LabMotion.astro";
@@ -14,7 +14,6 @@ import { getActivePopup, getLocaties, getSiteSettings } from "../lib/content";
 import { ogImageSrc, type OgShape } from "../lib/images";
 import { baseGraph, toGraph, type JsonLdNode } from "../lib/schema";
 import { MPC_HOST, NOINDEX, THEME, absoluteUrl } from "../lib/site";
-import LabFonts from "../components/LabFonts.astro";
 
 export interface ArticleMeta {
   publishedTime: string;
@@ -171,7 +170,6 @@ const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
     <script type="application/ld+json" set:html={JSON.stringify(graph)} is:inline />
   </head>
   <body class="flex min-h-screen flex-col bg-brand-bg text-brand-text">
-    {THEME === "lab" && <LabFonts />}
     <Header brand={chromeBrand} lang={lang} path={path} altPath={altPath} />
     <main class="flex-1">
       <slot />

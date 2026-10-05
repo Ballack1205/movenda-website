@@ -1,0 +1,6 @@
+/* Fonts for the lab theme: Newsreader (display, optical-size axis) and
+   Instrument Sans with the width axis. The wdth file also covers weights
+   400–700 at normal width, so the plain Instrument Sans file is not loaded. */
+@import "@fontsource-variable/newsreader/opsz.css";
+@import "@fontsource-variable/newsreader/opsz-italic.css";
+@import "@fontsource-variable/instrument-sans/wdth.css";

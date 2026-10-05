@@ -1,4 +1,5 @@
 // @ts-check
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
@@ -124,6 +125,13 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        "theme-fonts.css": fileURLToPath(
+          new URL(process.env.PUBLIC_THEME === "lab" ? "./src/styles/fonts-lab.css" : "./src/styles/fonts-current.css", import.meta.url),
+        ),
+      },
+    },
   },
   integrations: [
     sitemap({
