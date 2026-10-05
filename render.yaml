@@ -29,7 +29,7 @@ services:
     # copy these rules into Dashboard > Settings > Redirects/Rewrites, or
     # run a Blueprint sync, before go-live. Blog slugs stayed identical.
     # Host-level mpc.movenda.be → /performance is Fase 4 DNS (out of scope here).
-    routes:
+    routes: &oude-urls
       - type: redirect
         source: /home
         destination: /
@@ -180,6 +180,52 @@ services:
       - type: redirect
         source: /prices
         destination: /prijzen
+      # Old Squarespace blog categories and tags → the matching new tag page.
+      - type: redirect
+        source: /blog/category/mentale+training
+        destination: /blog/tag/mentale-training
+      - type: redirect
+        source: /blog/category/mymindworks
+        destination: /blog/tag/mentale-training
+      - type: redirect
+        source: /blog/category/training
+        destination: /blog/tag/training
+      - type: redirect
+        source: /blog/tag/mentale+training+sporters
+        destination: /blog/tag/mentale-training
+      - type: redirect
+        source: /blog/tag/mymindworks
+        destination: /blog/tag/mentale-training
+      - type: redirect
+        source: /blog/tag/hittestuwing+symptomen
+        destination: /blog/tag/hitte
+      - type: redirect
+        source: /blog/tag/hydratatie+tijdens+het+sporten
+        destination: /blog/tag/hitte
+      - type: redirect
+        source: /blog/tag/lopen+in+de+hitte
+        destination: /blog/tag/hitte
+      - type: redirect
+        source: /blog/tag/oververhitting+voorkomen
+        destination: /blog/tag/hitte
+      - type: redirect
+        source: /blog/tag/sporten+bij+30+graden
+        destination: /blog/tag/hitte
+      - type: redirect
+        source: /blog/tag/sporten+in+de+hitte
+        destination: /blog/tag/hitte
+      - type: redirect
+        source: /blog/tag/sporten+warme+temperaturen
+        destination: /blog/tag/hitte
+      - type: redirect
+        source: /blog/tag/uitdroging+sporten
+        destination: /blog/tag/hitte
+      - type: redirect
+        source: /blog/tag/veilig+sporten+zomer
+        destination: /blog/tag/hitte
+      - type: redirect
+        source: /blog/tag/nekpijn%2C+bureau%2C+beeldschermwerk%2C+thuiswerken%2C+oefeningen%2C+kinesitherapie%2C+houding%2C+MovendaHasselt
+        destination: /blog/tag/nekpijn
 
   # MPC-only host (this week). Same repo/Sanity as the QR preview.
   # PUBLIC_NOINDEX stays true until Friday 25 Sep 2026 + explicit OK. Do not flip in this file.
@@ -281,3 +327,35 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+
+  # Production: www.movenda.be + movenda.be. Tracks main; brief is where Julie reviews.
+  # Created via the Render MCP. Redirects + headers below must be set in the Dashboard
+  # (Settings > Redirects/Rewrites and Headers) — the MCP cannot set them.
+  # Go-live day: PUBLIC_NOINDEX=false, then switch DNS. No X-Robots-Tag header here.
+  - type: web
+    name: movenda-www
+    runtime: static
+    branch: main
+    buildCommand: cd web && npm install && npm run build
+    staticPublishPath: web/dist
+    autoDeploy: true
+    domains:
+      - www.movenda.be
+      - movenda.be
+    envVars:
+      - key: PUBLIC_NOINDEX
+        value: "true" # flip to "false" on go-live day, right before the DNS switch
+      - key: PUBLIC_SITE_URL
+        value: https://www.movenda.be
+      - key: PUBLIC_THEME
+        value: lab
+      - key: PUBLIC_HOST_MODE
+        value: full
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+    routes: *oude-urls

@@ -15,6 +15,7 @@
 //
 // Settings live in siteSettings -> Analytics (see content.ts AnalyticsSettings).
 import { getSiteSettings, uiTekst } from "../lib/content";
+import { NOINDEX } from "../lib/site";
 
 export interface Props {
   lang?: "nl" | "en";
@@ -27,7 +28,8 @@ const { enabled, mode, ga4Id, umami } = settings.analytics;
 const ga = enabled && !!ga4Id;
 const um = enabled && umami.enabled && !!umami.websiteId;
 const config = {
-  mode,
+  // Preview hosts (brief, preview, MPC) are noindex and must never report real traffic.
+  mode: NOINDEX ? "test" : mode,
   ga4Id: ga ? ga4Id : "",
   umamiId: um ? umami.websiteId : "",
   umamiSrc: um ? umami.scriptUrl : "",
