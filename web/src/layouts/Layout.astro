@@ -14,6 +14,7 @@ import { getActivePopup, getLocaties, getSiteSettings } from "../lib/content";
 import { ogImageSrc, type OgShape } from "../lib/images";
 import { baseGraph, toGraph, type JsonLdNode } from "../lib/schema";
 import { MPC_HOST, NOINDEX, THEME, absoluteUrl } from "../lib/site";
+import labBodyFont from "@fontsource-variable/instrument-sans/files/instrument-sans-latin-wdth-normal.woff2?url";
 
 export interface ArticleMeta {
   publishedTime: string;
@@ -133,6 +134,8 @@ const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
 >
   <head>
     <meta charset="utf-8" />
+    {/* Body/menu font, preloaded so the first paint does not wait on (or swap to) it. */}
+    {THEME === "lab" && <link rel="preload" href={labBodyFont} as="font" type="font/woff2" crossorigin />}
     {deferFont && (
       <script is:inline>
         addEventListener("load", function () { document.documentElement.removeAttribute("data-defer-display-font"); }, { once: true });
