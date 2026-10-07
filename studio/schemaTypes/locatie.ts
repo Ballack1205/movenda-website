@@ -183,7 +183,8 @@ export default defineType({
         defineField({ name: "aanbodTitelEn", title: "Kop “Overig aanbod” (EN)", type: "string", fieldset: "en" }),
         defineField({ name: "aanbodMeer", title: "“Meer →” (NL)", type: "string" }),
         defineField({ name: "aanbodMeerEn", title: "“Meer →” (EN)", type: "string", fieldset: "en" }),
-        defineField({ name: "olympiaLink", title: "Linktekst Olympia Hasselt", type: "string" }),
+        defineField({ name: "olympiaLink", title: "Linktekst onder het aanbod (NL)", type: "string" }),
+        defineField({ name: "olympiaLinkEn", title: "Linktekst onder het aanbod (EN)", type: "string", fieldset: "en" }),
         defineField({ name: "olympiaUrl", title: "Link naar Olympia", type: "string" }),
         defineField({
           name: "aanbod",

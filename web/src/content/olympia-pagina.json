@@ -8,8 +8,8 @@
   "cta": "Plan je afspraak in Olympia",
   "ctaEn": "Book in Olympia",
   "ctaHref": "/team#keuzehulp",
-  "aanbodLink": "Bekijk het aanbod",
-  "aanbodLinkEn": "See the offer",
+  "aanbodLink": "Bekijk het aanbod van Movenda",
+  "aanbodLinkEn": "See Movenda's offer",
   "aboKicker": "Kiné-fitnessabonnement",
   "aboKickerEn": "Physio fitness membership",
   "aboTitel": "Revalideer verder, ook buiten je sessies.",
@@ -46,7 +46,8 @@
   "aanbodTitelEn": "Also at Olympia",
   "aanbodMeer": "Meer →",
   "aanbodMeerEn": "More →",
-  "olympiaLink": "Olympia Hasselt",
+  "olympiaLink": "Bekijk het volledige aanbod van Sportcentrum Olympia",
+  "olympiaLinkEn": "See the full Sportcentrum Olympia offer",
   "olympiaUrl": "https://www.oly.be",
   "aanbod": [
     {

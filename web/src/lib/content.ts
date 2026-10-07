@@ -210,6 +210,7 @@ export interface OlympiaPagina {
   aanbodMeer: string;
   aanbodMeerEn: string;
   olympiaLink: string;
+  olympiaLinkEn: string;
   olympiaUrl: string;
   aanbod: OlympiaAanbodItem[];
   waaromTitel: string;
@@ -879,7 +880,7 @@ const locatieProjection = `{
     aboKicker, aboKickerEn, aboTitel, aboTitelEn, aboTekst, aboTekstEn,
     aboPunten[]{ tekst, tekstEn, href },
     aboMeer, aboMeerEn, aboMeerNa, aboMeerNaEn, aboCta, aboCtaEn, aboCtaHref,
-    aanbodTitel, aanbodTitelEn, aanbodMeer, aanbodMeerEn, olympiaLink, olympiaUrl,
+    aanbodTitel, aanbodTitelEn, aanbodMeer, aanbodMeerEn, olympiaLink, olympiaLinkEn, olympiaUrl,
     aanbod[]{ titel, titelEn, tekst, tekstEn, href },
     waaromTitel, waaromTitelEn, waarom[]{ tekst, tekstEn },
     praktischTitel, praktischTitelEn,
@@ -1102,6 +1103,7 @@ function mergeOlympiaPagina(live?: Partial<OlympiaPagina> | null): OlympiaPagina
     aanbodMeer: filled(live?.aanbodMeer, seed.aanbodMeer),
     aanbodMeerEn: filled(live?.aanbodMeerEn, seed.aanbodMeerEn),
     olympiaLink: filled(live?.olympiaLink, seed.olympiaLink),
+    olympiaLinkEn: filled(live?.olympiaLinkEn, seed.olympiaLinkEn),
     olympiaUrl: filled(live?.olympiaUrl, seed.olympiaUrl),
     aanbod: mergeAanbod(live?.aanbod, seed.aanbod),
     waaromTitel: filled(live?.waaromTitel, seed.waaromTitel),
