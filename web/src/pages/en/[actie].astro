@@ -3,10 +3,12 @@ import Layout from "../../layouts/Layout.astro";
 import ActiePagina from "../../components/ActiePagina.astro";
 import { getActiepaginas, localizeActie } from "../../lib/content";
 import { breadcrumbSchema } from "../../lib/schema";
-import { MPC_HOST } from "../../lib/site";
+import { MPC_HOST, PREVIEW_URL } from "../../lib/site";
+
+const BRIEF_HOST = import.meta.env.PUBLIC_SITE_URL?.replace(/\/+$/, "") === PREVIEW_URL;
 
 export async function getStaticPaths() {
-  if (MPC_HOST) return [];
+  if (MPC_HOST || BRIEF_HOST) return [];
   const paginas = await getActiepaginas();
   return paginas.map((pagina) => ({ params: { actie: pagina.slug }, props: { pagina } }));
 }
