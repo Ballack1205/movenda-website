@@ -187,6 +187,14 @@ const useVisual = weergave.mobiel === "visual" || weergave.desktop === "visual";
       if (location.hash === "#keuzehulp") history.replaceState(null, "", `${location.pathname}${location.search}`);
     });
     document.querySelectorAll("[data-open-keuzehulp]").forEach((button) => button.addEventListener("click", open));
-    if (location.hash === "#keuzehulp") open();
+    if (location.hash === "#keuzehulp") {
+      open();
+      // Arriving from another page: the hash used to scroll to the filter bar.
+      // Open the compass and leave the team page at the top.
+      const pin = () => window.scrollTo(0, 0);
+      pin();
+      requestAnimationFrame(pin);
+      window.addEventListener("load", pin, { once: true });
+    }
   }
 </script>

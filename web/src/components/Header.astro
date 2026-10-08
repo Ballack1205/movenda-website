@@ -626,9 +626,10 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
 
   toggle?.addEventListener("click", () => setMenu(!menuOpen()));
 
-  // On the team page the appointment link is /team#keuzehulp. That hash is the
-  // filter bar, so a click while already there only scrolls. Open the compass
-  // instead — the same button as "Vind je collega".
+  // On the team page the appointment link is /team#keuzehulp. A click while
+  // already there must open the compass, the same button as "Vind je collega",
+  // without scrolling. From any other page the link still navigates, and the
+  // team page opens the compass on load.
   document.addEventListener("click", (event) => {
     const link = (event.target as Element | null)?.closest?.("a[href]");
     if (!link) return;

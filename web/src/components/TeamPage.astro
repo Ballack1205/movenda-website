@@ -130,7 +130,7 @@ const filters = [
       <TeamGroupPhoto foto={settings.teamfoto} />
     </div>
 
-    <div id="keuzehulp" class="mt-8 flex flex-col gap-3 scroll-mt-24 sm:mt-10 sm:flex-row sm:items-center sm:justify-between">
+    <div class="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:items-center sm:justify-between">
       <div
         class="team-filters flex flex-wrap gap-1.5 sm:inline-flex sm:max-w-full sm:gap-1 sm:overflow-hidden sm:rounded-full sm:border sm:border-brand-border sm:bg-brand-surface sm:p-1"
         role="group"
@@ -626,11 +626,21 @@ const filters = [
     dialog.addEventListener("close", syncUrl);
 
     // Deep links: ?k=tag,tag prefills (a therapist can send a patient a link); #keuzehulp opens it.
+    // Remember the hash first: renderResults() rewrites the URL and would drop it.
+    const openFromHash = location.hash === "#keuzehulp";
     const params = new URLSearchParams(location.search);
     const known = new Set([...dialog.querySelectorAll("[data-tag]")].map((b) => b.dataset.tag));
     const initialTags = (params.get("k") || "").split(",").filter((id) => known.has(id));
     for (const id of initialTags) selected.add(id);
     renderResults();
-    if (initialTags.length || location.hash === "#keuzehulp") open();
+    if (initialTags.length || openFromHash) open();
+    // #keuzehulp used to be the filter bar, so arriving from another page
+    // scrolled there. The compass is the destination; stay at the top.
+    if (openFromHash) {
+      const pin = () => window.scrollTo(0, 0);
+      pin();
+      requestAnimationFrame(pin);
+      window.addEventListener("load", pin, { once: true });
+    }
   }
 </script>
