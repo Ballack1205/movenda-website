@@ -74,6 +74,7 @@ export function resolvePreviewUrl(document: PreviewDoc): string | undefined {
       return `${PREVIEW_URL}/groepslessen`;
     case "keuzehulp":
     case "keuzehulpTag":
+    case "verwijskompas":
     case "specialisatie":
       return `${PREVIEW_URL}/team#keuzehulp`;
     case "popup":

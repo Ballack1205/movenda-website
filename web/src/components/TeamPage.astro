@@ -4,6 +4,7 @@ import {
   getTeamleden,
   getSiteSettings,
   getKeuzehulp,
+  getVerwijskompas,
   getLocaties,
   getPagina,
   paginaAlineas,
@@ -31,6 +32,7 @@ const lab = THEME === "lab";
 const team = await getTeamleden();
 const settings = await getSiteSettings();
 const keuzehulp = await getKeuzehulp();
+const kompas = lang === "nl" ? await getVerwijskompas() : null;
 const locaties = await getLocaties();
 const pagina = await getPagina("team");
 const path = withLang("/team", lang);
@@ -235,8 +237,9 @@ const filters = [
     </p>
   </section>
 
-  {lang === "nl" ? (
+  {lang === "nl" && kompas ? (
     <Verwijskompas
+      tree={kompas}
       weergave={keuzehulp.kompasWeergave}
       team={team.map((lid) => ({
         slug: lid.slug,

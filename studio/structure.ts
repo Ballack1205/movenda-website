@@ -21,7 +21,7 @@ import {
 import { DAGEN } from "./schemaTypes/lesrooster";
 
 // Julie's desk: daily work first, then people, then the offer, then copy.
-// siteSettings + keuzehulp are singletons (no second document). Locaties
+// siteSettings, keuzehulp and verwijskompas are singletons (no second document). Locaties
 // are the two existing records — no "create new". Lesrooster was missing
 // from the old flat list.
 
@@ -72,6 +72,10 @@ export const deskStructure: StructureResolver = (S) =>
               S.documentTypeListItem("keuzehulpTag").title("Keuze-opties (tags)"),
             ]),
         ),
+      S.listItem()
+        .title("Verwijskompas")
+        .icon(HelpCircleIcon)
+        .child(S.document().schemaType("verwijskompas").documentId("verwijskompas")),
       S.divider(),
 
       S.listItem()

@@ -1,7 +1,9 @@
 ---
 // Desktop "map" view of the Verwijskompas: every step stays visible as a column,
 // with a gold wire from each choice to the next step. Same routing data as the
-// step-by-step dialog (verwijskompas.json); that dialog stays the fallback.
+// step-by-step dialog. Both read the same tree (Sanity, JSON only as fallback).
+import type { VerwijskompasTree } from "../lib/content";
+
 interface TeamFace {
   slug: string;
   rol?: string;
@@ -11,7 +13,7 @@ interface TeamFace {
 }
 
 interface Props {
-  tree: Record<string, unknown>;
+  tree: VerwijskompasTree;
   team: TeamFace[];
 }
 

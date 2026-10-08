@@ -13,8 +13,8 @@ const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
 const showVision = process.env.SANITY_STUDIO_VISION === "true";
 
-const NO_DELETE = new Set(["siteSettings", "keuzehulp", "locatie", "pagina"]);
-const HIDE_FROM_CREATE = new Set(["siteSettings", "keuzehulp", "locatie", "pagina", "googleReviewInfo", "homePijler", "lesrooster-op-dag"]);
+const NO_DELETE = new Set(["siteSettings", "keuzehulp", "verwijskompas", "locatie", "pagina"]);
+const HIDE_FROM_CREATE = new Set(["siteSettings", "keuzehulp", "verwijskompas", "locatie", "pagina", "googleReviewInfo", "homePijler", "lesrooster-op-dag"]);
 
 // Julie asked for a "duplicate" next to "create" for blogposts and the like.
 // Sanity has the action, but buried at the bottom of the ⋮ menu. For these

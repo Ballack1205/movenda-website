@@ -27,6 +27,7 @@ import seedSportaanbod from "../content/sportaanbod.json";
 import seedDiensten from "../content/diensten.json";
 import seedPartners from "../content/partners.json";
 import seedPaginas from "../content/paginas.json";
+import seedKompas from "../content/verwijskompas.json";
 import { resolveBlogMedia } from "./blog";
 import type { Lang } from "./i18n";
 import { KEUZEHULP_EN, withLang } from "./i18n";
@@ -1003,6 +1004,105 @@ async function loadKeuzehulp(): Promise<Keuzehulp> {
       desktop: asKompasWeergave(doc?.kompasWeergave?.desktop, "visual"),
     },
   };
+}
+
+export interface KompasStap {
+  id: string;
+  label: string;
+  next?: "regio" | "sport";
+  people?: string[];
+  book?: string;
+}
+
+/** Shape both compass views already walk. People are keyed by teamlid slug. */
+export interface VerwijskompasTree {
+  people: Record<string, { naam: string; slug: string; book?: string }>;
+  contexts: KompasStap[];
+  regions: KompasStap[];
+  sports: KompasStap[];
+  training: KompasStap[];
+}
+
+interface SanityKompasPersoon {
+  slug?: string;
+  voornaam?: string;
+  naam?: string;
+}
+
+interface SanityKompasStap {
+  _key?: string;
+  label?: string;
+  vervolg?: "regio" | "sport" | "collegas";
+  boekUrl?: string;
+  collegas?: (SanityKompasPersoon | null)[] | null;
+}
+
+interface SanityKompas {
+  klachten?: SanityKompasStap[] | null;
+  regios?: SanityKompasStap[] | null;
+  sporten?: SanityKompasStap[] | null;
+  training?: SanityKompasStap[] | null;
+}
+
+const KOMPAS_STAP = `{
+  _key, label, vervolg, boekUrl,
+  collegas[]->{ "slug": slug.current, voornaam, naam }
+}`;
+
+/** Choices, colleagues and booking links for the compass on /team.
+ * Edited in Studio as the verwijskompas singleton. The JSON seed is only
+ * used when that document is missing or empty, so the page still works
+ * before the first publish. */
+export async function getVerwijskompas(): Promise<VerwijskompasTree> {
+  return once("verwijskompas", loadVerwijskompas);
+}
+
+async function loadVerwijskompas(): Promise<VerwijskompasTree> {
+  const doc = await sanity.fetch(
+    `*[_id == "verwijskompas"][0]{
+      klachten[]${KOMPAS_STAP},
+      regios[]${KOMPAS_STAP},
+      sporten[]${KOMPAS_STAP},
+      training[]${KOMPAS_STAP}
+    }`,
+  );
+  return kompasFromSanity(doc) || (seedKompas as VerwijskompasTree);
+}
+
+function kompasFromSanity(doc: SanityKompas | null): VerwijskompasTree | null {
+  if (!doc) return null;
+  const people: VerwijskompasTree["people"] = {};
+  const mapList = (items: SanityKompasStap[] | null | undefined, withNext: boolean): KompasStap[] =>
+    (items || []).flatMap((item) => {
+      const label = item.label?.trim();
+      if (!label) return [];
+      const ids: string[] = [];
+      for (const collega of item.collegas || []) {
+        const slug = collega?.slug?.trim();
+        if (!slug || ids.includes(slug)) continue;
+        ids.push(slug);
+        const naam = `${collega?.voornaam || ""} ${collega?.naam || ""}`.trim();
+        people[slug] = { naam: naam || slug, slug };
+      }
+      const next = withNext && (item.vervolg === "regio" || item.vervolg === "sport") ? item.vervolg : undefined;
+      const book = item.boekUrl?.trim() || undefined;
+      const stap: KompasStap = { id: item._key || label, label };
+      if (next) stap.next = next;
+      else {
+        if (ids.length) stap.people = ids;
+        if (book) stap.book = book;
+      }
+      return [stap];
+    });
+  const tree: VerwijskompasTree = {
+    people,
+    contexts: mapList(doc.klachten, true),
+    regions: mapList(doc.regios, false),
+    sports: mapList(doc.sporten, false),
+    training: mapList(doc.training, false),
+  };
+  const heeftStappen = tree.contexts.length + tree.regions.length + tree.sports.length + tree.training.length > 0;
+  return heeftStappen ? tree : null;
 }
 
 const seedTeamBySlug = new Map(
