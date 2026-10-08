@@ -551,8 +551,6 @@
       "id": "spec-ondernemers",
       "label": "Ondernemers",
       "people": [
-        "jens",
-        "cedriek",
         "charlotte",
         "yannick",
         "quinten"
@@ -587,7 +585,6 @@
       "id": "spec-dames",
       "label": "Dames",
       "people": [
-        "jens",
         "charlotte",
         "yannick",
         "quinten"
@@ -606,7 +603,6 @@
       "id": "spec-voetbal",
       "label": "Voetbal",
       "people": [
-        "jens",
         "cedriek"
       ],
       "book": "https://book.crossuite.app/fc582ae5-0c1b-4513-a855-b8727a866e51"
@@ -623,7 +619,6 @@
       "id": "spec-hyrox2",
       "label": "Hyrox",
       "people": [
-        "cedriek",
         "charlotte",
         "yannick"
       ],
@@ -634,7 +629,8 @@
       "label": "Lopers",
       "people": [
         "jens",
-        "charlotte"
+        "charlotte",
+        "cedriek"
       ],
       "book": "https://book.crossuite.app/6409bdd3-271f-414a-8f6c-d56b91fa1871"
     },
@@ -650,7 +646,6 @@
       "id": "spec-bovenhands",
       "label": "Bovenhandse slagsporten",
       "people": [
-        "cedriek",
         "yannick",
         "quinten"
       ],
@@ -660,7 +655,6 @@
       "id": "spec-balsporten2",
       "label": "Balsporten",
       "people": [
-        "jens",
         "cedriek",
         "yannick",
         "quinten"
@@ -678,13 +672,17 @@
     {
       "id": "spec-inspanningstesten",
       "label": "Inspanningstesten",
-      "people": [],
+      "people": [
+        "jens"
+      ],
       "book": "https://book.crossuite.app/db3cf0b0-cdd2-43da-b609-38a6b7bcc716"
     },
     {
       "id": "spec-looptesten",
       "label": "Looptesten",
-      "people": [],
+      "people": [
+        "jens"
+      ],
       "book": "https://book.crossuite.app/1722ac8a-5e5e-4356-ac6c-56be07515ca6"
     }
   ]

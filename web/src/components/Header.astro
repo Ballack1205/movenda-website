@@ -626,6 +626,31 @@ const plain = items.filter((i) => !i.children || i.children.length === 0);
 
   toggle?.addEventListener("click", () => setMenu(!menuOpen()));
 
+  // On the team page the appointment link is /team#keuzehulp. That hash is the
+  // filter bar, so a click while already there only scrolls. Open the compass
+  // instead — the same button as "Vind je collega".
+  document.addEventListener("click", (event) => {
+    const link = (event.target as Element | null)?.closest?.("a[href]");
+    if (!link) return;
+    const raw = link.getAttribute("href") || "";
+    if (!raw.includes("#keuzehulp")) return;
+    let target: URL;
+    try {
+      target = new URL(raw, location.origin);
+    } catch {
+      return;
+    }
+    if (target.hash !== "#keuzehulp") return;
+    const here = location.pathname.replace(/\/$/, "") || "/";
+    const there = target.pathname.replace(/\/$/, "") || "/";
+    if (here !== there || !/^\/(en\/)?team$/.test(here)) return;
+    const opener = document.querySelector<HTMLButtonElement>("[data-open-keuzehulp]");
+    if (!opener) return;
+    event.preventDefault();
+    if (menuOpen()) setMenu(false);
+    opener.click();
+  });
+
   // Panel groups: accordions on phones (only the active group open), always
   // expanded from `sm` up where there is room for columns.
   const accordions = Array.from(panel?.querySelectorAll<HTMLDetailsElement>("[data-mnav-group]") ?? []);
