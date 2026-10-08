@@ -10,10 +10,14 @@ interface Props {
 const { href, foto, titel, lang = "nl" } = Astro.props;
 const label = lang === "en" ? `Watch ${titel} on Instagram` : `Bekijk ${titel} op Instagram`;
 const src = foto ? `${foto}?w=1200&fit=max&auto=format` : undefined;
+// Sanity asset URLs end in -1080x1350.png. These posters are portrait; cropping them to landscape cut off the title.
+const size = foto?.match(/-(\d+)x(\d+)\.\w+(?:\?|$)/);
+const width = size ? Number(size[1]) : 1200;
+const height = size ? Number(size[2]) : 1500;
 ---
 
 <a class="event-ig" href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
-  {src && <img src={src} alt="" width="1200" height="750" />}
+  {src && <img src={src} alt="" width={width} height={height} />}
   <span class="event-ig__label">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path
@@ -34,10 +38,8 @@ const src = foto ? `${foto}?w=1200&fit=max&auto=format` : undefined;
   .event-ig img {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 10;
+    height: auto;
     border-radius: 0.9rem;
-    object-fit: cover;
-    object-position: center 32%;
   }
 
   .event-ig__label {
