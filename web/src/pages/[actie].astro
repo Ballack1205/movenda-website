@@ -5,12 +5,11 @@ import { getActiepaginas, localizeActie } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 import { MPC_HOST, PREVIEW_URL } from "../lib/site";
 
-// The brief host must not publish these HTML files. Render skips a redirect
-// when a file already exists, so the 301 to www.movenda.be would never run.
-const BRIEF_HOST = import.meta.env.PUBLIC_SITE_URL?.replace(/\/+$/, "") === PREVIEW_URL;
-
 export async function getStaticPaths() {
-  if (MPC_HOST || BRIEF_HOST) return [];
+  // getStaticPaths cannot see a const declared outside it. The brief host must
+  // not publish these files, or Render ignores the 301 to www.movenda.be.
+  const briefHost = import.meta.env.PUBLIC_SITE_URL?.replace(/\/+$/, "") === PREVIEW_URL;
+  if (MPC_HOST || briefHost) return [];
   const paginas = await getActiepaginas();
   return paginas.map((pagina) => ({ params: { actie: pagina.slug }, props: { pagina } }));
 }
