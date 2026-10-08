@@ -1,6 +1,7 @@
 ---
 // One event, with the full text, photo, video and optional info button.
 import Layout from "../layouts/Layout.astro";
+import EventInstagram from "./EventInstagram.astro";
 import EventVideo from "./EventVideo.astro";
 import { eventInfoHref, getEvents } from "../lib/content";
 import { breadcrumbNode } from "../lib/schema";
@@ -32,6 +33,7 @@ const weekdag = geldig ? new Intl.DateTimeFormat(locale, { weekday: "long" }).fo
 const volledig = geldig
   ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(date)
   : event.datum;
+const instagram = event.instagram?.trim() || "";
 const path = `${prefix}/events/${event.slug}`;
 const knopHref = event.link?.trim() ? eventInfoHref(event, lang) : "";
 const knopExtern = /^https?:/i.test(knopHref);
@@ -76,8 +78,12 @@ const description = tekst.replace(/\s+/g, " ").trim().slice(0, 160);
           {knop}
         </a>
       )}
-      <EventVideo video={event.video} foto={event.foto} titel={titel} />
-      {foto && !event.video && (
+      {instagram ? (
+        <EventInstagram href={instagram} foto={event.foto} titel={titel} lang={lang} />
+      ) : (
+        <EventVideo video={event.video} foto={event.foto} titel={titel} />
+      )}
+      {foto && !event.video && !instagram && (
         <img class="event-pagina__foto" src={foto} alt="" width="800" height="500" />
       )}
     </article>

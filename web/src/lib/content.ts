@@ -2466,8 +2466,10 @@ export interface SiteEvent {
   locatie?: string;
   foto?: string;
   fotoHotspot?: { x: number; y: number };
-  /** Sanity CDN URL of an uploaded mp4/webm. Plays on the events page. */
+  /** Sanity CDN URL of an uploaded mp4/webm. Unused when instagram is set. */
   video?: string;
+  /** Reel or post. Shown instead of the uploaded file; a click opens Instagram. */
+  instagram?: string;
   tekst?: string;
   tekstEn?: string;
   /** "Meer info" target: an actiepagina (/ddh-ready) or an external URL. */
@@ -2501,7 +2503,7 @@ export async function getEvents(): Promise<SiteEvent[]> {
   return once("events", async () => {
     const rows = await sanity.fetch(
       `*[_type == "event" && actief != false] | order(datum desc) {
-        "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, link, linkLabel, tonenOpHome,
+        "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, link, linkLabel, tonenOpHome, instagram,
         "foto": foto.asset->url,
         "fotoHotspot": foto.hotspot{ x, y },
         "video": video.asset->url

@@ -1,0 +1,53 @@
+---
+// The event's Instagram Reel or post. A click leaves the site and opens Instagram.
+interface Props {
+  href: string;
+  foto?: string;
+  titel: string;
+  lang?: "nl" | "en";
+}
+
+const { href, foto, titel, lang = "nl" } = Astro.props;
+const label = lang === "en" ? `Watch ${titel} on Instagram` : `Bekijk ${titel} op Instagram`;
+const src = foto ? `${foto}?w=1200&fit=max&auto=format` : undefined;
+---
+
+<a class="event-ig" href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
+  {src && <img src={src} alt="" width="640" height="800" />}
+  <span class="event-ig__label">{lang === "en" ? "Watch on Instagram" : "Bekijk op Instagram"}</span>
+</a>
+
+<style>
+  .event-ig {
+    position: relative;
+    display: block;
+    margin-top: 1rem;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: #111;
+  }
+
+  .event-ig img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 32rem;
+    object-fit: cover;
+  }
+
+  .event-ig__label {
+    position: absolute;
+    right: 0.8rem;
+    bottom: 0.8rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 9999px;
+    background: #f3eee4;
+    color: #161513;
+    font-size: 0.85rem;
+    font-weight: 650;
+  }
+
+  .event-ig:hover .event-ig__label {
+    background: #fffdf8;
+  }
+</style>

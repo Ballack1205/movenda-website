@@ -1,7 +1,7 @@
 import { CalendarIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
 import { EN_FIELDSET, SLUG_DESCRIPTION } from "./helpers";
-import { verplicht } from "./regels";
+import { verplicht, webadres } from "./regels";
 
 export default defineType({
   name: "event",
@@ -25,12 +25,20 @@ export default defineType({
     defineField({ name: "locatie", title: "Locatie", type: "string" }),
     defineField({ name: "foto", title: "Foto", type: "image", options: { hotspot: true } }),
     defineField({
+      name: "instagram",
+      title: "Instagram-video",
+      type: "string",
+      validation: webadres,
+      description:
+        "Link naar de Reel of post (kopieer die uit Instagram). De site toont die in plaats van een geüpload bestand. Een klik opent Instagram, dus je hoeft de video niet opnieuw te bewerken of te uploaden.",
+    }),
+    defineField({
       name: "video",
-      title: "Video",
+      title: "Video-bestand",
       type: "file",
       options: { accept: "video/mp4,video/webm" },
       description:
-        "Video bij dit event (mp4 of webm). Speelt op de eventspagina; de foto hierboven is het stilstaande beeld tot iemand op play drukt. Richtlijn: liggend (16:9), maximaal 20 MB. Leeg = alleen tekst en foto.",
+        "Alleen als er geen Instagram-link is. Mp4 of webm, liggend (16:9), maximaal 20 MB. De foto hierboven is het stilstaande beeld.",
     }),
     defineField({ name: "tekst", title: "Tekst (NL)", type: "text", rows: 4 }),
     defineField({ name: "tekstEn", title: "Tekst (EN)", type: "text", rows: 4, fieldset: "en" }),

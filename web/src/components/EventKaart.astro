@@ -2,6 +2,7 @@
 // One event on /events: big date, title, place, text, photo and an optional
 // "Meer info" button (Studio → Events → Link). Past events render compact.
 import { eventInfoHref, type SiteEvent } from "../lib/content";
+import EventInstagram from "./EventInstagram.astro";
 import EventVideo from "./EventVideo.astro";
 
 interface Props {
@@ -24,6 +25,7 @@ const weekdag = geldig ? new Intl.DateTimeFormat(locale, { weekday: "long" }).fo
 const volledig = geldig
   ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(date)
   : event.datum;
+const instagram = event.instagram?.trim() || "";
 const infoHref = eventInfoHref(event, lang);
 const infoExtern = /^https?:/i.test(infoHref);
 const infoAttrs = infoExtern ? { target: "_blank", rel: "noopener" } : {};
@@ -33,7 +35,7 @@ const fp = event.fotoHotspot ? `&crop=focalpoint&fp-x=${event.fotoHotspot.x.toFi
 const foto = event.foto ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` : undefined;
 ---
 
-<article class:list={["event-kaart", afgelopen && "event-kaart--afgelopen", foto && !afgelopen && "event-kaart--foto"]}>
+<article class:list={["event-kaart", afgelopen && "event-kaart--afgelopen", foto && !afgelopen && !instagram && !event.video && "event-kaart--foto"]}>
   <a class="event-kaart__datum" href={infoHref} aria-label={volledig} {...infoAttrs}>
     <time datetime={event.datum} style="display: contents">
       <span class="event-kaart__dag">{dag}</span>
@@ -53,10 +55,14 @@ const foto = event.foto ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` 
         {knop}
       </a>
     )}
-    <EventVideo video={event.video} foto={event.foto} titel={titel} />
+    {instagram ? (
+      <EventInstagram href={instagram} foto={event.foto} titel={titel} lang={lang} />
+    ) : (
+      <EventVideo video={event.video} foto={event.foto} titel={titel} />
+    )}
   </div>
 
-  {foto && !event.video && (
+  {foto && !event.video && !instagram && (
     <img class="event-kaart__foto" src={foto} alt="" width="450" height="320" loading="lazy" />
   )}
 </article>
@@ -254,14 +260,6 @@ const foto = event.foto ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` 
 
   .event-kaart--afgelopen .event-kaart__titel {
     font-size: 1.3rem;
-  }
-
-  .event-kaart--afgelopen .event-kaart__tekst {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    white-space: normal;
   }
 
   .event-kaart--afgelopen .event-kaart__foto {
