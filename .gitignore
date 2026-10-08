@@ -9,7 +9,7 @@ dist/
 .sanity/
 .lighthouseci/
 
-# Local client notes, not the site
+# Leftover copies at the repo root stay local. The shared set lives in documents/.
 /OFFERTE.md
 /OFFERTE.pdf
 /Meeting-*.pdf
