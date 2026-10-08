@@ -1,0 +1,180 @@
+---
+// One event, with the full text, photo, video and optional info button.
+import Layout from "../layouts/Layout.astro";
+import EventVideo from "./EventVideo.astro";
+import { eventInfoHref, getEvents } from "../lib/content";
+import { breadcrumbNode } from "../lib/schema";
+import { withLang, type Lang } from "../lib/i18n";
+
+interface Props {
+  lang?: Lang;
+  slug: string;
+}
+
+const { lang = "nl", slug } = Astro.props;
+const en = lang === "en";
+const prefix = en ? "/en" : "";
+const event = (await getEvents()).find((item) => item.slug === slug);
+
+if (!event) {
+  return Astro.redirect(withLang("/events", lang));
+}
+
+const titel = (en && event.titelEn) || event.titel;
+const tekst = (en && event.tekstEn) || event.tekst || "";
+const locale = en ? "en-GB" : "nl-BE";
+const date = new Date(`${event.datum}T12:00:00`);
+const geldig = !Number.isNaN(date.getTime());
+const dag = geldig ? String(date.getDate()) : "";
+const maand = geldig ? new Intl.DateTimeFormat(locale, { month: "short" }).format(date).replace(".", "") : "";
+const jaar = geldig ? String(date.getFullYear()) : "";
+const weekdag = geldig ? new Intl.DateTimeFormat(locale, { weekday: "long" }).format(date) : "";
+const volledig = geldig
+  ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(date)
+  : event.datum;
+const path = `${prefix}/events/${event.slug}`;
+const knopHref = event.link?.trim() ? eventInfoHref(event, lang) : "";
+const knopExtern = /^https?:/i.test(knopHref);
+const knop = event.linkLabel || (en ? "More info" : "Meer info");
+const fp = event.fotoHotspot ? `&crop=focalpoint&fp-x=${event.fotoHotspot.x.toFixed(3)}&fp-y=${event.fotoHotspot.y.toFixed(3)}` : "";
+const foto = event.foto ? `${event.foto}?w=1600&h=1000&fit=crop${fp}&auto=format` : undefined;
+const description = tekst.replace(/\s+/g, " ").trim().slice(0, 160);
+---
+
+<Layout
+  title={`${titel} | Movenda`}
+  description={description}
+  path={path}
+  altPath={en ? `/events/${event.slug}` : `/en/events/${event.slug}`}
+  lang={lang}
+  ogImage={event.foto}
+  jsonLd={[
+    breadcrumbNode([
+      { name: "Home", path: prefix || "/" },
+      { name: "Events", path: `${prefix}/events` },
+      { name: titel, path },
+    ]),
+  ]}
+>
+  <section class="page-ink">
+    <article class="mx-auto max-w-3xl px-4 py-12 md:py-16">
+      <a class="brief-textlink mt-0" href={withLang("/events", lang)}>{en ? "All events" : "Alle events"}</a>
+      <div class="event-pagina__kop">
+        <time class="event-pagina__datum" datetime={event.datum} aria-label={volledig}>
+          <span class="event-pagina__dag">{dag}</span>
+          <span class="event-pagina__maand">{maand}</span>
+          <span class="event-pagina__jaar">{jaar}</span>
+        </time>
+        <div>
+          <p class="event-pagina__meta">{weekdag}{event.locatie && ` · ${event.locatie}`}</p>
+          <h1>{titel}</h1>
+        </div>
+      </div>
+      {tekst && <p class="event-pagina__tekst">{tekst}</p>}
+      {knopHref && (
+        <a class="event-pagina__knop" href={knopHref} {...(knopExtern ? { target: "_blank", rel: "noopener" } : {})}>
+          {knop}
+        </a>
+      )}
+      <EventVideo video={event.video} foto={event.foto} titel={titel} />
+      {foto && !event.video && (
+        <img class="event-pagina__foto" src={foto} alt="" width="800" height="500" />
+      )}
+    </article>
+  </section>
+</Layout>
+
+<style>
+  .event-pagina__kop {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+
+  .event-pagina__datum {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    min-width: 5.25rem;
+    padding: 0.85rem 0.75rem 0.7rem;
+    border-radius: 0.9rem;
+    background: #f3eee4;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .event-pagina__datum span {
+    color: #161513 !important;
+  }
+
+  .event-pagina__dag {
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .event-pagina__maand {
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .event-pagina__jaar {
+    margin-top: 0.25rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.6;
+  }
+
+  .event-pagina__meta {
+    font-size: 0.78rem;
+    font-weight: 650;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .event-pagina__kop h1 {
+    margin-top: 0.35rem;
+    font-size: clamp(2rem, 1.4rem + 2vw, 3.2rem);
+    line-height: 1.05;
+  }
+
+  .event-pagina__tekst {
+    margin-top: 1.5rem;
+    line-height: 1.6;
+    white-space: pre-line;
+  }
+
+  .event-pagina__knop {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0 1.35rem;
+    border-radius: 9999px;
+    font-weight: 650;
+    background: #f3eee4;
+    color: #161513 !important;
+  }
+
+  .event-pagina__knop::after {
+    content: "→";
+  }
+
+  .event-pagina__foto {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 1.75rem;
+    aspect-ratio: 16 / 10;
+    border-radius: 1rem;
+    object-fit: cover;
+  }
+</style>

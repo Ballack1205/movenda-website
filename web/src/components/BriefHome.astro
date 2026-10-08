@@ -7,6 +7,7 @@ import PartnerBand from "./PartnerBand.astro";
 import InstagramFeed from "./InstagramFeed.astro";
 import GoogleReviewsFeed from "./GoogleReviewsFeed.astro";
 import {
+  eventInfoHref,
   getEvents,
   getLocaties,
   teamCounts,
@@ -244,7 +245,7 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
       <ul class="brief-events">
         {homeEvents.map((event) => (
           <li>
-            <a class="brief-event" href={event.link ? withLang(event.link, lang) : withLang("/events", lang)}>
+            <a class="brief-event" href={eventInfoHref(event, lang)}>
               <span class="brief-event__copy">
                 <span class="brief-event__when">{eventWhen(event)}{event.locatie ? ` · ${event.locatie}` : ""}</span>
                 <span class="brief-event__title">{en ? event.titelEn || event.titel : event.titel}</span>

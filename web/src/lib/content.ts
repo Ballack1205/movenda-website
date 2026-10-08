@@ -29,7 +29,7 @@ import seedPartners from "../content/partners.json";
 import seedPaginas from "../content/paginas.json";
 import { resolveBlogMedia } from "./blog";
 import type { Lang } from "./i18n";
-import { KEUZEHULP_EN } from "./i18n";
+import { KEUZEHULP_EN, withLang } from "./i18n";
 
 export type LocatieSlug = "olympia" | "mpc";
 export type DienstCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep";
@@ -2386,6 +2386,16 @@ const PLACEHOLDER_EVENT: SiteEvent = {
   tekstEn: "We'll be there.",
   tonenOpHome: true,
 };
+
+/** Where the title and date open: the event's own info link, or its page. */
+export function eventInfoHref(event: SiteEvent, lang: Lang = "nl"): string {
+  const link = event.link?.trim();
+  if (link) {
+    if (/^https?:/i.test(link)) return link;
+    return withLang(link.startsWith("/") ? link : `/${link}`, lang);
+  }
+  return withLang(`/events/${event.slug}`, lang);
+}
 
 export async function getEvents(): Promise<SiteEvent[]> {
   return once("events", async () => {

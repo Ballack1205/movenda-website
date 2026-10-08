@@ -1,5 +1,5 @@
 import type { BlogPost, Dienst, SiteEvent, Teamlid } from "./content";
-import { dienstHref } from "./content";
+import { dienstHref, eventInfoHref } from "./content";
 import type { SearchItem } from "./search";
 
 type Lang = "nl" | "en";
@@ -158,7 +158,7 @@ export function buildSearchIndex(input: {
   for (const event of events) {
     items.push({
       title: en ? event.titelEn || event.titel : event.titel,
-      href: page(lang, "/events"),
+      href: eventInfoHref(event, lang),
       keys: event.locatie || "",
       text: clip(en ? event.tekstEn || event.tekst : event.tekst),
       kind: "event",

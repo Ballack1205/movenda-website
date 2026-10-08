@@ -61,7 +61,7 @@ export function resolvePreviewUrl(document: PreviewDoc): string | undefined {
     case "faq":
       return `${PREVIEW_URL}/faq`;
     case "event":
-      return `${PREVIEW_URL}/events`;
+      return slug ? `${PREVIEW_URL}/events/${slug}` : `${PREVIEW_URL}/events`;
     case "prijsitem":
       return `${PREVIEW_URL}/prijzen`;
     case "vacature":

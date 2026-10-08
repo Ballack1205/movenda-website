@@ -42,7 +42,8 @@ async function getLastmodMap() {
         "team": *[_type == "teamlid" && actief == true]{ "slug": slug.current, "u": _updatedAt },
         "blog": *[_type == "blogPost"]{ "slug": slug.current, tags, "u": _updatedAt },
         "locaties": *[_type == "locatie"]{ "slug": slug.current, "u": _updatedAt },
-        "acties": *[_type == "actiepagina" && !(_id in path("drafts.**"))]{ "slug": slug.current, zichtbaarInGoogle, "u": _updatedAt }
+        "acties": *[_type == "actiepagina" && !(_id in path("drafts.**"))]{ "slug": slug.current, zichtbaarInGoogle, "u": _updatedAt },
+        "events": *[_type == "event" && actief != false]{ "slug": slug.current, "u": _updatedAt }
       }`;
       const res = await fetch(
         `https://${SANITY_PROJECT}.apicdn.sanity.io/v2026-01-01/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`,
@@ -88,6 +89,11 @@ async function getLastmodMap() {
       for (const a of result.acties || []) {
         map.set(`/${a.slug}`, a.u);
         if (a.zichtbaarInGoogle === false) noindexPaths.add(`/${a.slug}`);
+      }
+      for (const e of result.events || []) {
+        if (!e.slug) continue;
+        map.set(`/events/${e.slug}`, e.u);
+        map.set(`/en/events/${e.slug}`, e.u);
       }
       /** @param {{ u: string }[]} rows */
       const newest = (rows) => rows.map((r) => r.u).sort().at(-1) || "";
