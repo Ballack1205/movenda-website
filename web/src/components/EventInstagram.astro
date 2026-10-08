@@ -13,41 +13,51 @@ const src = foto ? `${foto}?w=1200&fit=max&auto=format` : undefined;
 ---
 
 <a class="event-ig" href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
-  {src && <img src={src} alt="" width="640" height="800" />}
-  <span class="event-ig__label">{lang === "en" ? "Watch on Instagram" : "Bekijk op Instagram"}</span>
+  {src && <img src={src} alt="" width="1200" height="750" />}
+  <span class="event-ig__label">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 2A1.8 1.8 0 1 0 13.8 12 1.8 1.8 0 0 0 12 10.2zM17.2 6.8a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"
+      />
+    </svg>
+    {lang === "en" ? "Watch on Instagram" : "Bekijk op Instagram"}
+  </span>
 </a>
 
 <style>
   .event-ig {
-    position: relative;
     display: block;
-    margin-top: 1rem;
-    overflow: hidden;
-    border-radius: 1rem;
-    background: #111;
+    margin-top: 1.25rem;
   }
 
   .event-ig img {
     display: block;
     width: 100%;
-    height: auto;
-    max-height: 32rem;
+    aspect-ratio: 16 / 10;
+    border-radius: 0.9rem;
     object-fit: cover;
+    object-position: center 32%;
   }
 
   .event-ig__label {
-    position: absolute;
-    right: 0.8rem;
-    bottom: 0.8rem;
-    padding: 0.45rem 0.8rem;
-    border-radius: 9999px;
-    background: #f3eee4;
-    color: #161513;
-    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.75rem;
+    color: inherit;
+    font-size: 0.95rem;
     font-weight: 650;
   }
 
+  .event-ig__label svg {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: none;
+  }
+
   .event-ig:hover .event-ig__label {
-    background: #fffdf8;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 </style>
