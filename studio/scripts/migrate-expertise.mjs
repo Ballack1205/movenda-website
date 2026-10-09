@@ -31,6 +31,7 @@ const client = createClient({
   apiVersion: "2026-01-01",
   token,
   useCdn: false,
+  perspective: "raw", // include drafts.* as well (default is published only)
 });
 
 const norm = (s) => s.toLowerCase().replace(/\s+/g, " ").trim();

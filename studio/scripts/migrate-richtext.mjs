@@ -28,6 +28,7 @@ const client = createClient({
   apiVersion: "2026-01-01",
   token,
   useCdn: false,
+  perspective: "raw", // include drafts.* as well (default is published only)
 });
 
 // document type → fields. A path may go through objects (a.b) and arrays (items[].tekst).
