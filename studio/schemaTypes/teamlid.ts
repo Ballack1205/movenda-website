@@ -136,18 +136,16 @@ export default defineType({
     defineField({
       name: "bio",
       title: "Korte bio (NL)",
-      type: "text",
+      type: "richText",
       group: "bio",
-      rows: 6,
-      description: "Een lege regel = nieuwe alinea. Expertise, motivatie en quote hebben hieronder elk een eigen veld.",
+      description: "Elke alinea is een nieuwe regel (Enter). Vet, cursief en links kan via de knoppen. Expertise, motivatie en quote hebben hieronder elk een eigen veld.",
     }),
     defineField({
       name: "bioEn",
       title: "Korte bio (EN)",
-      type: "text",
+      type: "richText",
       group: "bio",
       fieldset: "en",
-      rows: 4,
     }),
     defineField({
       name: "opleiding",
@@ -158,24 +156,120 @@ export default defineType({
       description: "Eén diploma per regel, bv. ‘Musculoskeletale revalidatie en sportkinesitherapie · UHasselt · 2014’. Staat klein onder de naam op de profielpagina.",
     }),
     defineField({
+      name: "expertiseRegels",
+      title: "Expertise en begeleiding",
+      type: "array",
+      group: "bio",
+      description:
+        "Elke regel staat op een eigen lijn op de profielpagina; de elementen in een regel staan naast elkaar, gescheiden door een punt. Kies een element uit de lijst Specialisaties (de link naar het aanbod staat daar al) of typ vrije tekst en zet er zelf een link achter. De kop ‘Expertise en begeleiding’ komt automatisch.",
+      of: [
+        {
+          type: "object",
+          name: "expertiseRegel",
+          title: "Regel",
+          fields: [
+            defineField({
+              name: "elementen",
+              title: "Elementen in deze regel",
+              type: "array",
+              of: [
+                {
+                  type: "object",
+                  name: "expertiseSpecialisatie",
+                  title: "Specialisatie uit de lijst",
+                  fields: [
+                    defineField({
+                      name: "specialisatie",
+                      title: "Specialisatie",
+                      type: "reference",
+                      to: [{ type: "specialisatie" }],
+                      validation: verplicht,
+                      description: "Ontbreekt er een? Maak ze aan onder Specialisaties; daar staat ook de link naar de dienst.",
+                    }),
+                  ],
+                  preview: {
+                    select: { title: "specialisatie.naam", dienst: "specialisatie.dienst.titel" },
+                    prepare: ({ title, dienst }) => ({ title: title || "Kies een specialisatie", subtitle: dienst ? `→ ${dienst}` : "zonder link" }),
+                  },
+                },
+                {
+                  type: "object",
+                  name: "expertiseTekst",
+                  title: "Vrije tekst (met eigen link)",
+                  fields: [
+                    defineField({ name: "tekst", title: "Tekst (NL)", type: "string", validation: verplicht }),
+                    defineField({ name: "tekstEn", title: "Tekst (EN)", type: "string", description: "Leeg = de Engelse site toont de Nederlandse tekst." }),
+                    defineField({
+                      name: "dienst",
+                      title: "Link naar een dienst",
+                      type: "reference",
+                      to: [{ type: "dienst" }],
+                      description: "Optioneel. Kies een dienst, of plak hieronder een eigen link.",
+                    }),
+                    defineField({
+                      name: "url",
+                      title: "Of een eigen link",
+                      type: "string",
+                      validation: link,
+                      description: "Optioneel. https://…, mailto:… of /pad. Een gekozen dienst gaat voor.",
+                    }),
+                  ],
+                  preview: {
+                    select: { title: "tekst", dienst: "dienst.titel", url: "url" },
+                    prepare: ({ title, dienst, url }) => ({
+                      title: title || "Vrije tekst",
+                      subtitle: dienst ? `→ ${dienst}` : url ? `→ ${url}` : "zonder link",
+                    }),
+                  },
+                },
+              ],
+            }),
+          ],
+          preview: {
+            select: Object.fromEntries(
+              Array.from({ length: 6 }, (_, i) => [
+                [`s${i}`, `elementen.${i}.specialisatie.naam`],
+                [`t${i}`, `elementen.${i}.tekst`],
+              ]).flat(),
+            ),
+            prepare: (sel: Record<string, string | undefined>) => {
+              const namen = Array.from({ length: 6 }, (_, i) => sel[`s${i}`] || sel[`t${i}`]).filter(Boolean);
+              return { title: namen.join(" · ") || "Lege regel" };
+            },
+          },
+        },
+      ],
+    }),
+    // Old free-text field. Shown (read-only) only while a profile has not been
+    // moved to the lines above (scripts/migrate-expertise.mjs); then it hides.
+    defineField({
       name: "expertise",
-      title: "Expertise en begeleiding (NL)",
+      title: "Expertise en begeleiding (oude tekst)",
       type: "text",
       group: "bio",
       rows: 5,
-      description:
-        "Eén regel per lijn, zoals in het document. De kop ‘Expertise en begeleiding’ komt automatisch. De specialisaties (met links naar het aanbod) staan eronder.",
+      readOnly: true,
+      hidden: ({ document, value }) => !value || (Array.isArray(document?.expertiseRegels) && document.expertiseRegels.length > 0),
+      description: "Wordt vervangen door de regels hierboven. Neem de tekst over in de regels; daarna verdwijnt dit veld vanzelf.",
     }),
-    defineField({ name: "expertiseEn", title: "Expertise en begeleiding (EN)", type: "text", group: "bio", fieldset: "en", rows: 5 }),
+    defineField({
+      name: "expertiseEn",
+      title: "Expertise en begeleiding (oude tekst, EN)",
+      type: "text",
+      group: "bio",
+      fieldset: "en",
+      rows: 5,
+      readOnly: true,
+      hidden: ({ document, value }) => !value || (Array.isArray(document?.expertiseRegels) && document.expertiseRegels.length > 0),
+    }),
     defineField({
       name: "motivatie",
       title: "Ik koos voor kinesitherapie / coaching omdat… (NL)",
-      type: "text",
+      type: "richText",
       group: "bio",
-      rows: 4,
       description: "Alleen het antwoord. De kop komt automatisch: ‘kinesitherapie’ voor kinesisten, ‘coaching’ voor trainers en coaches.",
     }),
-    defineField({ name: "motivatieEn", title: "Ik koos voor … omdat (EN)", type: "text", group: "bio", fieldset: "en", rows: 4 }),
+    defineField({ name: "motivatieEn", title: "Ik koos voor … omdat (EN)", type: "richText", group: "bio", fieldset: "en" }),
     defineField({
       name: "quote",
       title: "Quote",

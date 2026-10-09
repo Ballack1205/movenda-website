@@ -40,8 +40,8 @@ export default defineType({
       description:
         "Alleen als er geen Instagram-link is. Mp4 of webm, liggend (16:9), maximaal 20 MB. De foto hierboven is het stilstaande beeld.",
     }),
-    defineField({ name: "tekst", title: "Tekst (NL)", type: "text", rows: 4 }),
-    defineField({ name: "tekstEn", title: "Tekst (EN)", type: "text", rows: 4, fieldset: "en" }),
+    defineField({ name: "tekst", title: "Tekst (NL)", type: "richText", description: "Elke alinea is een nieuwe regel (Enter). Vet, cursief en links kies je in de balk." }),
+    defineField({ name: "tekstEn", title: "Tekst (EN)", type: "richText", fieldset: "en" }),
     defineField({
       name: "link",
       title: "Link voor meer info",

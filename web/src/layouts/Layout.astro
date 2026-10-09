@@ -13,7 +13,9 @@ import PromoPopup from "../components/PromoPopup.astro";
 import { getActivePopup, getLocaties, getSiteSettings } from "../lib/content";
 import { ogImageSrc, type OgShape } from "../lib/images";
 import { baseGraph, toGraph, type JsonLdNode } from "../lib/schema";
+import { PREVIEW } from "../lib/preview";
 import { MPC_HOST, NOINDEX, THEME, absoluteUrl } from "../lib/site";
+import VisualEditing from "../components/VisualEditing.astro";
 import labBodyFont from "@fontsource-variable/instrument-sans/files/instrument-sans-latin-wdth-normal.woff2?url";
 
 export interface ArticleMeta {
@@ -198,7 +200,8 @@ const graph = toGraph([...baseGraph(settings, locaties), ...jsonLd]);
     </main>
     <Footer brand={chromeBrand} lang={lang} />
     <PromoPopup popup={popup} lang={lang} />
-    <Analytics lang={lang} />
+    {!PREVIEW && <Analytics lang={lang} />}
+    {PREVIEW && <VisualEditing />}
     {THEME === "lab" && <LabMotion />}
   </body>
 </html>

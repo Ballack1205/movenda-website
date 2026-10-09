@@ -1,0 +1,30 @@
+---
+// Sanity Presentation overlay: click text in the live preview to open that
+// field in the Studio. Only rendered by the preview service (PUBLIC_PREVIEW),
+// so the public sites do not ship it.
+---
+
+<script>
+  // The env check is replaced at build time, so public builds drop the import
+  // (and its CSS) completely. Only the preview service loads the overlay.
+  if (import.meta.env.PUBLIC_PREVIEW === "true" && window.parent !== window) {
+    // Only inside the Studio's Presentation frame; opened directly it does nothing.
+    const { enableVisualEditing } = await import("@sanity/visual-editing/enable-visual-editing");
+    enableVisualEditing({
+      // Pages are separate documents: tell the Studio which URL is showing,
+      // and follow it when the Studio's address bar changes.
+      history: {
+        subscribe(navigate) {
+          const send = () => navigate({ type: "push", url: location.pathname + location.search + location.hash });
+          send();
+          window.addEventListener("popstate", send);
+          return () => window.removeEventListener("popstate", send);
+        },
+        update(update) {
+          if (update.type === "pop") history.back();
+          else if (update.url !== location.pathname + location.search + location.hash) location.assign(update.url);
+        },
+      },
+    });
+  }
+</script>

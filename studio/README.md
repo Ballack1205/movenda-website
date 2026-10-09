@@ -9,8 +9,11 @@ account) once invited.
 
 The Studio is Dutch. Daily work (settings, pop-ups, team) sits at the top;
 the MPC lesrooster is a first-class list. Long forms (teamlid, locatie,
-site-instellingen, blog, dienst, pop-up) use tabs. English fields are
-collapsed. The document menu has **Open preview** (pitch site until go-live).
+site-instellingen, blog, dienst, pop-up) use tabs. English fields sit on their
+own **English** tab (empty = the site shows the Dutch text). Running text
+(team bio, event, vacature, action pages) has a small editor: bold, italic,
+links and the sizes Normaal / Groot / Klein. The **Live voorbeeld** tab shows
+the site next to the form, with drafts, and click-to-edit. The document menu has **Open preview** (pitch site until go-live).
 Site-instellingen, keuzehulp and the two locaties cannot be deleted.
 
 Seeded on 2026-09-10 with the real pitch-preview content (19 teamleden, 2

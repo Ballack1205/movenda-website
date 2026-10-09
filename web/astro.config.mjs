@@ -9,6 +9,10 @@ import sitemap from "@astrojs/sitemap";
 // src/lib/site.ts reads the same variables for canonical/JSON-LD/robots.
 const site = process.env.PUBLIC_SITE_URL || "https://movenda-brief.onrender.com";
 const hostMode = process.env.PUBLIC_HOST_MODE === "mpc";
+// Live preview for the Studio's Presentation tab (`npm run preview:live`). It
+// runs the dev server, which renders each request from Sanity drafts; the
+// public static builds never set this.
+const livePreview = process.env.PUBLIC_PREVIEW === "true";
 
 const SANITY_PROJECT = process.env.PUBLIC_SANITY_PROJECT_ID || "k73l2by8";
 const SANITY_DATASET = process.env.PUBLIC_SANITY_DATASET || "production";
@@ -119,6 +123,7 @@ export default defineConfig({
   trailingSlash: "never",
   // The single stylesheet (~19 KB) was render-blocking on slow mobile; inline it in every page.
   build: { inlineStylesheets: "always" },
+  devToolbar: { enabled: !livePreview },
   redirects: {
     "/groepslessen/kleine-groepstraining": {
       status: 301,
@@ -130,6 +135,8 @@ export default defineConfig({
     },
   },
   vite: {
+    // The preview is served from a Render hostname, not localhost.
+    server: livePreview ? { allowedHosts: true } : undefined,
     plugins: [tailwindcss()],
     resolve: {
       alias: {

@@ -9,11 +9,17 @@ import { sanity } from "./sanity";
 // siteSettings (3 calls) on every page and burned the Free API quota.
 const onceCache = new Map<string, Promise<unknown>>();
 
+const onceStamp = new Map<string, number>();
+
 function once<T>(key: string, load: () => Promise<T>): Promise<T> {
   let hit = onceCache.get(key);
+  // Static builds fetch each list once. The live preview refetches after a few
+  // seconds, so a reload shows what was just edited.
+  if (hit && PREVIEW && Date.now() - (onceStamp.get(key) ?? 0) > PREVIEW_TTL_MS) hit = undefined;
   if (!hit) {
     hit = load();
     onceCache.set(key, hit);
+    onceStamp.set(key, Date.now());
   }
   return hit as Promise<T>;
 }
@@ -31,6 +37,8 @@ import seedKompas from "../content/verwijskompas.json";
 import { resolveBlogMedia } from "./blog";
 import type { Lang } from "./i18n";
 import { KEUZEHULP_EN, withLang } from "./i18n";
+import { alsTekst, isLeeg, type RichValue } from "./rich-text";
+import { PREVIEW, PREVIEW_TTL_MS } from "./preview";
 
 export type LocatieSlug = "olympia" | "mpc";
 export type DienstCategorie = "kine" | "training" | "mpc-training" | "mpc-rehab" | "mpc-groep";
@@ -46,6 +54,24 @@ export interface Club {
 
 export type Discipline = "kine" | "pt";
 
+/** One item in an expertise line: a specialisation or free text, optionally linked. */
+export interface ExpertiseElement {
+  tekst: string;
+  tekstEn?: string;
+  /** Target of a linked dienst (wins over `url`). */
+  dienst?: Pick<Dienst, "slug" | "categorie">;
+  url?: string;
+}
+
+export function expertiseElementNaam(el: ExpertiseElement, lang: Lang = "nl"): string {
+  return lang === "en" ? el.tekstEn || el.tekst : el.tekst;
+}
+
+export function expertiseElementHref(el: ExpertiseElement, lang: Lang = "nl"): string | undefined {
+  if (el.dienst?.slug) return dienstHref(el.dienst, lang);
+  return el.url?.trim() ? rewriteMpcHref(el.url.trim()) : undefined;
+}
+
 export interface Teamlid {
   slug: string;
   voornaam: string;
@@ -58,11 +84,20 @@ export interface Teamlid {
   /** References to specialisatie documents (Julie's vocabulary), in the order she picked them. */
   specialisaties: Specialisatie[];
   email: string;
+  /** Plain text of the bio (cards, meta tags, JSON-LD). The formatted version is `bioRich`. */
   bio: string;
   bioEn?: string;
+  /** Formatted bio / motivation as stored in Sanity (blocks, or a plain string before conversion). */
+  bioRich?: RichValue;
+  bioEnRich?: RichValue;
+  motivatieRich?: RichValue;
+  motivatieEnRich?: RichValue;
   opleiding?: string;
+  /** Old free-text expertise, kept as fallback until a profile has `expertiseRegels`. */
   expertise?: string;
   expertiseEn?: string;
+  /** Expertise lines Julie builds in Studio: each line is a row of elements, linked or not. */
+  expertiseRegels?: ExpertiseElement[][];
   motivatie?: string;
   motivatieEn?: string;
   quote?: string;
@@ -672,8 +707,9 @@ export interface Vacature {
   titel: string;
   titelEn?: string;
   locatieNaam?: string;
-  omschrijving: string;
-  omschrijvingEn?: string;
+  /** Rich text (blocks), or a plain string until the field is converted in Sanity. */
+  omschrijving: RichValue;
+  omschrijvingEn?: RichValue;
   contactEmail: string;
   actief: boolean;
 }
@@ -860,6 +896,12 @@ const teamlidProjection = `{
   "slug": slug.current,
   voornaam, naam, rol, rolEn, disciplines, locaties, email, bio, bioEn,
   opleiding, expertise, expertiseEn, motivatie, motivatieEn, quote,
+  "expertiseRegels": expertiseRegels[]{ "elementen": elementen[]{
+    "tekst": coalesce(tekst, specialisatie->naam),
+    "tekstEn": coalesce(tekstEn, specialisatie->naamEn),
+    url,
+    "dienst": coalesce(dienst, specialisatie->dienst)->{ "slug": slug.current, categorie }
+  } },
   volgorde, actief,
   "specialisaties": specialisaties[]->{ "id": _id, naam, naamEn, "dienst": dienst->{ "slug": slug.current, categorie } },
   "foto": foto.asset->url,
@@ -1111,9 +1153,20 @@ const seedTeamBySlug = new Map(
 
 function normalizeTeamlid(row: Teamlid): Teamlid {
   const fromSeed = seedTeamBySlug.get(row.slug);
+  const rawRegels = (row.expertiseRegels || []) as unknown as ({ elementen?: ExpertiseElement[] } | null)[];
   return {
     ...row,
-    bioEn: row.bioEn || fromSeed?.bioEn,
+    bio: alsTekst(row.bio as RichValue),
+    bioEn: alsTekst(row.bioEn as RichValue) || fromSeed?.bioEn,
+    motivatie: alsTekst(row.motivatie as RichValue) || undefined,
+    motivatieEn: alsTekst(row.motivatieEn as RichValue) || undefined,
+    bioRich: row.bio as RichValue,
+    bioEnRich: row.bioEn as RichValue,
+    motivatieRich: row.motivatie as RichValue,
+    motivatieEnRich: row.motivatieEn as RichValue,
+    expertiseRegels: rawRegels
+      .map((regel) => (regel?.elementen || []).filter((el) => el && el.tekst?.trim()))
+      .filter((elementen) => elementen.length > 0),
     clubs: row.clubs || [],
     keuzehulpTags: (row.keuzehulpTags || [])
       .filter((t): t is KeuzehulpTag => Boolean(t && t.id && t.label && t.categorie))
@@ -2470,8 +2523,11 @@ export interface SiteEvent {
   video?: string;
   /** Reel or post. Shown instead of the uploaded file; a click opens Instagram. */
   instagram?: string;
+  /** Plain text (cards, meta tags). The formatted text is `tekstRich`. */
   tekst?: string;
   tekstEn?: string;
+  tekstRich?: RichValue;
+  tekstEnRich?: RichValue;
   /** "Meer info" target: an actiepagina (/ddh-ready) or an external URL. */
   link?: string;
   linkLabel?: string;
@@ -2509,7 +2565,15 @@ export async function getEvents(): Promise<SiteEvent[]> {
         "video": video.asset->url
       }`,
     );
-    const live = (rows || []).filter((row: SiteEvent) => row.slug && row.titel && row.datum);
+    const live = (rows || [])
+      .filter((row: SiteEvent) => row.slug && row.titel && row.datum)
+      .map((row: SiteEvent) => ({
+        ...row,
+        tekst: alsTekst(row.tekst as RichValue) || undefined,
+        tekstEn: alsTekst(row.tekstEn as RichValue) || undefined,
+        tekstRich: row.tekst as RichValue,
+        tekstEnRich: row.tekstEn as RichValue,
+      }));
     return live.length > 0 ? live : [PLACEHOLDER_EVENT];
   });
 }
@@ -2519,8 +2583,9 @@ export interface ActieItem {
   labelEn?: string;
   kop: string;
   kopEn?: string;
-  tekst?: string;
-  tekstEn?: string;
+  /** Rich text (blocks), or a plain string until the field is converted in Sanity. */
+  tekst?: RichValue;
+  tekstEn?: RichValue;
   video?: string;
 }
 
@@ -2529,8 +2594,8 @@ export interface ActieSectie {
   kickerEn?: string;
   titel?: string;
   titelEn?: string;
-  tekst?: string;
-  tekstEn?: string;
+  tekst?: RichValue;
+  tekstEn?: RichValue;
   items: ActieItem[];
   kaderTitel?: string;
   kaderTitelEn?: string;
@@ -2554,8 +2619,8 @@ export interface Actiepagina {
   kickerEn?: string;
   slogan?: string;
   sloganEn?: string;
-  intro?: string;
-  introEn?: string;
+  intro?: RichValue;
+  introEn?: RichValue;
   datumRegel?: string;
   datumRegelEn?: string;
   foto?: CmsFoto;
@@ -2576,13 +2641,13 @@ export interface Actiepagina {
 /** A section is shown once Julie gave it more than a heading. */
 export function actieSectieGevuld(s: ActieSectie): boolean {
   return Boolean(
-    s.tekst?.trim() || s.items.length || s.kaderTekst?.trim() || s.foto || (s.knopLabel && s.knopUrl) || (s.knop2Label && s.knop2Url),
+    !isLeeg(s.tekst) || s.items.length || s.kaderTekst?.trim() || s.foto || (s.knopLabel && s.knopUrl) || (s.knop2Label && s.knop2Url),
   );
 }
 
-function actieTekst(nl: string | undefined, en: string | undefined, lang: Lang): string | undefined {
+function actieTekst<T extends RichValue>(nl: T | undefined, en: T | undefined, lang: Lang): T | undefined {
   if (lang !== "en") return nl;
-  return en?.trim() ? en : nl;
+  return !isLeeg(en) ? en : nl;
 }
 
 /** English campaign copy when Julie filled the EN fields; otherwise the Dutch text. */

@@ -1,0 +1,16 @@
+---
+// Renders Julie's formatted text (see lib/rich-text.ts). Output is plain
+// <p> / <strong> / <em> / <a>, so it inherits the look of whatever wrapper
+// the page puts around it (e.g. `space-y-4 text-brand-muted`).
+import { richHtml, type RichValue } from "../lib/rich-text";
+
+interface Props {
+  value: RichValue;
+  /** Class for every paragraph, for pages whose styles target a paragraph class. */
+  pClass?: string;
+}
+
+const { value, pClass } = Astro.props;
+---
+
+<Fragment set:html={richHtml(value, pClass)} />

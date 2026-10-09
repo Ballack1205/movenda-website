@@ -23,6 +23,7 @@ import {
   type SiteSettings,
   type SportaanbodItem,
 } from "./content";
+import { PREVIEW, PREVIEW_TTL_MS } from "./preview";
 import { movendaHomeHref, THEME } from "./site";
 
 export type Brand = "movenda" | "mpc";
@@ -77,9 +78,12 @@ interface NavData {
 // One fetch per build, not one per page. content.ts also memoizes the
 // underlying lists; this keeps Header from awaiting four getters on every route.
 let navDataPromise: Promise<NavData> | undefined;
+let navDataStamp = 0;
 
 function loadNavData(): Promise<NavData> {
+  if (PREVIEW && Date.now() - navDataStamp > PREVIEW_TTL_MS) navDataPromise = undefined;
   if (!navDataPromise) {
+    navDataStamp = Date.now();
     navDataPromise = Promise.all([getDiensten(), getLocaties(), getSiteSettings(), getSportaanbod()]).then(
       ([diensten, locaties, settings, sportaanbod]) => ({ diensten, locaties, settings, sportaanbod }),
     );

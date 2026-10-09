@@ -8,6 +8,12 @@ export const PREVIEW_URL = (process.env.SANITY_STUDIO_PREVIEW_URL || "https://mo
   "",
 );
 
+// Where the live preview (Sanity Presentation) runs: a separate Render service
+// that renders from drafts. See `npm run preview:live` in web/.
+export const LIVE_PREVIEW_URL = (
+  process.env.SANITY_STUDIO_LIVE_PREVIEW_URL || "https://movenda-live-preview.onrender.com"
+).replace(/\/+$/, "");
+
 type PreviewDoc = {
   _type?: string;
   slug?: { current?: string } | string;
@@ -38,6 +44,12 @@ function dienstPath(categorie?: string, slug?: string): string {
   if (categorie === "training") return `/training/${slug}`;
   // The site redirects /mpc/<slug> to its real home (/performance, /groepslessen or /b2b).
   return `/mpc/${slug}`;
+}
+
+/** The page a document lives on, as a path (`/team/jens-hendrickx`), or undefined. */
+export function resolvePreviewPath(document: PreviewDoc): string | undefined {
+  const url = resolvePreviewUrl(document);
+  return url ? url.slice(PREVIEW_URL.length) || "/" : undefined;
 }
 
 export function resolvePreviewUrl(document: PreviewDoc): string | undefined {

@@ -328,6 +328,36 @@ services:
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
 
+  # Live preview for the Studio's "Live voorbeeld" tab (Sanity Presentation). Not public:
+  # noindex, no analytics, renders Sanity DRAFTS per request with the dev server, so edits show
+  # before Publiceren. Free plan: sleeps after 15 min, the first load then takes ~30 s.
+  # Same branch as the preview Julie reviews. The public static sites above are unaffected.
+  # Set SANITY_VIEWER_TOKEN in the Dashboard: Sanity → API → Tokens → add token with "Viewer" role.
+  - type: web
+    name: movenda-live-preview
+    runtime: node
+    plan: free
+    branch: brief
+    buildCommand: cd web && npm install
+    startCommand: cd web && npm run preview:live
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22.12.0"
+      - key: PUBLIC_PREVIEW
+        value: "true"
+      - key: PUBLIC_NOINDEX
+        value: "true"
+      - key: PUBLIC_SITE_URL
+        value: https://movenda-live-preview.onrender.com
+      - key: PUBLIC_THEME
+        value: lab
+      - key: PUBLIC_HOST_MODE
+        value: full
+      - key: SANITY_VIEWER_TOKEN
+        sync: false
+
   # Production: www.movenda.be + movenda.be. Tracks main; brief is where Julie reviews.
   # Created via the Render MCP. Redirects + headers below must be set in the Dashboard
   # (Settings > Redirects/Rewrites and Headers) — the MCP cannot set them.

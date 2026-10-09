@@ -3,6 +3,8 @@
 import Layout from "../layouts/Layout.astro";
 import EventInstagram from "./EventInstagram.astro";
 import EventVideo from "./EventVideo.astro";
+import RichText from "./RichText.astro";
+import { isLeeg } from "../lib/rich-text";
 import { eventInfoHref, getEvents } from "../lib/content";
 import { breadcrumbNode } from "../lib/schema";
 import { withLang, type Lang } from "../lib/i18n";
@@ -23,6 +25,8 @@ if (!event) {
 
 const titel = (en && event.titelEn) || event.titel;
 const tekst = (en && event.tekstEn) || event.tekst || "";
+// Formatted text: English when filled in, else Dutch (a plain string until converted in Sanity).
+const tekstRich = en && !isLeeg(event.tekstEnRich) ? event.tekstEnRich : (event.tekstRich ?? event.tekst);
 const locale = en ? "en-GB" : "nl-BE";
 const date = new Date(`${event.datum}T12:00:00`);
 const geldig = !Number.isNaN(date.getTime());
@@ -72,7 +76,9 @@ const description = tekst.replace(/\s+/g, " ").trim().slice(0, 160);
           <h1>{titel}</h1>
         </div>
       </div>
-      {tekst && <p class="event-pagina__tekst">{tekst}</p>}
+      {typeof tekstRich === "string"
+        ? tekstRich.trim() && <p class="event-pagina__tekst">{tekstRich}</p>
+        : !isLeeg(tekstRich) && <RichText value={tekstRich} pClass="event-pagina__tekst" />}
       {knopHref && (
         <a class="event-pagina__knop" href={knopHref} {...(knopExtern ? { target: "_blank", rel: "noopener" } : {})}>
           {knop}
@@ -151,10 +157,17 @@ const description = tekst.replace(/\s+/g, " ").trim().slice(0, 160);
     line-height: 1.05;
   }
 
-  .event-pagina__tekst {
+  /* Paragraphs come from RichText (set:html), so they carry no Astro scope attribute. */
+  :global(.event-pagina__tekst) {
     margin-top: 1.5rem;
     line-height: 1.6;
     white-space: pre-line;
+  }
+
+  :global(.event-pagina__tekst a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .event-pagina__knop {

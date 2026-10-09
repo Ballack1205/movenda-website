@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import ActiePagina from "../../components/ActiePagina.astro";
 import { getActiepaginas, localizeActie } from "../../lib/content";
+import { alsTekst } from "../../lib/rich-text";
 import { breadcrumbSchema } from "../../lib/schema";
 import { MPC_HOST, PREVIEW_URL } from "../../lib/site";
 
@@ -16,7 +17,7 @@ const { pagina } = Astro.props;
 const path = `/en/${pagina.slug}`;
 const shown = localizeActie(pagina, "en");
 const description =
-  shown.seoDescription || [shown.slogan, shown.intro?.split("\n")[0]].filter(Boolean).join(" ").slice(0, 160);
+  shown.seoDescription || [shown.slogan, alsTekst(shown.intro).split("\n")[0]].filter(Boolean).join(" ").slice(0, 160);
 ---
 
 <Layout

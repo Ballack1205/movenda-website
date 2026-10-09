@@ -20,13 +20,17 @@ import verwijskompas from "./verwijskompas";
 import specialisatie from "./specialisatie";
 import pagina from "./pagina";
 import cmsFoto from "./cmsFoto";
+import richText from "./richText";
 import event from "./event";
 import actiepagina from "./actiepagina";
+import { engelsTabblad } from "./helpers";
 
+// English fields get their own tab (see helpers.ts).
 export const schemaTypes = [
   pagina,
   actiepagina,
   cmsFoto,
+  richText,
   event,
   teamlid,
   specialisatie,
@@ -48,4 +52,4 @@ export const schemaTypes = [
   keuzehulp,
   keuzehulpTag,
   verwijskompas,
-];
+].map((type) => engelsTabblad(type));

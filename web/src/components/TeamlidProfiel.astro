@@ -1,7 +1,9 @@
 ---
 // Body of a team profile (bio, motivation + quote, expertise, clubs), shared by NL and EN.
-import { dienstHref, specialisatieNaam, type Teamlid } from "../lib/content";
+import { dienstHref, expertiseElementHref, expertiseElementNaam, specialisatieNaam, type Teamlid } from "../lib/content";
 import type { Lang } from "../lib/i18n";
+import RichText from "./RichText.astro";
+import { isLeeg, type RichValue } from "../lib/rich-text";
 
 interface Props {
   lid: Teamlid;
@@ -11,11 +13,16 @@ interface Props {
 const { lid, lang = "nl" } = Astro.props;
 const en = lang === "en";
 const regels = (tekst?: string | null) => (tekst || "").split("\n").map((r) => r.trim()).filter(Boolean);
-const alineas = (tekst?: string | null) => (tekst || "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
-const bio = en ? lid.bioEn || lid.bio : lid.bio;
-const expertise = regels(en ? lid.expertiseEn || lid.expertise : lid.expertise);
-const motivatie = alineas(en ? lid.motivatieEn || lid.motivatie : lid.motivatie);
+// English text wins when Julie filled it in; otherwise the Dutch one (same as before).
+const kies = (nl: RichValue, enRich: RichValue, enPlain?: string): RichValue =>
+  en ? (!isLeeg(enRich) ? enRich : enPlain || nl) : nl;
+const bio = kies(lid.bioRich ?? lid.bio, lid.bioEnRich, lid.bioEn);
+// Lines Julie builds in Studio (elements, optionally linked); falls back to the old plain text.
+const expertiseRegels = lid.expertiseRegels ?? [];
+const expertiseTekst = regels(en ? lid.expertiseEn || lid.expertise : lid.expertise);
+const expertise = expertiseRegels.length > 0 ? expertiseRegels : expertiseTekst.map((r) => [{ tekst: r }]);
+const motivatie = kies(lid.motivatieRich ?? lid.motivatie, lid.motivatieEnRich, lid.motivatieEn);
 const quote = lid.quote?.trim().replace(/^[“"„]+|[”"]+$/g, "").replace(/\.{2,}$/, ".");
 
 const kine = lid.disciplines.includes("kine");
@@ -33,16 +40,16 @@ const kopClass = "text-sm font-semibold uppercase tracking-wide text-brand-muted
 ---
 
 <div class="mt-6 space-y-4 text-brand-muted">
-  {alineas(bio).map((p) => <p>{p}</p>)}
+  <RichText value={bio} />
 </div>
 
-{(motivatie.length > 0 || quote) && (
+{(!isLeeg(motivatie) || quote) && (
   <div class="mt-8 space-y-8">
-    {motivatie.length > 0 && (
+    {!isLeeg(motivatie) && (
       <div>
         <p class={kopClass}>{motivatieKop}</p>
         <div class="mt-2 space-y-3 text-brand-muted">
-          {motivatie.map((p) => <p>{p}</p>)}
+          <RichText value={motivatie} />
         </div>
       </div>
     )}
@@ -60,7 +67,19 @@ const kopClass = "text-sm font-semibold uppercase tracking-wide text-brand-muted
     <h2 class={kopClass}>{expertiseKop}</h2>
     {expertise.length > 0 && (
       <ul class="mt-3 divide-y divide-brand-border border-y border-brand-border">
-        {expertise.map((r) => <li class="py-2.5 text-brand-text">{r}</li>)}
+        {expertise.map((regel) => (
+          <li class="py-2.5 text-brand-text">
+            {regel.map((el, i) => {
+              const href = expertiseElementHref(el, lang);
+              return (
+                <>
+                  {i > 0 && " · "}
+                  {href ? <a href={href} class="text-brand-primary hover:underline">{expertiseElementNaam(el, lang)}</a> : expertiseElementNaam(el, lang)}
+                </>
+              );
+            })}
+          </li>
+        ))}
       </ul>
     )}
     {lid.specialisaties.length > 0 && (

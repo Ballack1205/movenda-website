@@ -1,10 +1,11 @@
 import { defineConfig, type DocumentActionComponent } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
+import { defineDocuments, defineLocations, presentationTool } from "sanity/presentation";
 import { nlNLLocale } from "@sanity/locale-nl-nl";
 import { schemaTypes } from "./schemaTypes";
 import { deskStructure } from "./structure";
-import { resolvePreviewUrl } from "./preview";
+import { LIVE_PREVIEW_URL, resolvePreviewPath, resolvePreviewUrl } from "./preview";
 import { bulkPublishTool } from "./tools/bulkPublish";
 import { withErrorList } from "./actions/publishWithErrors";
 import { withBekijkOpSite } from "./components/BekijkOpSite";
@@ -38,6 +39,27 @@ const withProminentDuplicate = (Action: DocumentActionComponent): DocumentAction
   return Wrapped;
 };
 
+// Live preview tab (Sanity Presentation): the page next to the form, drafts
+// included, click text to open its field. Each type points at the page it
+// lives on, reusing the same mapping as the "Bekijk op de site" button.
+const LOCATION_FIELDS = { slug: "slug.current", categorie: "categorie", locatie: "locatie", key: "key" };
+const PRESENTATION_TYPES = [
+  "pagina", "actiepagina", "teamlid", "blogPost", "locatie", "dienst", "faq", "event", "prijsitem",
+  "vacature", "getuigenis", "sportaanbodItem", "lesrooster", "popup", "siteSettings", "partner", "homePijler", "homeDeur",
+];
+const presentationLocations = Object.fromEntries(
+  PRESENTATION_TYPES.map((type) => [
+    type,
+    defineLocations({
+      select: LOCATION_FIELDS,
+      resolve: (doc) => {
+        const path = doc ? resolvePreviewPath({ _type: type, ...doc }) : undefined;
+        return path ? { locations: [{ title: "Op de site", href: path }] } : undefined;
+      },
+    }),
+  ]),
+);
+
 // i18n approach: plain sibling fields (e.g. `rol` / `rolEn`, `bio` / `bioEn`)
 // instead of the internationalized-array plugin. Dutch is required, English
 // is optional and falls back to Dutch on the site. This is simpler for
@@ -50,6 +72,20 @@ export default defineConfig({
   basePath: "/",
   plugins: [
     structureTool({ structure: deskStructure }),
+    presentationTool({
+      previewUrl: { initial: LIVE_PREVIEW_URL },
+      title: "Live voorbeeld",
+      resolve: {
+        locations: presentationLocations,
+        mainDocuments: defineDocuments([
+          { route: "/team/:slug", filter: `_type == "teamlid" && slug.current == $slug` },
+          { route: "/en/team/:slug", filter: `_type == "teamlid" && slug.current == $slug` },
+          { route: "/blog/:slug", filter: `_type == "blogPost" && slug.current == $slug` },
+          { route: "/locaties/:slug", filter: `_type == "locatie" && slug.current == $slug` },
+          { route: "/events/:slug", filter: `_type == "event" && slug.current == $slug` },
+        ]),
+      },
+    }),
     nlNLLocale({ title: "Nederlands" }),
     ...(showVision ? [visionTool()] : []),
   ],

@@ -31,8 +31,8 @@ export default defineType({
       type: "reference",
       to: [{ type: "locatie" }],
     }),
-    defineField({ name: "omschrijving", title: "Omschrijving", type: "text", rows: 8, validation: verplicht }),
-    defineField({ name: "omschrijvingEn", title: "Omschrijving (EN)", type: "text", rows: 8 }),
+    defineField({ name: "omschrijving", title: "Omschrijving", type: "richText", validation: verplicht, description: "Elke alinea is een nieuwe regel (Enter). Vet, cursief en links kies je in de balk." }),
+    defineField({ name: "omschrijvingEn", title: "Omschrijving (EN)", type: "richText" }),
     defineField({
       name: "contactEmail",
       title: "Solliciteren via e-mail",

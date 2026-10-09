@@ -3,6 +3,8 @@
 // Every text and photo is Julie's: Studio → Actiepagina's. Layout lives here.
 import { actieSectieGevuld, localizeActie, type Actiepagina, type CmsFoto } from "../lib/content";
 import { withLang, type Lang } from "../lib/i18n";
+import RichText from "./RichText.astro";
+import { isLeeg } from "../lib/rich-text";
 
 interface Props {
   pagina: Actiepagina;
@@ -12,7 +14,6 @@ interface Props {
 const { pagina: bron, lang = "nl" } = Astro.props;
 const pagina = localizeActie(bron, lang);
 const en = lang === "en";
-const alineas = (tekst?: string) => (tekst || "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 const regels = (tekst?: string) => (tekst || "").split("\n").map((r) => r.trim()).filter(Boolean);
 const secties = pagina.secties.filter(actieSectieGevuld);
 
@@ -68,9 +69,9 @@ function embedUrl(url: string): string | undefined {
   </header>
 
   <div class="actie-ink">
-    {pagina.intro && (
+    {!isLeeg(pagina.intro) && (
       <div class="actie-copy mx-auto box-content max-w-3xl px-4">
-        {alineas(pagina.intro).map((p) => <p class="actie-regels">{p}</p>)}
+        <RichText value={pagina.intro} pClass="actie-regels" />
       </div>
     )}
 
@@ -79,7 +80,7 @@ function embedUrl(url: string): string | undefined {
         <div class="actie-copy mx-auto max-w-3xl">
           {s.kicker && <p class="actie-kicker">{s.kicker}</p>}
           {s.titel && <h2>{s.titel}</h2>}
-          {alineas(s.tekst).map((p) => <p class="actie-regels">{p}</p>)}
+          <RichText value={s.tekst} pClass="actie-regels" />
         </div>
 
         {s.items.length > 0 && (
@@ -90,7 +91,7 @@ function embedUrl(url: string): string | undefined {
                 <li>
                   {item.label && <p class="actie-kicker">{item.label}</p>}
                   <h3>{item.kop}</h3>
-                  {alineas(item.tekst).map((p) => <p class="actie-regels">{p}</p>)}
+                  <RichText value={item.tekst} pClass="actie-regels" />
                   {embed && (
                     <div class="actie-video">
                       <iframe src={embed} title={item.kop} loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen />
@@ -254,11 +255,20 @@ function embedUrl(url: string): string | undefined {
     padding-bottom: 5rem;
   }
 
-  .actie-regels {
+  /* The paragraphs come from RichText (set:html), so they carry no Astro scope attribute. */
+  .actie-copy :global(.actie-regels),
+  .actie-items li :global(.actie-regels) {
     white-space: pre-line;
   }
 
-  .actie-copy p {
+  .actie-copy :global(.actie-regels a),
+  .actie-items li :global(.actie-regels a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .actie-copy :global(p) {
     margin-top: 1rem;
     line-height: 1.75;
     color: rgb(244 247 251 / 0.86);
@@ -330,7 +340,7 @@ function embedUrl(url: string): string | undefined {
     font-size: 0.72rem;
   }
 
-  .actie-items li p:not(.actie-kicker) {
+  .actie-items li :global(p:not(.actie-kicker)) {
     margin-top: 0.6rem;
     line-height: 1.65;
     color: rgb(244 247 251 / 0.8);

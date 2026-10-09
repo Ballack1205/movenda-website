@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import SectionKicker from "./SectionKicker.astro";
+import RichText from "./RichText.astro";
+import { isLeeg } from "../lib/rich-text";
 import { getVacatures, getSiteSettings, getPagina, paginaAlineas, paginaTekst } from "../lib/content";
 import { breadcrumbSchema } from "../lib/schema";
 import type { Lang } from "../lib/i18n";
@@ -51,7 +53,12 @@ const path = `${prefix}/jobs`;
           <div class="rounded-2xl border border-brand-border bg-brand-surface p-6">
             <h2 class="text-lg font-semibold">{en ? vacature.titelEn || vacature.titel : vacature.titel}</h2>
             {vacature.locatieNaam && <p class="text-sm font-medium text-brand-primary">{vacature.locatieNaam}</p>}
-            <p class="mt-2 whitespace-pre-line text-sm text-brand-muted">{en ? vacature.omschrijvingEn || vacature.omschrijving : vacature.omschrijving}</p>
+            <div class="[&>p+p]:mt-5">
+              <RichText
+                value={en && !isLeeg(vacature.omschrijvingEn) ? vacature.omschrijvingEn : vacature.omschrijving}
+                pClass="mt-2 whitespace-pre-line text-sm text-brand-muted"
+              />
+            </div>
             <a
               href={`mailto:${vacature.contactEmail}`}
               class="mt-4 inline-block font-semibold text-brand-primary hover:underline"
