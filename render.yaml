@@ -328,35 +328,40 @@ services:
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
 
-  # Live preview for the Studio's "Live voorbeeld" tab (Sanity Presentation). Not public:
-  # noindex, no analytics, renders Sanity DRAFTS per request with the dev server, so edits show
-  # before Publiceren. Free plan: sleeps after 15 min, the first load then takes ~30 s.
-  # Same branch as the preview Julie reviews. The public static sites above are unaffected.
-  # Set SANITY_VIEWER_TOKEN in the Dashboard: Sanity → API → Tokens → add token with "Viewer" role.
-  - type: web
-    name: movenda-live-preview
-    runtime: node
-    plan: free
-    branch: brief
-    buildCommand: cd web && npm install
-    startCommand: cd web && npm run preview:live
-    healthCheckPath: /
-    autoDeploy: true
-    envVars:
-      - key: NODE_VERSION
-        value: "22.12.0"
-      - key: PUBLIC_PREVIEW
-        value: "true"
-      - key: PUBLIC_NOINDEX
-        value: "true"
-      - key: PUBLIC_SITE_URL
-        value: https://movenda-live-preview.onrender.com
-      - key: PUBLIC_THEME
-        value: lab
-      - key: PUBLIC_HOST_MODE
-        value: full
-      - key: SANITY_VIEWER_TOKEN
-        sync: false
+  # PARKED (2026-10-09): live preview service for the Studio's "Live voorbeeld" tab.
+  # The free plan (512 MB, 0.1 CPU) runs out of memory on the Astro dev server (500/502), so
+  # the service was removed. To bring it back: uncomment, set plan: starter (~$7/month, needs
+  # founder OK), create it, add SANITY_VIEWER_TOKEN, then set SANITY_STUDIO_LIVE_PREVIEW_URL
+  # (e.g. https://movenda-live-preview.onrender.com) when deploying the Studio. See DECISIONS.md.
+  # # Live preview for the Studio's "Live voorbeeld" tab (Sanity Presentation). Not public:
+  # # noindex, no analytics, renders Sanity DRAFTS per request with the dev server, so edits show
+  # # before Publiceren. Free plan: sleeps after 15 min, the first load then takes ~30 s.
+  # # Same branch as the preview Julie reviews. The public static sites above are unaffected.
+  # # Set SANITY_VIEWER_TOKEN in the Dashboard: Sanity → API → Tokens → add token with "Viewer" role.
+  # - type: web
+  #   name: movenda-live-preview
+  #   runtime: node
+  #   plan: free
+  #   branch: brief
+  #   buildCommand: cd web && npm install
+  #   startCommand: cd web && npm run preview:live
+  #   healthCheckPath: /
+  #   autoDeploy: true
+  #   envVars:
+  #     - key: NODE_VERSION
+  #       value: "22.12.0"
+  #     - key: PUBLIC_PREVIEW
+  #       value: "true"
+  #     - key: PUBLIC_NOINDEX
+  #       value: "true"
+  #     - key: PUBLIC_SITE_URL
+  #       value: https://movenda-live-preview.onrender.com
+  #     - key: PUBLIC_THEME
+  #       value: lab
+  #     - key: PUBLIC_HOST_MODE
+  #       value: full
+  #     - key: SANITY_VIEWER_TOKEN
+  #       sync: false
 
   # Production: www.movenda.be + movenda.be. Tracks main; brief is where Julie reviews.
   # Created via the Render MCP. Redirects + headers below must be set in the Dashboard

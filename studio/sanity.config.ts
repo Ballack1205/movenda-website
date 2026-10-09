@@ -72,20 +72,25 @@ export default defineConfig({
   basePath: "/",
   plugins: [
     structureTool({ structure: deskStructure }),
-    presentationTool({
-      previewUrl: { initial: LIVE_PREVIEW_URL },
-      title: "Live voorbeeld",
-      resolve: {
-        locations: presentationLocations,
-        mainDocuments: defineDocuments([
-          { route: "/team/:slug", filter: `_type == "teamlid" && slug.current == $slug` },
-          { route: "/en/team/:slug", filter: `_type == "teamlid" && slug.current == $slug` },
-          { route: "/blog/:slug", filter: `_type == "blogPost" && slug.current == $slug` },
-          { route: "/locaties/:slug", filter: `_type == "locatie" && slug.current == $slug` },
-          { route: "/events/:slug", filter: `_type == "event" && slug.current == $slug` },
-        ]),
-      },
-    }),
+    // Only when a live preview service exists (SANITY_STUDIO_LIVE_PREVIEW_URL).
+    ...(LIVE_PREVIEW_URL
+      ? [
+          presentationTool({
+            previewUrl: { initial: LIVE_PREVIEW_URL },
+            title: "Live voorbeeld",
+            resolve: {
+              locations: presentationLocations,
+              mainDocuments: defineDocuments([
+                { route: "/team/:slug", filter: `_type == "teamlid" && slug.current == $slug` },
+                { route: "/en/team/:slug", filter: `_type == "teamlid" && slug.current == $slug` },
+                { route: "/blog/:slug", filter: `_type == "blogPost" && slug.current == $slug` },
+                { route: "/locaties/:slug", filter: `_type == "locatie" && slug.current == $slug` },
+                { route: "/events/:slug", filter: `_type == "event" && slug.current == $slug` },
+              ]),
+            },
+          }),
+        ]
+      : []),
     nlNLLocale({ title: "Nederlands" }),
     ...(showVision ? [visionTool()] : []),
   ],

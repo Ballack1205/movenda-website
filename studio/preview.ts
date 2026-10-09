@@ -9,10 +9,9 @@ export const PREVIEW_URL = (process.env.SANITY_STUDIO_PREVIEW_URL || "https://mo
 );
 
 // Where the live preview (Sanity Presentation) runs: a separate Render service
-// that renders from drafts. See `npm run preview:live` in web/.
-export const LIVE_PREVIEW_URL = (
-  process.env.SANITY_STUDIO_LIVE_PREVIEW_URL || "https://movenda-live-preview.onrender.com"
-).replace(/\/+$/, "");
+// that renders from drafts. See `npm run preview:live` in web/ and DECISIONS.md.
+// Empty = the "Live voorbeeld" tab is not shown (default until the service exists).
+export const LIVE_PREVIEW_URL = (process.env.SANITY_STUDIO_LIVE_PREVIEW_URL || "").replace(/\/+$/, "");
 
 type PreviewDoc = {
   _type?: string;
