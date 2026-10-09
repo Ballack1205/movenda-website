@@ -134,7 +134,7 @@ const fotoPos = event.fotoHotspot
     }
 
     .event-kaart--foto {
-      grid-template-columns: auto minmax(0, 1fr) minmax(0, 16rem);
+      grid-template-columns: auto minmax(0, 1fr) 11.5rem;
       grid-template-areas: "datum body foto";
     }
   }
@@ -256,7 +256,9 @@ const fotoPos = event.fotoHotspot
   .event-kaart__foto {
     position: relative;
     grid-area: foto;
-    min-height: 8rem;
+    align-self: center;
+    width: 100%;
+    aspect-ratio: 4 / 5;
     overflow: hidden;
     border-radius: 0.9rem;
   }
