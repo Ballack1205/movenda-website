@@ -164,6 +164,11 @@ const description = tekst.replace(/\s+/g, " ").trim().slice(0, 160);
     white-space: pre-line;
   }
 
+  /* A blank line in the old plain text was exactly one line high (line-height 1.6). */
+  :global(.event-pagina__tekst + .event-pagina__tekst) {
+    margin-top: 1.6em;
+  }
+
   :global(.event-pagina__tekst a) {
     color: inherit;
     text-decoration: underline;
