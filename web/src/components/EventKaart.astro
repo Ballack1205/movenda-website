@@ -1,20 +1,20 @@
 ---
-// One event on /events: big date, title, place, text, photo and an optional
-// "Meer info" button (Studio → Events → Link). Past events render compact.
+// Short card on /events, same shape as Dwars door Hasselt: date, title, the
+// first paragraph, and a button. The rest (full text, Instagram, video) lives
+// on /events/[slug], which exists for every event. A separate actiepagina is
+// only needed when the button should open a campaign page (Studio → Link).
 import { eventInfoHref, type SiteEvent } from "../lib/content";
-import EventInstagram from "./EventInstagram.astro";
-import EventVideo from "./EventVideo.astro";
+import { withLang } from "../lib/i18n";
 
 interface Props {
   event: SiteEvent;
   lang?: "nl" | "en";
-  afgelopen?: boolean;
 }
 
-const { event, lang = "nl", afgelopen = false } = Astro.props;
+const { event, lang = "nl" } = Astro.props;
 const en = lang === "en";
 const titel = (en && event.titelEn) || event.titel;
-const tekst = (en && event.tekstEn) || event.tekst;
+const tekst = (en && event.tekstEn) || event.tekst || "";
 const locale = en ? "en-GB" : "nl-BE";
 const date = new Date(`${event.datum}T12:00:00`);
 const geldig = !Number.isNaN(date.getTime());
@@ -26,16 +26,24 @@ const volledig = geldig
   ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(date)
   : event.datum;
 const instagram = event.instagram?.trim() || "";
+const alinea = tekst.split(/\n\s*\n/).map((deel) => deel.trim()).filter(Boolean);
+const teaser = alinea[0] || "";
+const meerTekst = alinea.length > 1;
+const heeftEigenLink = Boolean(event.link?.trim());
+const paginaHref = withLang(`/events/${event.slug}`, lang);
 const infoHref = eventInfoHref(event, lang);
 const infoExtern = /^https?:/i.test(infoHref);
 const infoAttrs = infoExtern ? { target: "_blank", rel: "noopener" } : {};
-const extern = Boolean(event.link && /^https?:/.test(event.link));
-const knop = event.linkLabel || (en ? "More info" : "Meer info");
+const knopHref = heeftEigenLink ? infoHref : paginaHref;
+const knopExtern = /^https?:/i.test(knopHref);
+const knopAttrs = knopExtern ? { target: "_blank", rel: "noopener" } : {};
+const toonKnop = heeftEigenLink || meerTekst || Boolean(instagram || event.video);
+const knop = (heeftEigenLink && event.linkLabel) || (en ? "More info" : "Meer info");
 const fp = event.fotoHotspot ? `&crop=focalpoint&fp-x=${event.fotoHotspot.x.toFixed(3)}&fp-y=${event.fotoHotspot.y.toFixed(3)}` : "";
-const foto = event.foto ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` : undefined;
+const foto = event.foto && !instagram && !event.video ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` : undefined;
 ---
 
-<article class:list={["event-kaart", afgelopen && "event-kaart--afgelopen", foto && !afgelopen && !instagram && !event.video && "event-kaart--foto"]}>
+<article class:list={["event-kaart", foto && "event-kaart--foto"]}>
   <a class="event-kaart__datum" href={infoHref} aria-label={volledig} {...infoAttrs}>
     <time datetime={event.datum} style="display: contents">
       <span class="event-kaart__dag">{dag}</span>
@@ -49,22 +57,15 @@ const foto = event.foto ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` 
       {weekdag}{event.locatie && ` · ${event.locatie}`}
     </p>
     <h3 class="event-kaart__titel"><a href={infoHref} {...infoAttrs}>{titel}</a></h3>
-    {tekst && <p class="event-kaart__tekst">{tekst}</p>}
-    {event.link && !afgelopen && (
-      <a href={event.link} class="event-kaart__knop" {...(extern ? { target: "_blank", rel: "noopener" } : {})}>
+    {teaser && <p class:list={["event-kaart__tekst", (meerTekst || instagram || event.video) && "event-kaart__tekst--kort"]}>{teaser}</p>}
+    {toonKnop && (
+      <a href={knopHref} class="event-kaart__knop" {...knopAttrs}>
         {knop}
       </a>
     )}
-    {instagram ? (
-      <EventInstagram href={instagram} foto={event.foto} titel={titel} lang={lang} />
-    ) : (
-      <EventVideo video={event.video} foto={event.foto} titel={titel} />
-    )}
   </div>
 
-  {foto && !event.video && !instagram && (
-    <img class="event-kaart__foto" src={foto} alt="" width="450" height="320" loading="lazy" />
-  )}
+  {foto && <img class="event-kaart__foto" src={foto} alt="" width="450" height="320" loading="lazy" />}
 </article>
 
 <style>
@@ -195,8 +196,14 @@ const foto = event.foto ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` 
     margin-top: 0.75rem;
     max-width: 38rem;
     line-height: 1.6;
-    white-space: pre-line;
     opacity: 0.85;
+  }
+
+  .event-kaart__tekst--kort {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
   }
 
   .event-kaart__knop {
@@ -237,32 +244,5 @@ const foto = event.foto ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` 
       aspect-ratio: auto;
       min-height: 12rem;
     }
-  }
-
-  .event-kaart--afgelopen {
-    padding: 1rem 1.25rem;
-    background: transparent;
-  }
-
-  .event-kaart--afgelopen .event-kaart__datum {
-    min-width: 4.25rem;
-    padding: 0.6rem 0.6rem 0.5rem;
-    background: rgb(244 247 251 / 0.12);
-  }
-
-  .event-kaart--afgelopen .event-kaart__datum span {
-    color: #f4f7fb !important;
-  }
-
-  .event-kaart--afgelopen .event-kaart__dag {
-    font-size: 1.8rem;
-  }
-
-  .event-kaart--afgelopen .event-kaart__titel {
-    font-size: 1.3rem;
-  }
-
-  .event-kaart--afgelopen .event-kaart__foto {
-    display: none;
   }
 </style>

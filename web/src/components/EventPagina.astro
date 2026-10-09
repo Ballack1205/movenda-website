@@ -38,6 +38,7 @@ const volledig = geldig
   ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(date)
   : event.datum;
 const instagram = event.instagram?.trim() || "";
+const instagramLabel = (en && event.instagramLabelEn?.trim()) || event.instagramLabel?.trim() || "";
 const path = `${prefix}/events/${event.slug}`;
 const knopHref = event.link?.trim() ? eventInfoHref(event, lang) : "";
 const knopExtern = /^https?:/i.test(knopHref);
@@ -85,7 +86,7 @@ const description = tekst.replace(/\s+/g, " ").trim().slice(0, 160);
         </a>
       )}
       {instagram ? (
-        <EventInstagram href={instagram} foto={event.foto} titel={titel} lang={lang} />
+        <EventInstagram href={instagram} foto={event.foto} titel={titel} label={instagramLabel} lang={lang} />
       ) : (
         <EventVideo video={event.video} foto={event.foto} titel={titel} />
       )}

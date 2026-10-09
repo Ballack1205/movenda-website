@@ -1,14 +1,20 @@
 ---
-// The event's Instagram Reel or post. A click leaves the site and opens Instagram.
+// Photo on an event page. The link is a Reel, a post or a photo album.
+// The caption comes from Studio (Tekst onder de foto). Empty stays “Bekijk op Instagram”.
 interface Props {
   href: string;
   foto?: string;
   titel: string;
+  /** Visible caption. Empty keeps “Bekijk op Instagram”. */
+  label?: string;
   lang?: "nl" | "en";
 }
 
-const { href, foto, titel, lang = "nl" } = Astro.props;
-const label = lang === "en" ? `Watch ${titel} on Instagram` : `Bekijk ${titel} op Instagram`;
+const { href, foto, titel, label: labelProp = "", lang = "nl" } = Astro.props;
+const custom = labelProp.trim();
+const zichtbaar = custom || (lang === "en" ? "Watch on Instagram" : "Bekijk op Instagram");
+const label = custom || (lang === "en" ? `Watch ${titel} on Instagram` : `Bekijk ${titel} op Instagram`);
+const isInstagram = /instagram\.com|instagr\.am/i.test(href);
 const src = foto ? `${foto}?w=1200&fit=max&auto=format` : undefined;
 // Sanity asset URLs end in -1080x1350.png. These posters are portrait; cropping them to landscape cut off the title.
 const size = foto?.match(/-(\d+)x(\d+)\.\w+(?:\?|$)/);
@@ -19,13 +25,15 @@ const height = size ? Number(size[2]) : 1500;
 <a class="event-ig" href={href} target="_blank" rel="noopener noreferrer" aria-label={label}>
   {src && <img src={src} alt="" width={width} height={height} />}
   <span class="event-ig__label">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="currentColor"
-        d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 2A1.8 1.8 0 1 0 13.8 12 1.8 1.8 0 0 0 12 10.2zM17.2 6.8a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"
-      />
-    </svg>
-    {lang === "en" ? "Watch on Instagram" : "Bekijk op Instagram"}
+    {isInstagram && (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 2A1.8 1.8 0 1 0 13.8 12 1.8 1.8 0 0 0 12 10.2zM17.2 6.8a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"
+        />
+      </svg>
+    )}
+    {zichtbaar}
   </span>
 </a>
 

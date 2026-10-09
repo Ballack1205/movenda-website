@@ -2521,8 +2521,11 @@ export interface SiteEvent {
   fotoHotspot?: { x: number; y: number };
   /** Sanity CDN URL of an uploaded mp4/webm. Unused when instagram is set. */
   video?: string;
-  /** Reel or post. Shown instead of the uploaded file; a click opens Instagram. */
+  /** Reel, post or photo album. Shown instead of the uploaded file; a click opens this link. */
   instagram?: string;
+  /** Caption under the photo. Empty = “Bekijk op Instagram”. */
+  instagramLabel?: string;
+  instagramLabelEn?: string;
   /** Plain text (cards, meta tags). The formatted text is `tekstRich`. */
   tekst?: string;
   tekstEn?: string;
@@ -2559,7 +2562,7 @@ export async function getEvents(): Promise<SiteEvent[]> {
   return once("events", async () => {
     const rows = await sanity.fetch(
       `*[_type == "event" && actief != false] | order(datum desc) {
-        "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, link, linkLabel, tonenOpHome, instagram,
+        "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, link, linkLabel, tonenOpHome, instagram, instagramLabel, instagramLabelEn,
         "foto": foto.asset->url,
         "fotoHotspot": foto.hotspot{ x, y },
         "video": video.asset->url
