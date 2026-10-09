@@ -39,8 +39,11 @@ const knopExtern = /^https?:/i.test(knopHref);
 const knopAttrs = knopExtern ? { target: "_blank", rel: "noopener" } : {};
 const toonKnop = heeftEigenLink || meerTekst || Boolean(instagram || event.video);
 const knop = (heeftEigenLink && event.linkLabel) || (en ? "More info" : "Meer info");
-const fp = event.fotoHotspot ? `&crop=focalpoint&fp-x=${event.fotoHotspot.x.toFixed(3)}&fp-y=${event.fotoHotspot.y.toFixed(3)}` : "";
-const foto = event.foto && !instagram && !event.video ? `${event.foto}?w=900&h=640&fit=crop${fp}&auto=format` : undefined;
+// Full frame; the card crops it into the right column. A landscape pre-crop cut the title off portrait posters.
+const foto = event.foto ? `${event.foto}?w=900&fit=max&auto=format` : undefined;
+const fotoPos = event.fotoHotspot
+  ? `${(event.fotoHotspot.x * 100).toFixed(1)}% ${(event.fotoHotspot.y * 100).toFixed(1)}%`
+  : "center";
 ---
 
 <article class:list={["event-kaart", foto && "event-kaart--foto"]}>
@@ -65,7 +68,11 @@ const foto = event.foto && !instagram && !event.video ? `${event.foto}?w=900&h=6
     )}
   </div>
 
-  {foto && <img class="event-kaart__foto" src={foto} alt="" width="450" height="320" loading="lazy" />}
+  {foto && (
+    <div class="event-kaart__foto">
+      <img src={foto} alt="" style={`object-position: ${fotoPos}`} loading="lazy" />
+    </div>
+  )}
 </article>
 
 <style>
@@ -79,9 +86,26 @@ const foto = event.foto && !instagram && !event.video ? `${event.foto}?w=900&h=6
     background: rgb(244 247 251 / 0.05);
   }
 
+  .event-kaart--foto {
+    grid-template-columns: minmax(0, 1fr) 6.5rem;
+    grid-template-areas: "datum foto" "body foto";
+  }
+
+  .event-kaart--foto .event-kaart__datum {
+    grid-area: datum;
+  }
+
+  .event-kaart--foto .event-kaart__body {
+    grid-area: body;
+  }
+
   @media (max-width: 767px) {
-    .event-kaart {
+    .event-kaart:not(.event-kaart--foto) {
       grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
+    }
+
+    .event-kaart--foto {
       gap: 1rem;
     }
 
@@ -110,7 +134,8 @@ const foto = event.foto && !instagram && !event.video ? `${event.foto}?w=900&h=6
     }
 
     .event-kaart--foto {
-      grid-template-columns: auto minmax(0, 1fr) minmax(0, 18rem);
+      grid-template-columns: auto minmax(0, 1fr) minmax(0, 16rem);
+      grid-template-areas: "datum body foto";
     }
   }
 
@@ -229,20 +254,18 @@ const foto = event.foto && !instagram && !event.video ? `${event.foto}?w=900&h=6
   }
 
   .event-kaart__foto {
-    grid-column: 1 / -1;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 10;
+    position: relative;
+    grid-area: foto;
+    min-height: 8rem;
+    overflow: hidden;
     border-radius: 0.9rem;
-    object-fit: cover;
   }
 
-  @media (min-width: 768px) {
-    .event-kaart__foto {
-      grid-column: auto;
-      height: 100%;
-      aspect-ratio: auto;
-      min-height: 12rem;
-    }
+  .event-kaart__foto img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 </style>
