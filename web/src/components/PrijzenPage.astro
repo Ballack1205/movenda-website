@@ -156,7 +156,7 @@ const annulatie = prijzenInfoText(info, "annulatiebeleid", lang);
       <div class="mt-14 max-w-2xl">
         <h3 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">{copy.training} {copy.trainingPlace}</h3>
         <p class="mt-1 text-sm text-brand-muted">{copy.exBtw}</p>
-        {training.length > 0 && <PrijsLijst items={training} lang={lang} />}
+        {training.length > 0 && <PrijsLijst items={training} lang={lang} voorkeur="mpc-training" />}
         {[[copy.groep, groep], [copy.screening, screening]].map(([titel, items]) =>
           (items as Prijsitem[]).length > 0 && (
             <div class="mt-6">

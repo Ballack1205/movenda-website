@@ -2318,6 +2318,66 @@ export function findPrijsVoorDienst(dienst: Dienst, prijzen: Prijsitem[]): Prijs
   return match;
 }
 
+/** A price row belongs to the dienst in the same catalogue, not to a same-named page elsewhere. */
+function prijsCategoriePastBijDienst(categorie: PrijsCategorie, dienstCategorie: DienstCategorie): boolean {
+  if (categorie === "kine") return dienstCategorie === "kine";
+  if (categorie === "training") return dienstCategorie === "training";
+  if (categorie === "mpc-training") return dienstCategorie === "mpc-training";
+  if (categorie === "mpc-groep") return dienstCategorie === "mpc-groep";
+  if (categorie === "mpc-rehab") return dienstCategorie === "mpc-rehab";
+  if (categorie === "screening") return dienstCategorie === "training" || dienstCategorie === "mpc-training";
+  return false;
+}
+
+function prijsNaamPastBijDienst(naam: string, dienst: Pick<Dienst, "titel" | "titelEn" | "slug">): boolean {
+  const pn = normalizeNaam(naam);
+  const dn = normalizeNaam(dienstKorteTitel(dienst));
+  // "Cupping / Taping" is two treatments on one row. Do not send it to just one of them.
+  const combined = naam.includes("/");
+  if (pn && dn) {
+    if (pn === dn || pn.replace(/ /g, "") === dn.replace(/ /g, "")) return true;
+    if (!combined && (pn.startsWith(`${dn} `) || pn.startsWith(`${dn}/`))) return true;
+  }
+  // "Boxing — 10 lessen" → slug boxing.
+  if (!pn || combined) return false;
+  return pn.split(" ")[0] === dienst.slug;
+}
+
+/**
+ * Dienst page a price row should link to. Only when one live page matches,
+ * so "Personal Training" on Olympia does not point at the Performance Centre
+ * page, and a combined price does not pick one of two treatments.
+ */
+function uniekeDienst(pool: Dienst[]): Dienst | undefined {
+  const byHref = new Map<string, Dienst>();
+  for (const dienst of pool) byHref.set(dienstHref(dienst), dienst);
+  if (byHref.size !== 1) return undefined;
+  return [...byHref.values()][0];
+}
+
+export function findDienstVoorPrijs(
+  item: Prijsitem,
+  diensten: Dienst[],
+  voorkeur?: DienstCategorie,
+): Dienst | undefined {
+  const live = diensten.filter((dienst) => !isRetiredDienst(dienst));
+  const explicit = item.id ? live.filter((dienst) => dienst.prijs?.id === item.id) : [];
+  // The public "Training & Coaching (Performance Centre)" block stores prices as
+  // categorie "training" but the amounts are the Centre's. Prefer that catalogue.
+  if (voorkeur) {
+    const preferredExplicit = explicit.filter((dienst) => dienst.categorie === voorkeur);
+    const preferredByName = live.filter(
+      (dienst) => dienst.categorie === voorkeur && prijsNaamPastBijDienst(item.naam, dienst),
+    );
+    const preferred = uniekeDienst(preferredExplicit.length > 0 ? preferredExplicit : preferredByName);
+    if (preferred) return preferred;
+  }
+  const byName = live.filter(
+    (dienst) => prijsCategoriePastBijDienst(item.categorie, dienst.categorie) && prijsNaamPastBijDienst(item.naam, dienst),
+  );
+  return uniekeDienst(explicit.length > 0 ? explicit : byName);
+}
+
 /** Cut text at the last sentence boundary before `max` chars; falls back to a word cut with an ellipsis. */
 export function truncateAtSentence(text: string | undefined, max = 155): string {
   if (!text) return "";

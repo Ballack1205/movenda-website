@@ -1,14 +1,17 @@
 ---
-import { prijsNaam, prijsNotitie, type Prijsitem } from "../lib/content";
+import { dienstHref, findDienstVoorPrijs, getDiensten, prijsNaam, prijsNotitie, type Prijsitem } from "../lib/content";
 import type { Lang } from "../lib/i18n";
 
 interface Props {
   items: Prijsitem[];
   lang: Lang;
+  /** When the list is the Performance Centre block, match those diensten first. */
+  voorkeur?: "mpc-training";
 }
 
-const { items, lang } = Astro.props;
+const { items, lang, voorkeur } = Astro.props;
 const en = lang === "en";
+const diensten = await getDiensten();
 
 function startprijs(item: Prijsitem): string {
   if (item.opAanvraag) return en ? "On request" : "Op aanvraag";
@@ -18,13 +21,21 @@ function startprijs(item: Prijsitem): string {
 ---
 
 <ul class="mt-3 border-t border-brand-border">
-  {items.map((item) => (
-    <li class="flex items-baseline justify-between gap-6 border-b border-brand-border py-3">
-      <span>
-        {prijsNaam(item, lang)}
-        {prijsNotitie(item, lang) && <span class="mt-0.5 block text-sm text-brand-muted">{prijsNotitie(item, lang)}</span>}
-      </span>
-      <span class="shrink-0 font-semibold">{startprijs(item)}</span>
-    </li>
-  ))}
+  {items.map((item) => {
+    const dienst = findDienstVoorPrijs(item, diensten, voorkeur);
+    const href = dienst ? dienstHref(dienst, lang) : undefined;
+    return (
+      <li class="flex items-baseline justify-between gap-6 border-b border-brand-border py-3">
+        <span>
+          {href ? (
+            <a href={href} class="underline decoration-brand-border underline-offset-4 hover:decoration-brand-text">{prijsNaam(item, lang)}</a>
+          ) : (
+            prijsNaam(item, lang)
+          )}
+          {prijsNotitie(item, lang) && <span class="mt-0.5 block text-sm text-brand-muted">{prijsNotitie(item, lang)}</span>}
+        </span>
+        <span class="shrink-0 font-semibold">{startprijs(item)}</span>
+      </li>
+    );
+  })}
 </ul>
