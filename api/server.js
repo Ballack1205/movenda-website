@@ -2,6 +2,7 @@
 // site. The static site (web/) cannot run server code, so this is a small
 // separate Render web service that relays forms via Resend.
 import { createServer } from "node:http";
+import { pathToFileURL } from "node:url";
 
 const PORT = process.env.PORT || 10000;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
@@ -37,6 +38,55 @@ function corsHeaders(origin) {
 
 function isValidEmail(email) {
   return typeof email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function caseFlips(value) {
+  let flips = 0;
+  for (let i = 1; i < value.length; i++) {
+    const prev = value[i - 1];
+    const cur = value[i];
+    if (!/[A-Za-z]/.test(prev) || !/[A-Za-z]/.test(cur)) continue;
+    const prevUpper = prev >= "A" && prev <= "Z";
+    const curUpper = cur >= "A" && cur <= "Z";
+    if (prevUpper !== curUpper) flips++;
+  }
+  return flips;
+}
+
+// Bots that skip the honeypot still send a random token as the name and the
+// message (CmSjSGVvbdkfEbSnlFiskJQ / tVeKFWvTWpQiPFmzEKuzf). A real name or a
+// Dutch sentence does not flip case that often inside one word.
+function isGibberishToken(value) {
+  const s = String(value || "").trim();
+  if (s.length < 12 || /\s/.test(s) || !/^[A-Za-z0-9]+$/.test(s)) return false;
+  const letters = s.replace(/[^A-Za-z]/g, "");
+  if (letters.length < 12) return false;
+  if (caseFlips(letters) >= 4) return true;
+  if (letters.length < 18) return false;
+  const vowels = (letters.match(/[aeiouy]/gi) || []).length;
+  return vowels / letters.length < 0.22;
+}
+
+// Gmail ignores dots, so bots invent unique addresses like
+// eca.r.d.e.na.s.y.20.06@gmail.com. Real addresses rarely have this many dots.
+function isDotStuffedEmail(email) {
+  const local = String(email || "").split("@")[0] || "";
+  const dots = (local.match(/\./g) || []).length;
+  if (dots >= 4) return true;
+  const singles = local.split(".").filter((part) => part.length === 1).length;
+  return singles >= 4;
+}
+
+function spamReason(data) {
+  if (isGibberishToken(data?.naam)) return "gibberish-name";
+  if (isGibberishToken(data?.bericht)) return "gibberish-message";
+  if (isDotStuffedEmail(data?.email)) return "dotted-email";
+  return "";
+}
+
+function dropSpam(res, origin, reason, email) {
+  console.log(`Dropped spam submission (${reason}) <${email || ""}>`);
+  json(res, origin, 200, { ok: true });
 }
 
 function escapeHtml(str) {
@@ -273,6 +323,11 @@ const server = createServer(async (req, res) => {
       json(res, origin, 400, { error: "invalid_input" });
       return;
     }
+    const newsletterSpam = spamReason(data);
+    if (newsletterSpam) {
+      dropSpam(res, origin, newsletterSpam, data.email);
+      return;
+    }
     if (!RESEND_API_KEY) {
       json(res, origin, 500, { error: "server_not_configured" });
       return;
@@ -304,6 +359,11 @@ const server = createServer(async (req, res) => {
       json(res, origin, 400, { error: "invalid_input" });
       return;
     }
+    const popupSpam = spamReason(data);
+    if (popupSpam) {
+      dropSpam(res, origin, popupSpam, data.email);
+      return;
+    }
     if (!RESEND_API_KEY) {
       json(res, origin, 500, { error: "server_not_configured" });
       return;
@@ -332,6 +392,11 @@ const server = createServer(async (req, res) => {
     }
     if (!data.naam || !isValidEmail(data.email) || !data.les) {
       json(res, origin, 400, { error: "invalid_input" });
+      return;
+    }
+    const groepSpam = spamReason(data);
+    if (groepSpam) {
+      dropSpam(res, origin, groepSpam, data.email);
       return;
     }
     if (!RESEND_API_KEY) {
@@ -400,6 +465,12 @@ const server = createServer(async (req, res) => {
     return;
   }
 
+  const contactSpam = spamReason(data);
+  if (contactSpam) {
+    dropSpam(res, origin, contactSpam, data.email);
+    return;
+  }
+
   if (!RESEND_API_KEY) {
     console.error("Missing RESEND_API_KEY env var — cannot send contact emails.");
     json(res, origin, 500, { error: "server_not_configured" });
@@ -415,6 +486,12 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log(`movenda-contact-api listening on 0.0.0.0:${PORT}`);
-});
+const isDirectRun = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (isDirectRun) {
+  server.listen(PORT, "0.0.0.0", () => {
+    console.log(`movenda-contact-api listening on 0.0.0.0:${PORT}`);
+  });
+}
+
+export { spamReason, isGibberishToken, isDotStuffedEmail };
