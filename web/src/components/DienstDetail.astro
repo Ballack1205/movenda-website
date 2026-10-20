@@ -28,6 +28,8 @@ const manueel = dienst.slug === "manuele-therapie";
 // Specialist band under the service copy. false = beige everywhere.
 // true = partner-strip gray, and a gray chip border, on manuele therapie only.
 const specialistenPartnergrijs = false;
+// Kine pages: the specialist band and "Lees ook" continue the black copy area above.
+const inkClose = dienst.categorie === "kine";
 const listLabel = /^(Voor wie|Zo werken we|Zo ziet de les eruit|Who it's for|How we work|What a session looks like)\s*:?\s*/i;
 const expectLabel = /^(Wat je mag verwachten|What to expect)\s*:?\s*/i;
 const duurStart = /^(elke behandeling duurt|each (treatment|session) lasts)/i;
@@ -212,7 +214,7 @@ const heroSrc = dienst.afbeelding
   )}
   </div>
 
-  <div class:list={["dienst-close", specialistenPartnergrijs && manueel && "dienst-close--partnergrijs"]}>
+  <div class:list={["dienst-close", inkClose && "dienst-close--ink", specialistenPartnergrijs && manueel && "dienst-close--partnergrijs"]}>
   <div class="mx-auto max-w-3xl px-4">
   {team.length > 0 && (
     <div class="mt-10">
@@ -258,6 +260,7 @@ const heroSrc = dienst.afbeelding
   </div>
 
   {posts.length > 0 && (
+    <div class:list={["dienst-lees", inkClose && "dienst-lees--ink"]}>
     <div class="mx-auto max-w-3xl px-4 pb-16">
       <aside class="mt-14 border-t border-brand-border pt-10">
         <h2 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">
@@ -269,6 +272,7 @@ const heroSrc = dienst.afbeelding
           ))}
         </div>
       </aside>
+    </div>
     </div>
   )}
 </article>
@@ -416,6 +420,55 @@ const heroSrc = dienst.afbeelding
   :global(html[data-theme="lab"]) .dienst-close {
     background: #f3eee4;
     color: #161513;
+  }
+
+  /* Kine: black band, same ink as .dienst-ink above. The CTA flips to paper
+     because the lab primary is itself ink and would vanish. */
+  :global(html[data-theme="lab"]) .dienst-close--ink,
+  :global(html[data-theme="lab"]) .dienst-lees--ink {
+    display: flow-root;
+    background: #161513;
+    color: #f4f7fb;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-close--ink :is(h2, a),
+  :global(html[data-theme="lab"] .dienst-lees--ink :is(h2, p, span)) {
+    color: #f4f7fb;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-close--ink a.rounded-full:not(.bg-brand-primary) {
+    border-color: rgb(244 247 251 / 0.28);
+  }
+
+  :global(html[data-theme="lab"]) .dienst-close--ink a.rounded-full:not(.bg-brand-primary):hover {
+    border-color: #f4f7fb;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-close--ink a.bg-brand-primary {
+    background: #f3eee4;
+    color: #161513;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-close--ink a.bg-brand-primary:hover {
+    background: #fffdf8;
+    color: #161513;
+  }
+
+  :global(html[data-theme="lab"]) .dienst-lees--ink aside {
+    border-color: rgb(244 247 251 / 0.28);
+  }
+
+  :global(html[data-theme="lab"] .dienst-lees--ink .lab-card) {
+    background: rgb(244 247 251 / 0.06);
+    border-color: rgb(244 247 251 / 0.18);
+  }
+
+  :global(html[data-theme="lab"] .dienst-lees--ink .lab-card:hover) {
+    border-color: #f4f7fb;
+  }
+
+  :global(html[data-theme="lab"] .dienst-lees--ink .blog-card__caption) {
+    background: rgb(22 21 19 / 0.72);
   }
 
   /* Used only when specialistenPartnergrijs is true. Same gray as the
