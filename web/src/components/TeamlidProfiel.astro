@@ -37,6 +37,8 @@ const quoteKop = en
   ? `In our ${kine ? "therapist" : "coach"}'s words`
   : `Woorden van onze ${kine ? "therapeut" : "coach"}`;
 const kopClass = "text-sm font-semibold uppercase tracking-wide text-brand-muted";
+// The lab theme styles every h2 as a large serif headline; these labels must stay small, so the size, font and spacing win with !important.
+const kopH2Class = `${kopClass} font-sans! text-sm! font-semibold! leading-normal! tracking-wide!`;
 ---
 
 <div class="mt-6 space-y-4 text-brand-muted">
@@ -64,7 +66,7 @@ const kopClass = "text-sm font-semibold uppercase tracking-wide text-brand-muted
 
 {(expertise.length > 0 || lid.specialisaties.length > 0) && (
   <div class="mt-10">
-    <h2 class={kopClass}>{expertiseKop}</h2>
+    <h2 class={kopH2Class}>{expertiseKop}</h2>
     {expertise.length > 0 && (
       <ul class="mt-3 divide-y divide-brand-border border-y border-brand-border">
         {expertise.map((regel) => (
@@ -100,7 +102,7 @@ const kopClass = "text-sm font-semibold uppercase tracking-wide text-brand-muted
 
 {lid.clubs.length > 0 && (
   <div class="mt-8">
-    <h2 class={kopClass}>Clubs</h2>
+    <h2 class={kopH2Class}>Clubs</h2>
     <ul class="mt-2 flex flex-wrap gap-2 text-sm">
       {lid.clubs.map((c) => (
         <li>
