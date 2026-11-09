@@ -53,7 +53,8 @@ const mb = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
 const bijlagen = (event.bijlagen || []).map((bijlage) => {
   const bestand = bijlage.bestandsnaam || "bijlage.pdf";
   return {
-    bekijk: bijlage.url,
+    // A trailing filename on a Sanity file URL is the name the browser tab shows.
+    bekijk: `${bijlage.url}/${encodeURIComponent(bestand.replace(/\s+/g, "-"))}`,
     // Sanity's ?dl= serves the file as an attachment with this filename.
     download: `${bijlage.url}?dl=${encodeURIComponent(bestand)}`,
     naam: bijlage.titel?.trim() || bestand.replace(/\.pdf$/i, ""),
