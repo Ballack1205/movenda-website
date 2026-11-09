@@ -43,8 +43,11 @@ const path = `${prefix}/events/${event.slug}`;
 const knopHref = event.link?.trim() ? eventInfoHref(event, lang) : "";
 const knopExtern = /^https?:/i.test(knopHref);
 const knop = event.linkLabel || (en ? "More info" : "Meer info");
-const fp = event.fotoHotspot ? `&crop=focalpoint&fp-x=${event.fotoHotspot.x.toFixed(3)}&fp-y=${event.fotoHotspot.y.toFixed(3)}` : "";
-const foto = event.foto ? `${event.foto}?w=1600&h=1000&fit=crop${fp}&auto=format` : undefined;
+// Posters are often portrait (1080×1350): show the whole frame, never a landscape crop.
+const foto = event.foto ? `${event.foto}?w=1600&fit=max&auto=format` : undefined;
+const fotoMaat = event.foto?.match(/-(\d+)x(\d+)\.\w+(?:\?|$)/);
+const fotoBreedte = fotoMaat ? Number(fotoMaat[1]) : 1600;
+const fotoHoogte = fotoMaat ? Number(fotoMaat[2]) : 1000;
 const description = tekst.replace(/\s+/g, " ").trim().slice(0, 160);
 ---
 
@@ -91,7 +94,7 @@ const description = tekst.replace(/\s+/g, " ").trim().slice(0, 160);
         <EventVideo video={event.video} foto={event.foto} titel={titel} />
       )}
       {foto && !event.video && !instagram && (
-        <img class="event-pagina__foto" src={foto} alt="" width="800" height="500" />
+        <img class="event-pagina__foto" src={foto} alt="" width={fotoBreedte} height={fotoHoogte} />
       )}
     </article>
   </section>
@@ -195,11 +198,11 @@ const description = tekst.replace(/\s+/g, " ").trim().slice(0, 160);
 
   .event-pagina__foto {
     display: block;
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     height: auto;
+    max-height: min(85vh, 46rem);
     margin-top: 1.75rem;
-    aspect-ratio: 16 / 10;
     border-radius: 1rem;
-    object-fit: cover;
   }
 </style>

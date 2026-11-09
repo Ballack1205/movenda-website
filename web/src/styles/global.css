@@ -1989,6 +1989,24 @@ html[data-theme="lab"] .brief-event__title {
   line-height: 1.15;
 }
 
+/* Whole poster, no crop: portrait event posters lost their title in a fixed frame. */
+html[data-theme="lab"] .brief-event__foto {
+  flex-shrink: 0;
+  width: auto;
+  height: 7rem;
+  max-width: 9rem;
+  margin: 0.75rem 0 0.75rem 0.5rem;
+  border-radius: 0.6rem;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  html[data-theme="lab"] .brief-event__foto {
+    height: 8.5rem;
+    max-width: 12rem;
+  }
+}
+
 html[data-theme="lab"] .brief-event__go {
   flex-shrink: 0;
   padding: 0 1.25rem;

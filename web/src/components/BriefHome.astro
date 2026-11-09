@@ -251,6 +251,17 @@ const paragraphs = brief.merkTekst.split(/\n\n+/).map((part) => part.trim()).fil
                 <span class="brief-event__title">{en ? event.titelEn || event.titel : event.titel}</span>
                 {(en ? event.tekstEn || event.tekst : event.tekst) && <span class="brief-event__text">{en ? event.tekstEn || event.tekst : event.tekst}</span>}
               </span>
+              {event.foto && (
+                <img
+                  class="brief-event__foto"
+                  src={`${event.foto}?w=360&fit=max&auto=format`}
+                  alt=""
+                  width={event.foto.match(/-(\d+)x\d+\.\w+$/)?.[1] ?? 1080}
+                  height={event.foto.match(/-\d+x(\d+)\.\w+$/)?.[1] ?? 1350}
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
               <span class="brief-event__go" aria-hidden="true">→</span>
             </a>
           </li>
