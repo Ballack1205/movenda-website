@@ -19,11 +19,11 @@ export const sanity = createClient({
   projectId,
   dataset,
   apiVersion: "2026-01-01",
-  // API CDN (`apicdn.sanity.io`). Same public dataset, ~60 s delay after a
-  // write. The live API (`useCdn: false`) counts against the 250k/month Free
-  // quota; the CDN does not. Seed/migrate scripts keep `useCdn: false`.
-  // After Publish, Render rebuilds via webhook — that is later than 60 s.
-  useCdn: !PREVIEW,
+  // Live API, not apicdn.sanity.io: the publish webhook starts a Render build
+  // within seconds, while the API CDN serves the old document for up to ~60 s.
+  // A build then baked in the previous photo. One build is a few dozen queries,
+  // far under the 250k/month Free quota.
+  useCdn: false,
   ...(PREVIEW
     ? {
         perspective: previewToken ? ("drafts" as const) : ("published" as const),

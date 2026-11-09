@@ -63,6 +63,28 @@ export default defineType({
     }),
     defineField({ name: "tekstEn", title: "Tekst (EN)", type: "richText", fieldset: "en" }),
     defineField({
+      name: "bijlagen",
+      title: "Bijlagen om te downloaden",
+      type: "array",
+      description:
+        "PDF's die bezoekers kunnen downloaden, zoals een roadbook of infobundel. Ze verschijnen onder de tekst op de pagina van dit event. Zet een Word-bestand eerst om naar PDF.",
+      of: [
+        {
+          type: "file",
+          title: "Bijlage",
+          options: { accept: "application/pdf" },
+          fields: [
+            defineField({
+              name: "titel",
+              title: "Naam op de knop",
+              type: "string",
+              description: "Bijvoorbeeld ‘Roadbook’. Leeg = de bestandsnaam.",
+            }),
+          ],
+        },
+      ],
+    }),
+    defineField({
       name: "link",
       title: "Link voor meer info",
       type: "string",

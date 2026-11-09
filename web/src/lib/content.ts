@@ -2594,6 +2594,8 @@ export interface SiteEvent {
   /** "Meer info" target: an actiepagina (/ddh-ready) or an external URL. */
   link?: string;
   linkLabel?: string;
+  /** Downloadable PDFs (roadbook, infobundel). */
+  bijlagen?: { titel?: string; url: string; bestandsnaam?: string; grootte?: number }[];
   tonenOpHome: boolean;
 }
 
@@ -2625,7 +2627,8 @@ export async function getEvents(): Promise<SiteEvent[]> {
         "slug": slug.current, titel, titelEn, datum, locatie, tekst, tekstEn, link, linkLabel, tonenOpHome, instagram, instagramLabel, instagramLabelEn,
         "foto": foto.asset->url,
         "fotoHotspot": foto.hotspot{ x, y },
-        "video": video.asset->url
+        "video": video.asset->url,
+        "bijlagen": bijlagen[defined(asset)]{ titel, "url": asset->url, "bestandsnaam": asset->originalFilename, "grootte": asset->size }
       }`,
     );
     const live = (rows || [])
