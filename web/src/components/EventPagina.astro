@@ -53,8 +53,9 @@ const mb = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
 const bijlagen = (event.bijlagen || []).map((bijlage) => {
   const bestand = bijlage.bestandsnaam || "bijlage.pdf";
   return {
+    bekijk: bijlage.url,
     // Sanity's ?dl= serves the file as an attachment with this filename.
-    href: `${bijlage.url}?dl=${encodeURIComponent(bestand)}`,
+    download: `${bijlage.url}?dl=${encodeURIComponent(bestand)}`,
     naam: bijlage.titel?.trim() || bestand.replace(/\.pdf$/i, ""),
     info: bijlage.grootte ? `PDF · ${mb.format(bijlage.grootte / 1_000_000)} MB` : "PDF",
   };
@@ -101,11 +102,30 @@ const bijlagen = (event.bijlagen || []).map((bijlage) => {
       {bijlagen.length > 0 && (
         <ul class="event-pagina__bijlagen" aria-label="Downloads">
           {bijlagen.map((bijlage) => (
-            <li>
-              <a class="event-pagina__bijlage" href={bijlage.href} download>
+            <li class="event-pagina__bijlage">
+              <span class="event-pagina__bijlage-tekst">
                 <span class="event-pagina__bijlage-naam">{bijlage.naam}</span>
                 <span class="event-pagina__bijlage-info">{bijlage.info}</span>
-              </a>
+              </span>
+              <span class="event-pagina__bijlage-knoppen">
+                <a
+                  class="event-pagina__bijlage-knop"
+                  href={bijlage.bekijk}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={en ? `View ${bijlage.naam}` : `Bekijk ${bijlage.naam}`}
+                >
+                  {en ? "View" : "Bekijken"}
+                </a>
+                <a
+                  class="event-pagina__bijlage-knop event-pagina__bijlage-knop--download"
+                  href={bijlage.download}
+                  download
+                  aria-label={en ? `Download ${bijlage.naam}` : `Download ${bijlage.naam}`}
+                >
+                  Download
+                </a>
+              </span>
             </li>
           ))}
         </ul>
@@ -219,33 +239,27 @@ const bijlagen = (event.bijlagen || []).map((bijlage) => {
   }
 
   .event-pagina__bijlagen {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
     gap: 0.75rem;
-    margin-top: 1.5rem;
+    margin-top: 1.75rem;
     list-style: none;
   }
 
   .event-pagina__bijlage {
-    display: inline-flex;
-    min-height: 46px;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 1.35rem;
-    border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
-    border-radius: 9999px;
-    color: inherit;
-    text-decoration: none;
-    transition: background-color 0.2s;
+    justify-content: space-between;
+    gap: 0.75rem 1.25rem;
+    padding: 1rem 1rem 1rem 1.25rem;
+    border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+    border-radius: 1rem;
   }
 
-  .event-pagina__bijlage::before {
-    content: "↓";
-    font-weight: 700;
-  }
-
-  .event-pagina__bijlage:hover {
-    background: color-mix(in srgb, currentColor 10%, transparent);
+  .event-pagina__bijlage-tekst {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
   }
 
   .event-pagina__bijlage-naam {
@@ -253,8 +267,46 @@ const bijlagen = (event.bijlagen || []).map((bijlage) => {
   }
 
   .event-pagina__bijlage-info {
-    font-size: 0.85rem;
-    opacity: 0.7;
+    font-size: 0.82rem;
+    opacity: 0.65;
+  }
+
+  .event-pagina__bijlage-knoppen {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .event-pagina__bijlage-knop {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    padding: 0 1.15rem;
+    border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+    border-radius: 9999px;
+    font-size: 0.92rem;
+    font-weight: 650;
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+
+  .event-pagina__bijlage-knop:hover {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+  }
+
+  .event-pagina__bijlage-knop--download {
+    gap: 0.45rem;
+    border-color: transparent;
+    background: #f3eee4;
+    color: #161513 !important;
+  }
+
+  .event-pagina__bijlage-knop--download::before {
+    content: "↓";
+  }
+
+  .event-pagina__bijlage-knop--download:hover {
+    background: #fffdf8;
   }
 
   .event-pagina__foto {
