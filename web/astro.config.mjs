@@ -158,6 +158,8 @@ export default defineConfig({
         if (!hostMode && (path === "/performance/visie" || path === "/en/performance/visie")) return false;
         // Old /mpc URLs are redirects. The pages live at /performance and /groepslessen.
         if (path === "/mpc" || path.startsWith("/mpc/") || path === "/en/mpc" || path.startsWith("/en/mpc/")) return false;
+        // These two only redirect (to /prijzen and /b2b); a redirect stub is not a page to index.
+        if (/^(\/en)?\/performance\/(prijzen|corporate-coaching)$/.test(path)) return false;
         if (!hostMode) return true;
         if (path === "/" || path === "/en") return true;
         if (path.startsWith("/performance") || path.startsWith("/en/performance")) return true;

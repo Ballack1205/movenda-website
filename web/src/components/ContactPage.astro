@@ -72,6 +72,8 @@ const jsonLd = [
 >
   <div class="page-ink">
   <section class="px-4 pb-4 pt-8 md:px-12">
+    {/* The form leads the page by design; the heading is for search engines and screen readers. */}
+    <h1 class="sr-only">{paginaTekst(pagina, "titel", lang) || copy.crumb}</h1>
     <form class="grid gap-4" data-contact-form>
       <div class="grid gap-4 sm:grid-cols-3">
         <input class="rounded-lg border border-brand-border px-4 py-3" type="text" name="naam" placeholder={copy.name} required />
